@@ -4,7 +4,13 @@
   "description": "",
   "main": "dist/cloudsite.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "make",
+    "lint": "make lint",
+    "lint:fix": "make lint-fix",
+    "test": "make test",
+    "prepack": "make build",
+    "preversion": "npm test && make lint",
+    "qa": "make qa"
   },
   "keywords": [],
   "author": "Zane Rockenbaugh <zane@liquid-labs.com>",
@@ -13,5 +19,14 @@
   "bugs": {
     "url": "https://github.com/liquid-labs/cloudsite/issues"
   },
-  "homepage": "https://github.com/liquid-labs/cloudsite#readme"
+  "homepage": "https://github.com/liquid-labs/cloudsite#readme",
+  "dependencies": {
+    "command-line-args": "^5.2.1",
+    "command-line-documentation": "^1.0.0-alpha.3"
+  },
+  "devDependencies": {
+    "@liquid-labs/sdlc-resource-babel-and-rollup": "^1.0.0-alpha.8",
+    "@liquid-labs/sdlc-resource-eslint": "^1.0.0-alpha.8",
+    "@liquid-labs/sdlc-resource-jest": "^1.0.0-alpha.7"
+  }
 }
