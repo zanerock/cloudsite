@@ -21,8 +21,11 @@
   },
   "homepage": "https://github.com/liquid-labs/cloudsite#readme",
   "dependencies": {
+    "@aws-sdk/client-acm": "^3.515.0",
+    "@aws-sdk/credential-providers": "^3.515.0",
     "command-line-args": "^5.2.1",
-    "command-line-documentation": "^1.0.0-alpha.3"
+    "command-line-documentation": "^1.0.0-alpha.3",
+    "question-and-answer": "^1.0.0-alpha.16"
   },
   "devDependencies": {
     "@liquid-labs/sdlc-resource-babel-and-rollup": "^1.0.0-alpha.8",

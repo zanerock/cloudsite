@@ -12,6 +12,28 @@ const cliSpec = {
     }
   ],
   commands : [
+    { 
+      name : 'configuration',
+      summary : 'Command group for managing the Cloudsite CLI configuration.',
+      arguments : [
+        { 
+          name : 'command', 
+          defaultOption : true, 
+          required : true, 
+          description : 'The configuration action to perform.'
+        }
+      ],
+      commands : [
+        { 
+          name : 'initialize',
+          summary : 'Runs the initialization wizard and updates all options.'
+        },
+        { 
+          name : 'show',
+          summary : 'Displays the current configuration.'
+        }
+      ]
+    },
     {
       name      : 'create',
       summary   : 'Creates a new cloud host environment for a site.',

@@ -6,12 +6,14 @@ import commandLineArgs from 'command-line-args'
 import { cliSpec, SOURCE_TYPES } from '../cli-spec'
 import { create } from '../../lib/actions/create'
 
-const handleCreate = async({ argv }) => {
+const handleCreate = async({ argv, globalOptions }) => {
+  const options = structuredClone(globalOptions)
+
   const createOptionsSpec = cliSpec.commands.find(({ name }) => name === 'create').arguments
   const createOptions = commandLineArgs(createOptionsSpec, { argv })
-  const apexDomain = createOptions['apex-domain']
-  const sourcePath = createOptions['source-path']
-  let sourceType = createOptions['source-type']
+  options.apexDomain = createOptions['apex-domain']
+  options.sourcePath = createOptions['source-path']
+  options.sourceType = createOptions['source-type']
 
   for (const option of ['apex-domain', 'source-path']) {
     if (createOptions[option] === undefined) {
@@ -24,14 +26,14 @@ const handleCreate = async({ argv }) => {
 
   if (sourceType === undefined) {
     const docusaurusConfigPath = fsPath.join(sourcePath, 'docusaurus.config.js')
-    sourceType = fileExists(docusaurusConfigPath) ? 'docusaurus' : 'vanilla'
+    options.sourceType = fileExists(docusaurusConfigPath) ? 'docusaurus' : 'vanilla'
   }
-  else if (!SOURCE_TYPES.includes(sourceType)) {
+  else if (!SOURCE_TYPES.includes(options.sourceType)) {
     process.stderr(`Invalid site source type '${sourceType}'; must be one of ${SOURCE_TYPES.join(', ')}.\n`)
     process.exit(1)
   }
 
-  await create({ apexDomain, sourcePath, sourceType })
+  await create(options)
 }
 
 export { handleCreate }
