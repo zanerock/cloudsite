@@ -1,13 +1,13 @@
 import { ACMClient, RequestCertificateCommand } from "@aws-sdk/client-acm"
 import { fromIni } from "@aws-sdk/credential-providers"
 
-const create = async ({ apexDomain, sourcePath, sourceType, profile }) => {
+const create = async ({ apexDomain, sourcePath, sourceType, ssoProfile }) => {
   // process.stdout.write(`TODO: create ${apexDomain} of type ${sourceType}; source: ${sourcePath}\n`)
 
   const credentials = fromIni({
     // Optional. The configuration profile to use. If not specified, the provider will use the value
     // in the `AWS_PROFILE` environment variable or a default of `default`.
-    profile,
+    profile: ssoProfile,
     // Optional. The path to the shared credentials file. If not specified, the provider will use
     // the value in the `AWS_SHARED_CREDENTIALS_FILE` environment variable or a default of
     // `~/.aws/credentials`.

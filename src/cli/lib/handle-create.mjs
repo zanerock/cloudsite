@@ -24,8 +24,8 @@ const handleCreate = async({ argv, globalOptions }) => {
   }
   // TODO: verify apex domain matches apex domain RE
 
-  if (sourceType === undefined) {
-    const docusaurusConfigPath = fsPath.join(sourcePath, 'docusaurus.config.js')
+  if (options.sourceType === undefined) {
+    const docusaurusConfigPath = fsPath.join(options.sourcePath, 'docusaurus.config.js')
     options.sourceType = fileExists(docusaurusConfigPath) ? 'docusaurus' : 'vanilla'
   }
   else if (!SOURCE_TYPES.includes(options.sourceType)) {
