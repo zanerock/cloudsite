@@ -3,7 +3,7 @@ import * as fsPath from 'node:path'
 
 import commandLineArgs from 'command-line-args'
 
-import { cliSpec, SOURCE_TYPES } from '../cli-spec'
+import { cliSpec, SOURCE_TYPES } from '../constants'
 import { create } from '../../lib/actions/create'
 
 const handleCreate = async ({ argv, globalOptions }) => {

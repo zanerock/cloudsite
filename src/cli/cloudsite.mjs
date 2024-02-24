@@ -3,7 +3,7 @@ import * as fsPath from 'node:path'
 
 import commandLineArgs from 'command-line-args'
 
-import { cliSpec } from './cli-spec'
+import { cliSpec } from './constants'
 import { handleConfiguration } from './lib/handle-configuration'
 import { handleCreate } from './lib/handle-create'
 
