@@ -57,7 +57,6 @@ const create = async ({ apexDomain, sourcePath, sourceType, ssoProfile }) => {
   // this method can safely be called multiple times; it'll  match  existing certs (by domain name I'd assume)
   const command = new RequestCertificateCommand(input)
   const response = await client.send(command)
-  console.log(response) // DEBUG
 
   const { CertificateArn } = response
 
