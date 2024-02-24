@@ -1,4 +1,4 @@
-const SOURCE_TYPES = [ 'docusaurus', 'vanilla' ]
+const SOURCE_TYPES = ['docusaurus', 'vanilla']
 
 const cliSpec = {
   mainCommand : 'cloudsite',
@@ -12,24 +12,24 @@ const cliSpec = {
     }
   ],
   commands : [
-    { 
-      name : 'configuration',
-      summary : 'Command group for managing the Cloudsite CLI configuration.',
+    {
+      name      : 'configuration',
+      summary   : 'Command group for managing the Cloudsite CLI configuration.',
       arguments : [
-        { 
-          name : 'command', 
-          defaultOption : true, 
-          required : true, 
-          description : 'The configuration action to perform.'
+        {
+          name          : 'command',
+          defaultOption : true,
+          required      : true,
+          description   : 'The configuration action to perform.'
         }
       ],
       commands : [
-        { 
-          name : 'initialize',
+        {
+          name    : 'initialize',
           summary : 'Runs the initialization wizard and updates all options.'
         },
-        { 
-          name : 'show',
+        {
+          name    : 'show',
           summary : 'Displays the current configuration.'
         }
       ]
@@ -37,21 +37,21 @@ const cliSpec = {
     {
       name      : 'create',
       summary   : 'Creates a new cloud host environment for a site.',
-      arguments   : [
+      arguments : [
         {
           name          : 'apex-domain',
           description   : 'The site apex domain.',
           defaultOption : true
         },
         {
-          name : 'source-path',
+          name        : 'source-path',
           description : 'Local path to the static site root.',
-          required: true
+          required    : true
         },
         {
-          name : 'source-type',
-          summary: "May be either 'vanilla' or 'docusaurus', otherwise process will attempt to guess."
-        },
+          name    : 'source-type',
+          summary : "May be either 'vanilla' or 'docusaurus', otherwise process will attempt to guess."
+        }
       ]
     }
   ]

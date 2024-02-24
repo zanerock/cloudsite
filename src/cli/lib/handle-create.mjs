@@ -6,7 +6,7 @@ import commandLineArgs from 'command-line-args'
 import { cliSpec, SOURCE_TYPES } from '../cli-spec'
 import { create } from '../../lib/actions/create'
 
-const handleCreate = async({ argv, globalOptions }) => {
+const handleCreate = async ({ argv, globalOptions }) => {
   const options = structuredClone(globalOptions)
 
   const createOptionsSpec = cliSpec.commands.find(({ name }) => name === 'create').arguments
@@ -27,8 +27,7 @@ const handleCreate = async({ argv, globalOptions }) => {
   if (options.sourceType === undefined) {
     const docusaurusConfigPath = fsPath.join(options.sourcePath, 'docusaurus.config.js')
     options.sourceType = fileExists(docusaurusConfigPath) ? 'docusaurus' : 'vanilla'
-  }
-  else if (!SOURCE_TYPES.includes(options.sourceType)) {
+  } else if (!SOURCE_TYPES.includes(options.sourceType)) {
     process.stderr(`Invalid site source type '${sourceType}'; must be one of ${SOURCE_TYPES.join(', ')}.\n`)
     process.exit(1)
   }

@@ -11,12 +11,12 @@ const handleConfiguration = async ({ argv, cliSpec, globalOptions }) => {
   argv = configurationOptions._unknown || []
 
   switch (command) {
-  case 'initialize':
-    await handleConfigurationInitialize({ argv, configurationCLISpec, globalOptions }); break
-  case 'show':
-    await handleConfigurationShow({ argv, configurationCLISpec, globalOptions }); break
-  default:
-    throw new Error('Unknown configuration command: ' + command)
+    case 'initialize':
+      await handleConfigurationInitialize({ argv, configurationCLISpec, globalOptions }); break
+    case 'show':
+      await handleConfigurationShow({ argv, configurationCLISpec, globalOptions }); break
+    default:
+      throw new Error('Unknown configuration command: ' + command)
   }
 }
 
