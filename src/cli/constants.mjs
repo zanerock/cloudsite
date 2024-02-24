@@ -1,4 +1,8 @@
+import * as fsPath from 'node:path'
+
 const SOURCE_TYPES = ['docusaurus', 'vanilla']
+
+const GLOBAL_OPTIONS = fsPath.join(process.env.HOME, '.config', 'cloudsite', 'global-options.json')
 
 const cliSpec = {
   mainCommand : 'cloudsite',
@@ -57,4 +61,4 @@ const cliSpec = {
   ]
 }
 
-export { cliSpec, SOURCE_TYPES }
+export { cliSpec, GLOBAL_OPTIONS, SOURCE_TYPES }

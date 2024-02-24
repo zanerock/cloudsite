@@ -3,6 +3,8 @@ import * as fsPath from 'node:path'
 
 import { Questioner } from 'question-and-answer'
 
+import { GLOBAL_OPTIONS } from '../../constants'
+
 const handleConfigurationInitialize = async () => {
   const interrogationBundle = {
     actions : [
@@ -20,11 +22,11 @@ const handleConfigurationInitialize = async () => {
   const results = questioner.results
     .reduce((acc, { parameter, value }) => { acc[parameter] = value; return acc }, {})
 
-  const configPath = fsPath.join(process.env.HOME, '.config', 'cloudsite', 'global-options.json')
-  const configContents = JSON.stringify(results, null, '  ')
+  const globalOptionsPath = GLOBAL_OPTIONS
+  const globalOptionsContents = JSON.stringify(results, null, '  ')
 
-  await fs.mkdir(fsPath.dirname(configPath), { recursive : true })
-  await fs.writeFile(configPath, configContents, { encoding : 'utf8' })
+  await fs.mkdir(fsPath.dirname(globalOptionsPath), { recursive : true })
+  await fs.writeFile(globalOptionsPath, globalOptionsContents, { encoding : 'utf8' })
 }
 
 export { handleConfigurationInitialize }
