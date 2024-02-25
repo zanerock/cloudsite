@@ -1,0 +1,26 @@
+Test git rev: 6d1049c68f5ece90bd6d7a5a95d2657410cab1f7
+PASS cli/lib/configuration/test/handle-configuration-show.test.js
+  handleConfigurationShow
+    ✓ prints the file contents (1 ms)
+
+--------------------------------------|---------|----------|---------|---------|-------------------
+File                                  | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+--------------------------------------|---------|----------|---------|---------|-------------------
+All files                             |   10.84 |     17.2 |   17.24 |   10.47 |                   
+ cli                                  |   11.36 |    17.14 |      20 |   13.79 |                   
+  cloudsite.mjs                       |       0 |        0 |       0 |       0 | 1-48              
+  constants.mjs                       |     100 |      100 |     100 |     100 |                   
+ cli/lib                              |       0 |        0 |       0 |       0 |                   
+  handle-configuration.mjs            |       0 |        0 |       0 |       0 | 1-21              
+  handle-create.mjs                   |       0 |        0 |       0 |       0 | 1-36              
+ cli/lib/configuration                |   34.21 |    47.61 |   44.44 |   33.33 |                   
+  handle-configuration-initialize.mjs |       0 |        0 |       0 |       0 | 1-30              
+  handle-configuration-show.mjs       |     100 |      100 |     100 |     100 |                   
+ lib/actions                          |       0 |        0 |       0 |       0 |                   
+  create.mjs                          |       0 |        0 |       0 |       0 | 1-70              
+--------------------------------------|---------|----------|---------|---------|-------------------
+Test Suites: 1 passed, 1 total
+Tests:       1 passed, 1 total
+Snapshots:   0 total
+Time:        0.291 s, estimated 1 s
+Ran all test suites.
