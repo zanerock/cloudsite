@@ -3,15 +3,15 @@ import * as fsPath from 'node:path'
 
 import commandLineArgs from 'command-line-args'
 
-import { cliSpec } from './constants'
-import { handleConfiguration } from './lib/handle-configuration'
-import { handleCreate } from './lib/handle-create'
+import { cliSpec } from './constants' // eslint-disable-line node/no-missing-import
+import { handleConfiguration } from './lib/handle-configuration' // eslint-disable-line node/no-missing-import
+import { handleCreate } from './lib/handle-create' // eslint-disable-line node/no-missing-import
 
 const cloudsite = async () => {
   const mainOptions = commandLineArgs(cliSpec.mainOptions, { stopAtFirstUnknown : true })
   const argv = mainOptions._unknown || []
 
-  const { command, quiet } = mainOptions
+  const { command/*, quiet */ } = mainOptions
   const throwError = mainOptions['throw-error']
 
   const globalOptionsPath = fsPath.join(process.env.HOME, '.config', 'cloudsite', 'global-options.json')
@@ -42,7 +42,7 @@ const cloudsite = async () => {
       throw e
     } else {
       process.stderr.write(e.message + '\n')
-      process.exit(2)
+      process.exit(2) // eslint-disable-line no-process-exit
     }
   }
 }

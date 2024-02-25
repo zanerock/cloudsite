@@ -1,13 +1,13 @@
 import { ACMClient, RequestCertificateCommand } from '@aws-sdk/client-acm'
 import { fromIni } from '@aws-sdk/credential-providers'
 
-const create = async ({ apexDomain, sourcePath, sourceType, ssoProfile }) => {
+const create = async ({ apexDomain, sourcePath, /* sourceType, */ ssoProfile }) => {
   const CertificateArn = await createCertificate({ apexDomain, sourcePath, ssoProfile })
 
   process.stdout.write('CertificateArn: ' + CertificateArn + '\n')
 }
 
-const createCertificate = async ({ apexDomain, sourcePath, sourceType, ssoProfile }) => {
+const createCertificate = async ({ apexDomain, /* sourcePath, sourceType, */ ssoProfile }) => {
   // process.stdout.write(`TODO: create ${apexDomain} of type ${sourceType}; source: ${sourcePath}\n`)
 
   const credentials = fromIni({

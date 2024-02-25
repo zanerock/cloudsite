@@ -1,6 +1,6 @@
 import * as fs from 'node:fs/promises'
 
-import { GLOBAL_OPTIONS } from '../../constants'
+import { GLOBAL_OPTIONS } from '../../constants' // eslint-disable-line node/no-missing-import
 
 const handleConfigurationShow = async () => {
   const globalOptionsPath = GLOBAL_OPTIONS

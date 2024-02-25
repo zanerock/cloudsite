@@ -1,6 +1,8 @@
 import commandLineArgs from 'command-line-args'
 
+// eslint-disable-next-line node/no-missing-import
 import { handleConfigurationInitialize } from './configuration/handle-configuration-initialize'
+// eslint-disable-next-line node/no-missing-import
 import { handleConfigurationShow } from './configuration/handle-configuration-show'
 
 const handleConfiguration = async ({ argv, cliSpec, globalOptions }) => {

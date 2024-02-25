@@ -3,8 +3,8 @@ import * as fsPath from 'node:path'
 
 import commandLineArgs from 'command-line-args'
 
-import { cliSpec, SOURCE_TYPES } from '../constants'
-import { create } from '../../lib/actions/create'
+import { cliSpec, SOURCE_TYPES } from '../constants' // eslint-disable-line node/no-missing-import
+import { create } from '../../lib/actions/create' // eslint-disable-line node/no-missing-import
 
 const handleCreate = async ({ argv, globalOptions }) => {
   const options = structuredClone(globalOptions)
@@ -19,7 +19,7 @@ const handleCreate = async ({ argv, globalOptions }) => {
     if (createOptions[option] === undefined) {
       process.stderr.write(`Missing required '${option}' option.\n`)
       // TODO: handleHelp({ argv : ['create'] })
-      process.exit(1)
+      process.exit(1) // eslint-disable-line no-process-exit
     }
   }
   // TODO: verify apex domain matches apex domain RE
@@ -28,8 +28,8 @@ const handleCreate = async ({ argv, globalOptions }) => {
     const docusaurusConfigPath = fsPath.join(options.sourcePath, 'docusaurus.config.js')
     options.sourceType = fileExists(docusaurusConfigPath) ? 'docusaurus' : 'vanilla'
   } else if (!SOURCE_TYPES.includes(options.sourceType)) {
-    process.stderr(`Invalid site source type '${sourceType}'; must be one of ${SOURCE_TYPES.join(', ')}.\n`)
-    process.exit(1)
+    process.stderr(`Invalid site source type '${options.sourceType}'; must be one of ${SOURCE_TYPES.join(', ')}.\n`)
+    process.exit(1) // eslint-disable-line no-process-exit
   }
 
   await create(options)
