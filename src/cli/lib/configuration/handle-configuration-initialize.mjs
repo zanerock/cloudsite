@@ -3,7 +3,7 @@ import * as fsPath from 'node:path'
 
 import { Questioner } from 'question-and-answer'
 
-import { GLOBAL_OPTIONS } from '../../constants'
+import { GLOBAL_OPTIONS_PATH } from '../../constants'
 
 const handleConfigurationInitialize = async () => {
   const interrogationBundle = {
@@ -22,7 +22,7 @@ const handleConfigurationInitialize = async () => {
   const results = questioner.results
     .reduce((acc, { parameter, value }) => { acc[parameter] = value; return acc }, {})
 
-  const globalOptionsPath = GLOBAL_OPTIONS
+  const globalOptionsPath = GLOBAL_OPTIONS_PATH
   const globalOptionsContents = JSON.stringify(results, null, '  ')
 
   await fs.mkdir(fsPath.dirname(globalOptionsPath), { recursive : true })
