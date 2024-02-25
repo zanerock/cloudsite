@@ -12,6 +12,7 @@ const handleCreate = async ({ argv, globalOptions }) => {
   const createOptionsSpec = cliSpec.commands.find(({ name }) => name === 'create').arguments
   const createOptions = commandLineArgs(createOptionsSpec, { argv })
   options.apexDomain = createOptions['apex-domain']
+  options.bucketName = createOptions['bucket-name']
   options.sourcePath = createOptions['source-path']
   options.sourceType = createOptions['source-type']
 
