@@ -2,7 +2,9 @@ import * as fsPath from 'node:path'
 
 const SOURCE_TYPES = ['docusaurus', 'vanilla']
 
-const GLOBAL_OPTIONS = fsPath.join(process.env.HOME, '.config', 'cloudsite', 'global-options.json')
+const GLOBAL_OPTIONS_PATH = fsPath.join(process.env.HOME, '.config', 'cloudsite', 'global-options.json')
+
+const SITES_INFO_PATH = fsPath.join(process.env.HOME, '.config', 'cloudsite', 'sites.json')
 
 const cliSpec = {
   mainCommand : 'cloudsite',
@@ -48,6 +50,10 @@ const cliSpec = {
           defaultOption : true
         },
         {
+          name : 'bucket-name',
+          description: 'The name of the bucket to be used. If no option is given, cloudsite will generate a bucket name based on the apex domain.'
+        },
+        {
           name        : 'source-path',
           description : 'Local path to the static site root.',
           required    : true
@@ -61,4 +67,4 @@ const cliSpec = {
   ]
 }
 
-export { cliSpec, GLOBAL_OPTIONS, SOURCE_TYPES }
+export { cliSpec, GLOBAL_OPTIONS_PATH, SITES_INFO_PATH, SOURCE_TYPES }
