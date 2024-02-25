@@ -3,8 +3,8 @@ import * as fsPath from 'node:path'
 
 import commandLineArgs from 'command-line-args'
 
-import { cliSpec, SOURCE_TYPES } from '../constants' // eslint-disable-line node/no-missing-import
-import { create } from '../../lib/actions/create' // eslint-disable-line node/no-missing-import
+import { cliSpec, SOURCE_TYPES } from '../constants'
+import { create } from '../../lib/actions/create'
 
 const handleCreate = async ({ argv, globalOptions }) => {
   const options = structuredClone(globalOptions)

@@ -1,4 +1,4 @@
-import { handleConfigurationShow } from '../handle-configuration-show' // eslint-disable-line node/no-missing-import
+import { handleConfigurationShow } from '../handle-configuration-show'
 
 const expectedOutput = 'hi'
 

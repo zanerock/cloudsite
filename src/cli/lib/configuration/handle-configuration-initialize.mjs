@@ -3,7 +3,7 @@ import * as fsPath from 'node:path'
 
 import { Questioner } from 'question-and-answer'
 
-import { GLOBAL_OPTIONS } from '../../constants' // eslint-disable-line node/no-missing-import
+import { GLOBAL_OPTIONS } from '../../constants'
 
 const handleConfigurationInitialize = async () => {
   const interrogationBundle = {
