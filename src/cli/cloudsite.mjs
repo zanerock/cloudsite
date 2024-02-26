@@ -52,6 +52,7 @@ const cloudsite = async () => {
       // TODO: handleHelp() (abstriact from cloudcraft)
     }
   } catch (e) {
+    checkAndUpdateSitesInfo({ origSitesInfo, sitesInfo })
     if (throwError === true) {
       throw e
     }
@@ -70,6 +71,10 @@ const cloudsite = async () => {
     }
   }
 
+  checkAndUpdateSitesInfo({ origSitesInfo, sitesInfo })
+}
+
+const checkAndUpdateSitesInfo = async ({ origSitesInfo, sitesInfo }) => {
   if (!isEqual(origSitesInfo, sitesInfo)) {
     const sitesInfoContent = JSON.stringify(sitesInfo, null, '  ')
     await fs.writeFile(SITES_INFO_PATH, sitesInfoContent, { encoding: 'utf8' })

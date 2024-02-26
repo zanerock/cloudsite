@@ -3,8 +3,8 @@ import { fromIni } from '@aws-sdk/credential-providers'
 
 const create = async ({ apexDomain, bucketName, sourcePath, /* sourceType, */ siteInfo, ssoProfile }) => {
   const CertificateArn = await createCertificate({ apexDomain, sourcePath, ssoProfile })
-
   siteInfo.certificateArn = CertificateArn
+  await 
 
   process.stdout.write('CertificateArn: ' + CertificateArn + '\n')
 }
