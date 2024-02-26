@@ -6,7 +6,8 @@ import commandLineArgs from 'command-line-args'
 import { cliSpec, SOURCE_TYPES } from '../constants'
 import { create } from '../../lib/actions/create'
 
-const handleCreate = async ({ argv, globalOptions }) => {
+const handleCreate = async ({ argv, globalOptions, sitesInfo }) => {
+  // build up the options
   const options = structuredClone(globalOptions)
 
   const createOptionsSpec = cliSpec.commands.find(({ name }) => name === 'create').arguments
@@ -16,6 +17,11 @@ const handleCreate = async ({ argv, globalOptions }) => {
   options.sourcePath = createOptions['source-path']
   options.sourceType = createOptions['source-type']
 
+  const siteInfo = sitesInfo[options.apexDomain] || { apexDomain: options.apexDomain }
+  sitesInfo[options.apexDomain] = siteInfo
+  options.siteInfo = siteInfo
+
+  // verify the parameters/options
   for (const option of ['apex-domain', 'source-path']) {
     if (createOptions[option] === undefined) {
       process.stderr.write(`Missing required '${option}' option.\n`)

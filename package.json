@@ -25,6 +25,7 @@
     "@aws-sdk/credential-providers": "^3.515.0",
     "command-line-args": "^5.2.1",
     "command-line-documentation": "^1.0.0-alpha.3",
+    "lodash": "^4.17.21",
     "question-and-answer": "^1.0.0-alpha.16"
   },
   "devDependencies": {
