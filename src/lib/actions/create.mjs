@@ -1,17 +1,8 @@
 import { ACMClient, RequestCertificateCommand } from '@aws-sdk/client-acm'
+import { S3Client, CreateBucketCommand } from "@aws-sdk/client-s3"
 import { fromIni } from '@aws-sdk/credential-providers'
 
-const create = async ({ apexDomain, bucketName, sourcePath, /* sourceType, */ siteInfo, ssoProfile }) => {
-  const CertificateArn = await createCertificate({ apexDomain, sourcePath, ssoProfile })
-  siteInfo.certificateArn = CertificateArn
-  await 
-
-  process.stdout.write('CertificateArn: ' + CertificateArn + '\n')
-}
-
-const createCertificate = async ({ apexDomain, /* sourcePath, sourceType, */ siteInfo, ssoProfile }) => {
-  // process.stdout.write(`TODO: create ${apexDomain} of type ${sourceType}; source: ${sourcePath}\n`)
-
+const create = async ({ apexDomain, bucketName, region, sourcePath, /* sourceType, */ siteInfo, ssoProfile }) => {
   const credentials = fromIni({
     // Optional. The configuration profile to use. If not specified, the provider will use the value
     // in the `AWS_PROFILE` environment variable or a default of `default`.
@@ -33,6 +24,15 @@ const createCertificate = async ({ apexDomain, /* sourcePath, sourceType, */ sit
     // clientConfig: { region },
   })
 
+  const CertificateArn = await createCertificate({ apexDomain, credentials })
+  siteInfo.certificateArn = CertificateArn
+  await createS3Bucket({ apexDomain, bucketName, credentials, region, siteInfo })
+  console.log('siteInfo:', siteInfo) // DEBUG
+}
+
+const convertDomainToBucketName = (domain) => domain.replaceAll(/\./g, '-').replaceAll(/[^a-z0-9-]/g, 'x')
+
+const createCertificate = async ({ apexDomain, credentials, siteInfo}) => {
   const client = new ACMClient({
     credentials,
     region : 'us-east-1' // N. Virginia; required for certificate request
@@ -69,6 +69,31 @@ const createCertificate = async ({ apexDomain, /* sourcePath, sourceType, */ sit
   const { CertificateArn } = response
 
   return CertificateArn
+}
+
+const createS3Bucket = async ({ apexDomain, bucketName, credentials, region, siteInfo }) => {
+  if (bucketName === undefined) {
+    bucketName = siteInfo.bucketName || convertDomainToBucketName(apexDomain)
+  }
+  // else, we use the explicit bucketName provided
+
+  const client = new S3Client({ credentials })
+  const input = {
+    Bucket: bucketName,
+    ObjectOwnership: 'BucketOwnerEnforced'
+  }
+  if (region !== 'us-east-1' && region !== undefined) {
+    input.CreateBucketConfiguration = {
+      LocationConstraint: region
+    }
+  }
+
+  const command = new CreateBucketCommand(input)
+  const response = await client.send(command)
+
+  const { Location } = response
+
+  siteInfo.bucketName = Location.replace(/^\//, '')
 }
 
 export { create }

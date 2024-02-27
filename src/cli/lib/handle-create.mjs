@@ -2,6 +2,7 @@ import { existsSync as fileExists } from 'node:fs'
 import * as fsPath from 'node:path'
 
 import commandLineArgs from 'command-line-args'
+import { awsS3TABucketNameRE, awsS3TABucketNameREString } from 'regex-repo'
 
 import { cliSpec, SOURCE_TYPES } from '../constants'
 import { create } from '../../lib/actions/create'
@@ -14,6 +15,7 @@ const handleCreate = async ({ argv, globalOptions, sitesInfo }) => {
   const createOptions = commandLineArgs(createOptionsSpec, { argv })
   options.apexDomain = createOptions['apex-domain']
   options.bucketName = createOptions['bucket-name']
+  options.region = createOptions.region || 'us-east-1'
   options.sourcePath = createOptions['source-path']
   options.sourceType = createOptions['source-type']
 
@@ -26,7 +28,7 @@ const handleCreate = async ({ argv, globalOptions, sitesInfo }) => {
     if (createOptions[option] === undefined) {
       process.stderr.write(`Missing required '${option}' option.\n`)
       // TODO: handleHelp({ argv : ['create'] })
-      process.exit(1) // eslint-disable-line no-process-exit
+      process.exit(2) // eslint-disable-line no-process-exit
     }
   }
   // TODO: verify apex domain matches apex domain RE
@@ -36,7 +38,12 @@ const handleCreate = async ({ argv, globalOptions, sitesInfo }) => {
     options.sourceType = fileExists(docusaurusConfigPath) ? 'docusaurus' : 'vanilla'
   } else if (!SOURCE_TYPES.includes(options.sourceType)) {
     process.stderr(`Invalid site source type '${options.sourceType}'; must be one of ${SOURCE_TYPES.join(', ')}.\n`)
-    process.exit(1) // eslint-disable-line no-process-exit
+    process.exit(2) // eslint-disable-line no-process-exit
+  }
+
+  if (options.bucketName !== undefined && !awsS3TABucketNameRE.test(options.bucketName)) {
+    process.stderr(`Invalid bucket name. Must be valid AWS S3 Transfer Accelerated bucket name matching: ${awsS3TABucketNameREString}`)
+    process.exit(2) // eslint-disable-line no-process-exit
   }
 
   await create(options)

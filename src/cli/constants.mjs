@@ -54,6 +54,11 @@ const cliSpec = {
           description: 'The name of the bucket to be used. If no option is given, cloudsite will generate a bucket name based on the apex domain.'
         },
         {
+          name : 'region',
+          description : "The region where to create the site resources. Defaults to 'us-east-1'.",
+          default: 'us-east-1'
+        },
+        {
           name        : 'source-path',
           description : 'Local path to the static site root.',
           required    : true

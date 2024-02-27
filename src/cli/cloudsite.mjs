@@ -52,7 +52,7 @@ const cloudsite = async () => {
       // TODO: handleHelp() (abstriact from cloudcraft)
     }
   } catch (e) {
-    checkAndUpdateSitesInfo({ origSitesInfo, sitesInfo })
+    await checkAndUpdateSitesInfo({ origSitesInfo, sitesInfo })
     if (throwError === true) {
       throw e
     }
@@ -70,8 +70,7 @@ const cloudsite = async () => {
       process.exit(3) // eslint-disable-line no-process-exit
     }
   }
-
-  checkAndUpdateSitesInfo({ origSitesInfo, sitesInfo })
+  await checkAndUpdateSitesInfo({ origSitesInfo, sitesInfo })
 }
 
 const checkAndUpdateSitesInfo = async ({ origSitesInfo, sitesInfo }) => {
