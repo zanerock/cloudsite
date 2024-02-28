@@ -62,7 +62,7 @@ const create = async ({
     throw new Error(`Wildcard certificate for '${apexDomain}' found, but requires validation. Please validate the certificate. To validate on S3 when using Route 53 for DNS service, try navigating to the folliwng URL and select 'Create records in Route 53'::\n\n${certificateConsoleURL}\n\nSubsequent validation may take up to 30 minutes. For further documentation:\n\nhttps://docs.aws.amazon.com/acm/latest/userguide/dns-validation.html`)
   }
 
-  // await determineBucketName({ apexDomain, bucketName, credentials, siteInfo })
+  await determineBucketName({ apexDomain, bucketName, credentials, siteInfo })
   await createSiteStack({ credentials, noDeleteOnFailure, region, siteInfo })
 }
 
@@ -155,7 +155,6 @@ const determineBucketName = async ({ apexDomain, bucketName, credentials, siteIn
 const createSiteStack = async ({ credentials, noDeleteOnFailure, region, siteInfo }) => {
   const { apexDomain, bucketName, certificateArn } = siteInfo
   siteInfo.region = region
-  /*
 
   const cloudFormationTemplate = `AWSTemplateFormatVersion: 2010-09-09
 Description: Static hosting using an S3 bucket and CloudFront.
@@ -234,6 +233,9 @@ Resources:
 
   BucketPolicy:
     Type: AWS::S3::BucketPolicy
+    DependsOn:
+      - S3Bucket
+      - CloudFrontDistribution
     Properties:
       Bucket: "${bucketName}"
       PolicyDocument:
@@ -246,7 +248,7 @@ Resources:
             Resource: "arn:aws:s3:::${bucketName}/*"
             Condition:
               StringEquals:
-                AWS:SourceArn: !Sub "arn:aws:cloudfront::Id-of-IAM-User:distribution/\${CloudFrontDistribution}"`
+                AWS:SourceArn: !GetAtt CloudFrontOriginAccessControl.ARN`
 
   const client = new CloudFormationClient({ credentials, region })
   const stackName = convertDomainToBucketName(apexDomain) + '-stack'
@@ -265,9 +267,7 @@ Resources:
   siteInfo.stackArn = StackId
 
   await trackStackCreationStatus({ client, noDeleteOnFailure, stackName })
-*/
-  const client = new CloudFormationClient({ credentials, region }) // DEBUG
-  const stackName = convertDomainToBucketName(apexDomain) + '-stack' // DEBUG
+
   const describeInput = { StackName : stackName }
   const describeCommand = new DescribeStacksCommand(describeInput)
   const describeResponse = await client.send(describeCommand)
@@ -322,7 +322,7 @@ Resources:
   const changeResourceRecordSetResponse = await route53Client.send(changeResourceRecordSetCommand)
   console.log('changeResourceRecordSetResponse:', JSON.stringify(changeResourceRecordSetResponse, null, '  ')) // DEBUG
 
-  
+
 }
 
 const getHostedZoneID = async({ markerToken, route53Client, siteInfo }) => {
@@ -357,7 +357,7 @@ const trackStackCreationStatus = async ({ client, previousStatus, noDeleteOnFail
       process.stdout.write('.')
     }
     await new Promise(resolve => setTimeout(resolve, RECHECK_WAIT_TIME))
-    trackStackCreationStatus({ client, noDeleteOnFailure, previousStatus : stackStatus, stackName })
+    await trackStackCreationStatus({ client, noDeleteOnFailure, previousStatus : stackStatus, stackName })
   } else if (stackStatus === 'ROLLBACK_IN_PROGRESS') {
     if (previousStatus !== 'ROLLBACK_IN_PROGRESS') {
       process.stdout.write('\nRollback in progress')
@@ -365,7 +365,7 @@ const trackStackCreationStatus = async ({ client, previousStatus, noDeleteOnFail
       process.stdout.write('.')
     }
     await new Promise(resolve => setTimeout(resolve, RECHECK_WAIT_TIME))
-    trackStackCreationStatus({ client, noDeleteOnFailure, previousStatus : stackStatus, stackName })
+    await trackStackCreationStatus({ client, noDeleteOnFailure, previousStatus : stackStatus, stackName })
   } else if (stackStatus === 'ROLLBACK_COMPLETE' && noDeleteOnFailure !== true) {
     process.stdout.write(`\nDeleting stack '${stackName}'... `)
     const deleteInput = { StackName : stackName }
