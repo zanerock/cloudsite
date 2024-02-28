@@ -71,7 +71,7 @@ const create = async ({
   const stackCreated = await createSiteStack({ credentials, noDeleteOnFailure, region, siteInfo })
   if (stackCreated === true) {
     await Promise.all([
-      // createDNSRecords({ credentials, siteInfo }),
+      createDNSRecords({ credentials, siteInfo }),
       syncFiles({ credentials, sourcePath, siteInfo })
     ])
 
