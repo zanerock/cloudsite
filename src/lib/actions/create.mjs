@@ -1,10 +1,12 @@
 import { ACMClient, ListCertificatesCommand, RequestCertificateCommand } from '@aws-sdk/client-acm'
+import { CloudFrontClient, GetDistributionCommand } from '@aws-sdk/client-cloudfront'
 import {
   CloudFormationClient,
   CreateStackCommand,
   DeleteStackCommand,
   DescribeStacksCommand
 } from '@aws-sdk/client-cloudformation'
+import { Route53Client, ChangeResourceRecordSetsCommand, ListHostedZonesCommand } from '@aws-sdk/client-route-53'
 import { S3Client, HeadBucketCommand } from '@aws-sdk/client-s3'
 import { STSClient, GetCallerIdentityCommand } from '@aws-sdk/client-sts'
 import { fromIni } from '@aws-sdk/credential-providers'
@@ -55,13 +57,12 @@ const create = async ({
 
   if (status === 'PENDING_VALIDATION') {
     const accountLocalCertID = certificateArn.replace(/[^/]+\/(.+)/, '$1')
-    console.log('\n' + certificateArn, '\n' + accountLocalCertID) // DEBUG
     const certificateConsoleURL =
       `https://us-east-1.console.aws.amazon.com/acm/home?region=us-east-1#/certificates/${accountLocalCertID}`
     throw new Error(`Wildcard certificate for '${apexDomain}' found, but requires validation. Please validate the certificate. To validate on S3 when using Route 53 for DNS service, try navigating to the folliwng URL and select 'Create records in Route 53'::\n\n${certificateConsoleURL}\n\nSubsequent validation may take up to 30 minutes. For further documentation:\n\nhttps://docs.aws.amazon.com/acm/latest/userguide/dns-validation.html`)
   }
 
-  await determineBucketName({ apexDomain, bucketName, credentials, siteInfo })
+  // await determineBucketName({ apexDomain, bucketName, credentials, siteInfo })
   await createSiteStack({ credentials, noDeleteOnFailure, region, siteInfo })
 }
 
@@ -154,6 +155,7 @@ const determineBucketName = async ({ apexDomain, bucketName, credentials, siteIn
 const createSiteStack = async ({ credentials, noDeleteOnFailure, region, siteInfo }) => {
   const { apexDomain, bucketName, certificateArn } = siteInfo
   siteInfo.region = region
+  /*
 
   const cloudFormationTemplate = `AWSTemplateFormatVersion: 2010-09-09
 Description: Static hosting using an S3 bucket and CloudFront.
@@ -262,7 +264,81 @@ Resources:
   siteInfo.stackName = stackName
   siteInfo.stackArn = StackId
 
-  trackStackCreationStatus({ client, noDeleteOnFailure, stackName })
+  await trackStackCreationStatus({ client, noDeleteOnFailure, stackName })
+*/
+  const client = new CloudFormationClient({ credentials, region }) // DEBUG
+  const stackName = convertDomainToBucketName(apexDomain) + '-stack' // DEBUG
+  const describeInput = { StackName : stackName }
+  const describeCommand = new DescribeStacksCommand(describeInput)
+  const describeResponse = await client.send(describeCommand)
+  const cloudFrontID = describeResponse
+    .Stacks[0].Outputs.find(({ OutputKey }) => OutputKey === 'CloudFrontDist').OutputValue
+
+  const cloudFrontClient = new CloudFrontClient({ credentials, region })
+  const getDistributionCommand = new GetDistributionCommand({ Id: cloudFrontID })
+  const distributionResponse = await cloudFrontClient.send(getDistributionCommand)
+  const distributionDomainName = distributionResponse.Distribution.DomainName
+  
+  const route53Client = new Route53Client({ credentials, region })
+  const hostedZoneID = await getHostedZoneID({ credentials, route53Client, siteInfo })
+  console.log('hostedZoneID:', hostedZoneID) // DEBUG
+
+  const changeResourceRecordSetCommand = new ChangeResourceRecordSetsCommand({
+    HostedZoneId: hostedZoneID,
+    ChangeBatch: {
+      Comment: `Point '${apexDomain}' and 'www.${apexDomain}' to CloudFront distribution.`,
+      Changes: [
+        {
+          Action: 'CREATE',
+          ResourceRecordSet: {
+            Name: apexDomain,
+            // ResourceRecords: [ { Value: distributionDomainName }],
+            AliasTarget: { 
+              DNSName: distributionDomainName, 
+              EvaluateTargetHealth: false, 
+              HostedZoneId: 'Z2FDTNDATAQYW2' // Static value specified by API for use with CloudFront aliases
+            },
+            Type: 'A',
+            // TTL: 300
+          }
+        },
+        {
+          Action: 'CREATE',
+          ResourceRecordSet: {
+            Name: 'www.' + apexDomain,
+            // ResourceRecords: [ { Value: distributionDomainName }],
+            AliasTarget: { 
+              DNSName: distributionDomainName, 
+              EvaluateTargetHealth: false, 
+              HostedZoneId: 'Z2FDTNDATAQYW2' // Static value specified by API for use with CloudFront aliases
+            },
+            Type: 'A',
+            // TTL: 300
+          }
+        }
+      ]
+    }
+  })
+  const changeResourceRecordSetResponse = await route53Client.send(changeResourceRecordSetCommand)
+  console.log('changeResourceRecordSetResponse:', JSON.stringify(changeResourceRecordSetResponse, null, '  ')) // DEBUG
+
+  
+}
+
+const getHostedZoneID = async({ markerToken, route53Client, siteInfo }) => {
+  const listHostedZonesCommand = new ListHostedZonesCommand({ marker: markerToken })
+  const listHostedZonesResponse = await route53Client.send(listHostedZonesCommand)
+
+  for (const { Id, Name } of listHostedZonesResponse.HostedZones) {
+    console.log(`Looking at ${Name} (${Id}...`) // DEBUG
+    if (Name === siteInfo.apexDomain + '.') {
+      return Id.replace(/\/[^/]+\/(.+)/, '$1') // /hostedzone/XXX -> XXX
+    }
+  }
+
+  if (listHostedZonesResponse.IsTruncated === true) {
+    return await getHostedZoneID({ markerToken: listHostedZonesResponse.NewMarker, route53Client, siteInfo })
+  }
 }
 
 const RECHECK_WAIT_TIME = 2000 // ms
