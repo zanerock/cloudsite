@@ -10,6 +10,8 @@ import { Route53Client, ChangeResourceRecordSetsCommand, ListHostedZonesCommand 
 import { S3Client, HeadBucketCommand } from '@aws-sdk/client-s3'
 import { STSClient, GetCallerIdentityCommand } from '@aws-sdk/client-sts'
 import { fromIni } from '@aws-sdk/credential-providers'
+import mime from 'mime-types'
+import { S3SyncClient } from 's3-sync-client'
 
 const RECHECK_WAIT_TIME = 2000 // ms
 const STACK_CREATE_TIMEOUT = 15 // min; in recent testing, it takes about 7-8 min for stack creation to complete
@@ -68,12 +70,27 @@ const create = async ({
   await determineBucketName({ apexDomain, bucketName, credentials, siteInfo })
   const stackCreated = await createSiteStack({ credentials, noDeleteOnFailure, region, siteInfo })
   if (stackCreated === true) {
-    await createDNSRecords({ credentials, siteInfo })
+    await Promise.all([
+      // createDNSRecords({ credentials, siteInfo }),
+      syncFiles({ credentials, sourcePath, siteInfo })
+    ])
 
     process.stdout.write('Done!\n')
   } else {
     process.stdout.write('Stack creation error.\n')
   }
+}
+
+const syncFiles = async ({ credentials, sourcePath, siteInfo }) => {
+  process.stdout.write(`Syncing files from ${sourcePath}...`)
+  const s3Client = new S3Client({ credentials })
+  const { sync } = new S3SyncClient({ client : s3Client })
+
+  await sync(sourcePath, 's3://' + siteInfo.bucketName, {
+    commandInput           : (input) => ({ ContentType : mime.lookup(input.Key) || 'application/octet-stream' }),
+    del                    : true,
+    maxConcurrentTransfers : 10
+  })
 }
 
 const createDNSRecords = async ({ credentials, siteInfo }) => {
@@ -342,7 +359,6 @@ const getHostedZoneID = async ({ markerToken, route53Client, siteInfo }) => {
   const listHostedZonesResponse = await route53Client.send(listHostedZonesCommand)
 
   for (const { Id, Name } of listHostedZonesResponse.HostedZones) {
-    console.log(`Looking at ${Name} (${Id}...`) // DEBUG
     if (Name === siteInfo.apexDomain + '.') {
       return Id.replace(/\/[^/]+\/(.+)/, '$1') // /hostedzone/XXX -> XXX
     }
