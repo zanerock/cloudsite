@@ -15,13 +15,15 @@ const handleCreate = async ({ argv, globalOptions, sitesInfo }) => {
   const createOptions = commandLineArgs(createOptionsSpec, { argv })
   options.apexDomain = createOptions['apex-domain']
   options.bucketName = createOptions['bucket-name']
-  options.region = createOptions.region || 'us-east-1'
+  options.noDeleteOnFailure = createOptions['no-delete-on-failure']
   options.sourcePath = createOptions['source-path']
   options.sourceType = createOptions['source-type']
 
-  const siteInfo = sitesInfo[options.apexDomain] || { apexDomain: options.apexDomain }
+  const siteInfo = sitesInfo[options.apexDomain] || { apexDomain : options.apexDomain }
   sitesInfo[options.apexDomain] = siteInfo
   options.siteInfo = siteInfo
+
+  options.region = createOptions.region || siteInfo.region || 'us-east-1'
 
   // verify the parameters/options
   for (const option of ['apex-domain', 'source-path']) {

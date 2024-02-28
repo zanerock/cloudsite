@@ -1,5 +1,4 @@
 import * as fs from 'node:fs/promises'
-import * as fsPath from 'node:path'
 
 import commandLineArgs from 'command-line-args'
 import isEqual from 'lodash/isEqual'
@@ -55,8 +54,7 @@ const cloudsite = async () => {
     await checkAndUpdateSitesInfo({ origSitesInfo, sitesInfo })
     if (throwError === true) {
       throw e
-    }
-    else if (e.name === 'CredentialsProviderError') {
+    } else if (e.name === 'CredentialsProviderError') {
       let message = 'Your AWS login credentials may have expired. Update your credentials or try refreshing with:\n\naws sso login'
       if (globalOptions.ssoProfile !== undefined) {
         message += ' --profile ' + globalOptions.ssoProfile
@@ -64,8 +62,7 @@ const cloudsite = async () => {
       message += '\n'
       process.stderr.write(message)
       process.exit(2) // eslint-disable-line no-process-exit
-    }
-    else {
+    } else {
       process.stderr.write(e.message + '\n')
       process.exit(3) // eslint-disable-line no-process-exit
     }
@@ -76,7 +73,7 @@ const cloudsite = async () => {
 const checkAndUpdateSitesInfo = async ({ origSitesInfo, sitesInfo }) => {
   if (!isEqual(origSitesInfo, sitesInfo)) {
     const sitesInfoContent = JSON.stringify(sitesInfo, null, '  ')
-    await fs.writeFile(SITES_INFO_PATH, sitesInfoContent, { encoding: 'utf8' })
+    await fs.writeFile(SITES_INFO_PATH, sitesInfoContent, { encoding : 'utf8' })
   }
 }
 

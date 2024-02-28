@@ -50,13 +50,18 @@ const cliSpec = {
           defaultOption : true
         },
         {
-          name : 'bucket-name',
-          description: 'The name of the bucket to be used. If no option is given, cloudsite will generate a bucket name based on the apex domain.'
+          name        : 'bucket-name',
+          description : 'The name of the bucket to be used. If no option is given, cloudsite will generate a bucket name based on the apex domain.'
         },
         {
-          name : 'region',
+          name        : 'no-delete-on-failure',
+          description : 'When true, does not delete the site stack after setup failure.',
+          type        : Boolean
+        },
+        {
+          name        : 'region',
           description : "The region where to create the site resources. Defaults to 'us-east-1'.",
-          default: 'us-east-1'
+          default     : 'us-east-1'
         },
         {
           name        : 'source-path',
