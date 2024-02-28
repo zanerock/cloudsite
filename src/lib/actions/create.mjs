@@ -12,7 +12,7 @@ import { STSClient, GetCallerIdentityCommand } from '@aws-sdk/client-sts'
 import { fromIni } from '@aws-sdk/credential-providers'
 
 const RECHECK_WAIT_TIME = 2000 // ms
-const STACK_CREATE_TIMEOUT = 15 // min
+const STACK_CREATE_TIMEOUT = 15 // min; in recent testing, it takes about 7-8 min for stack creation to complete
 
 const create = async ({
   apexDomain,
@@ -275,6 +275,7 @@ Resources:
   const stackCreated = await trackStackCreationStatus({ cloudFormationClient, noDeleteOnFailure, stackName })
 
   if (stackCreated === true) {
+    process.stdout.write('Gathering information from stack...\n')
     const describeInput = { StackName : stackName }
     const describeCommand = new DescribeStacksCommand(describeInput)
     const describeResponse = await cloudFormationClient.send(describeCommand)
@@ -288,7 +289,6 @@ Resources:
     
     const route53Client = new Route53Client({ credentials, region })
     const hostedZoneID = await getHostedZoneID({ credentials, route53Client, siteInfo })
-    console.log('hostedZoneID:', hostedZoneID) // DEBUG
 
     const changeResourceRecordSetCommand = new ChangeResourceRecordSetsCommand({
       HostedZoneId: hostedZoneID,
@@ -322,8 +322,10 @@ Resources:
         ]
       }
     })
+    process.stdout.write('Creating Route 53 resource record sets/DNS entries...\n')
     const changeResourceRecordSetResponse = await route53Client.send(changeResourceRecordSetCommand)
-    console.log('changeResourceRecordSetResponse:', JSON.stringify(changeResourceRecordSetResponse, null, '  ')) // DEBUG
+
+    process.stdout.write('Done!\n')
   }
   else {
     process.stdout.write('Stack creation error.\n')
