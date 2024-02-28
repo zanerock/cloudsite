@@ -53,7 +53,7 @@ const create = async ({
   let { certificateArn, status } = await findCertificate({ acmClient, apexDomain })
   if (certificateArn === null) {
     process.stdout.write(`Creating wildcard certificate for '${apexDomain}'...`)
-    certificateArn = await createCertificate({ acmClient, apexDomain, siteInfo })
+    certificateArn = await createCertificate({ acmClient, apexDomain })
     status = 'PENDING_VALIDATION'
   }
   siteInfo.certificateArn = certificateArn
@@ -91,7 +91,7 @@ const findCertificate = async ({ apexDomain, acmClient, nextToken }) => {
 
 const convertDomainToBucketName = (domain) => domain.replaceAll(/\./g, '-').replaceAll(/[^a-z0-9-]/g, 'x')
 
-const createCertificate = async ({ acmClient, apexDomain, siteInfo }) => {
+const createCertificate = async ({ acmClient, apexDomain }) => {
   process.stdout.write(`Creating wildcard certificate for '${apexDomain}'...`)
   const input = { // RequestCertificateRequest
     DomainName       : '*.' + apexDomain, // TODO: support more narrow cert?
