@@ -128,6 +128,7 @@ const determineBucketName = async ({ apexDomain, bucketName, credentials, siteIn
   process.stdout.write('Getting effective account ID...\n')
   const response = await new STSClient({ credentials }).send(new GetCallerIdentityCommand({}))
   const accountID = response.Account
+  siteInfo.accountID = accountID
 
   if (bucketName === undefined) {
     bucketName = siteInfo.bucketName || convertDomainToBucketName(apexDomain)
@@ -153,7 +154,7 @@ const determineBucketName = async ({ apexDomain, bucketName, credentials, siteIn
 }
 
 const createSiteStack = async ({ credentials, noDeleteOnFailure, region, siteInfo }) => {
-  const { apexDomain, bucketName, certificateArn } = siteInfo
+  const { accountID, apexDomain, bucketName, certificateArn } = siteInfo
   siteInfo.region = region
 
   const cloudFormationTemplate = `AWSTemplateFormatVersion: 2010-09-09
@@ -237,18 +238,18 @@ Resources:
       - S3Bucket
       - CloudFrontDistribution
     Properties:
-      Bucket: "${bucketName}"
+      Bucket: '${bucketName}''
       PolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
           - Effect: Allow
             Principal:
-              Service: "cloudfront.amazonaws.com"
-            Action: "s3:GetObject"
-            Resource: "arn:aws:s3:::${bucketName}/*"
+              Service: 'cloudfront.amazonaws.com'
+            Action: 's3:GetObject'
+            Resource: 'arn:aws:s3:::${bucketName}/*''
             Condition:
               StringEquals:
-                AWS:SourceArn: !GetAtt CloudFrontOriginAccessControl.ARN`
+                AWS:SourceArn: arn:aws:cloudfront::${accountID}:distribution/\${!GetAtt CloudFrontDistribution.Id}`
 
   const client = new CloudFormationClient({ credentials, region })
   const stackName = convertDomainToBucketName(apexDomain) + '-stack'
@@ -343,30 +344,30 @@ const getHostedZoneID = async({ markerToken, route53Client, siteInfo }) => {
 
 const RECHECK_WAIT_TIME = 2000 // ms
 
-const trackStackCreationStatus = async ({ client, previousStatus, noDeleteOnFailure, stackName }) => {
-  const describeInput = { StackName : stackName }
-  const describeCommand = new DescribeStacksCommand(describeInput)
-  const describeResponse = await client.send(describeCommand)
+const trackStackCreationStatus = async ({ client, noDeleteOnFailure, stackName }) => {
+  let stackStatus, previousStatus
+  do {
+    const describeInput = { StackName : stackName }
+    const describeCommand = new DescribeStacksCommand(describeInput)
+    const describeResponse = await client.send(describeCommand)
 
-  const stackStatus = describeResponse.Stacks[0].StackStatus
+    stackStatus = describeResponse.Stacks[0].StackStatus
 
-  if (stackStatus === 'CREATE_IN_PROGRESS') {
-    if (previousStatus === undefined) {
+    if (stackStatus === 'CREATE_IN_PROGRESS' && previousStatus === undefined) {
       process.stdout.write('Creating stack')
-    } else {
-      process.stdout.write('.')
     }
-    await new Promise(resolve => setTimeout(resolve, RECHECK_WAIT_TIME))
-    await trackStackCreationStatus({ client, noDeleteOnFailure, previousStatus : stackStatus, stackName })
-  } else if (stackStatus === 'ROLLBACK_IN_PROGRESS') {
-    if (previousStatus !== 'ROLLBACK_IN_PROGRESS') {
+    else if (stackStatus === 'ROLLBACK_IN_PROGRESS' && previousStatus !== 'ROLLBACK_IN_PROGRESS') {
       process.stdout.write('\nRollback in progress')
-    } else {
+    }
+    else {
       process.stdout.write('.')
     }
+    
+    previousStatus = stackStatus
     await new Promise(resolve => setTimeout(resolve, RECHECK_WAIT_TIME))
-    await trackStackCreationStatus({ client, noDeleteOnFailure, previousStatus : stackStatus, stackName })
-  } else if (stackStatus === 'ROLLBACK_COMPLETE' && noDeleteOnFailure !== true) {
+  } while (stackStatus.match(/_IN_PROGRESS$/))
+
+  if (stackStatus === 'ROLLBACK_COMPLETE' && noDeleteOnFailure !== true) {
     process.stdout.write(`\nDeleting stack '${stackName}'... `)
     const deleteInput = { StackName : stackName }
     const deleteCommand = new DeleteStackCommand(deleteInput)
