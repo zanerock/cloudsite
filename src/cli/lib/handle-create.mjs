@@ -36,7 +36,7 @@ const handleCreate = async ({ argv, globalOptions, sitesInfo }) => {
   // TODO: verify apex domain matches apex domain RE
 
   if (options.sourceType === undefined) {
-    const docusaurusConfigPath = fsPath.join(options.sourcePath, 'docusaurus.config.js')
+    const docusaurusConfigPath = fsPath.resolve(options.sourcePath, '..', 'docusaurus.config.js')
     options.sourceType = fileExists(docusaurusConfigPath) ? 'docusaurus' : 'vanilla'
   } else if (!SOURCE_TYPES.includes(options.sourceType)) {
     process.stderr(`Invalid site source type '${options.sourceType}'; must be one of ${SOURCE_TYPES.join(', ')}.\n`)

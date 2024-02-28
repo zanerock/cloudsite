@@ -1,3 +1,6 @@
+import { existsSync as fileExists } from 'node:fs'
+import * as fsPath from 'node:path'
+
 import { ACMClient, ListCertificatesCommand, RequestCertificateCommand } from '@aws-sdk/client-acm'
 import { CloudFrontClient, GetDistributionCommand } from '@aws-sdk/client-cloudfront'
 import {
@@ -22,7 +25,7 @@ const create = async ({
   noDeleteOnFailure,
   region,
   sourcePath,
-  /* sourceType, */
+  sourceType,
   siteInfo,
   ssoProfile
 }) => {
@@ -46,6 +49,9 @@ const create = async ({
     // Optional. Custom STS client configurations overriding the default ones.
     // clientConfig: { region },
   })
+
+  siteInfo.sourceType = sourceType
+  console.log('sourceType:', sourceType) // DEBUG
 
   const acmClient = new ACMClient({
     credentials,
@@ -235,8 +241,36 @@ const determineBucketName = async ({ apexDomain, bucketName, credentials, siteIn
 }
 
 const createSiteStack = async ({ credentials, noDeleteOnFailure, region, siteInfo }) => {
-  const { accountID, apexDomain, bucketName, certificateArn } = siteInfo
+  const { accountID, apexDomain, bucketName, certificateArn, sourceType } = siteInfo
   siteInfo.region = region
+
+  let cloudFunction = ''
+  let cloudFrontDeps = ''
+
+  if (sourceType === 'docusaurus') {
+    cloudFunction = `  CloundFrontFunction:
+    Type: AWS::CloudFront::Function
+    Properties:
+      AutoPublish: true
+      FunctionCode: |
+        function handler(event) {
+          var request = event.request;
+          var uri = request.uri;
+          
+          if (uri.endsWith('/')) {
+              request.uri += 'index.html';
+          } else if (!uri.includes('.')) {
+              request.uri += '/index.html';
+          }
+
+          return request;
+        }
+      FunctionConfig:
+        Comment: Docusaurus URL handler.
+        Runtime: cloudfront-js-1.0
+      Name: ${bucketName}-docusaurus-url-handler`
+    cloudFrontDeps = '- CloundFrontFunction'
+  }
 
   const cloudFormationTemplate = `AWSTemplateFormatVersion: 2010-09-09
 Description: Static hosting using an S3 bucket and CloudFront.
@@ -271,10 +305,13 @@ Resources:
         SigningBehavior: always
         SigningProtocol: sigv4
 
+${cloudFunction}
+
   CloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
     DependsOn:
       - S3Bucket
+      ${cloudFrontDeps}
     Properties:
       DistributionConfig:
         Origins:
