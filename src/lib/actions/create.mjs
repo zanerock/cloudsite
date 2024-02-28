@@ -11,6 +11,9 @@ import { S3Client, HeadBucketCommand } from '@aws-sdk/client-s3'
 import { STSClient, GetCallerIdentityCommand } from '@aws-sdk/client-sts'
 import { fromIni } from '@aws-sdk/credential-providers'
 
+const RECHECK_WAIT_TIME = 2000 // ms
+const STACK_CREATE_TIMEOUT = 15 // min
+
 const create = async ({
   apexDomain,
   bucketName,
@@ -136,12 +139,12 @@ const determineBucketName = async ({ apexDomain, bucketName, credentials, siteIn
   // else, we use the explicit bucketName provided
   process.stdout.write(`Checking bucket '${bucketName}' is free...\n`)
 
-  const client = new S3Client({ credentials })
+  const s3Client = new S3Client({ credentials })
   const input = { Bucket : bucketName, ExpectedBucketOwner : accountID }
 
   const command = new HeadBucketCommand(input)
   try {
-    const response = await client.send(command)
+    const response = await s3Client.send(command)
     throw new Error(`Account already owns bucket '${bucketName}'; delete or specify alternate bucket name.`)
   } catch (e) {
     if (e.name === 'NotFound') {
@@ -238,7 +241,7 @@ Resources:
       - S3Bucket
       - CloudFrontDistribution
     Properties:
-      Bucket: '${bucketName}''
+      Bucket: '${bucketName}'
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -246,84 +249,85 @@ Resources:
             Principal:
               Service: 'cloudfront.amazonaws.com'
             Action: 's3:GetObject'
-            Resource: 'arn:aws:s3:::${bucketName}/*''
+            Resource: 'arn:aws:s3:::${bucketName}/*'
             Condition:
               StringEquals:
-                AWS:SourceArn: arn:aws:cloudfront::${accountID}:distribution/\${!GetAtt CloudFrontDistribution.Id}`
+                AWS:SourceArn: !Join ['', [ 'arn:aws:cloudfront::${accountID}:distribution/', !GetAtt CloudFrontDistribution.Id ]]
+`
 
-  const client = new CloudFormationClient({ credentials, region })
+  const cloudFormationClient = new CloudFormationClient({ credentials, region })
   const stackName = convertDomainToBucketName(apexDomain) + '-stack'
   const createInput = {
     StackName       : stackName,
     TemplateBody    : cloudFormationTemplate,
     DisableRollback : false,
-    Capabilities    : ['CAPABILITY_IAM', 'CAPABILITY_NAMED_IAM']
+    Capabilities    : ['CAPABILITY_IAM', 'CAPABILITY_NAMED_IAM'],
+    TimeoutInMinutes : STACK_CREATE_TIMEOUT
   }
   const createCommand = new CreateStackCommand(createInput)
-  const createResponse = await client.send(createCommand)
+  const createResponse = await cloudFormationClient.send(createCommand)
 
   const { StackId } = createResponse
 
   siteInfo.stackName = stackName
   siteInfo.stackArn = StackId
 
-  await trackStackCreationStatus({ client, noDeleteOnFailure, stackName })
+  const stackCreated = await trackStackCreationStatus({ cloudFormationClient, noDeleteOnFailure, stackName })
 
-  const describeInput = { StackName : stackName }
-  const describeCommand = new DescribeStacksCommand(describeInput)
-  const describeResponse = await client.send(describeCommand)
-  const cloudFrontID = describeResponse
-    .Stacks[0].Outputs.find(({ OutputKey }) => OutputKey === 'CloudFrontDist').OutputValue
+  if (stackCreated === true) {
+    const describeInput = { StackName : stackName }
+    const describeCommand = new DescribeStacksCommand(describeInput)
+    const describeResponse = await cloudFormationClient.send(describeCommand)
+    const cloudFrontID = describeResponse
+      .Stacks[0].Outputs.find(({ OutputKey }) => OutputKey === 'CloudFrontDist').OutputValue
 
-  const cloudFrontClient = new CloudFrontClient({ credentials, region })
-  const getDistributionCommand = new GetDistributionCommand({ Id: cloudFrontID })
-  const distributionResponse = await cloudFrontClient.send(getDistributionCommand)
-  const distributionDomainName = distributionResponse.Distribution.DomainName
-  
-  const route53Client = new Route53Client({ credentials, region })
-  const hostedZoneID = await getHostedZoneID({ credentials, route53Client, siteInfo })
-  console.log('hostedZoneID:', hostedZoneID) // DEBUG
+    const cloudFrontClient = new CloudFrontClient({ credentials, region })
+    const getDistributionCommand = new GetDistributionCommand({ Id: cloudFrontID })
+    const distributionResponse = await cloudFrontClient.send(getDistributionCommand)
+    const distributionDomainName = distributionResponse.Distribution.DomainName
+    
+    const route53Client = new Route53Client({ credentials, region })
+    const hostedZoneID = await getHostedZoneID({ credentials, route53Client, siteInfo })
+    console.log('hostedZoneID:', hostedZoneID) // DEBUG
 
-  const changeResourceRecordSetCommand = new ChangeResourceRecordSetsCommand({
-    HostedZoneId: hostedZoneID,
-    ChangeBatch: {
-      Comment: `Point '${apexDomain}' and 'www.${apexDomain}' to CloudFront distribution.`,
-      Changes: [
-        {
-          Action: 'CREATE',
-          ResourceRecordSet: {
-            Name: apexDomain,
-            // ResourceRecords: [ { Value: distributionDomainName }],
-            AliasTarget: { 
-              DNSName: distributionDomainName, 
-              EvaluateTargetHealth: false, 
-              HostedZoneId: 'Z2FDTNDATAQYW2' // Static value specified by API for use with CloudFront aliases
-            },
-            Type: 'A',
-            // TTL: 300
+    const changeResourceRecordSetCommand = new ChangeResourceRecordSetsCommand({
+      HostedZoneId: hostedZoneID,
+      ChangeBatch: {
+        Comment: `Point '${apexDomain}' and 'www.${apexDomain}' to CloudFront distribution.`,
+        Changes: [
+          {
+            Action: 'CREATE',
+            ResourceRecordSet: {
+              Name: apexDomain,
+              AliasTarget: { 
+                DNSName: distributionDomainName, 
+                EvaluateTargetHealth: false, 
+                HostedZoneId: 'Z2FDTNDATAQYW2' // Static value specified by API for use with CloudFront aliases
+              },
+              Type: 'A'
+            }
+          },
+          {
+            Action: 'CREATE',
+            ResourceRecordSet: {
+              Name: 'www.' + apexDomain,
+              AliasTarget: { 
+                DNSName: distributionDomainName, 
+                EvaluateTargetHealth: false, 
+                HostedZoneId: 'Z2FDTNDATAQYW2' // Static value specified by API for use with CloudFront aliases
+              },
+              Type: 'A'
+            }
           }
-        },
-        {
-          Action: 'CREATE',
-          ResourceRecordSet: {
-            Name: 'www.' + apexDomain,
-            // ResourceRecords: [ { Value: distributionDomainName }],
-            AliasTarget: { 
-              DNSName: distributionDomainName, 
-              EvaluateTargetHealth: false, 
-              HostedZoneId: 'Z2FDTNDATAQYW2' // Static value specified by API for use with CloudFront aliases
-            },
-            Type: 'A',
-            // TTL: 300
-          }
-        }
-      ]
-    }
-  })
-  const changeResourceRecordSetResponse = await route53Client.send(changeResourceRecordSetCommand)
-  console.log('changeResourceRecordSetResponse:', JSON.stringify(changeResourceRecordSetResponse, null, '  ')) // DEBUG
-
-
+        ]
+      }
+    })
+    const changeResourceRecordSetResponse = await route53Client.send(changeResourceRecordSetCommand)
+    console.log('changeResourceRecordSetResponse:', JSON.stringify(changeResourceRecordSetResponse, null, '  ')) // DEBUG
+  }
+  else {
+    process.stdout.write('Stack creation error.\n')
+  }
 }
 
 const getHostedZoneID = async({ markerToken, route53Client, siteInfo }) => {
@@ -342,14 +346,12 @@ const getHostedZoneID = async({ markerToken, route53Client, siteInfo }) => {
   }
 }
 
-const RECHECK_WAIT_TIME = 2000 // ms
-
-const trackStackCreationStatus = async ({ client, noDeleteOnFailure, stackName }) => {
+const trackStackCreationStatus = async ({ cloudFormationClient, noDeleteOnFailure, stackName }) => {
   let stackStatus, previousStatus
   do {
     const describeInput = { StackName : stackName }
     const describeCommand = new DescribeStacksCommand(describeInput)
-    const describeResponse = await client.send(describeCommand)
+    const describeResponse = await cloudFormationClient.send(describeCommand)
 
     stackStatus = describeResponse.Stacks[0].StackStatus
 
@@ -371,12 +373,14 @@ const trackStackCreationStatus = async ({ client, noDeleteOnFailure, stackName }
     process.stdout.write(`\nDeleting stack '${stackName}'... `)
     const deleteInput = { StackName : stackName }
     const deleteCommand = new DeleteStackCommand(deleteInput)
-    const deleteResponse = await client.send(deleteCommand)
+    const deleteResponse = await cloudFormationClient.send(deleteCommand)
 
     process.stdout.write('done.\n')
   } else {
     process.stdout.write('\nStack status: ' + stackStatus + '\n')
   }
+
+  return stckStatus === 'CREATE_COMPLETE'
 }
 
 export { create }
