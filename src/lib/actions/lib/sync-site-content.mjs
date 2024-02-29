@@ -6,7 +6,7 @@ import { S3SyncClient } from 's3-sync-client'
 const syncSiteContent = async ({ credentials, siteInfo }) => {
   const { bucketName, sourcePath } = siteInfo
 
-  process.stdout.write(`Syncing files from ${sourcePath}...`)
+  process.stdout.write(`Syncing files from ${sourcePath}...\n`)
 
   const s3Client = new S3Client({ credentials })
   const { sync } = new S3SyncClient({ client : s3Client })

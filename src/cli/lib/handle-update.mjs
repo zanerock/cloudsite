@@ -16,7 +16,7 @@ const handleUpdate = async ({ argv, globalOptions, sitesInfo }) => {
     process.exit(1) // eslint-disable-line no-process-exit
   }
 
-  await update({ noCacheInvalidation, onlyContent, sitesInfo, ...globalOptions })
+  await update({ noCacheInvalidation, onlyContent, siteInfo, ...globalOptions })
 }
 
 export { handleUpdate }

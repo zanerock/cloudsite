@@ -4,9 +4,9 @@ import { getCredentials } from './lib/get-credentials'
 import { syncSiteContent } from './lib/sync-site-content'
 
 const update = async ({ /* onlyContent, */ noCacheInvalidation, siteInfo, ...downstreamOptions }) => {
-  const credentials = getCredentials(...downstreamOptions)
+  const credentials = getCredentials(downstreamOptions)
 
-  process.stdout.write('Syncing files...\n')
+  // method will reeport actions to user
   await syncSiteContent({ credentials, siteInfo })
 
   if (noCacheInvalidation !== true) {
