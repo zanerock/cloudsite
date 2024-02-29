@@ -23,7 +23,7 @@ const create = async ({
 }) => {
   const { apexDomain, bucketName } = siteInfo
 
-  const credentials = getCredentials(...downstreamOptions)
+  const credentials = getCredentials(downstreamOptions)
 
   const acmClient = new ACMClient({
     credentials,
@@ -253,7 +253,7 @@ Resources:
     Properties:
       OriginAccessControlConfig:
         Description: "origin access control(OAC) for allowing cloudfront to access S3 bucket"
-        Name: static-hosting-OAC
+        Name: ${bucketName}-OAC
         OriginAccessControlOriginType: s3
         SigningBehavior: always
         SigningProtocol: sigv4
