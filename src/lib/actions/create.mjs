@@ -1,6 +1,3 @@
-import { existsSync as fileExists } from 'node:fs'
-import * as fsPath from 'node:path'
-
 import { ACMClient, ListCertificatesCommand, RequestCertificateCommand } from '@aws-sdk/client-acm'
 import { CloudFrontClient, GetDistributionCommand } from '@aws-sdk/client-cloudfront'
 import {
