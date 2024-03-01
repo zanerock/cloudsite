@@ -295,12 +295,9 @@ ${cloudFunction}
             - GET
             - HEAD
             - OPTIONS
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 # CachingOptimized cache policy ID
           Compress: true
           TargetOriginId: static-hosting
-          ForwardedValues:
-            QueryString: "false"
-            Cookies:
-              Forward: none
           ViewerProtocolPolicy: redirect-to-https
 
   BucketPolicy:
