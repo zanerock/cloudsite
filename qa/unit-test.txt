@@ -1,0 +1,33 @@
+Test git rev: 3b1d5ea5aac31cce30f57052bef891fb92740062
+PASS cli/lib/configuration/test/handle-configuration-show.test.js
+  handleConfigurationShow
+    ✓ prints the file contents (2 ms)
+
+--------------------------------------|---------|----------|---------|---------|-------------------
+File                                  | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+--------------------------------------|---------|----------|---------|---------|-------------------
+All files                             |    3.88 |    12.12 |    8.33 |     3.5 |                   
+ cli                                  |    9.52 |    21.42 |      25 |    8.77 |                   
+  cloudsite.mjs                       |       0 |        0 |       0 |       0 | 1-82              
+  constants.mjs                       |     100 |      100 |     100 |     100 |                   
+ cli/lib                              |       0 |        0 |       0 |       0 |                   
+  handle-configuration.mjs            |       0 |        0 |       0 |       0 | 1-21              
+  handle-create.mjs                   |       0 |        0 |       0 |       0 | 1-50              
+  handle-destroy.mjs                  |       0 |        0 |       0 |       0 | 1-24              
+  handle-update.mjs                   |       0 |        0 |       0 |       0 | 1-20              
+ cli/lib/configuration                |      32 |       50 |      40 |   31.81 |                   
+  handle-configuration-initialize.mjs |       0 |        0 |       0 |       0 | 1-30              
+  handle-configuration-show.mjs       |     100 |      100 |     100 |     100 |                   
+ lib/actions                          |       0 |        0 |       0 |       0 |                   
+  create.mjs                          |       0 |        0 |       0 |       0 | 1-406             
+  destroy.mjs                         |       0 |      100 |       0 |       0 | 1-22              
+  update.mjs                          |       0 |        0 |       0 |       0 | 1-33              
+ lib/actions/lib                      |       0 |        0 |       0 |       0 |                   
+  get-credentials.mjs                 |       0 |        0 |       0 |       0 | 1-26              
+  sync-site-content.mjs               |       0 |        0 |       0 |       0 | 1-19              
+--------------------------------------|---------|----------|---------|---------|-------------------
+Test Suites: 1 passed, 1 total
+Tests:       1 passed, 1 total
+Snapshots:   0 total
+Time:        0.56 s, estimated 1 s
+Ran all test suites.
