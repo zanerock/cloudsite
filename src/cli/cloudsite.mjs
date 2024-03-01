@@ -6,6 +6,7 @@ import isEqual from 'lodash/isEqual'
 import { cliSpec, GLOBAL_OPTIONS_PATH, SITES_INFO_PATH } from './constants'
 import { handleConfiguration } from './lib/handle-configuration'
 import { handleUpdate } from './lib/handle-update'
+import { handleDestroy } from './lib/handle-destroy'
 import { handleCreate } from './lib/handle-create'
 
 const cloudsite = async () => {
@@ -47,6 +48,8 @@ const cloudsite = async () => {
         await handleConfiguration({ argv, cliSpec, globalOptions }); break
       case 'create':
         await handleCreate({ argv, globalOptions, sitesInfo }); break
+      case 'destroy':
+        await handleDestroy({ argv, globalOptions, sitesInfo }); break
       case 'update':
         await handleUpdate({ argv, globalOptions, sitesInfo }); break
       default:
