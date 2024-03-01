@@ -9,46 +9,21 @@ import {
 import { Route53Client, ChangeResourceRecordSetsCommand, ListHostedZonesCommand } from '@aws-sdk/client-route-53'
 import { S3Client, HeadBucketCommand } from '@aws-sdk/client-s3'
 import { STSClient, GetCallerIdentityCommand } from '@aws-sdk/client-sts'
-import { fromIni } from '@aws-sdk/credential-providers'
-import mime from 'mime-types'
-import { S3SyncClient } from 's3-sync-client'
+
+import { getCredentials } from './lib/get-credentials'
+import { syncSiteContent } from './lib/sync-site-content'
 
 const RECHECK_WAIT_TIME = 2000 // ms
 const STACK_CREATE_TIMEOUT = 15 // min; in recent testing, it takes about 7-8 min for stack creation to complete
 
 const create = async ({
-  apexDomain,
-  bucketName,
   noDeleteOnFailure,
-  region,
-  sourcePath,
-  sourceType,
   siteInfo,
-  ssoProfile
+  ...downstreamOptions
 }) => {
-  const credentials = fromIni({
-    // Optional. The configuration profile to use. If not specified, the provider will use the value
-    // in the `AWS_PROFILE` environment variable or a default of `default`.
-    profile : ssoProfile
-    // Optional. The path to the shared credentials file. If not specified, the provider will use
-    // the value in the `AWS_SHARED_CREDENTIALS_FILE` environment variable or a default of
-    // `~/.aws/credentials`.
-    // filepath: "~/.aws/credentials",
-    // Optional. The path to the shared config file. If not specified, the provider will use the
-    // value in the `AWS_CONFIG_FILE` environment variable or a default of `~/.aws/config`.
-    // configFilepath: "~/.aws/config",
-    // Optional. A function that returns a a promise fulfilled with an MFA token code for the
-    // provided MFA Serial code. If a profile requires an MFA code and `mfaCodeProvider` is not a
-    // valid function, the credential provider promise will be rejected.
-    /* mfaCodeProvider: async (mfaSerial) => {
-      return "token";
-    }, */
-    // Optional. Custom STS client configurations overriding the default ones.
-    // clientConfig: { region },
-  })
+  const { apexDomain, bucketName } = siteInfo
 
-  siteInfo.sourceType = sourceType
-  console.log('sourceType:', sourceType) // DEBUG
+  const credentials = getCredentials(downstreamOptions)
 
   const acmClient = new ACMClient({
     credentials,
@@ -71,11 +46,12 @@ const create = async ({
   }
 
   await determineBucketName({ apexDomain, bucketName, credentials, siteInfo })
-  const stackCreated = await createSiteStack({ credentials, noDeleteOnFailure, region, siteInfo })
+  const stackCreated = await createSiteStack({ credentials, noDeleteOnFailure, siteInfo })
   if (stackCreated === true) {
+    await updateSiteInfo({ credentials, siteInfo }) // needed by createDNSRecords
     await Promise.all([
       createDNSRecords({ credentials, siteInfo }),
-      syncFiles({ credentials, sourcePath, siteInfo })
+      syncSiteContent({ credentials, siteInfo })
     ])
 
     process.stdout.write('Done!\n')
@@ -84,30 +60,11 @@ const create = async ({
   }
 }
 
-const syncFiles = async ({ credentials, sourcePath, siteInfo }) => {
-  process.stdout.write(`Syncing files from ${sourcePath}...`)
-  const s3Client = new S3Client({ credentials })
-  const { sync } = new S3SyncClient({ client : s3Client })
-
-  await sync(sourcePath, 's3://' + siteInfo.bucketName, {
-    commandInput           : (input) => ({ ContentType : mime.lookup(input.Key) || 'application/octet-stream' }),
-    del                    : true,
-    maxConcurrentTransfers : 10
-  })
-}
-
 const createDNSRecords = async ({ credentials, siteInfo }) => {
-  const { apexDomain, region, stackName } = siteInfo
-
-  process.stdout.write('Gathering information from stack...\n')
-  const cloudFormationClient = new CloudFormationClient({ credentials, region })
-  const describeCommand = new DescribeStacksCommand({ StackName : stackName })
-  const describeResponse = await cloudFormationClient.send(describeCommand)
-  const cloudFrontID = describeResponse
-    .Stacks[0].Outputs.find(({ OutputKey }) => OutputKey === 'CloudFrontDist').OutputValue
+  const { apexDomain, cloudFrontDistributionID, region } = siteInfo
 
   const cloudFrontClient = new CloudFrontClient({ credentials, region })
-  const getDistributionCommand = new GetDistributionCommand({ Id : cloudFrontID })
+  const getDistributionCommand = new GetDistributionCommand({ Id : cloudFrontDistributionID })
   const distributionResponse = await cloudFrontClient.send(getDistributionCommand)
   const distributionDomainName = distributionResponse.Distribution.DomainName
 
@@ -237,9 +194,8 @@ const determineBucketName = async ({ apexDomain, bucketName, credentials, siteIn
   }
 }
 
-const createSiteStack = async ({ credentials, noDeleteOnFailure, region, siteInfo }) => {
-  const { accountID, apexDomain, bucketName, certificateArn, sourceType } = siteInfo
-  siteInfo.region = region
+const createSiteStack = async ({ credentials, noDeleteOnFailure, siteInfo }) => {
+  const { accountID, apexDomain, bucketName, certificateArn, region, sourceType } = siteInfo
 
   let cloudFunction = ''
   let cloudFrontDeps = ''
@@ -297,7 +253,7 @@ Resources:
     Properties:
       OriginAccessControlConfig:
         Description: "origin access control(OAC) for allowing cloudfront to access S3 bucket"
-        Name: static-hosting-OAC
+        Name: ${bucketName}-OAC
         OriginAccessControlOriginType: s3
         SigningBehavior: always
         SigningProtocol: sigv4
@@ -436,6 +392,18 @@ const trackStackCreationStatus = async ({ cloudFormationClient, noDeleteOnFailur
   }
 
   return stackStatus === 'CREATE_COMPLETE'
+}
+
+const updateSiteInfo = async ({ credentials, siteInfo }) => {
+  const { region, stackName } = siteInfo
+  process.stdout.write('Gathering information from stack...\n')
+  const cloudFormationClient = new CloudFormationClient({ credentials, region })
+  const describeCommand = new DescribeStacksCommand({ StackName : stackName })
+  const describeResponse = await cloudFormationClient.send(describeCommand)
+  const cloudFrontDistributionID = describeResponse
+    .Stacks[0].Outputs.find(({ OutputKey }) => OutputKey === 'CloudFrontDist').OutputValue
+
+  siteInfo.cloudFrontDistributionID = cloudFrontDistributionID
 }
 
 export { create }

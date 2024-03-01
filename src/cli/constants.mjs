@@ -42,7 +42,7 @@ const cliSpec = {
     },
     {
       name      : 'create',
-      summary   : 'Creates a new cloud host environment for a site.',
+      summary   : 'Creates a new website, setting up infrastructure and copying content.',
       arguments : [
         {
           name          : 'apex-domain',
@@ -71,6 +71,25 @@ const cliSpec = {
         {
           name    : 'source-type',
           summary : "May be either 'vanilla' or 'docusaurus', otherwise process will attempt to guess."
+        }
+      ]
+    },
+    {
+      name      : 'update',
+      summaray  : 'Updates a website content and/or infrastructure.',
+      arguments : [
+        {
+          name          : 'apex-domain',
+          description   : 'The apex domain identifying the site.',
+          defaultOption : true
+        },
+        {
+          name        : 'no-cache-invalidation',
+          description : 'Suppresses the default behavior of invalidating the CloudFront cache after the files are updated. Note that invalidation events are chargeable thought at the time of this writing, each account gets 1,000 free requests per year.'
+        },
+        {
+          name        : 'only-content',
+          description : 'Limits the update to the site content (skipping any infrastructure updates).'
         }
       ]
     }

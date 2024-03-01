@@ -12,6 +12,9 @@
     "preversion": "npm test && make lint",
     "qa": "make qa"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "keywords": [],
   "author": "Zane Rockenbaugh <zane@liquid-labs.com>",
   "license": "UNLICENSED",
@@ -39,7 +42,7 @@
   },
   "devDependencies": {
     "@liquid-labs/sdlc-resource-babel-and-rollup": "^1.0.0-alpha.8",
-    "@liquid-labs/sdlc-resource-eslint": "file:.yalc/@liquid-labs/sdlc-resource-eslint",
+    "@liquid-labs/sdlc-resource-eslint": "^1.0.0-alpha.11",
     "@liquid-labs/sdlc-resource-jest": "^1.0.0-alpha.7"
   },
   "_comply": {
