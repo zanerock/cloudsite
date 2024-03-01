@@ -6,9 +6,9 @@
   - The _cli_—short for 'command line interface'—deals with taking input from the user, parsing commands, generating help, etc. Basically, all the user stuff.
   - The _cli_ also handles validating user input.
   - The _lib_—short for library—creates a reusable library that can be incorporated into other projects.
-- Valid _cli_ input is defined in the `cliSpec` (in [`src/cli/constants.mjs`](./cloudsite/blob/main/src/cli/constants.mjs)) object, which is used to parse input as well as generate API documentation and "help".
+- Valid _cli_ input is defined in the `cliSpec` (in [`src/cli/constants.mjs`](./src/cli/constants.mjs)) object, which is used to parse input as well as generate API documentation and "help".
   - Command procesing is handled by a series of hierarchial handlers.
-  - At the top level, [`cloudsite.mjs`](./cloudsite/blob/main/src/cli/cloudsite.mjs) processes top level options (like '--quiet') and then passes control to a "handler" function for further processing.
+  - At the top level, [`cloudsite.mjs`](./src/cli/cloudsite.mjs) processes top level options (like '--quiet') and then passes control to a "handler" function for further processing.
   - Each handler function then processes command/command group specific options.
   - Control is then passed either to one of the cloudsite action handlers (defined in _lib_), or when the command group 'configurations' is specified, passes control to a third layer _cli_ handler for processing of the subcommand.
   - The 'configuration' subcommand handlers process the final subcommand options and then directly implement the commands. The thinking here being that 'configuration' is a concept in the _cli_ itself whereas the _lib_ actions deal exclusively with managing the site infrastructure and content.
