@@ -21,18 +21,18 @@
   - `cloudsite update`
   - `cloudsite destroy`,
   - `cloudsite import`.
-- The 'create' action is used to create a new site:
+- The '[create](./src/lib/create.mjs)' action is used to create a new site:
   - generates an SSL certificate for the site,
   - uses CloudFormation to create an S3 bucket, security policies, and CloudFront distribution, and
   - copies the site contents to S3.
   - The action is safe to repeat, which is useful in the case of partial creation.
   - Basic site information is stored locally (in `~/.config/cloudsite/sites.json`) for future reference. This reduces the need to make API calls to manage sites.
-- The 'list' action is used to list known sites.
-- The 'detail' action prints detailed information about the site configuration.
-- The 'verify' action checks that the infrastructure and content of a live site is up to date.
-- The 'update' action is used to update site infrastructure and/or content.
-- The 'destroy' action is used to destroy (delete/remove) all site resources.
-- The 'import' action examines existing AWS resources, identifies existing sites, and updates the local site database (in `~/.config/cloudsite/sites.json`).
+- The '[list](./src/lib/list.mjs)' action is used to list known sites.
+- The '[detail](./src/lib/detail.mjs)' action prints detailed information about the site configuration.
+- The '[verify](./src/lib/verify.mjs)' action checks that the infrastructure and content of a live site is up to date.
+- The '[update](./src/lib/update.mjs)' action is used to update site infrastructure and/or content.
+- The '[destroy](./src/lib/destroy.mjs)' action is used to destroy (delete/remove) all site resources.
+- The '[import](./src/lib/import.mjs)' action examines existing AWS resources, identifies existing sites, and updates the local site database (in `~/.config/cloudsite/sites.json`).
 
 # Limitations and future goals
 
