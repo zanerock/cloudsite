@@ -75,6 +75,22 @@ const cliSpec = {
       ]
     },
     {
+      name      : 'destroy',
+      summary   : 'Destroys the named site. I.e., deletes all cloud resources associated with the site.',
+      arguments : [
+        {
+          name          : 'apex-domain',
+          description   : 'The domain of the site to delete.',
+          defaultOption : true
+        },
+        {
+          name        : 'confirmed',
+          description : 'Skips the interactive confirmation and destroys the resources without further confirmation.',
+          type        : Boolean
+        }
+      ]
+    },
+    {
       name      : 'update',
       summaray  : 'Updates a website content and/or infrastructure.',
       arguments : [
