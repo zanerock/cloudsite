@@ -11,10 +11,6 @@ SDLC_LINT_PASS_MARKER:=$(QA)/.lint.passed
 LINT_TARGETS+=$(SDLC_LINT_REPORT) $(SDLC_LINT_PASS_MARKER)
 PRECIOUS_TARGETS+=$(SDLC_LINT_REPORT)
 
-LINT_IGNORE_PATTERNS:=--ignore-pattern '$(DIST)/**/*'\
---ignore-pattern '$(TEST_STAGING)/**/*'\
---ignore-pattern '$(DOC)/**/*'
-
 $(SDLC_LINT_REPORT) $(SDLC_LINT_PASS_MARKER): $(SDLC_ALL_JS_FILES_SRC)
 	mkdir -p $(dir $@)
 	echo -n 'Test git rev: ' > $(SDLC_LINT_REPORT)
