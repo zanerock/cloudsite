@@ -41,6 +41,11 @@ projects:
           - builder: '@liquid-labs/sdlc-projects-workflow-local-node-build'
             version: 1.0.0-alpha.5
             priority: 50
+            path: make/50-cloudsite-js.mk
+            purpose: Builds the 'dist/cloudsite.js' artifact.
+          - builder: '@liquid-labs/sdlc-projects-workflow-local-node-build'
+            version: 1.0.0-alpha.5
+            priority: 50
             path: make/50-cloudsite-exec-js.mk
             purpose: Builds the 'dist/cloudsite-exec.js' artifact.
           - builder: '@liquid-labs/sdlc-projects-workflow-local-node-build'

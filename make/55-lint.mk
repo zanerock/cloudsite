@@ -20,16 +20,20 @@ $(SDLC_LINT_REPORT) $(SDLC_LINT_PASS_MARKER): $(SDLC_ALL_JS_FILES_SRC)
 	echo -n 'Test git rev: ' > $(SDLC_LINT_REPORT)
 	git rev-parse HEAD >> $(SDLC_LINT_REPORT)
 	( set -e; set -o pipefail; \
-	  ESLINT_USE_FLAT_CONFIG=true $(SDLC_ESLINT) \
+	  $(SDLC_ESLINT) \
 	    --config $(SDLC_ESLINT_CONFIG) \
+	    --ext .cjs,.js,.mjs,.cjs,.xjs \
+	    $(LINT_IGNORE_PATTERNS) \
 	    . \
 	    | tee -a $(SDLC_LINT_REPORT); \
 	  touch $(SDLC_LINT_PASS_MARKER) )
 
 lint-fix:
 	@( set -e; set -o pipefail; \
-	  ESLINT_USE_FLAT_CONFIG=true $(SDLC_ESLINT) \
+	  $(SDLC_ESLINT) \
 	    --config $(SDLC_ESLINT_CONFIG) \
+	    --ext .js,.mjs,.cjs,.xjs \
+	    $(LINT_IGNORE_PATTERNS) \
 	    --fix . )
 
 #####

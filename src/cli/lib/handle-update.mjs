@@ -1,7 +1,7 @@
 import commandLineArgs from 'command-line-args'
 
 import { cliSpec } from '../constants'
-import { update } from '../../lib/actions/update'
+import { update } from '../../lib/update'
 
 const handleUpdate = async ({ argv, globalOptions, sitesInfo }) => {
   const updateOptionsSpec = cliSpec.commands.find(({ name }) => name === 'update').arguments
