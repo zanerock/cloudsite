@@ -17,7 +17,7 @@ const destroy = async ({ siteInfo, ...downstreamOptions }) => {
   process.stdout.write('Deleting stack...\n')
   const cloudFormationClient = new CloudFormationClient({ credentials })
   const deleteStackCommand = new DeleteStackCommand({ StackName : stackName })
-  await cloudFormationClient.send(deleteStackCommand)  
+  await cloudFormationClient.send(deleteStackCommand)
   process.stdout.write('Done!\n')
 }
 
