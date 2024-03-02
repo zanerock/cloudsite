@@ -15,6 +15,7 @@ const handleCreate = async ({ argv, globalOptions, sitesInfo }) => {
   // siteInfo options
   const apexDomain = createOptions['apex-domain']
   const bucketName = createOptions['bucket-name']
+  const noBuild = createOptions['no-build']
   const sourcePath = createOptions['source-path']
   let sourceType = createOptions['source-type']
 
@@ -46,7 +47,7 @@ const handleCreate = async ({ argv, globalOptions, sitesInfo }) => {
     process.exit(2) // eslint-disable-line no-process-exit
   }
 
-  await create({ noDeleteOnFailure, siteInfo, ...globalOptions })
+  await create({ noBuild, noDeleteOnFailure, siteInfo, ...globalOptions })
 }
 
 export { handleCreate }

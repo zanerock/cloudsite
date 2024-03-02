@@ -3,11 +3,11 @@ import { CloudFrontClient, CreateInvalidationCommand } from '@aws-sdk/client-clo
 import { getCredentials } from './lib/get-credentials'
 import { syncSiteContent } from './lib/sync-site-content'
 
-const update = async ({ /* onlyContent, */ noCacheInvalidation, siteInfo, ...downstreamOptions }) => {
+const update = async ({ /* onlyContent, */ noBuild, noCacheInvalidation, siteInfo, ...downstreamOptions }) => {
   const credentials = getCredentials(downstreamOptions)
 
   // method will reeport actions to user
-  await syncSiteContent({ credentials, siteInfo })
+  await syncSiteContent({ credentials, noBuild, siteInfo })
 
   if (noCacheInvalidation !== true) {
     await invalidateCache({ credentials, siteInfo })

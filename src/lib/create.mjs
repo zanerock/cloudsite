@@ -17,6 +17,7 @@ const RECHECK_WAIT_TIME = 2000 // ms
 const STACK_CREATE_TIMEOUT = 15 // min; in recent testing, it takes about 7-8 min for stack creation to complete
 
 const create = async ({
+  noBuild,
   noDeleteOnFailure,
   siteInfo,
   ...downstreamOptions
@@ -51,7 +52,7 @@ const create = async ({
     await updateSiteInfo({ credentials, siteInfo }) // needed by createDNSRecords
     await Promise.all([
       createDNSRecords({ credentials, siteInfo }),
-      syncSiteContent({ credentials, siteInfo })
+      syncSiteContent({ credentials, noBuild, siteInfo })
     ])
 
     process.stdout.write('Done!\n')
