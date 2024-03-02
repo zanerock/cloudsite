@@ -12,7 +12,7 @@ const syncSiteContent = async ({ credentials, noBuild, siteInfo }) => {
   if (noBuild !== true && sourceType === 'docusaurus') {
     const packageRoot = fsPath.resolve(sourcePath, '..')
     const packagePath = fsPath.join(packageRoot, 'package.json')
-    if (fileExists) {
+    if (fileExists(packagePath)) {
       process.stdout.write('Rebuilding site... ')
       tryExec(`cd "${packageRoot}" && npm run build`)
       process.stdout.write('done.\n')
