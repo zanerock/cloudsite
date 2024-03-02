@@ -54,6 +54,11 @@ const cliSpec = {
           description : 'The name of the bucket to be used. If no option is given, cloudsite will generate a bucket name based on the apex domain.'
         },
         {
+          name: 'no-build',
+          description: 'Supresses the default behavior of building before uploading the site content.',
+          type: Boolean
+        },
+        {
           name        : 'no-delete-on-failure',
           description : 'When true, does not delete the site stack after setup failure.',
           type        : Boolean
@@ -100,12 +105,18 @@ const cliSpec = {
           defaultOption : true
         },
         {
+          name: 'no-build',
+          description: 'Supresses the default behavior of building before updating the site.',
+          type: Boolean
+        },
+        {
           name        : 'no-cache-invalidation',
           description : 'Suppresses the default behavior of invalidating the CloudFront cache after the files are updated. Note that invalidation events are chargeable thought at the time of this writing, each account gets 1,000 free requests per year.'
         },
         {
           name        : 'only-content',
-          description : 'Limits the update to the site content (skipping any infrastructure updates).'
+          description : 'Limits the update to the site content (skipping any infrastructure updates).',
+          type: Boolean
         }
       ]
     }
