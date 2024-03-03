@@ -1,5 +1,5 @@
 const config = {
-  urlPath : { default : '/contact' }
+  options : { default : true, validation: (v) => 'boolean' === typeof v }
 }
 
 const handler = ({ cloudFormationTemplate, settings }) => {

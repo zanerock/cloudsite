@@ -70,9 +70,10 @@ const handleSetOption = async ({ argv, globalOptions, sitesInfo }) => {
       const optionsSpec = optionHandlers[option].config?.options
 
       const wrappedSpec = { [option]: optionsSpec } // so our option spec matches our path
+      const smartValue = smartConvert(value)
       const { valueContainer, valueKey } =
-        getValueContainerAndKey({ path : name, rootContainer : siteOptions, spec : wrappedSpec, value })
-      valueContainer[valueKey] = smartConvert(value)
+        getValueContainerAndKey({ path : name, rootContainer : siteOptions, spec : wrappedSpec, value: smartValue })
+      valueContainer[valueKey] = smartValue
     }
   }
 
@@ -118,7 +119,7 @@ const getValueContainerAndKey = ({ path, rootContainer, spec, value }) => {
           process.exit(1) // eslint-disable-line no-process-exit
         }
         
-        if (validation?.(value)) {
+        if (!validation?.(value)) {
           process.stderr.write(`Value '${value}' for '${path}' failed validation.\n`)
           process.exit(1) // eslint-disable-line no-process-exit
         }
