@@ -69,8 +69,9 @@ const handleSetOption = async ({ argv, globalOptions, sitesInfo }) => {
 
       const optionsSpec = optionHandlers[option].config?.options
 
+      const wrappedSpec = { [option]: optionsSpec } // so our option spec matches our path
       const { valueContainer, valueKey } =
-        getValueContainerAndKey({ path : name, rootContainer : siteOptions, spec : optionsSpec, value })
+        getValueContainerAndKey({ path : name, rootContainer : siteOptions, spec : wrappedSpec, value })
       valueContainer[valueKey] = smartConvert(value)
     }
   }
@@ -125,7 +126,7 @@ const getValueContainerAndKey = ({ path, rootContainer, spec, value }) => {
 
       return { valueKey : pathBits[i], valueContainer : currContainer }
     } else {
-      const currSpec = i === 0 ? spec : spec[bit]
+      const currSpec = spec[bit]
       if (currSpec === undefined && i > 0) {
         process.stderr.write(`Invalid option path '${path}'; no such element '${bit}'.\n`)
         process.exit(1) // eslint-disable-line no-process-exit
