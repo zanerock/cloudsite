@@ -107,7 +107,7 @@ const getValueContainerAndKey = ({ path, rootContainer, spec, value }) => {
 
   return pathBits.reduce(([currContainer, spec], bit, i) => {
     if (i === pathBits.length - 1) {
-      spec = spec[bit]
+      spec = spec?.[bit]
       if (spec !== undefined) {
         const { matches, validation } = spec
         if (validation === undefined && matches === undefined) {
