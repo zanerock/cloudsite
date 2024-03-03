@@ -1,6 +1,9 @@
 const config = {
   options: {
-    urlPath : { default : '/contact' }
+    urlPath : { 
+      default : '/contact',
+      matches: /^\/(?:[a-z0-9_-]+\/?)+$/
+    }
   }
 }
 

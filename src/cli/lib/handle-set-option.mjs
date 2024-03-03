@@ -9,7 +9,7 @@ const handleSetOption = async ({ argv, globalOptions, sitesInfo }) => {
   const apexDomain = setOptionOptions['apex-domain']
   const options = (setOptionOptions.option || []).map((spec) => {
     let [name, value] = spec.split(/(?!\\):/)
-    value = value.replaceAll(/\\:/g, ':')
+    value = value?.replaceAll(/\\:/g, ':')
 
     return { name, value }
   })
@@ -61,12 +61,16 @@ const handleSetOption = async ({ argv, globalOptions, sitesInfo }) => {
   } else {
     for (const { name, value } of options) {
       const [ option ] = name.split('.')
+
       if (!(option in optionHandlers)) {
         process.stderr.write(`No such option '${option}'; use one of: ${Object.keys(optionHandlers).join(', ')}.\n`)
         process.exit(1) // eslint-disable-line no-process-exit
       }
 
-      const { valueContainer, valueKey } = getValueContainerAndKey({ path : name, rootContainer : siteOptions })
+      const optionsSpec = optionHandlers[option].config?.options
+
+      const { valueContainer, valueKey } =
+        getValueContainerAndKey({ path : name, rootContainer : siteOptions, spec : optionsSpec, value })
       valueContainer[valueKey] = smartConvert(value)
     }
   }
@@ -75,7 +79,10 @@ const handleSetOption = async ({ argv, globalOptions, sitesInfo }) => {
 }
 
 const smartConvert = (value) => {
-  if (value === 'true' || value === 'TRUE') {
+  if (value === undefined) {
+    return ''
+  }
+  else if (value === 'true' || value === 'TRUE') {
     return true
   } else if (value === 'false' || value === 'FALSE') {
     return false
@@ -93,20 +100,43 @@ const smartConvert = (value) => {
   }
 }
 
-const getValueContainerAndKey = ({ path, rootContainer }) => {
+const getValueContainerAndKey = ({ path, rootContainer, spec, value }) => {
   const pathBits = path.split('.')
 
-  return pathBits.reduce((currContainer, bit, i) => {
+  return pathBits.reduce(([currContainer, spec], bit, i) => {
     if (i === pathBits.length - 1) {
+      spec = spec[bit]
+      if (spec !== undefined) {
+        const { matches, validation } = spec
+        if (validation === undefined && matches === undefined) {
+          process.stderr.write(`'${path}' does not appear to be a terminal path.\n`)
+          process.exit(1) // eslint-disable-line no-process-exit
+        }
+        if (matches !== undefined && value.match(matches) === null) {
+          process.stderr.write(`Invalid value '${value}' for '${path}'; must match ${matches.toString()}.\n`)
+          process.exit(1) // eslint-disable-line no-process-exit
+        }
+        
+        if (validation?.(value)) {
+          process.stderr.write(`Value '${value}' for '${path}' failed validation.\n`)
+          process.exit(1) // eslint-disable-line no-process-exit
+        }
+      }
+
       return { valueKey : pathBits[i], valueContainer : currContainer }
     } else {
+      const currSpec = i === 0 ? spec : spec[bit]
+      if (currSpec === undefined && i > 0) {
+        process.stderr.write(`Invalid option path '${path}'; no such element '${bit}'.\n`)
+        process.exit(1) // eslint-disable-line no-process-exit
+      }
       const container = currContainer[bit]
       if (container === undefined) {
         currContainer[bit] = {}
       }
-      return currContainer[bit]
+      return [currContainer[bit], currSpec]
     }
-  }, rootContainer)
+  }, [rootContainer, spec])
 }
 
 export { handleSetOption }
