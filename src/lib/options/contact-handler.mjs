@@ -7,8 +7,8 @@ const config = {
   }
 }
 
-const handler = ({ cloudFormationTemplate, settings }) => {
-
+const handler = (/* { cloudFormationTemplate, settings } */) => {
+  throw new Error('Not yet implemented')
 }
 
 const contactHandler = { config, handler }

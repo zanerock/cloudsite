@@ -2,6 +2,7 @@ import commandLineArgs from 'command-line-args'
 
 import { cliSpec } from '../constants'
 import { errorOut } from './error-out'
+import { getSiteInfo } from './get-site-info'
 import { getValueContainerAndKey } from './get-value-container-and-key'
 import * as optionHandlers from '../../lib/options'
 import { smartConvert } from './smart-convert'
@@ -19,9 +20,7 @@ const handleSetOption = async ({ argv, sitesInfo }) => {
   const { delete: doDelete, name, value } = setOptionOptions
 
   // validate options
-  if (apexDomain === undefined) {
-    errorOut('Must specify site domain.\n')
-  }
+  const siteInfo = getSiteInfo({ apexDomain, sitesInfo })
 
   if (doDelete === true && (value !== undefined || options.length > 0)) {
     errorOut("The '--delete' option is incompatible with the '--value' and --name-value options.\n")
@@ -39,11 +38,6 @@ const handleSetOption = async ({ argv, sitesInfo }) => {
 
   if (doDelete !== true && options.length === 0) {
     errorOut("Invalid options; specify '--name'+'--value', '--delete'/'--name', or one or more '--option' options.\n")
-  }
-
-  const siteInfo = sitesInfo[apexDomain]
-  if (siteInfo === undefined) {
-    errorOut(`No such site '${apexDomain}' found.\n`)
   }
 
   // take actions and update the options

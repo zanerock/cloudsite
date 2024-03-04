@@ -1,15 +1,24 @@
 import { CloudFrontClient, CreateInvalidationCommand } from '@aws-sdk/client-cloudfront'
 
+import { createOrUpdateDNSRecords } from './lib/create-or-update-dns-records'
 import { getCredentials } from './lib/get-credentials'
 import { syncSiteContent } from './lib/sync-site-content'
 
-const update = async ({ /* onlyContent, */ noBuild, noCacheInvalidation, siteInfo, ...downstreamOptions }) => {
+const update = async ({ doContent, doDNS, noBuild, noCacheInvalidation, siteInfo, ...downstreamOptions }) => {
+  const doAll = !doContent && !doDNS
+
   const credentials = getCredentials(downstreamOptions)
 
-  // method will reeport actions to user
-  await syncSiteContent({ credentials, noBuild, siteInfo })
+  if (doAll === true || doContent === true) {
+    // method will report actions to user
+    await syncSiteContent({ credentials, noBuild, siteInfo })
+  }
 
-  if (noCacheInvalidation !== true) {
+  if (doAll === true || doDNS === true) {
+    await createOrUpdateDNSRecords({ credentials, siteInfo })
+  }
+
+  if ((doAll === true || doContent === true) && noCacheInvalidation !== true) {
     await invalidateCache({ credentials, siteInfo })
   }
 }

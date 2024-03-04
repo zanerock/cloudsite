@@ -1,15 +1,15 @@
 import { ACMClient, ListCertificatesCommand, RequestCertificateCommand } from '@aws-sdk/client-acm'
-import { CloudFrontClient, GetDistributionCommand } from '@aws-sdk/client-cloudfront'
 import {
   CloudFormationClient,
   CreateStackCommand,
   DeleteStackCommand,
   DescribeStacksCommand
 } from '@aws-sdk/client-cloudformation'
-import { Route53Client, ChangeResourceRecordSetsCommand, ListHostedZonesCommand } from '@aws-sdk/client-route-53'
 import { S3Client, HeadBucketCommand } from '@aws-sdk/client-s3'
 import { STSClient, GetCallerIdentityCommand } from '@aws-sdk/client-sts'
 
+import { createOrUpdateDNSRecords } from './lib/create-or-update-dns-records'
+import { errorOut } from '../../cli/lib/error-out'
 import { getCredentials } from './lib/get-credentials'
 import { SiteTemplate } from './lib/site-template'
 import { syncSiteContent } from './lib/sync-site-content'
@@ -50,63 +50,16 @@ const create = async ({
   await determineBucketName({ apexDomain, bucketName, credentials, siteInfo })
   const stackCreated = await createSiteStack({ credentials, noDeleteOnFailure, siteInfo })
   if (stackCreated === true) {
-    await updateSiteInfo({ credentials, siteInfo }) // needed by createDNSRecords
+    await updateSiteInfo({ credentials, siteInfo }) // needed by createOrUpdateDNSRecords
     await Promise.all([
-      createDNSRecords({ credentials, siteInfo }),
-      syncSiteContent({ credentials, noBuild, siteInfo })
+      syncSiteContent({ credentials, noBuild, siteInfo }),
+      createOrUpdateDNSRecords({ credentials, siteInfo })
     ])
 
-    process.stdout.write('Done!\n')
+    process.stdout.write('Stack created.\n')
   } else {
-    process.stdout.write('Stack creation error.\n')
+    errorOut('Stack creation error.\n')
   }
-}
-
-const createDNSRecords = async ({ credentials, siteInfo }) => {
-  const { apexDomain, cloudFrontDistributionID, region } = siteInfo
-
-  const cloudFrontClient = new CloudFrontClient({ credentials, region })
-  const getDistributionCommand = new GetDistributionCommand({ Id : cloudFrontDistributionID })
-  const distributionResponse = await cloudFrontClient.send(getDistributionCommand)
-  const distributionDomainName = distributionResponse.Distribution.DomainName
-
-  const route53Client = new Route53Client({ credentials, region })
-  const hostedZoneID = await getHostedZoneID({ credentials, route53Client, siteInfo })
-
-  const changeResourceRecordSetCommand = new ChangeResourceRecordSetsCommand({
-    HostedZoneId : hostedZoneID,
-    ChangeBatch  : {
-      Comment : `Point '${apexDomain}' and 'www.${apexDomain}' to CloudFront distribution.`,
-      Changes : [
-        {
-          Action            : 'CREATE',
-          ResourceRecordSet : {
-            Name        : apexDomain,
-            AliasTarget : {
-              DNSName              : distributionDomainName,
-              EvaluateTargetHealth : false,
-              HostedZoneId         : 'Z2FDTNDATAQYW2' // Static value specified by API for use with CloudFront aliases
-            },
-            Type : 'A'
-          }
-        },
-        {
-          Action            : 'CREATE',
-          ResourceRecordSet : {
-            Name        : 'www.' + apexDomain,
-            AliasTarget : {
-              DNSName              : distributionDomainName,
-              EvaluateTargetHealth : false,
-              HostedZoneId         : 'Z2FDTNDATAQYW2' // Static value specified by API for use with CloudFront aliases
-            },
-            Type : 'A'
-          }
-        }
-      ]
-    }
-  })
-  process.stdout.write('Creating Route 53 resource record sets/DNS entries...\n')
-  await route53Client.send(changeResourceRecordSetCommand)
 }
 
 const findCertificate = async ({ apexDomain, acmClient, nextToken }) => {
@@ -225,21 +178,6 @@ const createSiteStack = async ({ credentials, noDeleteOnFailure, siteInfo }) => 
 
   const stackCreated = await trackStackCreationStatus({ cloudFormationClient, noDeleteOnFailure, stackName })
   return stackCreated
-}
-
-const getHostedZoneID = async ({ markerToken, route53Client, siteInfo }) => {
-  const listHostedZonesCommand = new ListHostedZonesCommand({ marker : markerToken })
-  const listHostedZonesResponse = await route53Client.send(listHostedZonesCommand)
-
-  for (const { Id, Name } of listHostedZonesResponse.HostedZones) {
-    if (Name === siteInfo.apexDomain + '.') {
-      return Id.replace(/\/[^/]+\/(.+)/, '$1') // /hostedzone/XXX -> XXX
-    }
-  }
-
-  if (listHostedZonesResponse.IsTruncated === true) {
-    return await getHostedZoneID({ markerToken : listHostedZonesResponse.NewMarker, route53Client, siteInfo })
-  }
 }
 
 const trackStackCreationStatus = async ({ cloudFormationClient, noDeleteOnFailure, stackName }) => {
