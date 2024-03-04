@@ -196,7 +196,7 @@ const determineBucketName = async ({ apexDomain, bucketName, credentials, siteIn
 }
 
 const createSiteStack = async ({ credentials, noDeleteOnFailure, siteInfo }) => {
-  const { accountID, apexDomain, bucketName, certificateArn, region, sourceType } = siteInfo
+  const { accountID, apexDomain, bucketName, certificateArn, region } = siteInfo
 
   const cloudFormationTemplate = `AWSTemplateFormatVersion: 2010-09-09
 Description: Static hosting using an S3 bucket and CloudFront.

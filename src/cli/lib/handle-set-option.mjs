@@ -6,7 +6,7 @@ import { getValueContainerAndKey } from './get-value-container-and-key'
 import * as optionHandlers from '../../lib/options'
 import { smartConvert } from './smart-convert'
 
-const handleSetOption = async ({ argv, globalOptions, sitesInfo }) => {
+const handleSetOption = async ({ argv, sitesInfo }) => {
   const setOptionOptionsSpec = cliSpec.commands.find(({ name }) => name === 'set-option').arguments
   const setOptionOptions = commandLineArgs(setOptionOptionsSpec, { argv })
   const apexDomain = setOptionOptions['apex-domain']
@@ -58,7 +58,7 @@ const handleSetOption = async ({ argv, globalOptions, sitesInfo }) => {
     }
   } else {
     for (const { name, value } of options) {
-      const [ option ] = name.split('.')
+      const [option] = name.split('.')
 
       if (!(option in optionHandlers)) {
         errorOut(`No such option '${option}'; use one of: ${Object.keys(optionHandlers).join(', ')}.\n`)
@@ -66,10 +66,10 @@ const handleSetOption = async ({ argv, globalOptions, sitesInfo }) => {
 
       const optionsSpec = optionHandlers[option].config?.options
 
-      const wrappedSpec = { [option]: optionsSpec } // so our option spec matches our path
+      const wrappedSpec = { [option] : optionsSpec } // so our option spec matches our path
       const smartValue = smartConvert(value)
       const { valueContainer, valueKey } =
-        getValueContainerAndKey({ path : name, rootContainer : siteOptions, spec : wrappedSpec, value: smartValue })
+        getValueContainerAndKey({ path : name, rootContainer : siteOptions, spec : wrappedSpec, value : smartValue })
       valueContainer[valueKey] = smartValue
     }
   }

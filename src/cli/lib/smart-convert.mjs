@@ -1,8 +1,7 @@
 const smartConvert = (value) => {
   if (value === undefined) {
     return ''
-  }
-  else if (value === 'true' || value === 'TRUE') {
+  } else if (value === 'true' || value === 'TRUE') {
     return true
   } else if (value === 'false' || value === 'FALSE') {
     return false
