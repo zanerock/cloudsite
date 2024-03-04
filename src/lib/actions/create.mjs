@@ -222,7 +222,7 @@ const updateSiteInfo = async ({ credentials, siteInfo }) => {
   const describeCommand = new DescribeStacksCommand({ StackName : stackName })
   const describeResponse = await cloudFormationClient.send(describeCommand)
   const cloudFrontDistributionID = describeResponse
-    .Stacks[0].Outputs.find(({ OutputKey }) => OutputKey === 'CloudFrontDist').OutputValue
+    .Stacks[0].Outputs.find(({ OutputKey }) => OutputKey === 'SiteCloudFrontDistribution').OutputValue
 
   siteInfo.cloudFrontDistributionID = cloudFrontDistributionID
 }

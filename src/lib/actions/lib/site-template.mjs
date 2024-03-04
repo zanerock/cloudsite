@@ -8,10 +8,16 @@ const SiteTemplate = class {
     this.certificateArn = certificateArn
     this.region = region
     this.sourceType = sourceType
+
+    this.resourceTypes = ['CloudFormation', 'S3']
   }
 
   get baseTemplate () {
+    this.resourceTypes.sort()
+
     return {
+      AWSTemplateFormatVersion: '2010-09-09',
+      Description: `${this.apexDomain} site build with ${this.resourceTypes.slice(0, -1).join(', ')} and ${this.resourceTypes[this.resourceTypes.length - 1]}.`,
       Resources : {
         SiteS3Bucket : {
           Type       : 'AWS::S3::Bucket',
@@ -44,7 +50,7 @@ const SiteTemplate = class {
                   S3OriginConfig : {
                     OriginAccessIdentity : ''
                   },
-                  OriginAccessControlId : '!GetAtt SiteCloudFrontOriginAccessControl.Id'
+                  OriginAccessControlId : { 'Fn::GetAtt' : [ 'SiteCloudFrontOriginAccessControl', 'Id' ] }
                 }
               ],
               Enabled              : true,
@@ -87,7 +93,9 @@ const SiteTemplate = class {
                   Resource  : `arn:aws:s3:::${this.bucketName}/*`,
                   Condition : {
                     StringEquals : {
-                      'AWS:SourceArn' : `!Join ['', [ 'arn:aws:cloudfront::${this.accountID}:distribution/', !GetAtt SiteCloudFrontDistribution.Id ]]`
+                      'AWS:SourceArn' : {
+                        "Fn::Join": [ '', [ 'arn:aws:cloudfront::${this.accountID}:distribution/', { 'Fn::GetAtt': ['SiteCloudFrontDistribution', 'Id'] }]]
+                      }
                     }
                   }
                 }
@@ -111,14 +119,11 @@ const SiteTemplate = class {
   }
 
   render () {
-    let output = `AWSTemplateFormatVersion: 2010-09-09
-Description: Static ${this.apexDomain} site using an S3 bucket and CloudFront.
-
-`
-    output += yaml.dump(this.baseTemplate, { lineWidth : -1 })
+    const output = JSON.stringify(this.baseTemplate, null, '  ')
+    /*const output = yaml.dump(this.baseTemplate, { lineWidth : -1 })
       // yaml wants to quote the template functions like '!Get', but that breaks our template
       .replaceAll(/: '(!.+)'\s*$/gm, ': $1')
-      .replaceAll(/(?<!: )''/gm, "'") // When quoting the above, yaml generates escaped 's
+      .replaceAll(/(?<!: )''/gm, "'") // When quoting the above, yaml generates escaped 's*/
 
     return output
   }
