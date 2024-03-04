@@ -11,6 +11,7 @@ import { S3Client, HeadBucketCommand } from '@aws-sdk/client-s3'
 import { STSClient, GetCallerIdentityCommand } from '@aws-sdk/client-sts'
 
 import { getCredentials } from './lib/get-credentials'
+import { SiteTemplate } from './lib/site-template'
 import { syncSiteContent } from './lib/sync-site-content'
 
 const RECHECK_WAIT_TIME = 2000 // ms
@@ -196,99 +197,14 @@ const determineBucketName = async ({ apexDomain, bucketName, credentials, siteIn
 }
 
 const createSiteStack = async ({ credentials, noDeleteOnFailure, siteInfo }) => {
-  const { accountID, apexDomain, bucketName, certificateArn, region } = siteInfo
+  const { apexDomain, region } = siteInfo
 
-  const cloudFormationTemplate = `AWSTemplateFormatVersion: 2010-09-09
-Description: Static hosting using an S3 bucket and CloudFront.
+  const siteTemplate = new SiteTemplate(siteInfo)
 
-Outputs:
-  S3BucketName:
-    Value:
-      Ref: S3Bucket
+  // console.log(siteTemplate.render()) // DEBUG
+  // process.exit(0) // DEBUG
 
-  OriginAccessControl:
-    Value:
-      Ref: CloudFrontOriginAccessControl
-
-  CloudFrontDist:
-    Value:
-      Ref: CloudFrontDistribution
-
-Resources:
-  S3Bucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      AccessControl: Private
-      BucketName: "${bucketName}"
-
-  CloudFrontOriginAccessControl:
-    Type: AWS::CloudFront::OriginAccessControl
-    Properties:
-      OriginAccessControlConfig:
-        Description: "origin access control(OAC) for allowing cloudfront to access S3 bucket"
-        Name: ${bucketName}-OAC
-        OriginAccessControlOriginType: s3
-        SigningBehavior: always
-        SigningProtocol: sigv4
-
-  CloudFrontDistribution:
-    Type: AWS::CloudFront::Distribution
-    DependsOn:
-      - S3Bucket
-    Properties:
-      DistributionConfig:
-        Origins:
-          - DomainName: "${bucketName}.s3.${region}.amazonaws.com"
-            Id: static-hosting
-            S3OriginConfig:
-              OriginAccessIdentity: ""
-            OriginAccessControlId: !GetAtt CloudFrontOriginAccessControl.Id
-        Enabled: "true"
-        DefaultRootObject: index.html
-        CustomErrorResponses:
-          - ErrorCode: 404
-            ResponseCode: 200
-            ResponsePagePath: /index.html
-          - ErrorCode: 403
-            ResponseCode: 200
-            ResponsePagePath: /index.html
-        HttpVersion: http2
-        Aliases:
-          - ${apexDomain}
-          - www.${apexDomain}
-        ViewerCertificate:
-          AcmCertificateArn: "${certificateArn}"
-          MinimumProtocolVersion: TLSv1.2_2021
-          SslSupportMethod: sni-only
-        DefaultCacheBehavior:
-          AllowedMethods:
-            - GET
-            - HEAD
-            - OPTIONS
-          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 # CachingOptimized cache policy ID
-          Compress: true
-          TargetOriginId: static-hosting
-          ViewerProtocolPolicy: redirect-to-https
-
-  BucketPolicy:
-    Type: AWS::S3::BucketPolicy
-    DependsOn:
-      - S3Bucket
-      - CloudFrontDistribution
-    Properties:
-      Bucket: '${bucketName}'
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: 'cloudfront.amazonaws.com'
-            Action: 's3:GetObject'
-            Resource: 'arn:aws:s3:::${bucketName}/*'
-            Condition:
-              StringEquals:
-                AWS:SourceArn: !Join ['', [ 'arn:aws:cloudfront::${accountID}:distribution/', !GetAtt CloudFrontDistribution.Id ]]
-`
+  const cloudFormationTemplate = siteTemplate.render()
 
   const cloudFormationClient = new CloudFormationClient({ credentials, region })
   const stackName = convertDomainToBucketName(apexDomain) + '-stack'
