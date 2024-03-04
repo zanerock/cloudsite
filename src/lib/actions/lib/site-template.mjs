@@ -13,14 +13,14 @@ const SiteTemplate = class {
   get baseTemplate () {
     return {
       Resources : {
-        S3Bucket : {
+        SiteS3Bucket : {
           Type       : 'AWS::S3::Bucket',
           Properties : {
             AccessControl : 'Private',
             BucketName    : this.bucketName
           }
         },
-        CloudFrontOriginAccessControl : {
+        SiteCloudFrontOriginAccessControl : {
           Type       : 'AWS::CloudFront::OriginAccessControl',
           Properties : {
             OriginAccessControlConfig : {
@@ -32,9 +32,9 @@ const SiteTemplate = class {
             }
           }
         },
-        CloudFrontDistribution : {
+        SiteCloudFrontDistribution : {
           Type       : 'AWS::CloudFront::Distribution',
-          DependsOn  : ['S3Bucket'],
+          DependsOn  : ['SiteS3Bucket'],
           Properties : {
             DistributionConfig : {
               Origins : [
@@ -44,7 +44,7 @@ const SiteTemplate = class {
                   S3OriginConfig : {
                     OriginAccessIdentity : ''
                   },
-                  OriginAccessControlId : '!GetAtt CloudFrontOriginAccessControl.Id'
+                  OriginAccessControlId : '!GetAtt SiteCloudFrontOriginAccessControl.Id'
                 }
               ],
               Enabled              : true,
@@ -69,10 +69,10 @@ const SiteTemplate = class {
               }
             }
           }
-        }, // CloudFrontDistribution
+        }, // SiteCloudFrontDistribution
         BucketPolicy : {
           Type       : 'AWS::S3::BucketPolicy',
-          DependsOn  : ['S3Bucket', 'CloudFrontDistribution'],
+          DependsOn  : ['SiteS3Bucket', 'SiteCloudFrontDistribution'],
           Properties : {
             Bucket         : this.bucketName,
             PolicyDocument : {
@@ -87,7 +87,7 @@ const SiteTemplate = class {
                   Resource  : `arn:aws:s3:::${this.bucketName}/*`,
                   Condition : {
                     StringEquals : {
-                      'AWS:SourceArn' : `!Join ['', [ 'arn:aws:cloudfront::${this.accountID}:distribution/', !GetAtt CloudFrontDistribution.Id ]]`
+                      'AWS:SourceArn' : `!Join ['', [ 'arn:aws:cloudfront::${this.accountID}:distribution/', !GetAtt SiteCloudFrontDistribution.Id ]]`
                     }
                   }
                 }
@@ -97,14 +97,14 @@ const SiteTemplate = class {
         }
       }, // Resources
       Outputs : {
-        S3BucketName : {
-          Value : { Ref : 'S3Bucket' }
+        SiteS3Bucket : {
+          Value : { Ref : 'SiteS3Bucket' }
         },
-        OriginAccessControl : {
-          Value : { Ref : 'CloudFrontOriginAccessControl' }
+        SiteCloudFrontOriginAccessControl : {
+          Value : { Ref : 'SiteCloudFrontOriginAccessControl' }
         },
-        CloudFrontDist : {
-          Value : { Ref : 'CloudFrontDistribution' }
+        SiteCloudFrontDistribution : {
+          Value : { Ref : 'SiteCloudFrontDistribution' }
         }
       }
     }
