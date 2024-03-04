@@ -13,7 +13,7 @@ const createOrUpdateDNSRecords = async ({ credentials, siteInfo }) => {
 
   const hostedZoneID = await getHostedZoneID({ route53Client, siteInfo })
 
-  const domains = [ apexDomain, 'www.' + apexDomain ]
+  const domains = [apexDomain, 'www.' + apexDomain]
 
   const changeResourceRecordSetCommand = new ChangeResourceRecordSetsCommand({
     HostedZoneId : hostedZoneID,
@@ -21,15 +21,15 @@ const createOrUpdateDNSRecords = async ({ credentials, siteInfo }) => {
       Comment : `Point '${apexDomain}' and 'www.${apexDomain}' to CloudFront distribution.`,
       Changes : domains.map((name) => ({
         Action            : 'UPSERT',
-          ResourceRecordSet : {
-            Name        : name,
-            AliasTarget : {
-              DNSName              : distributionDomainName,
-              EvaluateTargetHealth : false,
-              HostedZoneId         : 'Z2FDTNDATAQYW2' // Static value specified by API for use with CloudFront aliases
-            },
-            Type : 'A'
-          }
+        ResourceRecordSet : {
+          Name        : name,
+          AliasTarget : {
+            DNSName              : distributionDomainName,
+            EvaluateTargetHealth : false,
+            HostedZoneId         : 'Z2FDTNDATAQYW2' // Static value specified by API for use with CloudFront aliases
+          },
+          Type : 'A'
+        }
       }))
     }
   })

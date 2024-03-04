@@ -143,9 +143,9 @@ const cliSpec = {
           type        : Boolean
         },
         {
-          name: 'do-dns',
-          description: 'Limits update to DNS entries and any other specified updates.',
-          type: Boolean
+          name        : 'do-dns',
+          description : 'Limits update to DNS entries and any other specified updates.',
+          type        : Boolean
         },
         {
           name        : 'no-build',

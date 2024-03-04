@@ -9,8 +9,10 @@ import { S3Client, HeadBucketCommand } from '@aws-sdk/client-s3'
 import { STSClient, GetCallerIdentityCommand } from '@aws-sdk/client-sts'
 
 import { createOrUpdateDNSRecords } from './lib/create-or-update-dns-records'
+import { errorOut } from '../../cli/lib/error-out'
 import { getCredentials } from './lib/get-credentials'
 import { SiteTemplate } from './lib/site-template'
+import { syncSiteContent } from './lib/sync-site-content'
 
 const RECHECK_WAIT_TIME = 2000 // ms
 const STACK_CREATE_TIMEOUT = 15 // min; in recent testing, it takes about 7-8 min for stack creation to complete
@@ -50,13 +52,13 @@ const create = async ({
   if (stackCreated === true) {
     await updateSiteInfo({ credentials, siteInfo }) // needed by createOrUpdateDNSRecords
     await Promise.all([
-      syncDNSRecords({ credentials, siteInfo }),
+      syncSiteContent({ credentials, noBuild, siteInfo }),
       createOrUpdateDNSRecords({ credentials, siteInfo })
     ])
 
-    process.stdout.write('Done!\n')
+    process.stdout.write('Stack created.\n')
   } else {
-    process.stdout.write('Stack creation error.\n')
+    errorOut('Stack creation error.\n')
   }
 }
 

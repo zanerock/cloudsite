@@ -2,6 +2,7 @@ import commandLineArgs from 'command-line-args'
 
 import { cliSpec } from '../constants'
 import { destroy } from '../../lib/actions/destroy'
+import { getSiteInfo } from './get-site-info'
 
 const handleDestroy = async ({ argv, globalOptions, sitesInfo }) => {
   const destroyOptionsSpec = cliSpec.commands.find(({ name }) => name === 'destroy').arguments
