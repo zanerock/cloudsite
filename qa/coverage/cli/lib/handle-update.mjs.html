@@ -25,14 +25,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/17</span>
+                <span class='fraction'>0/16</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/1</span>
+                <span class='fraction'>0/0</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/16</span>
+                <span class='fraction'>0/15</span>
             </div>
         
             
@@ -84,17 +84,8 @@
 <a name='L19'></a><a href='#L19'>19</a>
 <a name='L20'></a><a href='#L20'>20</a>
 <a name='L21'></a><a href='#L21'>21</a>
-<a name='L22'></a><a href='#L22'>22</a>
-<a name='L23'></a><a href='#L23'>23</a>
-<a name='L24'></a><a href='#L24'>24</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L22'></a><a href='#L22'>22</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -103,7 +94,12 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -112,23 +108,21 @@
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >import commandLineArgs from 'command-line-args'</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >import { cliSpec } from '../constants'</span>
+<span class="cstat-no" title="statement not covered" >import { getSiteInfo } from './get-site-info'</span>
 <span class="cstat-no" title="statement not covered" >import { update } from '../../lib/actions/update'</span>
 &nbsp;
 const handleUpdate = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >async ({</span> argv, globalOptions, sitesInfo }) =&gt; {</span>
   const updateOptionsSpec = <span class="cstat-no" title="statement not covered" >cliSpec.commands.find(<span class="fstat-no" title="function not covered" >({</span> name }) =&gt; <span class="cstat-no" title="statement not covered" >name === 'update')</span>.arguments</span>
   const updateOptions = <span class="cstat-no" title="statement not covered" >commandLineArgs(updateOptionsSpec, { argv })</span>
   const apexDomain = <span class="cstat-no" title="statement not covered" >updateOptions['apex-domain']</span>
+  const doContent = <span class="cstat-no" title="statement not covered" >updateOptions['do-content']</span>
+  const doDNS = <span class="cstat-no" title="statement not covered" >updateOptions['do-dns']</span>
   const noBuild = <span class="cstat-no" title="statement not covered" >updateOptions['no-build']</span>
   const noCacheInvalidation = <span class="cstat-no" title="statement not covered" >updateOptions['no-cache-invalidation']</span>
-  const onlyContent = <span class="cstat-no" title="statement not covered" >updateOptions['only-content']</span>
 &nbsp;
-  const siteInfo = <span class="cstat-no" title="statement not covered" >sitesInfo[apexDomain]</span>
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (siteInfo === undefined) {</span>
-<span class="cstat-no" title="statement not covered" >    process.stderr.write(`No such site '${apexDomain}' found.\n`)</span>
-<span class="cstat-no" title="statement not covered" >    process.exit(1) /</span>/ eslint-disable-line no-process-exit
-  }
+  const siteInfo = <span class="cstat-no" title="statement not covered" >getSiteInfo({ apexDomain, sitesInfo })</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  await update({ noBuild, noCacheInvalidation, onlyContent, siteInfo, ...globalOptions })</span>
+<span class="cstat-no" title="statement not covered" >  await update({ doContent, doDNS, noBuild, noCacheInvalidation, siteInfo, ...globalOptions })</span>
 }<span class="cstat-no" title="statement not covered" ></span>
 &nbsp;
 export { handleUpdate }
@@ -139,7 +133,7 @@ export { handleUpdate }
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-03-04T17:50:39.777Z
+                at 2024-03-04T20:39:28.968Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

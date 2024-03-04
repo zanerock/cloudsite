@@ -1,4 +1,4 @@
-Test git rev: 06e57cc83eec95b1bb96c44fcc00bfa02d0db1de
+Test git rev: bf9034136ed61291a823893b2d9839464ac29a4c
 PASS cli/lib/configuration/test/handle-configuration-show.test.js
   handleConfigurationShow
     ✓ prints the file contents (1 ms)
@@ -6,27 +6,29 @@ PASS cli/lib/configuration/test/handle-configuration-show.test.js
 --------------------------------------|---------|----------|---------|---------|-------------------
 File                                  | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 --------------------------------------|---------|----------|---------|---------|-------------------
-All files                             |    2.86 |     6.21 |    5.88 |    2.57 |                   
+All files                             |    2.81 |     5.94 |    5.66 |    2.52 |                   
  cli                                  |    9.09 |    20.68 |      25 |    8.47 |                   
   cloudsite.mjs                       |       0 |        0 |       0 |       0 | 1-85              
   constants.mjs                       |     100 |      100 |     100 |     100 |                   
  cli/lib                              |       0 |        0 |       0 |       0 |                   
   error-out.mjs                       |       0 |      100 |       0 |       0 | 1-4               
+  get-site-info.mjs                   |       0 |        0 |       0 |       0 | 1-14              
   get-value-container-and-key.mjs     |       0 |        0 |       0 |       0 | 1-36              
   handle-configuration.mjs            |       0 |        0 |       0 |       0 | 1-21              
   handle-create.mjs                   |       0 |        0 |       0 |       0 | 1-51              
-  handle-destroy.mjs                  |       0 |        0 |       0 |       0 | 1-24              
-  handle-set-option.mjs               |       0 |        0 |       0 |       0 | 1-78              
-  handle-update.mjs                   |       0 |        0 |       0 |       0 | 1-21              
+  handle-destroy.mjs                  |       0 |        0 |       0 |       0 | 1-20              
+  handle-set-option.mjs               |       0 |        0 |       0 |       0 | 1-72              
+  handle-update.mjs                   |       0 |      100 |       0 |       0 | 1-19              
   smart-convert.mjs                   |       0 |        0 |       0 |       0 | 1-20              
  cli/lib/configuration                |      32 |       50 |      40 |   31.81 |                   
   handle-configuration-initialize.mjs |       0 |        0 |       0 |       0 | 1-30              
   handle-configuration-show.mjs       |     100 |      100 |     100 |     100 |                   
  lib/actions                          |       0 |        0 |       0 |       0 |                   
-  create.mjs                          |       0 |        0 |       0 |       0 | 1-289             
+  create.mjs                          |       0 |        0 |       0 |       0 | 1-225             
   destroy.mjs                         |       0 |      100 |       0 |       0 | 1-22              
-  update.mjs                          |       0 |        0 |       0 |       0 | 1-33              
+  update.mjs                          |       0 |        0 |       0 |       0 | 1-42              
  lib/actions/lib                      |       0 |        0 |       0 |       0 |                   
+  create-or-update-dns-records.mjs    |       0 |        0 |       0 |       0 | 1-51              
   get-credentials.mjs                 |       0 |        0 |       0 |       0 | 1-26              
   site-template.mjs                   |       0 |      100 |       0 |       0 | 1-125             
   sync-site-content.mjs               |       0 |        0 |       0 |       0 | 1-32              
@@ -37,5 +39,5 @@ All files                             |    2.86 |     6.21 |    5.88 |    2.57 |
 Test Suites: 1 passed, 1 total
 Tests:       1 passed, 1 total
 Snapshots:   0 total
-Time:        0.774 s, estimated 1 s
+Time:        0.744 s, estimated 1 s
 Ran all test suites.

@@ -25,14 +25,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/52</span>
+                <span class='fraction'>0/49</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/47</span>
+                <span class='fraction'>0/45</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/50</span>
+                <span class='fraction'>0/47</span>
             </div>
         
             
@@ -137,14 +137,9 @@
 <a name='L72'></a><a href='#L72'>72</a>
 <a name='L73'></a><a href='#L73'>73</a>
 <a name='L74'></a><a href='#L74'>74</a>
-<a name='L75'></a><a href='#L75'>75</a>
-<a name='L76'></a><a href='#L76'>76</a>
-<a name='L77'></a><a href='#L77'>77</a>
-<a name='L78'></a><a href='#L78'>78</a>
-<a name='L79'></a><a href='#L79'>79</a>
-<a name='L80'></a><a href='#L80'>80</a>
-<a name='L81'></a><a href='#L81'>81</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L75'></a><a href='#L75'>75</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -165,8 +160,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -182,11 +175,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -227,6 +215,7 @@
 &nbsp;
 <span class="cstat-no" title="statement not covered" >import { cliSpec } from '../constants'</span>
 <span class="cstat-no" title="statement not covered" >import { errorOut } from './error-out'</span>
+<span class="cstat-no" title="statement not covered" >import { getSiteInfo } from './get-site-info'</span>
 <span class="cstat-no" title="statement not covered" >import { getValueContainerAndKey } from './get-value-container-and-key'</span>
 <span class="cstat-no" title="statement not covered" >import * as optionHandlers from '../../lib/options'</span>
 <span class="cstat-no" title="statement not covered" >import { smartConvert } from './smart-convert'<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="missing-if-branch" title="if path not taken" >I</span></span></span></span>
@@ -244,9 +233,7 @@ const handleSetOption = <span class="cstat-no" title="statement not covered" ><s
   const { delete: doDelete, name, value } = <span class="cstat-no" title="statement not covered" >setOptionOptions</span>
 &nbsp;
   // validate options
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (apexDomain === undefined) {</span>
-<span class="cstat-no" title="statement not covered" >    errorOut('Must specify site domain.\n')</span>
-  }
+  const siteInfo = <span class="cstat-no" title="statement not covered" >getSiteInfo({ apexDomain, sitesInfo })</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >  if (doDelete === true &amp;&amp; (value !== undefined || options.length &gt; 0)) {</span>
 <span class="cstat-no" title="statement not covered" >    errorOut("The '--delete' option is incompatible with the '--value' and --name-value options.\n")</span>
@@ -264,11 +251,6 @@ const handleSetOption = <span class="cstat-no" title="statement not covered" ><s
 &nbsp;
 <span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (doDelete !== true &amp;&amp; options.length === 0) {</span>
 <span class="cstat-no" title="statement not covered" >    errorOut("Invalid options; specify '--name'+'--value', '--delete'/'--name', or one or more '--option' options.\n")</span>
-  }
-&nbsp;
-  const siteInfo = <span class="cstat-no" title="statement not covered" >sitesInfo[apexDomain]</span>
-<span class="cstat-no" title="statement not covered" >  <span class="missing-if-branch" title="if path not taken" >I</span>if (siteInfo === undefined) {</span>
-<span class="cstat-no" title="statement not covered" >    errorOut(`No such site '${apexDomain}' found.\n`)</span>
   }
 &nbsp;
   // take actions and update the options
@@ -310,7 +292,7 @@ export { handleSetOption }
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-03-04T17:50:39.777Z
+                at 2024-03-04T20:39:28.968Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
