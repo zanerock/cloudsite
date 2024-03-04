@@ -5,7 +5,7 @@ import commandLineArgs from 'command-line-args'
 import { awsS3TABucketNameRE, awsS3TABucketNameREString } from 'regex-repo'
 
 import { cliSpec, SOURCE_TYPES } from '../constants'
-import { create } from '../../lib/create'
+import { create } from '../../lib/actions/create'
 
 const handleCreate = async ({ argv, globalOptions, sitesInfo }) => {
   const createOptionsSpec = cliSpec.commands.find(({ name }) => name === 'create').arguments
