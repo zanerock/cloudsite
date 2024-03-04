@@ -34,6 +34,11 @@
 - The '[destroy](./src/lib/destroy.mjs)' action is used to destroy (delete/remove) all site resources.
 - The '[import](./src/lib/import.mjs)' action examines existing AWS resources, identifies existing sites, and updates the local site database (in `~/.config/cloudsite/sites.json`).
 
+# TODOs
+
+- Make the custom error responses smarter; I think we want to retain the error code in the response (? need to verify our assumption how that works) and use 403.html and 404.html _if present_.
+- Create role and user with limited IAM permissions (see [Deploy a website with AWS S3 + CloudFront using CloudFormation](https://blog.canopas.com/deploy-a-website-with-aws-s3-cloudfront-using-cloudformation-c2199dc6c435))
+
 # Limitations and future goals
 
 - The current implementation deals exclusively with apex domains. It would make a lot of sense to support sub-domains as well.
