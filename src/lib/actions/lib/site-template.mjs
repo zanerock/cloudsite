@@ -70,7 +70,7 @@ const SiteTemplate = class {
             }
           }
         }, // SiteCloudFrontDistribution
-        BucketPolicy : {
+        SiteBucketPolicy : {
           Type       : 'AWS::S3::BucketPolicy',
           DependsOn  : ['SiteS3Bucket', 'SiteCloudFrontDistribution'],
           Properties : {
