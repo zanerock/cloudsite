@@ -47,7 +47,8 @@ const cliSpec = {
         {
           name          : 'apex-domain',
           description   : 'The site apex domain.',
-          defaultOption : true
+          defaultOption : true,
+          required      : true
         },
         {
           name        : 'bucket-name',
@@ -86,12 +87,43 @@ const cliSpec = {
         {
           name          : 'apex-domain',
           description   : 'The domain of the site to delete.',
-          defaultOption : true
+          defaultOption : true,
+          required      : true
         },
         {
           name        : 'confirmed',
           description : 'Skips the interactive confirmation and destroys the resources without further confirmation.',
           type        : Boolean
+        }
+      ]
+    },
+    {
+      name      : 'set-option',
+      summary   : 'Sets (or deletes) a site option.',
+      arguments : [
+        {
+          name          : 'apex-domain',
+          description   : 'The apex domain identifying the site.',
+          defaultOption : true,
+          required      : true
+        },
+        {
+          name        : 'delete',
+          description : "When set, then deletes the option. Incompatible with the '--value' option.",
+          type        : Boolean
+        },
+        {
+          name        : 'name',
+          description : 'The option name.'
+        },
+        {
+          name        : 'option',
+          description : "A combined name-value paid, separated by ':'. Used to set multiple option values at one time.",
+          multiple    : true
+        },
+        {
+          name        : 'value',
+          description : "The option value. Incompatible with the '--delete' option."
         }
       ]
     },
@@ -102,7 +134,8 @@ const cliSpec = {
         {
           name          : 'apex-domain',
           description   : 'The apex domain identifying the site.',
-          defaultOption : true
+          defaultOption : true,
+          required      : true
         },
         {
           name        : 'no-build',

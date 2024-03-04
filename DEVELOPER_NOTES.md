@@ -40,3 +40,8 @@
 - Reporting progress through `process.stdout` isn't ideal, especial for the _lib_ components. We think using something like the Winston logger might be useful.[^1]
 
 [^1: We did a survey of "top javascript log libraries" and determined that Winston seemed to fit best. It had all the feataures we needed and is very well supported.]
+
+# Credits
+
+- [Deploy a website with AWS S3 + CloudFront using CloudFormation](https://blog.canopas.com/deploy-a-website-with-aws-s3-cloudfront-using-cloudformation-c2199dc6c435): Described basic setup.
+- [How to deploy Docusaurus page using AWS S3 and CloudFront](https://juffalow.com/blog/other/how-to-deploy-docusaurus-page-using-aws-s3-and-cloudfront#cloudfront-functions): Describes (now unnecessary?) changes to handle Docusaurus site

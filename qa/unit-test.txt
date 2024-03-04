@@ -1,0 +1,40 @@
+Test git rev: 7f8f1c1cb35994327c6d8b0385185b651da944cd
+PASS cli/lib/configuration/test/handle-configuration-show.test.js
+  handleConfigurationShow
+    ✓ prints the file contents (1 ms)
+
+--------------------------------------|---------|----------|---------|---------|-------------------
+File                                  | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+--------------------------------------|---------|----------|---------|---------|-------------------
+All files                             |    2.95 |     6.21 |    6.25 |    2.66 |                   
+ cli                                  |    9.09 |    20.68 |      25 |    8.47 |                   
+  cloudsite.mjs                       |       0 |        0 |       0 |       0 | 1-85              
+  constants.mjs                       |     100 |      100 |     100 |     100 |                   
+ cli/lib                              |       0 |        0 |       0 |       0 |                   
+  error-out.mjs                       |       0 |      100 |       0 |       0 | 1-4               
+  get-value-container-and-key.mjs     |       0 |        0 |       0 |       0 | 1-36              
+  handle-configuration.mjs            |       0 |        0 |       0 |       0 | 1-21              
+  handle-create.mjs                   |       0 |        0 |       0 |       0 | 1-51              
+  handle-destroy.mjs                  |       0 |        0 |       0 |       0 | 1-24              
+  handle-set-option.mjs               |       0 |        0 |       0 |       0 | 1-78              
+  handle-update.mjs                   |       0 |        0 |       0 |       0 | 1-21              
+  smart-convert.mjs                   |       0 |        0 |       0 |       0 | 1-21              
+ cli/lib/configuration                |      32 |       50 |      40 |   31.81 |                   
+  handle-configuration-initialize.mjs |       0 |        0 |       0 |       0 | 1-30              
+  handle-configuration-show.mjs       |     100 |      100 |     100 |     100 |                   
+ lib/actions                          |       0 |        0 |       0 |       0 |                   
+  create.mjs                          |       0 |        0 |       0 |       0 | 1-373             
+  destroy.mjs                         |       0 |      100 |       0 |       0 | 1-22              
+  update.mjs                          |       0 |        0 |       0 |       0 | 1-33              
+ lib/actions/lib                      |       0 |        0 |       0 |       0 |                   
+  get-credentials.mjs                 |       0 |        0 |       0 |       0 | 1-26              
+  sync-site-content.mjs               |       0 |        0 |       0 |       0 | 1-32              
+ lib/options                          |       0 |      100 |       0 |       0 |                   
+  access-logs.mjs                     |       0 |      100 |       0 |       0 | 1-9               
+  contact-handler.mjs                 |       0 |      100 |       0 |       0 | 1-14              
+--------------------------------------|---------|----------|---------|---------|-------------------
+Test Suites: 1 passed, 1 total
+Tests:       1 passed, 1 total
+Snapshots:   0 total
+Time:        0.793 s, estimated 1 s
+Ran all test suites.

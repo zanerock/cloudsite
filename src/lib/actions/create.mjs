@@ -196,35 +196,7 @@ const determineBucketName = async ({ apexDomain, bucketName, credentials, siteIn
 }
 
 const createSiteStack = async ({ credentials, noDeleteOnFailure, siteInfo }) => {
-  const { accountID, apexDomain, bucketName, certificateArn, region, sourceType } = siteInfo
-
-  let cloudFunction = ''
-  let cloudFrontDeps = ''
-
-  if (sourceType === 'docusaurus') {
-    cloudFunction = `  CloundFrontFunction:
-    Type: AWS::CloudFront::Function
-    Properties:
-      AutoPublish: true
-      FunctionCode: |
-        function handler(event) {
-          var request = event.request;
-          var uri = request.uri;
-          
-          if (uri.endsWith('/')) {
-              request.uri += 'index.html';
-          } else if (!uri.includes('.')) {
-              request.uri += '/index.html';
-          }
-
-          return request;
-        }
-      FunctionConfig:
-        Comment: Docusaurus URL handler.
-        Runtime: cloudfront-js-1.0
-      Name: ${bucketName}-docusaurus-url-handler`
-    cloudFrontDeps = '- CloundFrontFunction'
-  }
+  const { accountID, apexDomain, bucketName, certificateArn, region } = siteInfo
 
   const cloudFormationTemplate = `AWSTemplateFormatVersion: 2010-09-09
 Description: Static hosting using an S3 bucket and CloudFront.
@@ -259,13 +231,10 @@ Resources:
         SigningBehavior: always
         SigningProtocol: sigv4
 
-${cloudFunction}
-
   CloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
     DependsOn:
       - S3Bucket
-      ${cloudFrontDeps}
     Properties:
       DistributionConfig:
         Origins:

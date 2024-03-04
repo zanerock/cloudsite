@@ -1,0 +1,45 @@
+Test git rev: 7f8f1c1cb35994327c6d8b0385185b651da944cd
+
+/Users/zane/playground/cloudsite/src/cli/lib/error-out.mjs
+  6:20  error  Newline required at end of file but not found  eol-last
+
+/Users/zane/playground/cloudsite/src/cli/lib/get-value-container-and-key.mjs
+  17:1   error  Trailing spaces not allowed                    no-trailing-spaces
+  38:35  error  Newline required at end of file but not found  eol-last
+
+/Users/zane/playground/cloudsite/src/cli/lib/handle-set-option.mjs
+   9:40  error  'globalOptions' is defined but never used  no-unused-vars
+  61:14  error  There should be no space after '['         array-bracket-spacing
+  61:21  error  There should be no space before ']'        array-bracket-spacing
+  69:36  error  Missing space after computed key 'option'  key-spacing
+  72:97  error  Missing space after key 'value'            key-spacing
+
+/Users/zane/playground/cloudsite/src/cli/lib/smart-convert.mjs
+   4:3   error  Closing curly brace does not appear on the same line as the subsequent block  brace-style
+  23:24  error  Newline required at end of file but not found                                 eol-last
+
+/Users/zane/playground/cloudsite/src/lib/actions/create.mjs
+  199:70  error  'sourceType' is assigned a value but never used. Allowed unused vars must match /React/u  no-unused-vars
+
+/Users/zane/playground/cloudsite/src/lib/actions/index.mjs
+  3:25  error  Newline required at end of file but not found  eol-last
+
+/Users/zane/playground/cloudsite/src/lib/index.mjs
+  2:26  error  Newline required at end of file but not found  eol-last
+
+/Users/zane/playground/cloudsite/src/lib/options/access-logs.mjs
+  2:31  error  Missing space after key 'validation'                key-spacing
+  2:50  error  Expected literal to be on the right side of ===     yoda
+  5:20  error  'cloudFormationTemplate' is defined but never used  no-unused-vars
+  5:44  error  'settings' is defined but never used                no-unused-vars
+
+/Users/zane/playground/cloudsite/src/lib/options/contact-handler.mjs
+   2:3   error  Missing space after key 'options'                   key-spacing
+   3:16  error  Trailing spaces not allowed                         no-trailing-spaces
+   5:7   error  Missing space after key 'matches'                   key-spacing
+  10:20  error  'cloudFormationTemplate' is defined but never used  no-unused-vars
+  10:44  error  'settings' is defined but never used                no-unused-vars
+
+✖ 22 problems (22 errors, 0 warnings)
+  16 errors and 0 warnings potentially fixable with the `--fix` option.
+
