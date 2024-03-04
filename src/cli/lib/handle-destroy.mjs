@@ -9,15 +9,11 @@ const handleDestroy = async ({ argv, globalOptions, sitesInfo }) => {
   const apexDomain = destroyOptions['apex-domain']
   const { confirmed } = destroyOptions
 
+  const siteInfo = getSiteInfo({ apexDomain, sitesInfo })
+
   if (confirmed !== true) {
     process.stderr.write("Interactive mode not yet implement. You must include the '--confirmed' option.\n")
     process.exit(3) // eslint-disable-line no-process-exit
-  }
-
-  const siteInfo = sitesInfo[apexDomain]
-  if (siteInfo === undefined) {
-    process.stderr.write(`No such site '${apexDomain}' found.\n`)
-    process.exit(1) // eslint-disable-line no-process-exit
   }
 
   await destroy({ siteInfo, ...globalOptions })

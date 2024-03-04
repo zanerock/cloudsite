@@ -138,6 +138,16 @@ const cliSpec = {
           required      : true
         },
         {
+          name        : 'do-content',
+          description : 'Limits update to site content and any other specified updates.',
+          type        : Boolean
+        },
+        {
+          name: 'do-dns',
+          description: 'Limits update to DNS entries and any other specified updates.',
+          type: Boolean
+        },
+        {
           name        : 'no-build',
           description : 'Supresses the default behavior of building before updating the site.',
           type        : Boolean
@@ -145,11 +155,6 @@ const cliSpec = {
         {
           name        : 'no-cache-invalidation',
           description : 'Suppresses the default behavior of invalidating the CloudFront cache after the files are updated. Note that invalidation events are chargeable thought at the time of this writing, each account gets 1,000 free requests per year.'
-        },
-        {
-          name        : 'only-content',
-          description : 'Limits the update to the site content (skipping any infrastructure updates).',
-          type        : Boolean
         }
       ]
     }
