@@ -115,7 +115,7 @@ const SiteTemplate = class {
 Description: Static ${this.apexDomain} site using an S3 bucket and CloudFront.
 
 `
-    output += yaml.dump(this.baseTemplate, { lineWidth: -1 })
+    output += yaml.dump(this.baseTemplate, { lineWidth : -1 })
       // yaml wants to quote the template functions like '!Get', but that breaks our template
       .replaceAll(/: '(!.+)'\s*$/gm, ': $1')
       .replaceAll(/(?<!: )''/gm, "'") // When quoting the above, yaml generates escaped 's
