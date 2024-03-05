@@ -7,8 +7,14 @@ const config = {
   }
 }
 
-const handler = ({ cloudFormationTemplate, settings }) => {
-  throw new Error('Not yet implemented')
+const handler = ({ cloudFormationTemplate, options, siteInfo }) => {
+  cloudFormationTemplate.Resources.LambdaS3Bucket = {
+    Type       : 'AWS::S3::Bucket',
+    Properties : {
+      AccessControl : 'Private',
+      BucketName    : this.bucketName
+    }
+  }
 }
 
 const contactHandler = { config, handler }
