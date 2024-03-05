@@ -7,8 +7,8 @@ import { getValueContainerAndKey } from './get-value-container-and-key'
 import * as plugins from '../../lib/plugins'
 import { smartConvert } from './smart-convert'
 
-const handleSetOption = async ({ argv, sitesInfo }) => {
-  const setOptionOptionsSpec = cliSpec.commands.find(({ name }) => name === 'set-option').arguments
+const handlePluginSettings = async ({ argv, sitesInfo }) => {
+  const setOptionOptionsSpec = cliSpec.commands.find(({ name }) => name === 'plugin-settings').arguments
   const setOptionOptions = commandLineArgs(setOptionOptionsSpec, { argv })
   const apexDomain = setOptionOptions['apex-domain']
   const options = (setOptionOptions.option || []).map((spec) => {
@@ -71,4 +71,4 @@ const handleSetOption = async ({ argv, sitesInfo }) => {
   siteInfo.pluginSettings = pluginSettings
 }
 
-export { handleSetOption }
+export { handlePluginSettings }
