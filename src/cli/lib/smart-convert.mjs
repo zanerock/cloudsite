@@ -11,7 +11,7 @@ const smartConvert = (value) => {
     return parseFloat(value)
   } else {
     value = value.trim()
-    if (value.startsWith('/')) {
+    if (value.startsWith('\\')) {
       return value.slice(1)
     } else {
       return value
