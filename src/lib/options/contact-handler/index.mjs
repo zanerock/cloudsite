@@ -1,13 +1,13 @@
 const config = {
   options : {
     urlPath : {
-      default : '/contact',
+      default : '/contact-handler',
       matches : /^\/(?:[a-z0-9_-]+\/?)+$/
     }
   }
 }
 
-const handler = (/* { cloudFormationTemplate, settings } */) => {
+const handler = ({ cloudFormationTemplate, settings }) => {
   throw new Error('Not yet implemented')
 }
 

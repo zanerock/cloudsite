@@ -153,10 +153,7 @@ const createSiteStack = async ({ credentials, noDeleteOnFailure, siteInfo }) => 
   const { apexDomain, region } = siteInfo
 
   const siteTemplate = new SiteTemplate(siteInfo)
-
-  // console.log(siteTemplate.render()) // DEBUG
-  // process.exit(0) // DEBUG
-
+  
   const cloudFormationTemplate = siteTemplate.render()
 
   const cloudFormationClient = new CloudFormationClient({ credentials, region })
