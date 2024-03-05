@@ -4,6 +4,7 @@
     "description": "Lambda function for handling the serverless contact form",
     "main": "index.js",
     "dependencies": {
-        "aws-sdk": "^2.1386.0"
+        "aws-sdk": "^2.1386.0",
+        "uuid": "^9.0.1"
     }
 }
