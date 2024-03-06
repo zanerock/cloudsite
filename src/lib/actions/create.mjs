@@ -62,8 +62,8 @@ const create = async ({
     await Promise.all([
       syncSiteContent({ credentials, noBuild, siteInfo }),
       createOrUpdateDNSRecords({ credentials, siteInfo }),
-      ...postUpdateHandlers.map(([pluginKey, handler]) =>
-        handler({ settings : siteInfo.pluginSettings[pluginKey], siteInfo }))
+      ...(postUpdateHandlers.map(([pluginKey, handler]) =>
+        handler({ settings : siteInfo.pluginSettings[pluginKey], siteInfo })))
     ])
 
     process.stdout.write('Stack created.\n')
