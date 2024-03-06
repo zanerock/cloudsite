@@ -6,6 +6,6 @@ $(CONTACT_LAMBDA_ZIP): $(CONTACT_LAMBDA_SRC)
 	cd $(CONTACT_LAMBDA_DIR) \
 		&& npm i \
 		&& npm prune
-	zip -r $(CONTACT_LAMBDA_ZIP) $(CONTACT_LAMBDA_DIR)
+	cd $(CONTACT_LAMBDA_DIR) && zip -r $(PWD)/$@ .
 
 BUILD_TARGETS+=$(CONTACT_LAMBDA_ZIP)
