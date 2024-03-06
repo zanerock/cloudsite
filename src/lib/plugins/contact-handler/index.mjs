@@ -82,6 +82,7 @@ const stackConfig = async ({ cloudFormationTemplate, credentials, resourceTypes,
       ]
     }
   }
+  cloudFormationTemplate.Outputs.ContactHandlerRole = { Value : { Ref : 'ContactHandlerRole' }}
   resourceTypes.IAMRole = true
 
   cloudFormationTemplate.Resources.ContactHandlerLambda = {
@@ -97,6 +98,7 @@ const stackConfig = async ({ cloudFormationTemplate, credentials, resourceTypes,
       Runtime : 'nodejs20.x'
     }
   }
+  cloudFormationTemplate.Outputs.ContactHandlerLambda = { Value : { Ref : 'ContactHandlerLambda' }}
   resourceTypes.LambdaFunction = true
 
   cloudFormationTemplate.Resources.ContactHandlerLambdaURL = {
@@ -108,6 +110,7 @@ const stackConfig = async ({ cloudFormationTemplate, credentials, resourceTypes,
       TargetFunctionArn : { 'Fn::GetAtt' : ['ContactHandlerLambda', 'Arn'] }
     }
   }
+  cloudFormationTemplate.Outputs.ContactHandlerLambdaURL = { Value : { Ref : 'ContactHandlerLambdaURL' }}
 
   cloudFormationTemplate.Resources.ContactHandlerDynamoDB = {
     Type       : 'AWS::DynamoDB::Table',
@@ -124,6 +127,7 @@ const stackConfig = async ({ cloudFormationTemplate, credentials, resourceTypes,
       BillingMode: 'PAY_PER_REQUEST'
     }
   }
+  cloudFormationTemplate.Outputs.ContactHandlerDynamoDB = { Value : { Ref : 'ContactHandlerDynamoDB' }}
   resourceTypes.DynamoDBTable = true
 
   // update the CloudFront Distribution configuration
