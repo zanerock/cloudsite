@@ -16,7 +16,7 @@ import { SiteTemplate } from './lib/site-template'
 import { syncSiteContent } from './lib/sync-site-content'
 
 const RECHECK_WAIT_TIME = 2000 // ms
-const STACK_CREATE_TIMEOUT = 15 // min; in recent testing, it takes about 7-8 min for stack creation to complete
+const STACK_CREATE_TIMEOUT = 30 // min
 
 const create = async ({
   noBuild,
@@ -24,7 +24,8 @@ const create = async ({
   siteInfo,
   ...downstreamOptions
 }) => {
-  const { apexDomain, bucketName } = siteInfo
+  const { apexDomain } = siteInfo
+  let { bucketName } = siteInfo
 
   const credentials = getCredentials(downstreamOptions)
 
@@ -48,7 +49,8 @@ const create = async ({
     throw new Error(`Wildcard certificate for '${apexDomain}' found, but requires validation. Please validate the certificate. To validate on S3 when using Route 53 for DNS service, try navigating to the folliwng URL and select 'Create records in Route 53'::\n\n${certificateConsoleURL}\n\nSubsequent validation may take up to 30 minutes. For further documentation:\n\nhttps://docs.aws.amazon.com/acm/latest/userguide/dns-validation.html`)
   }
 
-  await determineBucketName({ bucketName, credentials, siteInfo })
+  bucketName = await determineBucketName({ bucketName, credentials, siteInfo })
+  siteInfo.bucketName = bucketName
   const stackCreated = await createSiteStack({ credentials, noDeleteOnFailure, siteInfo })
 
   if (stackCreated === true) {
@@ -137,7 +139,7 @@ const createSiteStack = async ({ credentials, noDeleteOnFailure, siteInfo }) => 
   console.log('cloudFormationTemplate:', cloudFormationTemplate) // DEBUG
 
   const cloudFormationClient = new CloudFormationClient({ credentials, region })
-  const stackName = convertDomainToBucketName(apexDomain) + '-stack'
+  const stackName = siteInfo.stackName || convertDomainToBucketName(apexDomain) + '-stack'
   const createInput = {
     StackName        : stackName,
     TemplateBody     : cloudFormationTemplate,

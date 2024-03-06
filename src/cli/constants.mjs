@@ -77,6 +77,10 @@ const cliSpec = {
         {
           name    : 'source-type',
           summary : "May be either 'vanilla' or 'docusaurus', otherwise process will attempt to guess."
+        },
+        {
+          name : 'stack-name',
+          summary: 'Specify the name of the stack to be created and override the default name.'
         }
       ]
     },

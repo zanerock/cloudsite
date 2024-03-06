@@ -33,7 +33,6 @@ const determineBucketName = async (args) => {
     }
   } catch (e) {
     if (e.name === 'NotFound') {
-      siteInfo.bucketName = bucketName
       return bucketName
     } else if (findName === true) {
       nextName(args)

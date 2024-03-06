@@ -145,7 +145,7 @@ const SiteTemplate = class {
     },
     this.finalTemplate
     )
-    
+
     const output = yaml.dump(outputTemplate, { lineWidth : 0 })
     return output
   }
