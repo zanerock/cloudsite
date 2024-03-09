@@ -11,8 +11,27 @@ const SiteTemplate = class {
     this.finalTemplate = this.baseTemplate
   }
 
+  enableSharedLoggingBucket () {
+    const { bucketName } = this.siteInfo
+
+    const sharedLoggingBucketName = bucketName + '-common-logs'
+
+    this.finalTemplate.Resources.SharedLoggingBucket = {
+      Type       : 'AWS::S3::Bucket',
+      Properties : {
+        AccessControl : 'Private',
+        BucketName    : sharedLoggingBucketName,
+        OwnershipControls: { // this enables ACLs, as required by CloudFront standard logging
+          Rules: [{ ObjectOwnership: 'BucketOwnerPreferred' }]
+        }
+      }
+    }
+
+    return sharedLoggingBucketName
+  }
+
   async loadPlugins () {
-    const { credentials, resourceTypes, siteInfo } = this
+    const { siteInfo } = this
     const { apexDomain, pluginSettings } = siteInfo
 
     for (const [pluginKey, settings] of Object.entries(pluginSettings)) {
@@ -22,11 +41,8 @@ const SiteTemplate = class {
       }
 
       await plugin.stackConfig({
-        cloudFormationTemplate : this.finalTemplate,
-        credentials,
-        resourceTypes,
-        settings,
-        siteInfo
+        siteTemplate : this,
+        settings
       })
     }
   }

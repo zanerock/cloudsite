@@ -49,7 +49,7 @@ const create = async ({
     throw new Error(`Wildcard certificate for '${apexDomain}' found, but requires validation. Please validate the certificate. To validate on S3 when using Route 53 for DNS service, try navigating to the folliwng URL and select 'Create records in Route 53'::\n\n${certificateConsoleURL}\n\nSubsequent validation may take up to 30 minutes. For further documentation:\n\nhttps://docs.aws.amazon.com/acm/latest/userguide/dns-validation.html`)
   }
 
-  bucketName = await determineBucketName({ bucketName, credentials, siteInfo })
+  bucketName = await determineBucketName({ bucketName, credentials, findName : true, siteInfo })
   siteInfo.bucketName = bucketName
   const stackCreated = await createSiteStack({ credentials, noDeleteOnFailure, siteInfo })
 
@@ -57,6 +57,7 @@ const create = async ({
     const postUpdateHandlers = Object.keys(siteInfo.pluginSettings || {}).map((pluginKey) =>
       [pluginKey, plugins[pluginKey].postUpdateHandler]
     )
+      .filter(([, postUpdateHandler]) => postUpdateHandler !== undefined)
 
     await updateSiteInfo({ credentials, siteInfo }) // needed by createOrUpdateDNSRecords
     await Promise.all([

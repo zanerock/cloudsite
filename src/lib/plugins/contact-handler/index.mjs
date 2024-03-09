@@ -15,8 +15,10 @@ const config = {
   }
 }
 
-const stackConfig = async ({ cloudFormationTemplate, credentials, resourceTypes, settings, siteInfo }) => {
-  const { apexDomain, region } = siteInfo
+const stackConfig = async ({ siteTemplate, settings }) => {
+  const { credentials, finalTemplate, resourceTypes, siteInfo } = siteTemplate
+  const { accountID, apexDomain, region } = siteInfo
+  const contactHandlerPath = settings.path
 
   let bucketName = convertDomainToBucketName(apexDomain) + '-lambda-functions'
   bucketName = await determineBucketName({ bucketName, credentials, findName : true, siteInfo })
@@ -40,7 +42,7 @@ const stackConfig = async ({ cloudFormationTemplate, credentials, resourceTypes,
   })
   await s3Client.send(putObjectCommand)
 
-  /* cloudFormationTemplate.Resources.SharedLambdaFunctionsS3Bucket = {
+  /* finalTemplate.Resources.SharedLambdaFunctionsS3Bucket = {
     Type       : 'AWS::S3::Bucket',
     Properties : {
       AccessControl : 'Private',
@@ -49,7 +51,7 @@ const stackConfig = async ({ cloudFormationTemplate, credentials, resourceTypes,
   }
   resourceTypes.S3Bucket = true */
 
-  cloudFormationTemplate.Resources.ContactHandlerRole = {
+  finalTemplate.Resources.ContactHandlerRole = {
     Type       : 'AWS::IAM::Role',
     Properties : {
       AssumeRolePolicyDocument : {
@@ -82,58 +84,96 @@ const stackConfig = async ({ cloudFormationTemplate, credentials, resourceTypes,
       ]
     }
   }
-  cloudFormationTemplate.Outputs.ContactHandlerRole = { Value : { Ref : 'ContactHandlerRole' }}
+  finalTemplate.Outputs.ContactHandlerRole = { Value : { Ref : 'ContactHandlerRole' } }
   resourceTypes.IAMRole = true
 
-  cloudFormationTemplate.Resources.ContactHandlerLambda = {
-    Type       : 'AWS::Lambda::Function',
-    DependsOn  : ['ContactHandlerRole'],
+  const lambdaLogGroupName = bucketName + '-contact-handler-lambda-function'
+  finalTemplate.Resources.ContactHandlerLogGroup = {
+    Type       : 'AWS::Logs::LogGroup',
     Properties : {
-      Code : {
+      LogGroupClass   : 'STANDARD', // TODO: support option for INFREQUENT_ACCESS
+      LogGroupName    : lambdaLogGroupName,
+      RetentionInDays : 180 // TODO: support options
+    }
+  }
+
+  const lambdaFunctionName = bucketName + '-contact-handler'
+  finalTemplate.Resources.ContactHandlerLambdaFunction = {
+    Type       : 'AWS::Lambda::Function',
+    DependsOn  : ['ContactHandlerRole', 'ContactHandlerLogGroup'],
+    Properties : {
+      FunctionName : bucketName + '-contact-handler',
+      Description  : 'Handles contact form submissions; creates DynamoDB entry and sends email.',
+      Code         : {
         S3Bucket : bucketName,
         S3Key    : contactHandlerZipName
       },
-      Handler : 'index.handler',
-      Role    : { 'Fn::GetAtt' : ['ContactHandlerRole', 'Arn'] },
-      Runtime : 'nodejs20.x'
+      Handler       : 'index.handler',
+      Role          : { 'Fn::GetAtt' : ['ContactHandlerRole', 'Arn'] },
+      Runtime       : 'nodejs20.x',
+      LoggingConfig : {
+        ApplicationLogLevel : 'INFO', // support options
+        LogFormat           : 'JSON', // support options
+        LogGroup            : lambdaLogGroupName,
+        SystemLogLevel      : 'INFO' // support options
+      }
     }
   }
-  cloudFormationTemplate.Outputs.ContactHandlerLambda = { Value : { Ref : 'ContactHandlerLambda' }}
+  finalTemplate.Outputs.ContactHandlerLambdaFunction = { Value : { Ref : 'ContactHandlerLambdaFunction' } }
   resourceTypes.LambdaFunction = true
 
-  cloudFormationTemplate.Resources.ContactHandlerLambdaURL = {
-    Type       : 'AWS::Lambda::Url',
-    DependsOn  : ['ContactHandlerLambda'],
+  finalTemplate.Resources.ContactHandlerLambdaPermission = {
+    Type       : 'AWS::Lambda::Permission',
+    DependsOn  : ['SiteCloudFrontDistribution', 'ContactHandlerLambdaFunction'],
     Properties : {
-      AuthType          : 'NONE',
-      // Cors : Cors,
-      TargetFunctionArn : { 'Fn::GetAtt' : ['ContactHandlerLambda', 'Arn'] }
+      Action              : 'lambda:InvokeFunctionUrl',
+      Principal           : 'cloudfront.amazonaws.com',
+      FunctionName        : lambdaFunctionName,
+      FunctionUrlAuthType : 'AWS_IAM',
+      SourceArn           : {
+        'Fn::Join' : ['', [`arn:aws:cloudfront::${accountID}:distribution/`, { 'Fn::GetAtt' : ['SiteCloudFrontDistribution', 'Id'] }]]
+      }
     }
   }
-  cloudFormationTemplate.Outputs.ContactHandlerLambdaURL = { Value : { Ref : 'ContactHandlerLambdaURL' }}
 
-  cloudFormationTemplate.Resources.ContactHandlerDynamoDB = {
+  finalTemplate.Resources.ContactHandlerLambdaURL = {
+    Type       : 'AWS::Lambda::Url',
+    DependsOn  : ['ContactHandlerLambdaFunction'],
+    Properties : {
+      AuthType          : 'AWS_IAM',
+      Cors : {
+        AllowCredentials : true,
+        AllowHeaders : ['*'],
+        AllowMethods : ['POST'],
+        AllowOrigins : ['*']
+      },
+      TargetFunctionArn : { 'Fn::GetAtt' : ['ContactHandlerLambdaFunction', 'Arn'] }
+    }
+  }
+  finalTemplate.Outputs.ContactHandlerLambdaURL = { Value : { Ref : 'ContactHandlerLambdaURL' } }
+
+  finalTemplate.Resources.ContactHandlerDynamoDB = {
     Type       : 'AWS::DynamoDB::Table',
     Properties : {
-      TableName : 'ContactFormEntries',
-      AttributeDefinitions : [{
-        AttributeName: 'SubmissionID',
-        AttributeType: 'S'
-      }],
-      KeySchema : [{
-        AttributeName : 'SubmissionID',
-        KeyType       : 'HASH'
-      }],
-      BillingMode: 'PAY_PER_REQUEST'
+      TableName            : 'ContactFormEntries',
+      AttributeDefinitions : [
+        { AttributeName : 'SubmissionID', AttributeType : 'S' },
+        { AttributeName : 'SubmissionTime', AttributeType : 'S' }
+      ],
+      KeySchema : [
+        { AttributeName : 'SubmissionID', KeyType : 'HASH' },
+        { AttributeName : 'SubmissionTime', KeyType : 'RANGE' }
+      ],
+      BillingMode : 'PAY_PER_REQUEST'
     }
   }
-  cloudFormationTemplate.Outputs.ContactHandlerDynamoDB = { Value : { Ref : 'ContactHandlerDynamoDB' }}
+  finalTemplate.Outputs.ContactHandlerDynamoDB = { Value : { Ref : 'ContactHandlerDynamoDB' } }
   resourceTypes.DynamoDBTable = true
 
   // update the CloudFront Distribution configuration
-  cloudFormationTemplate.Resources.SiteCloudFrontDistribution.DependsOn.push('ContactHandlerLambdaURL')
+  finalTemplate.Resources.SiteCloudFrontDistribution.DependsOn.push('ContactHandlerLambdaURL')
 
-  const cfOrigins = cloudFormationTemplate.Resources.SiteCloudFrontDistribution.Properties.DistributionConfig.Origins
+  const cfOrigins = finalTemplate.Resources.SiteCloudFrontDistribution.Properties.DistributionConfig.Origins
   cfOrigins.push({
     Id         : 'ContactHandlerLambdaOrigin',
     DomainName : { // strip the https://
@@ -145,16 +185,16 @@ const stackConfig = async ({ cloudFormationTemplate, credentials, resourceTypes,
     }
   })
 
-  const cfCacheBehaviors = cloudFormationTemplate.Resources.SiteCloudFrontDistribution.Properties.DistributionConfig.CacheBehaviors || []
+  const cfCacheBehaviors = finalTemplate.Resources.SiteCloudFrontDistribution.Properties.DistributionConfig.CacheBehaviors || []
   cfCacheBehaviors.push({
-    AllowedMethods : [ 'DELETE', 'GET', 'HEAD', 'OPTIONS', 'PATCH', 'POST', 'PUT' ],
-    CachePolicyId  : '4135ea2d-6df8-44a3-9df3-4b5a84be39ad', // caching disabled managed policy
-    PathPattern    : '/contact-handler',
-    TargetOriginId : 'ContactHandlerLambdaOrigin',
-    ViewerProtocolPolicy: 'https-only'
+    AllowedMethods       : ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'PATCH', 'POST', 'PUT'],
+    CachePolicyId        : '4135ea2d-6df8-44a3-9df3-4b5a84be39ad', // caching disabled managed policy
+    PathPattern          : contactHandlerPath,
+    TargetOriginId       : 'ContactHandlerLambdaOrigin',
+    ViewerProtocolPolicy : 'https-only'
   })
 
-  cloudFormationTemplate.Resources.SiteCloudFrontDistribution.Properties.DistributionConfig.CacheBehaviors = cfCacheBehaviors
+  finalTemplate.Resources.SiteCloudFrontDistribution.Properties.DistributionConfig.CacheBehaviors = cfCacheBehaviors
 }
 
 const contactHandler = { config, stackConfig }
