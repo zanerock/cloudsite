@@ -1,3 +1,7 @@
+// credit to :
+// https://github.com/aws-samples/aws-lambda-function-url-secured/blob/209bc9d2a73dbb6eefed1dc9cf98a9678ede9873/src/functions/auth/auth.mjs
+// By AWS original licensed under MIT license
+
 import { SignatureV4 } from '@aws-sdk/signature-v4'
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers'
 import { HttpRequest } from '@aws-sdk/protocol-http'
@@ -11,7 +15,6 @@ const credentialProvider = fromNodeProviderChain()
 const credentials = await credentialProvider()
 
 export const handler = async (event) => {
-  console.info('Hey! I am in...')
   const request = event.Records[0].cf.request
   console.info('request=' + JSON.stringify(request))
 
