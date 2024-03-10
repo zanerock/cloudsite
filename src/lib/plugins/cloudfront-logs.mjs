@@ -12,7 +12,7 @@ const stackConfig = async ({ siteTemplate, settings }) => {
   finalTemplate.Resources.SiteCloudFrontDistribution.DependsOn.push('SharedLoggingBucket')
 
   finalTemplate.Resources.SiteCloudFrontDistribution.Properties.DistributionConfig.Logging = {
-    Bucket         : { 'Fn::GetAtt': [ 'SharedLoggingBucket', 'DomainName' ] },
+    Bucket         : { 'Fn::GetAtt' : ['SharedLoggingBucket', 'DomainName'] },
     IncludeCookies : settings.includeCookies,
     Prefix         : 'cloudfront-logs/'
   }

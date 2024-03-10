@@ -6,12 +6,12 @@ import { STSClient, GetCallerIdentityCommand } from '@aws-sdk/client-sts'
 import { convertDomainToBucketName } from './convert-domain-to-bucket-name'
 
 const determineBucketName = async (args) => {
+  const { apexDomain, credentials, findName = false, siteInfo } = args
   let { bucketName } = args
-  if (bucketName === undefined) {
-    bucketName = siteInfo.bucketName || convertDomainToBucketName(siteInfo.apexDomain)
-  }
 
-  const { credentials, findName = false, siteInfo } = args
+  if (bucketName === undefined) {
+    bucketName = siteInfo.bucketName || convertDomainToBucketName(apexDomain)
+  }
 
   let { accountID } = siteInfo
   if (accountID === undefined) {

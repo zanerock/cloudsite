@@ -34,13 +34,25 @@ const stackConfig = async ({ siteTemplate, settings }) => {
   const contactHandlerZipPath = fsPath.join(__dirname, contactHandlerZipName)
   const readStream = fs.createReadStream(contactHandlerZipPath)
 
-  const putObjectCommand = new PutObjectCommand({
+  const putObjectCommandCH = new PutObjectCommand({
     Body        : readStream,
     Bucket      : bucketName,
     Key         : contactHandlerZipName,
     ContentType : 'application/zip'
   })
-  await s3Client.send(putObjectCommand)
+  await s3Client.send(putObjectCommandCH)
+
+  const requestSignerZipName = 'request-signer-lambda.zip'
+  const requestSignerZipPath = fsPath.join(__dirname, requestSignerZipName)
+  const rsReadStream = fs.createReadStream(requestSignerZipPath)
+
+  const putObjectCommandRS = new PutObjectCommand({
+    Body        : rsReadStream,
+    Bucket      : bucketName,
+    Key         : requestSignerZipName,
+    ContentType : 'application/zip'
+  })
+  await s3Client.send(putObjectCommandRS)
 
   /* finalTemplate.Resources.SharedLambdaFunctionsS3Bucket = {
     Type       : 'AWS::S3::Bucket',
@@ -87,6 +99,39 @@ const stackConfig = async ({ siteTemplate, settings }) => {
   finalTemplate.Outputs.ContactHandlerRole = { Value : { Ref : 'ContactHandlerRole' } }
   resourceTypes.IAMRole = true
 
+  finalTemplate.Resources.RequestSignerRole = {
+    Type       : 'AWS::IAM::Role',
+    DependsOn : ['ContactHandlerLambdaFunction'],
+    Properties : {
+      AssumeRolePolicyDocument : {
+        Version   : '2012-10-17',
+        Statement : [
+          {
+            Effect    : 'Allow',
+            Principal : { Service : ['lambda.amazonaws.com', 'edgelambda.amazonaws.com'] },
+            Action    : ['sts:AssumeRole']
+          }
+        ]
+      },
+      Path     : '/',
+      Policies : [
+        {
+          PolicyName     : bucketName + '-request-signer',
+          PolicyDocument : {
+            Version   : '2012-10-17',
+            Statement : [
+              {
+                Effect   : 'Allow',
+                Action   : 'lambda:InvokeFunctionUrl',
+                Resource : { 'Fn::GetAtt' : ['ContactHandlerLambdaFunction', 'Arn'] }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+
   const lambdaLogGroupName = bucketName + '-contact-handler-lambda-function'
   finalTemplate.Resources.ContactHandlerLogGroup = {
     Type       : 'AWS::Logs::LogGroup',
@@ -111,6 +156,8 @@ const stackConfig = async ({ siteTemplate, settings }) => {
       Handler       : 'index.handler',
       Role          : { 'Fn::GetAtt' : ['ContactHandlerRole', 'Arn'] },
       Runtime       : 'nodejs20.x',
+      MemorySize    : 128,
+      Timeout       : 5,
       LoggingConfig : {
         ApplicationLogLevel : 'INFO', // support options
         LogFormat           : 'JSON', // support options
@@ -140,12 +187,12 @@ const stackConfig = async ({ siteTemplate, settings }) => {
     Type       : 'AWS::Lambda::Url',
     DependsOn  : ['ContactHandlerLambdaFunction'],
     Properties : {
-      AuthType          : 'AWS_IAM',
-      Cors : {
+      AuthType : 'AWS_IAM',
+      Cors     : {
         AllowCredentials : true,
-        AllowHeaders : ['*'],
-        AllowMethods : ['POST'],
-        AllowOrigins : ['*']
+        AllowHeaders     : ['*'],
+        AllowMethods     : ['POST'],
+        AllowOrigins     : ['*']
       },
       TargetFunctionArn : { 'Fn::GetAtt' : ['ContactHandlerLambdaFunction', 'Arn'] }
     }
@@ -191,10 +238,53 @@ const stackConfig = async ({ siteTemplate, settings }) => {
     CachePolicyId        : '4135ea2d-6df8-44a3-9df3-4b5a84be39ad', // caching disabled managed policy
     PathPattern          : contactHandlerPath,
     TargetOriginId       : 'ContactHandlerLambdaOrigin',
-    ViewerProtocolPolicy : 'https-only'
+    ViewerProtocolPolicy : 'https-only',
+    LambdaFunctionAssociations: [
+      {
+        EventType : 'origin-request',
+        IncludeBody : true,
+        LambdaFunctionARN : { 'Fn::Join': [':', [
+          { 'Fn::GetAtt': ['SignRequestFunction', 'Arn']},
+          { 'Fn::GetAtt': ['SignRequestFunctionVersion', 'Version']}]
+        ]}
+      }
+    ]
   })
 
   finalTemplate.Resources.SiteCloudFrontDistribution.Properties.DistributionConfig.CacheBehaviors = cfCacheBehaviors
+  finalTemplate.Resources.SiteCloudFrontDistribution.DependsOn.push('SignRequestFunctionVersion')
+
+  const signFunctionHandlerName = bucketName + '-request-signer'
+  finalTemplate.Resources.SignRequestFunction = {
+    Type       : 'AWS::Lambda::Function',
+    DependsOn  : ['RequestSignerRole'],
+    Properties : {
+      FunctionName : signFunctionHandlerName,
+      Handler      : 'index.handler',
+      Role         : { 'Fn::GetAtt' : ['RequestSignerRole', 'Arn'] },
+      Runtime      : 'nodejs20.x',
+      MemorySize   : 128,
+      Timeout      : 5,
+      Code         : {
+        S3Bucket : bucketName,
+        S3Key    : requestSignerZipName
+      },
+      LoggingConfig : {
+        ApplicationLogLevel : 'INFO', // support options
+        LogFormat           : 'JSON', // support options
+        LogGroup            : lambdaLogGroupName,
+        SystemLogLevel      : 'INFO' // support options
+      }
+    }
+  }
+
+  finalTemplate.Resources.SignRequestFunctionVersion = {
+    Type       : 'AWS::Lambda::Version',
+    DependsOn  : ['SignRequestFunction'],
+    Properties : {
+      FunctionName : { 'Fn::GetAtt' : ['SignRequestFunction', 'Arn'] }
+    }
+  }
 }
 
 const contactHandler = { config, stackConfig }

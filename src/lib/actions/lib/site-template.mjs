@@ -19,10 +19,10 @@ const SiteTemplate = class {
     this.finalTemplate.Resources.SharedLoggingBucket = {
       Type       : 'AWS::S3::Bucket',
       Properties : {
-        AccessControl : 'Private',
-        BucketName    : sharedLoggingBucketName,
-        OwnershipControls: { // this enables ACLs, as required by CloudFront standard logging
-          Rules: [{ ObjectOwnership: 'BucketOwnerPreferred' }]
+        AccessControl     : 'Private',
+        BucketName        : sharedLoggingBucketName,
+        OwnershipControls : { // this enables ACLs, as required by CloudFront standard logging
+          Rules : [{ ObjectOwnership : 'BucketOwnerPreferred' }]
         }
       }
     }
