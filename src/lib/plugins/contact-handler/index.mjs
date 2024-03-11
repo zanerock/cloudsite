@@ -24,11 +24,12 @@ const stackConfig = async ({ siteTemplate, settings }) => {
   const { credentials, finalTemplate, resourceTypes, siteInfo } = siteTemplate
   const { accountID, apexDomain, region } = siteInfo
   const contactHandlerPath = settings.path
-  const contactHandlerEmail = settings.email
+  const contactHandlerFromEmail = settings.email
+  const contactHandlerTargetEmail = settings.emailTo
 
   let lambdaFunctionsBucketName = convertDomainToBucketName(apexDomain) + '-lambda-functions'
   lambdaFunctionsBucketName =
-    await determineBucketName({ lambdaFunctionsBucketName, credentials, findName : true, siteInfo })
+    await determineBucketName({ bucketName: lambdaFunctionsBucketName, credentials, findName : true, siteInfo })
 
   const s3Client = new S3Client({ credentials, region })
   const createBucketCommand = new CreateBucketCommand({
@@ -64,7 +65,7 @@ const stackConfig = async ({ siteTemplate, settings }) => {
   putCommands.push(() => s3Client.send(putObjectCommandRS))
 
   const contactEmailerZipName = 'contact-emailer-lambda.zip'
-  if (contactHandlerEmail !== undefined) {
+  if (contactHandlerFromEmail !== undefined) {
     const contactEmailerZipPath = fsPath.join(__dirname, contactEmailerZipName)
     const ceReadStream = fs.createReadStream(contactEmailerZipPath)
 
@@ -159,17 +160,18 @@ const stackConfig = async ({ siteTemplate, settings }) => {
     }
   }
 
-  const lambdaLogGroupName = lambdaFunctionsBucketName + '-contact-handler'
+  const contactHandlerLogGroupName = lambdaFunctionsBucketName + '-contact-handler'
+
   finalTemplate.Resources.ContactHandlerLogGroup = {
     Type       : 'AWS::Logs::LogGroup',
     Properties : {
       LogGroupClass   : 'STANDARD', // TODO: support option for INFREQUENT_ACCESS
-      LogGroupName    : lambdaLogGroupName,
+      LogGroupName    : contactHandlerLogGroupName,
       RetentionInDays : 180 // TODO: support options
     }
   }
 
-  const contactHandlerFunctionName = lambdaLogGroupName
+  const contactHandlerFunctionName = contactHandlerLogGroupName
   finalTemplate.Resources.ContactHandlerLambdaFunction = {
     Type       : 'AWS::Lambda::Function',
     DependsOn  : ['ContactHandlerRole', 'ContactHandlerLogGroup'],
@@ -188,7 +190,7 @@ const stackConfig = async ({ siteTemplate, settings }) => {
       LoggingConfig : {
         ApplicationLogLevel : 'INFO', // support options
         LogFormat           : 'JSON', // support options
-        LogGroup            : lambdaLogGroupName,
+        LogGroup            : contactHandlerLogGroupName,
         SystemLogLevel      : 'INFO' // support options
       }
     }
@@ -246,20 +248,67 @@ const stackConfig = async ({ siteTemplate, settings }) => {
   resourceTypes.DynamoDBTable = true
 
   // add the email trigger on new DynamoDB entries
-  if (contactHandlerEmail !== undefined) {
+  if (contactHandlerFromEmail !== undefined) {
     // setup stream on table
     finalTemplate.Resources.ContactHandlerDynamoDB.StreamSpecification = {
       StreamViewType : 'NEW_IMAGE'
     }
 
     const emailerFunctionName = lambdaFunctionsBucketName + '-contact-emailer'
-    finalTemplate.Resources.SignRequestFunction = {
-      Type       : 'AWS::Lambda::Function',
-      DependsOn  : ['RequestSignerRole'],
+    const emailerFunctionLogGroupName = emailerFunctionName
+
+    finalTemplate.Resources.ContactEmailerLogGroup = {
+      Type       : 'AWS::Logs::LogGroup',
+      Properties : {
+        LogGroupClass   : 'STANDARD', // TODO: support option for INFREQUENT_ACCESS
+        LogGroupName    : emailerFunctionLogGroupName,
+        RetentionInDays : 180 // TODO: support options
+      }
+    }
+
+    finalTemplate.Resources.ContactEmailerRole = {
+      Type       : 'AWS::IAM::Role',
+      Properties : {
+        AssumeRolePolicyDocument : {
+          Version   : '2012-10-17',
+          Statement : [
+            {
+              Effect    : 'Allow',
+              Principal : {
+                Service : ['lambda.amazonaws.com']
+              },
+              Action : ['sts:AssumeRole']
+            }
+          ]
+        },
+        Path     : '/',
+        Policies : [
+          {
+            PolicyName     : lambdaFunctionsBucketName + '-contact-handler',
+            PolicyDocument : {
+              Version   : '2012-10-17',
+              Statement : [
+                {
+                  Effect   : 'Allow',
+                  Action   : ['ses:SendEmail', 'ses:SendEmailRaw', 'ses:GetSendQuota', 'ses:GetSendStatistics'],
+                  Resource : '*'
+                }
+              ]
+            }
+          }
+        ],
+        // AWSLambdaBasicExecutionRole: allows logging to CloudWatch
+        ManagedPolicyArns : ['arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole']
+      }
+    }
+
+    finalTemplate.Resources.ContactEmailerFunction = {
+      Type       : 'AWS::Serverless::Function',
+      DependsOn  : ['ContactEmailerRole', 'ContactEmailerLogGroup'],
       Properties : {
         FunctionName : emailerFunctionName,
         Handler      : 'index.handler',
-        Role         : { 'Fn::GetAtt' : ['RequestSignerRole', 'Arn'] },
+        Role         : { 'Fn::GetAtt' : ['ContactEmailerRole', 'Arn'] },
         Runtime      : 'nodejs20.x',
         MemorySize   : 128,
         Timeout      : 5,
@@ -267,15 +316,34 @@ const stackConfig = async ({ siteTemplate, settings }) => {
           S3Bucket : lambdaFunctionsBucketName,
           S3Key    : contactEmailerZipName
         },
+        Environment: {
+          Variables: {
+            EMAIL_HANDLER_SOURCE_EMAIL: contactHandlerFromEmail
+          }
+        },
+        Events: {
+          ContactFormEntriesEvent: {
+            Type: 'DynamoDB',
+            Properties: {
+              StartingPosition: 'LATEST',
+              Stream: { 'Fn::GetAtt': ['ContactHandlerDynamoDB', 'StreamArn'] }
+            }
+          }
+        },
         LoggingConfig : {
           ApplicationLogLevel : 'INFO', // support options
           LogFormat           : 'JSON', // support options
-          LogGroup            : lambdaLogGroupName,
+          LogGroup            : emailerFunctionLogGroupName,
           SystemLogLevel      : 'INFO' // support options
         }
       }
     }
-  }
+
+    if (contactHandlerTargetEmail !== undefined) {
+      finalTemplate.Resources.ContactEmailerFunction.Properties.Environment.Variables.EMAIL_HANDLER_TARGET_EMAIL =
+        contactHandlerTargetEmail
+    }
+  } // if (contactHandlerFromEmail !== undefined) {
 
   // update the CloudFront Distribution configuration
   finalTemplate.Resources.SiteCloudFrontDistribution.DependsOn.push('ContactHandlerLambdaURL')
@@ -334,7 +402,7 @@ const stackConfig = async ({ siteTemplate, settings }) => {
       LoggingConfig : {
         ApplicationLogLevel : 'INFO', // support options
         LogFormat           : 'JSON', // support options
-        LogGroup            : lambdaLogGroupName,
+        LogGroup            : contactHandlerLogGroupName,
         SystemLogLevel      : 'INFO' // support options
       }
     }
