@@ -1,6 +1,8 @@
 import * as fsPath from 'node:path'
 import * as fs from 'node:fs'
 
+import { emailRE } from 'regex-repo'
+
 import { CreateBucketCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 
 import { convertDomainToBucketName } from '../../shared/convert-domain-to-bucket-name'
@@ -8,6 +10,9 @@ import { determineBucketName } from '../../shared/determine-bucket-name'
 
 const config = {
   options : {
+    email : {
+      matches : emailRE
+    },
     urlPath : {
       default : '/contact-handler',
       matches : /^\/(?:[a-z0-9_-]+\/?)+$/
@@ -19,16 +24,20 @@ const stackConfig = async ({ siteTemplate, settings }) => {
   const { credentials, finalTemplate, resourceTypes, siteInfo } = siteTemplate
   const { accountID, apexDomain, region } = siteInfo
   const contactHandlerPath = settings.path
+  const contactHandlerEmail = settings.email
 
-  let bucketName = convertDomainToBucketName(apexDomain) + '-lambda-functions'
-  bucketName = await determineBucketName({ bucketName, credentials, findName : true, siteInfo })
+  let lambdaFunctionsBucketName = convertDomainToBucketName(apexDomain) + '-lambda-functions'
+  lambdaFunctionsBucketName = 
+    await determineBucketName({ lambdaFunctionsBucketName, credentials, findName : true, siteInfo })
 
   const s3Client = new S3Client({ credentials, region })
   const createBucketCommand = new CreateBucketCommand({
     ACL    : 'private',
-    Bucket : bucketName
+    Bucket : lambdaFunctionsBucketName
   })
   await s3Client.send(createBucketCommand)
+
+  const putCommands = []
 
   const contactHandlerZipName = 'contact-handler-lambda.zip'
   const contactHandlerZipPath = fsPath.join(__dirname, contactHandlerZipName)
@@ -36,11 +45,11 @@ const stackConfig = async ({ siteTemplate, settings }) => {
 
   const putObjectCommandCH = new PutObjectCommand({
     Body        : readStream,
-    Bucket      : bucketName,
+    Bucket      : lambdaFunctionsBucketName,
     Key         : contactHandlerZipName,
     ContentType : 'application/zip'
   })
-  await s3Client.send(putObjectCommandCH)
+  putCommands.push(() => s3Client.send(putObjectCommandCH))
 
   const requestSignerZipName = 'request-signer-lambda.zip'
   const requestSignerZipPath = fsPath.join(__dirname, requestSignerZipName)
@@ -48,17 +57,33 @@ const stackConfig = async ({ siteTemplate, settings }) => {
 
   const putObjectCommandRS = new PutObjectCommand({
     Body        : rsReadStream,
-    Bucket      : bucketName,
+    Bucket      : lambdaFunctionsBucketName,
     Key         : requestSignerZipName,
     ContentType : 'application/zip'
   })
-  await s3Client.send(putObjectCommandRS)
+  putCommands.push(() => s3Client.send(putObjectCommandRS))
+
+  if (contactHandlerEmail !== undefined) {
+    const contactEmailerZipName = 'contact-emailer-lambda.zip'
+    const contactEmailerZipPath = fsPath.join(__dirname, contactEmailerZipName)
+    const ceReadStream = fs.createReadStream(contactEmailerZipPath)
+
+    const putObjectCommandCE = new PutObjectCommand({
+      Body        : ceReadStream,
+      Bucket      : lambdaFunctionsBucketName,
+      Key         : contactEmailerZipName,
+      ContentType : 'application/zip'
+    })
+    putCommands.push(() => s3Client.send(putObjectCommandCE))
+  }
+
+  Promises.all(putCommand.map((c) => c()))
 
   /* finalTemplate.Resources.SharedLambdaFunctionsS3Bucket = {
     Type       : 'AWS::S3::Bucket',
     Properties : {
       AccessControl : 'Private',
-      BucketName    : bucketName
+      BucketName    : lambdaFunctionsBucketName
     }
   }
   resourceTypes.S3Bucket = true */
@@ -81,7 +106,7 @@ const stackConfig = async ({ siteTemplate, settings }) => {
       Path     : '/',
       Policies : [
         {
-          PolicyName     : bucketName + '-contact-handler',
+          PolicyName     : lambdaFunctionsBucketName + '-contact-handler',
           PolicyDocument : {
             Version   : '2012-10-17',
             Statement : [
@@ -116,7 +141,7 @@ const stackConfig = async ({ siteTemplate, settings }) => {
       Path     : '/',
       Policies : [
         {
-          PolicyName     : bucketName + '-request-signer',
+          PolicyName     : lambdaFunctionsBucketName + '-request-signer',
           PolicyDocument : {
             Version   : '2012-10-17',
             Statement : [
@@ -134,7 +159,7 @@ const stackConfig = async ({ siteTemplate, settings }) => {
     }
   }
 
-  const lambdaLogGroupName = bucketName + '-contact-handler-lambda-function'
+  const lambdaLogGroupName = lambdaFunctionsBucketName + '-contact-handler'
   finalTemplate.Resources.ContactHandlerLogGroup = {
     Type       : 'AWS::Logs::LogGroup',
     Properties : {
@@ -144,15 +169,15 @@ const stackConfig = async ({ siteTemplate, settings }) => {
     }
   }
 
-  const lambdaFunctionName = bucketName + '-contact-handler'
+  const contactHandlerFunctionName = lambdaLogGroupName
   finalTemplate.Resources.ContactHandlerLambdaFunction = {
     Type       : 'AWS::Lambda::Function',
     DependsOn  : ['ContactHandlerRole', 'ContactHandlerLogGroup'],
     Properties : {
-      FunctionName : bucketName + '-contact-handler',
+      FunctionName : contactHandlerFunctionName,
       Description  : 'Handles contact form submissions; creates DynamoDB entry and sends email.',
       Code         : {
-        S3Bucket : bucketName,
+        S3Bucket : lambdaFunctionsBucketName,
         S3Key    : contactHandlerZipName
       },
       Handler       : 'index.handler',
@@ -177,7 +202,7 @@ const stackConfig = async ({ siteTemplate, settings }) => {
     Properties : {
       Action              : 'lambda:InvokeFunctionUrl',
       Principal           : 'cloudfront.amazonaws.com',
-      FunctionName        : lambdaFunctionName,
+      FunctionName        : contactHandlerFunctionName,
       FunctionUrlAuthType : 'AWS_IAM',
       SourceArn           : {
         'Fn::Join' : ['', [`arn:aws:cloudfront::${accountID}:distribution/`, { 'Fn::GetAtt' : ['SiteCloudFrontDistribution', 'Id'] }]]
@@ -216,8 +241,19 @@ const stackConfig = async ({ siteTemplate, settings }) => {
       BillingMode : 'PAY_PER_REQUEST'
     }
   }
+
   finalTemplate.Outputs.ContactHandlerDynamoDB = { Value : { Ref : 'ContactHandlerDynamoDB' } }
   resourceTypes.DynamoDBTable = true
+
+  // add the email trigger on new DynamoDB entries
+  if (contactHandlerEmail !== undefined) {
+    // setup stream on table
+    finalTemplate.Resources.ContactHandlerDynamoDB.StreamSpecification = {
+      StreamViewType: 'NEW_IMAGE'
+    }
+
+
+  }
 
   // update the CloudFront Distribution configuration
   finalTemplate.Resources.SiteCloudFrontDistribution.DependsOn.push('ContactHandlerLambdaURL')
@@ -256,7 +292,7 @@ const stackConfig = async ({ siteTemplate, settings }) => {
   finalTemplate.Resources.SiteCloudFrontDistribution.Properties.DistributionConfig.CacheBehaviors = cfCacheBehaviors
   finalTemplate.Resources.SiteCloudFrontDistribution.DependsOn.push('SignRequestFunctionVersion')
 
-  const signFunctionHandlerName = bucketName + '-request-signer'
+  const signFunctionHandlerName = lambdaFunctionsBucketName + '-request-signer'
   finalTemplate.Resources.SignRequestFunction = {
     Type       : 'AWS::Lambda::Function',
     DependsOn  : ['RequestSignerRole'],
@@ -268,7 +304,7 @@ const stackConfig = async ({ siteTemplate, settings }) => {
       MemorySize   : 128,
       Timeout      : 5,
       Code         : {
-        S3Bucket : bucketName,
+        S3Bucket : lambdaFunctionsBucketName,
         S3Key    : requestSignerZipName
       },
       LoggingConfig : {
