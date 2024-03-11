@@ -46,7 +46,11 @@
 
 [^1: We did a survey of "top javascript log libraries" and determined that Winston seemed to fit best. It had all the feataures we needed and is very well supported.]
 
-# Credits
+# References and credits
 
+- [Cloudfront, Function, and Edge@Lambda with Cloudformation](https://medium.com/codex/cloudfront-function-and-edge-lambda-with-cloudformation-e6aae6d87517): An example of using Lambda@Edge
 - [Deploy a website with AWS S3 + CloudFront using CloudFormation](https://blog.canopas.com/deploy-a-website-with-aws-s3-cloudfront-using-cloudformation-c2199dc6c435): Described basic setup.
+- [Discussion on various ways to invoke Lambda functions from CloudFront](https://forum.serverless.com/t/directly-proxying-lambda-via-cloudfront-without-api-gateway/3808)
 - [How to deploy Docusaurus page using AWS S3 and CloudFront](https://juffalow.com/blog/other/how-to-deploy-docusaurus-page-using-aws-s3-and-cloudfront#cloudfront-functions): Describes (now unnecessary?) changes to handle Docusaurus site
+- [Protecting an AWS Lambda function URL with Amazon CloudFront and Lambda@Edge](https://aws.amazon.com/blogs/compute/protecting-an-aws-lambda-function-url-with-amazon-cloudfront-and-lambdaedge/)
+- [Request signing Lambda code](https://github.com/aws-samples/aws-lambda-function-url-secured/blob/209bc9d2a73dbb6eefed1dc9cf98a9678ede9873/src/functions/auth/auth.mjs)
