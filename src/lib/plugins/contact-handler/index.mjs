@@ -63,8 +63,8 @@ const stackConfig = async ({ siteTemplate, settings }) => {
   })
   putCommands.push(() => s3Client.send(putObjectCommandRS))
 
+  const contactEmailerZipName = 'contact-emailer-lambda.zip'
   if (contactHandlerEmail !== undefined) {
-    const contactEmailerZipName = 'contact-emailer-lambda.zip'
     const contactEmailerZipPath = fsPath.join(__dirname, contactEmailerZipName)
     const ceReadStream = fs.createReadStream(contactEmailerZipPath)
 
@@ -252,7 +252,29 @@ const stackConfig = async ({ siteTemplate, settings }) => {
       StreamViewType: 'NEW_IMAGE'
     }
 
-
+    const emailerFunctionName = lambdaFunctionsBucketName + '-contact-emailer'
+    finalTemplate.Resources.SignRequestFunction = {
+      Type       : 'AWS::Lambda::Function',
+      DependsOn  : ['RequestSignerRole'],
+      Properties : {
+        FunctionName : emailerFunctionName,
+        Handler      : 'index.handler',
+        Role         : { 'Fn::GetAtt' : ['RequestSignerRole', 'Arn'] },
+        Runtime      : 'nodejs20.x',
+        MemorySize   : 128,
+        Timeout      : 5,
+        Code         : {
+          S3Bucket : lambdaFunctionsBucketName,
+          S3Key    : contactEmailerZipName
+        },
+        LoggingConfig : {
+          ApplicationLogLevel : 'INFO', // support options
+          LogFormat           : 'JSON', // support options
+          LogGroup            : lambdaLogGroupName,
+          SystemLogLevel      : 'INFO' // support options
+        }
+      }
+    }
   }
 
   // update the CloudFront Distribution configuration
