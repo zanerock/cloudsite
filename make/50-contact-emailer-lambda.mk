@@ -1,6 +1,6 @@
 EMAILER_LAMBDA_DIR:=$(SRC)/lib/plugins/contact-handler/contact-emailer-lambda
 EMAILER_LAMBDA_SRC:=$(shell find $(EMAILER_LAMBDA_DIR) -not -path "*/node_modules/*")
-EMAILER_LAMBDA_ZIP:=$(DIST)/contact-handler-lambda.zip
+EMAILER_LAMBDA_ZIP:=$(DIST)/contact-emailer-lambda.zip
 
 $(EMAILER_LAMBDA_ZIP): $(EMAILER_LAMBDA_SRC)
 	cd $(EMAILER_LAMBDA_DIR) \
