@@ -12,7 +12,9 @@
     "preversion": "npm test && make lint",
     "qa": "make qa"
   },
-  "files": [ "dist/*" ],
+  "files": [
+    "dist/*"
+  ],
   "engines": {
     "node": ">=18.0.0"
   },
