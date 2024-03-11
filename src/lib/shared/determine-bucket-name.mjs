@@ -42,7 +42,7 @@ const determineBucketName = async (args) => {
       }
     }
     const bucketSalt = uuidv4().slice(0, 8)
-    bucketName.replace(/-[A-F0-9]{8}$/, '')
+    bucketName = bucketName.replace(/-[A-F0-9]{8}$/i, '')
     bucketName += '-' + bucketSalt
   }
 }
