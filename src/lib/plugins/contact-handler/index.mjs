@@ -128,7 +128,9 @@ const stackConfig = async ({ siteTemplate, settings }) => {
             ]
           }
         }
-      ]
+      ],
+      // AWSLambdaBasicExecutionRole: allows logging to CloudWatch
+      ManagedPolicyArns: [ 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole' ]
     }
   }
 
