@@ -7,7 +7,7 @@ const config = {
 const stackConfig = async ({ siteTemplate, settings }) => {
   const { finalTemplate } = siteTemplate
 
-  await finalTemplate.enableSharedLoggingBucket()
+  await siteTemplate.enableSharedLoggingBucket()
 
   finalTemplate.Resources.SiteCloudFrontDistribution.Properties.DistributionConfig.Logging = {
     Bucket         : { 'Fn::GetAtt' : ['SharedLoggingBucket', 'DomainName'] },
