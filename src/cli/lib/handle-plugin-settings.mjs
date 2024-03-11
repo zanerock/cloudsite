@@ -4,11 +4,11 @@ import { cliSpec } from '../constants'
 import { errorOut } from './error-out'
 import { getSiteInfo } from './get-site-info'
 import { getValueContainerAndKey } from './get-value-container-and-key'
-import * as optionHandlers from '../../lib/options'
+import * as plugins from '../../lib/plugins'
 import { smartConvert } from './smart-convert'
 
-const handleSetOption = async ({ argv, sitesInfo }) => {
-  const setOptionOptionsSpec = cliSpec.commands.find(({ name }) => name === 'set-option').arguments
+const handlePluginSettings = async ({ argv, sitesInfo }) => {
+  const setOptionOptionsSpec = cliSpec.commands.find(({ name }) => name === 'plugin-settings').arguments
   const setOptionOptions = commandLineArgs(setOptionOptionsSpec, { argv })
   const apexDomain = setOptionOptions['apex-domain']
   const options = (setOptionOptions.option || []).map((spec) => {
@@ -41,34 +41,34 @@ const handleSetOption = async ({ argv, sitesInfo }) => {
   }
 
   // take actions and update the options
-  const { options : siteOptions = {} } = siteInfo
+  const { pluginSettings = {} } = siteInfo
 
   if (doDelete === true) {
-    const { valueContainer, valueKey } = getValueContainerAndKey({ path : name, rootContainer : siteOptions })
+    const { valueContainer, valueKey } = getValueContainerAndKey({ path : name, rootContainer : pluginSettings })
     delete valueContainer[valueKey]
 
-    if (Object.keys(siteOptions).length === 0) {
+    if (Object.keys(pluginSettings).length === 0) {
       delete siteInfo.options
     }
   } else {
     for (const { name, value } of options) {
       const [option] = name.split('.')
 
-      if (!(option in optionHandlers)) {
-        errorOut(`No such option '${option}'; use one of: ${Object.keys(optionHandlers).join(', ')}.\n`)
+      if (!(option in plugins)) {
+        errorOut(`No such option '${option}'; use one of: ${Object.keys(plugins).join(', ')}.\n`)
       }
 
-      const optionsSpec = optionHandlers[option].config?.options
+      const optionsSpec = plugins[option].config?.options
 
       const wrappedSpec = { [option] : optionsSpec } // so our option spec matches our path
       const smartValue = smartConvert(value)
       const { valueContainer, valueKey } =
-        getValueContainerAndKey({ path : name, rootContainer : siteOptions, spec : wrappedSpec, value : smartValue })
+        getValueContainerAndKey({ path : name, rootContainer : pluginSettings, spec : wrappedSpec, value : smartValue })
       valueContainer[valueKey] = smartValue
     }
   }
 
-  siteInfo.options = siteOptions
+  siteInfo.pluginSettings = pluginSettings
 }
 
-export { handleSetOption }
+export { handlePluginSettings }

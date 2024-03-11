@@ -18,9 +18,13 @@ const handleCreate = async ({ argv, globalOptions, sitesInfo }) => {
   const noBuild = createOptions['no-build']
   const sourcePath = createOptions['source-path']
   let sourceType = createOptions['source-type']
+  const stackName = createOptions['stack-name']
 
   const siteInfo = sitesInfo[apexDomain] || { apexDomain, bucketName, sourcePath, sourceType }
   siteInfo.region = createOptions.region || siteInfo.region || 'us-east-1'
+  if (stackName !== undefined) {
+    siteInfo.stackName = stackName
+  }
 
   sitesInfo[apexDomain] = siteInfo
 

@@ -2,7 +2,7 @@ const config = {
   options : { default : true, validation : (v) => typeof v === 'boolean' }
 }
 
-const handler = (/* { cloudFormationTemplate, settings } */) => {
+const handler = () => {
   throw new Error('Not yet implemented')
 }
 

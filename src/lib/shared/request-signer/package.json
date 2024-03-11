@@ -1,0 +1,12 @@
+{
+  "name": "cloudsite-request-signer",
+  "version": "1.0.0",
+  "description": "Lambda function for signing requests to lambda functions.",
+  "main": "index.mjs",
+  "module": "index.mjs",
+  "dependencies": {
+    "@aws-sdk/credential-providers": "^3.529.1",
+    "@aws-sdk/protocol-http": "^3.374.0",
+    "@aws-sdk/signature-v4": "^3.374.0"
+  }
+}

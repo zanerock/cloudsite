@@ -15,7 +15,7 @@ const getValueContainerAndKey = ({ path, rootContainer, spec, value }) => {
           errorOut(`Invalid value '${value}' for '${path}'; must match ${matches.toString()}.\n`)
         }
 
-        if (!validation?.(value)) {
+        if (validation !== undefined && !validation(value)) {
           errorOut(`Value '${value}' for '${path}' failed validation.\n`)
         }
       }

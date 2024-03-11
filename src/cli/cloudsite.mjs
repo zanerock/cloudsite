@@ -7,8 +7,8 @@ import { cliSpec, GLOBAL_OPTIONS_PATH, SITES_INFO_PATH } from './constants'
 import { handleConfiguration } from './lib/handle-configuration'
 import { handleCreate } from './lib/handle-create'
 import { handleDestroy } from './lib/handle-destroy'
+import { handlePluginSettings } from './lib/handle-plugin-settings'
 import { handleUpdate } from './lib/handle-update'
-import { handleSetOption } from './lib/handle-set-option'
 
 const cloudsite = async () => {
   const mainOptions = commandLineArgs(cliSpec.mainOptions, { stopAtFirstUnknown : true })
@@ -51,8 +51,8 @@ const cloudsite = async () => {
         await handleCreate({ argv, globalOptions, sitesInfo }); break
       case 'destroy':
         await handleDestroy({ argv, globalOptions, sitesInfo }); break
-      case 'set-option':
-        await handleSetOption({ argv, globalOptions, sitesInfo }); break
+      case 'plugin-settings':
+        await handlePluginSettings({ argv, globalOptions, sitesInfo }); break
       case 'update':
         await handleUpdate({ argv, globalOptions, sitesInfo }); break
       default:

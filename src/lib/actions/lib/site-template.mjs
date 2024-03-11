@@ -1,23 +1,68 @@
 import yaml from 'js-yaml'
 
+import * as plugins from '../../plugins'
+import { determineBucketName } from '../../shared/determine-bucket-name'
+
 const SiteTemplate = class {
-  constructor ({ accountID, apexDomain, bucketName, certificateArn, region, sourceType }) {
-    this.accountID = accountID
-    this.apexDomain = apexDomain
-    this.bucketName = bucketName
-    this.certificateArn = certificateArn
-    this.region = region
-    this.sourceType = sourceType
+  constructor ({ credentials, siteInfo }) {
+    this.siteInfo = siteInfo
+    this.credentials = credentials
+
+    this.resourceTypes = { 'CloudFormation::Distribution' : true, 'S3::Bucket' : true }
+    this.finalTemplate = this.baseTemplate
+  }
+
+  async enableSharedLoggingBucket () {
+    const { bucketName } = this.siteInfo
+
+    const sharedLoggingBucketName = await determineBucketName({
+      bucketName  : bucketName + '-common-logs',
+      credentials : this.credentials,
+      findName    : true,
+      siteInfo    : this.siteInfo
+    })
+
+    this.finalTemplate.Resources.SharedLoggingBucket = {
+      Type       : 'AWS::S3::Bucket',
+      Properties : {
+        AccessControl     : 'Private',
+        BucketName        : sharedLoggingBucketName,
+        OwnershipControls : { // this enables ACLs, as required by CloudFront standard logging
+          Rules : [{ ObjectOwnership : 'BucketOwnerPreferred' }]
+        }
+      }
+    }
+
+    return sharedLoggingBucketName
+  }
+
+  async loadPlugins () {
+    const { siteInfo } = this
+    const { apexDomain, pluginSettings } = siteInfo
+
+    for (const [pluginKey, settings] of Object.entries(pluginSettings)) {
+      const plugin = plugins[pluginKey]
+      if (plugin === undefined) {
+        throw new Error(`Unknown plugin found in '${apexDomain}' plugin settings.`)
+      }
+
+      await plugin.stackConfig({
+        siteTemplate : this,
+        settings
+      })
+    }
   }
 
   get baseTemplate () {
+    const { accountID, apexDomain, bucketName, certificateArn, region } = this.siteInfo
+
     return {
       Resources : {
         SiteS3Bucket : {
           Type       : 'AWS::S3::Bucket',
           Properties : {
             AccessControl : 'Private',
-            BucketName    : this.bucketName
+            BucketName    : bucketName
           }
         },
         SiteCloudFrontOriginAccessControl : {
@@ -25,7 +70,7 @@ const SiteTemplate = class {
           Properties : {
             OriginAccessControlConfig : {
               Description                   : 'Origin Access Control (OAC) allowing CloudFront Distribution to access site S3 bucket.',
-              Name                          : `${this.bucketName}-OAC`,
+              Name                          : `${bucketName}-OAC`,
               OriginAccessControlOriginType : 's3',
               SigningBehavior               : 'always',
               SigningProtocol               : 'sigv4'
@@ -39,12 +84,12 @@ const SiteTemplate = class {
             DistributionConfig : {
               Origins : [
                 {
-                  DomainName     : `${this.bucketName}.s3.${this.region}.amazonaws.com`,
+                  DomainName     : `${bucketName}.s3.${region}.amazonaws.com`,
                   Id             : 'static-hosting',
                   S3OriginConfig : {
                     OriginAccessIdentity : ''
                   },
-                  OriginAccessControlId : '!GetAtt SiteCloudFrontOriginAccessControl.Id'
+                  OriginAccessControlId : { 'Fn::GetAtt' : ['SiteCloudFrontOriginAccessControl', 'Id'] }
                 }
               ],
               Enabled              : true,
@@ -54,9 +99,9 @@ const SiteTemplate = class {
                 { ErrorCode : 404, ResponseCode : 200, ResponsePagePath : '/index.html' }
               ],
               HttpVersion       : 'http2',
-              Aliases           : [this.apexDomain, `www.${this.apexDomain}`],
+              Aliases           : [apexDomain, `www.${apexDomain}`],
               ViewerCertificate : {
-                AcmCertificateArn      : this.certificateArn,
+                AcmCertificateArn      : certificateArn,
                 MinimumProtocolVersion : 'TLSv1.2_2021',
                 SslSupportMethod       : 'sni-only'
               },
@@ -70,11 +115,11 @@ const SiteTemplate = class {
             }
           }
         }, // SiteCloudFrontDistribution
-        BucketPolicy : {
+        SiteBucketPolicy : {
           Type       : 'AWS::S3::BucketPolicy',
           DependsOn  : ['SiteS3Bucket', 'SiteCloudFrontDistribution'],
           Properties : {
-            Bucket         : this.bucketName,
+            Bucket         : bucketName,
             PolicyDocument : {
               Version   : '2012-10-17',
               Statement : [
@@ -84,10 +129,12 @@ const SiteTemplate = class {
                     Service : 'cloudfront.amazonaws.com'
                   },
                   Action    : 's3:GetObject',
-                  Resource  : `arn:aws:s3:::${this.bucketName}/*`,
+                  Resource  : `arn:aws:s3:::${bucketName}/*`,
                   Condition : {
                     StringEquals : {
-                      'AWS:SourceArn' : `!Join ['', [ 'arn:aws:cloudfront::${this.accountID}:distribution/', !GetAtt SiteCloudFrontDistribution.Id ]]`
+                      'AWS:SourceArn' : {
+                        'Fn::Join' : ['', [`arn:aws:cloudfront::${accountID}:distribution/`, { 'Fn::GetAtt' : ['SiteCloudFrontDistribution', 'Id'] }]]
+                      }
                     }
                   }
                 }
@@ -111,15 +158,17 @@ const SiteTemplate = class {
   }
 
   render () {
-    let output = `AWSTemplateFormatVersion: 2010-09-09
-Description: Static ${this.apexDomain} site using an S3 bucket and CloudFront.
+    const { apexDomain } = this.siteInfo
+    const resourceTypes = Object.keys(this.resourceTypes).sort()
 
-`
-    output += yaml.dump(this.baseTemplate, { lineWidth : -1 })
-      // yaml wants to quote the template functions like '!Get', but that breaks our template
-      .replaceAll(/: '(!.+)'\s*$/gm, ': $1')
-      .replaceAll(/(?<!: )''/gm, "'") // When quoting the above, yaml generates escaped 's
+    const outputTemplate = Object.assign({
+      AWSTemplateFormatVersion : '2010-09-09',
+      Description              : `${apexDomain} site built with ${resourceTypes.slice(0, -1).join(', ')} and ${resourceTypes[resourceTypes.length - 1]}.`
+    },
+    this.finalTemplate
+    )
 
+    const output = yaml.dump(outputTemplate, { lineWidth : 0 })
     return output
   }
 }

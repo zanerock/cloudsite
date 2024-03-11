@@ -5,17 +5,18 @@ import {
   DeleteStackCommand,
   DescribeStacksCommand
 } from '@aws-sdk/client-cloudformation'
-import { S3Client, HeadBucketCommand } from '@aws-sdk/client-s3'
-import { STSClient, GetCallerIdentityCommand } from '@aws-sdk/client-sts'
 
+import { convertDomainToBucketName } from '../shared/convert-domain-to-bucket-name'
 import { createOrUpdateDNSRecords } from './lib/create-or-update-dns-records'
+import { determineBucketName } from '../shared/determine-bucket-name'
 import { errorOut } from '../../cli/lib/error-out'
 import { getCredentials } from './lib/get-credentials'
+import * as plugins from '../plugins'
 import { SiteTemplate } from './lib/site-template'
 import { syncSiteContent } from './lib/sync-site-content'
 
 const RECHECK_WAIT_TIME = 2000 // ms
-const STACK_CREATE_TIMEOUT = 15 // min; in recent testing, it takes about 7-8 min for stack creation to complete
+const STACK_CREATE_TIMEOUT = 30 // min
 
 const create = async ({
   noBuild,
@@ -23,7 +24,8 @@ const create = async ({
   siteInfo,
   ...downstreamOptions
 }) => {
-  const { apexDomain, bucketName } = siteInfo
+  const { apexDomain } = siteInfo
+  let { bucketName } = siteInfo
 
   const credentials = getCredentials(downstreamOptions)
 
@@ -47,13 +49,22 @@ const create = async ({
     throw new Error(`Wildcard certificate for '${apexDomain}' found, but requires validation. Please validate the certificate. To validate on S3 when using Route 53 for DNS service, try navigating to the folliwng URL and select 'Create records in Route 53'::\n\n${certificateConsoleURL}\n\nSubsequent validation may take up to 30 minutes. For further documentation:\n\nhttps://docs.aws.amazon.com/acm/latest/userguide/dns-validation.html`)
   }
 
-  await determineBucketName({ apexDomain, bucketName, credentials, siteInfo })
+  bucketName = await determineBucketName({ bucketName, credentials, findName : true, siteInfo })
+  siteInfo.bucketName = bucketName
   const stackCreated = await createSiteStack({ credentials, noDeleteOnFailure, siteInfo })
+
   if (stackCreated === true) {
+    const postUpdateHandlers = Object.keys(siteInfo.pluginSettings || {}).map((pluginKey) =>
+      [pluginKey, plugins[pluginKey].postUpdateHandler]
+    )
+      .filter(([, postUpdateHandler]) => postUpdateHandler !== undefined)
+
     await updateSiteInfo({ credentials, siteInfo }) // needed by createOrUpdateDNSRecords
     await Promise.all([
       syncSiteContent({ credentials, noBuild, siteInfo }),
-      createOrUpdateDNSRecords({ credentials, siteInfo })
+      createOrUpdateDNSRecords({ credentials, siteInfo }),
+      ...(postUpdateHandlers.map(([pluginKey, handler]) =>
+        handler({ settings : siteInfo.pluginSettings[pluginKey], siteInfo })))
     ])
 
     process.stdout.write('Stack created.\n')
@@ -81,8 +92,6 @@ const findCertificate = async ({ apexDomain, acmClient, nextToken }) => {
   // else
   return { certificateArn : null, status : null }
 }
-
-const convertDomainToBucketName = (domain) => domain.replaceAll(/\./g, '-').replaceAll(/[^a-z0-9-]/g, 'x')
 
 const createCertificate = async ({ acmClient, apexDomain }) => {
   process.stdout.write(`Creating wildcard certificate for '${apexDomain}'...`)
@@ -120,47 +129,18 @@ const createCertificate = async ({ acmClient, apexDomain }) => {
   return CertificateArn
 }
 
-const determineBucketName = async ({ apexDomain, bucketName, credentials, siteInfo }) => {
-  process.stdout.write('Getting effective account ID...\n')
-  const response = await new STSClient({ credentials }).send(new GetCallerIdentityCommand({}))
-  const accountID = response.Account
-  siteInfo.accountID = accountID
-
-  if (bucketName === undefined) {
-    bucketName = siteInfo.bucketName || convertDomainToBucketName(apexDomain)
-  }
-  // else, we use the explicit bucketName provided
-  process.stdout.write(`Checking bucket '${bucketName}' is free...\n`)
-
-  const s3Client = new S3Client({ credentials })
-  const input = { Bucket : bucketName, ExpectedBucketOwner : accountID }
-
-  const command = new HeadBucketCommand(input)
-  try {
-    await s3Client.send(command)
-    throw new Error(`Account already owns bucket '${bucketName}'; delete or specify alternate bucket name.`)
-  } catch (e) {
-    if (e.name === 'NotFound') {
-      siteInfo.bucketName = bucketName
-      return bucketName
-    }
-    // else
-    throw e
-  }
-}
-
 const createSiteStack = async ({ credentials, noDeleteOnFailure, siteInfo }) => {
   const { apexDomain, region } = siteInfo
 
-  const siteTemplate = new SiteTemplate(siteInfo)
-
-  // console.log(siteTemplate.render()) // DEBUG
-  // process.exit(0) // DEBUG
+  const siteTemplate = new SiteTemplate({ credentials, siteInfo })
+  await siteTemplate.loadPlugins()
 
   const cloudFormationTemplate = siteTemplate.render()
 
+  console.log('cloudFormationTemplate:', cloudFormationTemplate) // DEBUG
+
   const cloudFormationClient = new CloudFormationClient({ credentials, region })
-  const stackName = convertDomainToBucketName(apexDomain) + '-stack'
+  const stackName = siteInfo.stackName || convertDomainToBucketName(apexDomain) + '-stack'
   const createInput = {
     StackName        : stackName,
     TemplateBody     : cloudFormationTemplate,
@@ -222,7 +202,7 @@ const updateSiteInfo = async ({ credentials, siteInfo }) => {
   const describeCommand = new DescribeStacksCommand({ StackName : stackName })
   const describeResponse = await cloudFormationClient.send(describeCommand)
   const cloudFrontDistributionID = describeResponse
-    .Stacks[0].Outputs.find(({ OutputKey }) => OutputKey === 'CloudFrontDist').OutputValue
+    .Stacks[0].Outputs.find(({ OutputKey }) => OutputKey === 'SiteCloudFrontDistribution').OutputValue
 
   siteInfo.cloudFrontDistributionID = cloudFrontDistributionID
 }

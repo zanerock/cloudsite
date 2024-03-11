@@ -77,6 +77,10 @@ const cliSpec = {
         {
           name    : 'source-type',
           summary : "May be either 'vanilla' or 'docusaurus', otherwise process will attempt to guess."
+        },
+        {
+          name    : 'stack-name',
+          summary : 'Specify the name of the stack to be created and override the default name.'
         }
       ]
     },
@@ -98,7 +102,7 @@ const cliSpec = {
       ]
     },
     {
-      name      : 'set-option',
+      name      : 'plugin-settings',
       summary   : 'Sets (or deletes) a site option.',
       arguments : [
         {
@@ -109,7 +113,7 @@ const cliSpec = {
         },
         {
           name        : 'delete',
-          description : "When set, then deletes the option. Incompatible with the '--value' option.",
+          description : "When set, then deletes the setting. Incompatible with the '--value' option.",
           type        : Boolean
         },
         {
@@ -118,12 +122,12 @@ const cliSpec = {
         },
         {
           name        : 'option',
-          description : "A combined name-value paid, separated by ':'. Used to set multiple option values at one time.",
+          description : "A combined name-value paid, separated by ':'. Used to set multiple setting values at one time.",
           multiple    : true
         },
         {
           name        : 'value',
-          description : "The option value. Incompatible with the '--delete' option."
+          description : "The setting value. Incompatible with the '--delete' option."
         }
       ]
     },

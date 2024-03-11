@@ -1,0 +1,10 @@
+{
+    "name": "cloudsite-serverless-contact-emailer",
+    "version": "1.0.0",
+    "description": "Lambda function to email notices when new entries made in the contact DB.",
+    "main": "index.mjs",
+    "module": "index.mjs",
+    "dependencies": {
+        "@aws-sdk/client-ses": "^3.529.1"
+    }
+}
