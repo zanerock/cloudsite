@@ -19,7 +19,7 @@ const SiteTemplate = class {
       bucketName  : bucketName + '-common-logs',
       credentials : this.credentials,
       findName    : true,
-      siteInfo: this.siteInfo
+      siteInfo    : this.siteInfo
     })
 
     this.finalTemplate.Resources.SharedLoggingBucket = {

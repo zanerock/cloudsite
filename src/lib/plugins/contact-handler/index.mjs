@@ -29,7 +29,7 @@ const stackConfig = async ({ siteTemplate, settings }) => {
 
   let lambdaFunctionsBucketName = convertDomainToBucketName(apexDomain) + '-lambda-functions'
   lambdaFunctionsBucketName =
-    await determineBucketName({ bucketName: lambdaFunctionsBucketName, credentials, findName : true, siteInfo })
+    await determineBucketName({ bucketName : lambdaFunctionsBucketName, credentials, findName : true, siteInfo })
 
   const s3Client = new S3Client({ credentials, region })
   const createBucketCommand = new CreateBucketCommand({
@@ -311,9 +311,9 @@ const stackConfig = async ({ siteTemplate, settings }) => {
           S3Bucket : lambdaFunctionsBucketName,
           S3Key    : contactEmailerZipName
         },
-        Environment: {
-          Variables: {
-            EMAIL_HANDLER_SOURCE_EMAIL: contactHandlerFromEmail
+        Environment : {
+          Variables : {
+            EMAIL_HANDLER_SOURCE_EMAIL : contactHandlerFromEmail
           }
         },
         LoggingConfig : {
@@ -326,12 +326,12 @@ const stackConfig = async ({ siteTemplate, settings }) => {
     }
 
     finalTemplate.Resources.ContactEmailerEventsSource = {
-      Type: 'AWS::Lambda::EventSourceMapping',
-      DependsOn: ['ContactEmailerFunction'],
-      Properties: {
-        FunctionName: { 'Fn::GetAtt': ['ContactEmailerFunction', 'Arn']},
-        EventSourceArn: { 'Fn::GetAtt': ['ContactHandlerDynamoDB', 'StreamArn'] },
-        StartingPosition: 'LATEST'
+      Type       : 'AWS::Lambda::EventSourceMapping',
+      DependsOn  : ['ContactEmailerFunction'],
+      Properties : {
+        FunctionName     : { 'Fn::GetAtt' : ['ContactEmailerFunction', 'Arn'] },
+        EventSourceArn   : { 'Fn::GetAtt' : ['ContactHandlerDynamoDB', 'StreamArn'] },
+        StartingPosition : 'LATEST'
       }
     }
 
