@@ -15,10 +15,11 @@ const SiteTemplate = class {
   async enableSharedLoggingBucket () {
     const { bucketName } = this.siteInfo
 
-    const sharedLoggingBucketName = determineBucketName({
+    const sharedLoggingBucketName = await determineBucketName({
       bucketName  : bucketName + '-common-logs',
       credentials : this.credentials,
-      findName    : true
+      findName    : true,
+      siteInfo: this.siteInfo
     })
 
     this.finalTemplate.Resources.SharedLoggingBucket = {
