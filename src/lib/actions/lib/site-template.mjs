@@ -8,7 +8,7 @@ const SiteTemplate = class {
     this.siteInfo = siteInfo
     this.credentials = credentials
 
-    this.resourceTypes = { CloudFormationDistribution : true, S3Bucket : true }
+    this.resourceTypes = { 'CloudFormation::Distribution' : true, 'S3::Bucket' : true }
     this.finalTemplate = this.baseTemplate
   }
 

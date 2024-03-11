@@ -24,7 +24,7 @@ const stackConfig = async ({ siteTemplate, settings }) => {
   const { credentials, finalTemplate, resourceTypes, siteInfo } = siteTemplate
   const { accountID, apexDomain, region } = siteInfo
   const contactHandlerPath = settings.path
-  const contactHandlerFromEmail = settings.email
+  const contactHandlerFromEmail = settings.emailFrom
   const contactHandlerTargetEmail = settings.emailTo
 
   let lambdaFunctionsBucketName = convertDomainToBucketName(apexDomain) + '-lambda-functions'
@@ -80,15 +80,6 @@ const stackConfig = async ({ siteTemplate, settings }) => {
 
   await Promise.all(putCommands.map((c) => c()))
 
-  /* finalTemplate.Resources.SharedLambdaFunctionsS3Bucket = {
-    Type       : 'AWS::S3::Bucket',
-    Properties : {
-      AccessControl : 'Private',
-      BucketName    : lambdaFunctionsBucketName
-    }
-  }
-  resourceTypes.S3Bucket = true */
-
   finalTemplate.Resources.ContactHandlerRole = {
     Type       : 'AWS::IAM::Role',
     Properties : {
@@ -123,7 +114,7 @@ const stackConfig = async ({ siteTemplate, settings }) => {
     }
   }
   finalTemplate.Outputs.ContactHandlerRole = { Value : { Ref : 'ContactHandlerRole' } }
-  resourceTypes.IAMRole = true
+  resourceTypes['IAM::Role'] = true
 
   finalTemplate.Resources.RequestSignerRole = {
     Type       : 'AWS::IAM::Role',
@@ -196,7 +187,7 @@ const stackConfig = async ({ siteTemplate, settings }) => {
     }
   }
   finalTemplate.Outputs.ContactHandlerLambdaFunction = { Value : { Ref : 'ContactHandlerLambdaFunction' } }
-  resourceTypes.LambdaFunction = true
+  resourceTypes['Lambda::Function'] = true
 
   finalTemplate.Resources.ContactHandlerLambdaPermission = {
     Type       : 'AWS::Lambda::Permission',
@@ -245,12 +236,12 @@ const stackConfig = async ({ siteTemplate, settings }) => {
   }
 
   finalTemplate.Outputs.ContactHandlerDynamoDB = { Value : { Ref : 'ContactHandlerDynamoDB' } }
-  resourceTypes.DynamoDBTable = true
+  resourceTypes['DynamoDB::Table'] = true
 
   // add the email trigger on new DynamoDB entries
   if (contactHandlerFromEmail !== undefined) {
     // setup stream on table
-    finalTemplate.Resources.ContactHandlerDynamoDB.StreamSpecification = {
+    finalTemplate.Resources.ContactHandlerDynamoDB.Properties.StreamSpecification = {
       StreamViewType : 'NEW_IMAGE'
     }
 
@@ -297,13 +288,17 @@ const stackConfig = async ({ siteTemplate, settings }) => {
             }
           }
         ],
-        // AWSLambdaBasicExecutionRole: allows logging to CloudWatch
-        ManagedPolicyArns : ['arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole']
+        ManagedPolicyArns : [
+          // AWSLambdaBasicExecutionRole: allows logging to CloudWatch
+          'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole',
+          // Allows reading from DynamoDB streams
+          'arn:aws:iam::aws:policy/service-role/AWSLambdaDynamoDBExecutionRole'
+        ]
       }
     }
 
     finalTemplate.Resources.ContactEmailerFunction = {
-      Type       : 'AWS::Serverless::Function',
+      Type       : 'AWS::Lambda::Function',
       DependsOn  : ['ContactEmailerRole', 'ContactEmailerLogGroup'],
       Properties : {
         FunctionName : emailerFunctionName,
@@ -321,21 +316,22 @@ const stackConfig = async ({ siteTemplate, settings }) => {
             EMAIL_HANDLER_SOURCE_EMAIL: contactHandlerFromEmail
           }
         },
-        Events: {
-          ContactFormEntriesEvent: {
-            Type: 'DynamoDB',
-            Properties: {
-              StartingPosition: 'LATEST',
-              Stream: { 'Fn::GetAtt': ['ContactHandlerDynamoDB', 'StreamArn'] }
-            }
-          }
-        },
         LoggingConfig : {
           ApplicationLogLevel : 'INFO', // support options
           LogFormat           : 'JSON', // support options
           LogGroup            : emailerFunctionLogGroupName,
           SystemLogLevel      : 'INFO' // support options
         }
+      }
+    }
+
+    finalTemplate.Resources.ContactEmailerEventsSource = {
+      Type: 'AWS::Lambda::EventSourceMapping',
+      DependsOn: ['ContactEmailerFunction'],
+      Properties: {
+        FunctionName: { 'Fn::GetAtt': ['ContactEmailerFunction', 'Arn']},
+        EventSourceArn: { 'Fn::GetAtt': ['ContactHandlerDynamoDB', 'StreamArn'] },
+        StartingPosition: 'LATEST'
       }
     }
 
