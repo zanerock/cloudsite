@@ -1,6 +1,5 @@
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses'
 
-
 export const handler = async (event) => {
   const sourceEmail = process.env.EMAIL_HANDLER_SOURCE_EMAIL
   const targetEmails = (process.env.EMAIL_HANDLER_TARGET_EMAIL || sourceEmail).split(',')
@@ -11,7 +10,7 @@ export const handler = async (event) => {
 
   const tabledetails = event.Records[0].dynamodb
   console.info(tabledetails)
- 
+
   const submissionID = tabledetails.NewImage.SubmissionID.S
   const submissionTime = tabledetails.NewImage.SubmissionTime
   const givenName = tabledetails.NewImage.given_name.S
@@ -20,7 +19,7 @@ export const handler = async (event) => {
   const message = tabledetails.NewImage.message.S
   const topics = tabledetails.NewImage.topics.SS
 
-  subject = `New contact form submission (${submissionID})`
+  const subject = `New contact form submission (${submissionID})`
 
   let messageBody = ''
   if (givenName) {
@@ -39,16 +38,16 @@ export const handler = async (event) => {
 
   const sesClient = new SESClient()
   const sendEmailCommand = new SendEmailCommand({
-    Source: sourceEmail,
-    Destination: { ToAddresses: targetEmails },
-    Message: {
-      Subject: { Data: subject, Charset: 'UTF-8' },
-      Body: {
-        Text: { Data: messageBody, Charset: 'UTF-8' }
+    Source      : sourceEmail,
+    Destination : { ToAddresses : targetEmails },
+    Message     : {
+      Subject : { Data : subject, Charset : 'UTF-8' },
+      Body    : {
+        Text : { Data : messageBody, Charset : 'UTF-8' }
       }
     },
-    ReplyToAddresses: [ email ],
-    Tags: [{ Name: 'source', Value: 'contact-form' }]
+    ReplyToAddresses : [email],
+    Tags             : [{ Name : 'source', Value : 'contact-form' }]
   })
 
   await sesClient.send(sendEmailCommand)

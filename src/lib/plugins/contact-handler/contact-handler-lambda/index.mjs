@@ -24,7 +24,7 @@ const handler = async (event) => {
       family_name    : { S : data.family_name || '' },
       email          : { S : data.email || '' },
       message        : { S : data.message || '' },
-      topics         : { SS: data.topics || [''] }
+      topics         : { SS : data.topics || [''] }
     }
   })
 

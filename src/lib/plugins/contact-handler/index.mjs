@@ -27,7 +27,7 @@ const stackConfig = async ({ siteTemplate, settings }) => {
   const contactHandlerEmail = settings.email
 
   let lambdaFunctionsBucketName = convertDomainToBucketName(apexDomain) + '-lambda-functions'
-  lambdaFunctionsBucketName = 
+  lambdaFunctionsBucketName =
     await determineBucketName({ lambdaFunctionsBucketName, credentials, findName : true, siteInfo })
 
   const s3Client = new S3Client({ credentials, region })
@@ -77,7 +77,7 @@ const stackConfig = async ({ siteTemplate, settings }) => {
     putCommands.push(() => s3Client.send(putObjectCommandCE))
   }
 
-  Promises.all(putCommand.map((c) => c()))
+  await Promise.all(putCommands.map((c) => c()))
 
   /* finalTemplate.Resources.SharedLambdaFunctionsS3Bucket = {
     Type       : 'AWS::S3::Bucket',
@@ -126,7 +126,7 @@ const stackConfig = async ({ siteTemplate, settings }) => {
 
   finalTemplate.Resources.RequestSignerRole = {
     Type       : 'AWS::IAM::Role',
-    DependsOn : ['ContactHandlerLambdaFunction'],
+    DependsOn  : ['ContactHandlerLambdaFunction'],
     Properties : {
       AssumeRolePolicyDocument : {
         Version   : '2012-10-17',
@@ -155,7 +155,7 @@ const stackConfig = async ({ siteTemplate, settings }) => {
         }
       ],
       // AWSLambdaBasicExecutionRole: allows logging to CloudWatch
-      ManagedPolicyArns: [ 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole' ]
+      ManagedPolicyArns : ['arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole']
     }
   }
 
@@ -249,7 +249,7 @@ const stackConfig = async ({ siteTemplate, settings }) => {
   if (contactHandlerEmail !== undefined) {
     // setup stream on table
     finalTemplate.Resources.ContactHandlerDynamoDB.StreamSpecification = {
-      StreamViewType: 'NEW_IMAGE'
+      StreamViewType : 'NEW_IMAGE'
     }
 
     const emailerFunctionName = lambdaFunctionsBucketName + '-contact-emailer'
@@ -294,19 +294,21 @@ const stackConfig = async ({ siteTemplate, settings }) => {
 
   const cfCacheBehaviors = finalTemplate.Resources.SiteCloudFrontDistribution.Properties.DistributionConfig.CacheBehaviors || []
   cfCacheBehaviors.push({
-    AllowedMethods       : ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'PATCH', 'POST', 'PUT'],
-    CachePolicyId        : '4135ea2d-6df8-44a3-9df3-4b5a84be39ad', // caching disabled managed policy
-    PathPattern          : contactHandlerPath,
-    TargetOriginId       : 'ContactHandlerLambdaOrigin',
-    ViewerProtocolPolicy : 'https-only',
-    LambdaFunctionAssociations: [
+    AllowedMethods             : ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'PATCH', 'POST', 'PUT'],
+    CachePolicyId              : '4135ea2d-6df8-44a3-9df3-4b5a84be39ad', // caching disabled managed policy
+    PathPattern                : contactHandlerPath,
+    TargetOriginId             : 'ContactHandlerLambdaOrigin',
+    ViewerProtocolPolicy       : 'https-only',
+    LambdaFunctionAssociations : [
       {
-        EventType : 'origin-request',
-        IncludeBody : true,
-        LambdaFunctionARN : { 'Fn::Join': [':', [
-          { 'Fn::GetAtt': ['SignRequestFunction', 'Arn']},
-          { 'Fn::GetAtt': ['SignRequestFunctionVersion', 'Version']}]
-        ]}
+        EventType         : 'origin-request',
+        IncludeBody       : true,
+        LambdaFunctionARN : {
+          'Fn::Join' : [':', [
+            { 'Fn::GetAtt' : ['SignRequestFunction', 'Arn'] },
+            { 'Fn::GetAtt' : ['SignRequestFunctionVersion', 'Version'] }]
+          ]
+        }
       }
     ]
   })

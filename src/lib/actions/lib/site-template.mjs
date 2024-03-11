@@ -1,6 +1,7 @@
 import yaml from 'js-yaml'
 
 import * as plugins from '../../plugins'
+import { determineBucketName } from '../../shared/determine-bucket-name'
 
 const SiteTemplate = class {
   constructor ({ credentials, siteInfo }) {
@@ -11,10 +12,14 @@ const SiteTemplate = class {
     this.finalTemplate = this.baseTemplate
   }
 
-  enableSharedLoggingBucket () {
+  async enableSharedLoggingBucket () {
     const { bucketName } = this.siteInfo
 
-    const sharedLoggingBucketName = bucketName + '-common-logs'
+    const sharedLoggingBucketName = determineBucketName({
+      bucketName  : bucketName + '-common-logs',
+      credentials : this.credentials,
+      findName    : true
+    })
 
     this.finalTemplate.Resources.SharedLoggingBucket = {
       Type       : 'AWS::S3::Bucket',
