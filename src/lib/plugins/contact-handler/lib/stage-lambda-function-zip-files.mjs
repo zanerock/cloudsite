@@ -7,7 +7,7 @@ import { CONTACT_EMAILER_ZIP_NAME, CONTACT_HANDLER_ZIP_NAME, REQUEST_SIGNER_ZIP_
 import { convertDomainToBucketName } from '../../../shared/convert-domain-to-bucket-name'
 import { determineBucketName } from '../../../shared/determine-bucket-name'
 // jsdoc wants this, but it causes a circular dependency
-// import { SiteTemplate } from '../../../actions/lib/site-template'
+// import { SiteTemplate } from '../../../shared/site-template'
 
 /* eslint-disable  jsdoc/no-undefined-types */ // See note above re. SiteTemplate
 /**

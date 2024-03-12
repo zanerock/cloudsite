@@ -12,7 +12,7 @@ import { determineBucketName } from '../shared/determine-bucket-name'
 import { errorOut } from '../../cli/lib/error-out'
 import { getCredentials } from './lib/get-credentials'
 import * as plugins from '../plugins'
-import { SiteTemplate } from './lib/site-template'
+import { SiteTemplate } from '../shared/site-template'
 import { syncSiteContent } from './lib/sync-site-content'
 
 const RECHECK_WAIT_TIME = 2000 // ms

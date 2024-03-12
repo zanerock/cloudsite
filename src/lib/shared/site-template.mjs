@@ -1,7 +1,7 @@
 import yaml from 'js-yaml'
 
-import * as plugins from '../../plugins'
-import { determineBucketName } from '../../shared/determine-bucket-name'
+import * as plugins from '../plugins'
+import { determineBucketName } from './determine-bucket-name'
 
 /**
  * Class encapsulating site stack configuration. Any enabled plugins are loaded and processed by this class.
