@@ -20,7 +20,7 @@ const cliSpec = {
   commands : [
     {
       name      : 'configuration',
-      summary   : 'Command group for managing the Cloudsite CLI configuration.',
+      description   : 'Command group for managing the Cloudsite CLI configuration.',
       arguments : [
         {
           name          : 'command',
@@ -32,17 +32,17 @@ const cliSpec = {
       commands : [
         {
           name    : 'initialize',
-          summary : 'Runs the initialization wizard and updates all options.'
+          description : 'Runs the initialization wizard and updates all options.'
         },
         {
           name    : 'show',
-          summary : 'Displays the current configuration.'
+          description : 'Displays the current configuration.'
         }
       ]
     },
     {
       name      : 'create',
-      summary   : 'Creates a new website, setting up infrastructure and copying content.',
+      description   : 'Creates a new website, setting up infrastructure and copying content.',
       arguments : [
         {
           name          : 'apex-domain',
@@ -76,17 +76,17 @@ const cliSpec = {
         },
         {
           name    : 'source-type',
-          summary : "May be either 'vanilla' or 'docusaurus', otherwise process will attempt to guess."
+          description : "May be either 'vanilla' or 'docusaurus', otherwise process will attempt to guess."
         },
         {
           name    : 'stack-name',
-          summary : 'Specify the name of the stack to be created and override the default name.'
+          description : 'Specify the name of the stack to be created and override the default name.'
         }
       ]
     },
     {
       name      : 'destroy',
-      summary   : 'Destroys the named site. I.e., deletes all cloud resources associated with the site.',
+      description   : 'Destroys the named site. I.e., deletes all cloud resources associated with the site.',
       arguments : [
         {
           name          : 'apex-domain',
@@ -103,7 +103,7 @@ const cliSpec = {
     },
     {
       name      : 'plugin-settings',
-      summary   : 'Sets (or deletes) a site option.',
+      description   : 'Sets (or deletes) a site option.',
       arguments : [
         {
           name          : 'apex-domain',
