@@ -1,3 +1,10 @@
+## Known limitations
+
+- The current setup instructions grant the user 'PowerUserAccess', which is overly broad. We need to determine what permissions are needed and generate a permissions policy document with only the necessary permissions. See [issue #36](https://github.com/liquid-labs/cloudsite/issues/36).
+- One resource, the 'lambda-function-bucket', is not incorporated into the stack. We need to import it into the stack after stack creation. See [issue #32](https://github.com/liquid-labs/cloudsite/issues/32).
+- The permissions used by the 'ContactHandler' Lambda function are overly broad and need to be narrowed. See [issue #34](https://github.com/liquid-labs/cloudsite/issues/34).
+- There are still edge cases where the stack might fail due to resource name collisions. See [issue #33](https://github.com/liquid-labs/cloudsite/issues/33).
+
 ## Contributing
 
 Plase feel free to submit any [bug reports or feature suggestions](https://github.com/liquid-labs/cloudsite/issues). You're also welcome to submit patches of course. We don't have a full contributors policy yet, but you can post questions on [our discord channel](https://discord.gg/QWAav6fZ5C). It's not monitored 24/7, but you should hear back from us by next business day generally.

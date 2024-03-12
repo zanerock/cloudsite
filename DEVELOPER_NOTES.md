@@ -34,19 +34,25 @@
 - The '[destroy](./src/lib/destroy.mjs)' action is used to destroy (delete/remove) all site resources.
 - The '[import](./src/lib/import.mjs)' action examines existing AWS resources, identifies existing sites, and updates the local site database (in `~/.config/cloudsite/sites.json`).
 
-# TODOs
+## Dependencies organization
+
+All the CLI dependencies are noted as peer dependencies. This is so that if the package is being installed as a library, you can run `npm i --omit peer`.
+
+## TODOs
 
 - Make the custom error responses smarter; I think we want to retain the error code in the response (? need to verify our assumption how that works) and use 403.html and 404.html _if present_.
 - Create role and user with limited IAM permissions (see [Deploy a website with AWS S3 + CloudFront using CloudFormation](https://blog.canopas.com/deploy-a-website-with-aws-s3-cloudfront-using-cloudformation-c2199dc6c435))
 
-# Limitations and future goals
+## Limitations and future goals
+
+See also the [Known limitations section in the README.md](./README.md#known-limitations).
 
 - The current implementation deals exclusively with apex domains. It would make a lot of sense to support sub-domains as well.
 - Reporting progress through `process.stdout` isn't ideal, especial for the _lib_ components. We think using something like the Winston logger might be useful.[^1]
 
 [^1: We did a survey of "top javascript log libraries" and determined that Winston seemed to fit best. It had all the feataures we needed and is very well supported.]
 
-# References and credits
+## References and credits
 
 - [Cloudfront, Function, and Edge@Lambda with Cloudformation](https://medium.com/codex/cloudfront-function-and-edge-lambda-with-cloudformation-e6aae6d87517): An example of using Lambda@Edge
 - [Deploy a website with AWS S3 + CloudFront using CloudFormation](https://blog.canopas.com/deploy-a-website-with-aws-s3-cloudfront-using-cloudformation-c2199dc6c435): Described basic setup.
