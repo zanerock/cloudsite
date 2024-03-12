@@ -60,3 +60,4 @@ See also the [Known limitations section in the README.md](./README.md#known-limi
 - [How to deploy Docusaurus page using AWS S3 and CloudFront](https://juffalow.com/blog/other/how-to-deploy-docusaurus-page-using-aws-s3-and-cloudfront#cloudfront-functions): Describes (now unnecessary?) changes to handle Docusaurus site
 - [Protecting an AWS Lambda function URL with Amazon CloudFront and Lambda@Edge](https://aws.amazon.com/blogs/compute/protecting-an-aws-lambda-function-url-with-amazon-cloudfront-and-lambdaedge/)
 - [Request signing Lambda code](https://github.com/aws-samples/aws-lambda-function-url-secured/blob/209bc9d2a73dbb6eefed1dc9cf98a9678ede9873/src/functions/auth/auth.mjs)
+- [Revolutionizing Web Development: Creating Serverless Contact Forms with AWS](https://medium.com/cloud-native-daily/revolutionizing-web-development-creating-serverless-contact-forms-with-aws-8d2f2220329a)
