@@ -39,7 +39,7 @@ cloudsite destroy your-domain.com # destroys site infrastructure
 - [`create`](#cloudsite-create): Creates a new website, setting up infrastructure and copying content.
 - [`destroy`](#cloudsite-destroy): Destroys the named site. I.e., deletes all cloud resources associated with the site.
 - [`plugin-settings`](#cloudsite-plugin-settings): Sets (or deletes) a site option.
-- [`update`](#cloudsite-update)
+- [`update`](#cloudsite-update): Updates a website content and/or infrastructure.
 
 <span id="cloudsite-configuration"></span>
 #### `cloudsite configuration [command]`
@@ -115,6 +115,8 @@ Sets (or deletes) a site option.
 
 <span id="cloudsite-update"></span>
 #### `cloudsite update <options> [apex-domain]`
+
+Updates a website content and/or infrastructure.
 
 ##### `update` options
 

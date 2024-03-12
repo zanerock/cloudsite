@@ -23,7 +23,7 @@ const cliSpec = {
       description   : 'Command group for managing the Cloudsite CLI configuration.',
       arguments : [
         {
-          name          : 'command',
+          name          : 'subcommand',
           defaultOption : true,
           required      : true,
           description   : 'The configuration action to perform.'
@@ -133,7 +133,7 @@ const cliSpec = {
     },
     {
       name      : 'update',
-      summaray  : 'Updates a website content and/or infrastructure.',
+      summary  : 'Updates a website content and/or infrastructure.',
       arguments : [
         {
           name          : 'apex-domain',
