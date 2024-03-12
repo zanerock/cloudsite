@@ -19,9 +19,9 @@ const cliSpec = {
   ],
   commands : [
     {
-      name      : 'configuration',
-      description   : 'Command group for managing the Cloudsite CLI configuration.',
-      arguments : [
+      name        : 'configuration',
+      description : 'Command group for managing the Cloudsite CLI configuration.',
+      arguments   : [
         {
           name          : 'subcommand',
           defaultOption : true,
@@ -31,19 +31,19 @@ const cliSpec = {
       ],
       commands : [
         {
-          name    : 'initialize',
+          name        : 'initialize',
           description : 'Runs the initialization wizard and updates all options.'
         },
         {
-          name    : 'show',
+          name        : 'show',
           description : 'Displays the current configuration.'
         }
       ]
     },
     {
-      name      : 'create',
-      description   : 'Creates a new website, setting up infrastructure and copying content.',
-      arguments : [
+      name        : 'create',
+      description : 'Creates a new website, setting up infrastructure and copying content.',
+      arguments   : [
         {
           name          : 'apex-domain',
           description   : 'The site apex domain.',
@@ -75,19 +75,19 @@ const cliSpec = {
           required    : true
         },
         {
-          name    : 'source-type',
+          name        : 'source-type',
           description : "May be either 'vanilla' or 'docusaurus', otherwise process will attempt to guess."
         },
         {
-          name    : 'stack-name',
+          name        : 'stack-name',
           description : 'Specify the name of the stack to be created and override the default name.'
         }
       ]
     },
     {
-      name      : 'destroy',
-      description   : 'Destroys the named site. I.e., deletes all cloud resources associated with the site.',
-      arguments : [
+      name        : 'destroy',
+      description : 'Destroys the named site. I.e., deletes all cloud resources associated with the site.',
+      arguments   : [
         {
           name          : 'apex-domain',
           description   : 'The domain of the site to delete.',
@@ -102,9 +102,9 @@ const cliSpec = {
       ]
     },
     {
-      name      : 'plugin-settings',
-      description   : 'Sets (or deletes) a site option.',
-      arguments : [
+      name        : 'plugin-settings',
+      description : 'Sets (or deletes) a site option.',
+      arguments   : [
         {
           name          : 'apex-domain',
           description   : 'The apex domain identifying the site.',
@@ -133,7 +133,7 @@ const cliSpec = {
     },
     {
       name      : 'update',
-      summary  : 'Updates a website content and/or infrastructure.',
+      summary   : 'Updates a website content and/or infrastructure.',
       arguments : [
         {
           name          : 'apex-domain',
