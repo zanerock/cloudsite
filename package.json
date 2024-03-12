@@ -20,7 +20,7 @@
   },
   "keywords": [],
   "author": "Zane Rockenbaugh <zane@liquid-labs.com>",
-  "license": "UNLICENSED",
+  "license": "Apache-2.0",
   "repository": "git+ssh://git@github.com/liquid-labs/cloudsite.git",
   "bugs": {
     "url": "https://github.com/liquid-labs/cloudsite/issues"
