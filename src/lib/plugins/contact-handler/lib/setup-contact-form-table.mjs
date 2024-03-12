@@ -1,10 +1,11 @@
-const setupContactFormTable = ({ siteInfo }) => {
-  const { finalTemplate, resourceTypes } = siteInfo
+const setupContactFormTable = ({ siteInfo, siteTemplate }) => {
+  const { finalTemplate, resourceTypes } = siteTemplate
+  const { bucketName } = siteInfo
 
   finalTemplate.Resources.ContactHandlerDynamoDB = {
     Type       : 'AWS::DynamoDB::Table',
     Properties : {
-      TableName            : 'ContactFormEntries',
+      TableName            : bucketName + '-ContactFormEntries',
       AttributeDefinitions : [
         { AttributeName : 'SubmissionID', AttributeType : 'S' },
         { AttributeName : 'SubmissionTime', AttributeType : 'S' }

@@ -20,17 +20,19 @@ const config = {
 }
 
 const stackConfig = async ({ siteTemplate, settings }) => {
-  const { siteInfo } = siteTemplate
+  process.stdout.write('Preparing contact handler plugin...\n')
+
+  const { credentials, siteInfo } = siteTemplate
   const enableEmail = !!settings.emailFrom
 
-  const lambdaFunctionsBucketName = await stageLambdaFunctionZipFiles({ enableEmail, siteInfo })
+  const lambdaFunctionsBucketName = await stageLambdaFunctionZipFiles({ credentials, enableEmail, siteInfo })
 
-  setupContactHandler({ lambdaFunctionsBucketName, siteInfo })
-  setupRequestSigner({ lambdaFunctionsBucketName, siteInfo })
-  setupContactFormTable({ siteInfo })
-  updateCloudFrontDistribution({ settings, siteInfo })
+  setupContactHandler({ lambdaFunctionsBucketName, siteInfo, siteTemplate })
+  setupRequestSigner({ lambdaFunctionsBucketName, siteTemplate })
+  setupContactFormTable({ siteInfo, siteTemplate })
+  updateCloudFrontDistribution({ settings, siteTemplate })
   if (enableEmail === true) {
-    setupContactEmailer({ lambdaFunctionsBucketName, settings, siteInfo })
+    setupContactEmailer({ lambdaFunctionsBucketName, settings, siteTemplate })
   }
 }
 

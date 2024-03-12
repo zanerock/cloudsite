@@ -10,11 +10,13 @@ export const handler = async (event) => {
 
   const sendProcesses = []
   for (const record of event.Records) {
+    const { eventName } = record
+    if (eventName !== 'INSERT') continue;
     const tabledetails = record.dynamodb
     console.info(tabledetails)
 
     const submissionID = tabledetails.NewImage.SubmissionID.S
-    const submissionTime = tabledetails.NewImage.SubmissionTime
+    const submissionTime = tabledetails.NewImage.SubmissionTime.S
     const givenName = tabledetails.NewImage.given_name.S
     const familyName = tabledetails.NewImage.family_name.S
     const email = tabledetails.NewImage.email.S

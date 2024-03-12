@@ -1,7 +1,7 @@
 import { CONTACT_EMAILER_ZIP_NAME } from './constants'
 
-const setupContactEmailer = ({ lambdaFunctionsBucketName, settings, siteInfo }) => {
-  const { finalTemplate } = siteInfo
+const setupContactEmailer = ({ lambdaFunctionsBucketName, settings, siteTemplate }) => {
+  const { finalTemplate } = siteTemplate
   const contactHandlerFromEmail = settings.emailFrom
   const contactHandlerTargetEmail = settings.emailTo
 

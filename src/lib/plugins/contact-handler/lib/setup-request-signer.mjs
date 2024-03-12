@@ -1,7 +1,7 @@
 import { REQUEST_SIGNER_ZIP_NAME } from './constants'
 
-const setupRequestSigner = ({ lambdaFunctionsBucketName, siteInfo }) => {
-  const { finalTemplate } = siteInfo
+const setupRequestSigner = ({ lambdaFunctionsBucketName, siteTemplate }) => {
+  const { finalTemplate } = siteTemplate
 
   finalTemplate.Resources.RequestSignerRole = {
     Type       : 'AWS::IAM::Role',

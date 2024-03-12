@@ -1,7 +1,8 @@
 import { CONTACT_HANDLER_ZIP_NAME } from './constants'
 
-const setupContactHandler = ({ lambdaFunctionsBucketName, siteInfo }) => {
-  const { accountID, finalTemplate, resourceTypes } = siteInfo
+const setupContactHandler = ({ lambdaFunctionsBucketName, siteInfo, siteTemplate }) => {
+  const { accountID, bucketName } = siteInfo
+  const { finalTemplate, resourceTypes } = siteTemplate
 
   finalTemplate.Resources.ContactHandlerRole = {
     Type       : 'AWS::IAM::Role',
@@ -61,11 +62,14 @@ const setupContactHandler = ({ lambdaFunctionsBucketName, siteInfo }) => {
         S3Bucket : lambdaFunctionsBucketName,
         S3Key    : CONTACT_HANDLER_ZIP_NAME
       },
-      Handler       : 'index.handler',
-      Role          : { 'Fn::GetAtt' : ['ContactHandlerRole', 'Arn'] },
-      Runtime       : 'nodejs20.x',
-      MemorySize    : 128,
-      Timeout       : 5,
+      Handler     : 'index.handler',
+      Role        : { 'Fn::GetAtt' : ['ContactHandlerRole', 'Arn'] },
+      Runtime     : 'nodejs20.x',
+      MemorySize  : 128,
+      Timeout     : 5,
+      Environment : {
+        Variables : { TABLE_PREFIX : bucketName }
+      },
       LoggingConfig : {
         ApplicationLogLevel : 'INFO', // support options
         LogFormat           : 'JSON', // support options

@@ -17,8 +17,10 @@ import { determineBucketName } from '../../../shared/determine-bucket-name'
  * @param {object} input.siteInfo - See {@link SiteTemplate} for details.
  * @returns {string} The Lambda function bucket name.
  */ /* eslint-enable  jsdoc/no-undefined-types */
-const stageLambdaFunctionZipFiles = async ({ enableEmail, siteInfo }) => {
-  const { apexDomain, credentials, region } = siteInfo
+const stageLambdaFunctionZipFiles = async ({ credentials, enableEmail, siteInfo }) => {
+  process.stdout.write('Staging Lambda function zip files...\n')
+
+  const { apexDomain, region } = siteInfo
 
   const s3Client = new S3Client({ credentials, region })
 
@@ -43,7 +45,7 @@ const stageLambdaFunctionZipFiles = async ({ enableEmail, siteInfo }) => {
     putZipFile({ bucketName : lambdaFunctionsBucketName, fileName : REQUEST_SIGNER_ZIP_NAME, s3Client })
   ]
 
-  if (enableEmail !== true) {
+  if (enableEmail === true) {
     putCommands.push(putZipFile({
       bucketName : lambdaFunctionsBucketName,
       fileName   : CONTACT_EMAILER_ZIP_NAME,
