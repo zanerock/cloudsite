@@ -1,9 +1,11 @@
 import { emailRE } from 'regex-repo'
 
 import { CONTACT_EMAILER_ZIP_NAME } from './lib/constants'
+import { setupContactFormTable } from './lib/setup-contact-form-table'
 import { setupContactHandler } from './lib/setup-contact-handler'
 import { setupRequestSigner } from './lib/setup-request-signer'
 import { stageLambdaFunctionZipFiles } from './lib/stage-lambda-function-zip-files'
+import { updateCloudFrontDistribution } from './lib/update-cloud-front-distribution'
 
 const config = {
   options : {
@@ -18,8 +20,7 @@ const config = {
 }
 
 const stackConfig = async ({ siteTemplate, settings }) => {
-  const { finalTemplate, resourceTypes, siteInfo } = siteTemplate
-  const contactHandlerPath = settings.path
+  const { finalTemplate, siteInfo } = siteTemplate
   const contactHandlerFromEmail = settings.emailFrom
   const contactHandlerTargetEmail = settings.emailTo
   const enableEmail = !!contactHandlerFromEmail
@@ -32,25 +33,8 @@ const stackConfig = async ({ siteTemplate, settings }) => {
 
   setupContactHandler({ lambdaFunctionsBucketName, siteInfo })
   setupRequestSigner({ lambdaFunctionsBucketName, siteInfo })
-
-  finalTemplate.Resources.ContactHandlerDynamoDB = {
-    Type       : 'AWS::DynamoDB::Table',
-    Properties : {
-      TableName            : 'ContactFormEntries',
-      AttributeDefinitions : [
-        { AttributeName : 'SubmissionID', AttributeType : 'S' },
-        { AttributeName : 'SubmissionTime', AttributeType : 'S' }
-      ],
-      KeySchema : [
-        { AttributeName : 'SubmissionID', KeyType : 'HASH' },
-        { AttributeName : 'SubmissionTime', KeyType : 'RANGE' }
-      ],
-      BillingMode : 'PAY_PER_REQUEST'
-    }
-  }
-
-  finalTemplate.Outputs.ContactHandlerDynamoDB = { Value : { Ref : 'ContactHandlerDynamoDB' } }
-  resourceTypes['DynamoDB::Table'] = true
+  setupContactFormTable({ siteInfo })
+  updateCloudFrontDistribution({ settings, siteInfo })
 
   // add the email trigger on new DynamoDB entries
   if (contactHandlerFromEmail !== undefined) {
@@ -154,45 +138,6 @@ const stackConfig = async ({ siteTemplate, settings }) => {
         contactHandlerTargetEmail
     }
   } // if (contactHandlerFromEmail !== undefined) {
-
-  // update the CloudFront Distribution configuration
-  finalTemplate.Resources.SiteCloudFrontDistribution.DependsOn.push('ContactHandlerLambdaURL')
-
-  const cfOrigins = finalTemplate.Resources.SiteCloudFrontDistribution.Properties.DistributionConfig.Origins
-  cfOrigins.push({
-    Id         : 'ContactHandlerLambdaOrigin',
-    DomainName : { // strip the https://
-      'Fn::Select' : [2, { 'Fn::Split' : ['/', { 'Fn::GetAtt' : ['ContactHandlerLambdaURL', 'FunctionUrl'] }] }]
-    },
-    CustomOriginConfig : {
-      HTTPSPort            : 443,
-      OriginProtocolPolicy : 'https-only'
-    }
-  })
-
-  const cfCacheBehaviors = finalTemplate.Resources.SiteCloudFrontDistribution.Properties.DistributionConfig.CacheBehaviors || []
-  cfCacheBehaviors.push({
-    AllowedMethods             : ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'PATCH', 'POST', 'PUT'],
-    CachePolicyId              : '4135ea2d-6df8-44a3-9df3-4b5a84be39ad', // caching disabled managed policy
-    PathPattern                : contactHandlerPath,
-    TargetOriginId             : 'ContactHandlerLambdaOrigin',
-    ViewerProtocolPolicy       : 'https-only',
-    LambdaFunctionAssociations : [
-      {
-        EventType         : 'origin-request',
-        IncludeBody       : true,
-        LambdaFunctionARN : {
-          'Fn::Join' : [':', [
-            { 'Fn::GetAtt' : ['SignRequestFunction', 'Arn'] },
-            { 'Fn::GetAtt' : ['SignRequestFunctionVersion', 'Version'] }]
-          ]
-        }
-      }
-    ]
-  })
-
-  finalTemplate.Resources.SiteCloudFrontDistribution.Properties.DistributionConfig.CacheBehaviors = cfCacheBehaviors
-  finalTemplate.Resources.SiteCloudFrontDistribution.DependsOn.push('SignRequestFunctionVersion')
 }
 
 const contactHandler = { config, stackConfig }

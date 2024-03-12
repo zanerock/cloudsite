@@ -106,6 +106,7 @@ const setupContactHandler = ({ lambdaFunctionsBucketName, siteInfo }) => {
     }
   }
   finalTemplate.Outputs.ContactHandlerLambdaURL = { Value : { Ref : 'ContactHandlerLambdaURL' } }
+  resourceTypes['Lambda::Url'] = true
 }
 
 export { setupContactHandler }
