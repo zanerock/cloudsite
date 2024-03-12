@@ -21,10 +21,10 @@ npm i -g cloudsite
 ### Library installation
 
 ```bash
-npm i --omit peer cloudside
+npm i --omit peer cloudsite
 ```
 
-All the peer deps are specific to the CLI, so if you're not using the CLI, you can omit them.
+All the peer dependencies are specific to the CLI, so if you're not using the CLI, you can omit them.
 
 ## Usage
 
@@ -68,9 +68,9 @@ console.log('Final site info:\n' + JSON.stringify(siteInfo))
 
 ## AWS authentication
 
-Cloudsite works by setting up AWS infrastructure within your own AWS account. There are two basic methods to authenticate: access keys and SSO login. Of the two, SSO login is recommended by AWS and is generally the safer alternative; access keys are a less secure method in that the access keys persist on your hard drive so if your computer is compromised, your AWS account would be vulnerable. access keys, however, is a little easier.
+Cloudsite works by setting up AWS infrastructure within your own AWS account. There are two basic methods to authenticate: access keys and SSO login. Of the two, SSO login is recommended by AWS and is generally the safer alternative; access keys are a less secure method in that the access keys persist on your hard drive so if your computer is compromised, your AWS account would be vulnerable. Access keys, however, are a little easier/quicker to set up.
 
-If you aren't in a hurry, you might want to set up SSO authentication to start with. Otherwise, you can [setup access key authentication](#authenticating-with-api-keys) to get started quickly and then set up SSO authentication later (and delete + disable your access keys).
+If you aren't in a hurry, you might want to set up SSO authentication to start with. Otherwise, you can [setup access key authentication](#authenticating-with-api-keys) to get started quickly and then set up [SSO authentication](#sso-authentication) later (and then delete + disable your access keys).
 
 Note the following instructions use the 'PowerUserAccess' permissions policy, which is overbroad for our needs. Refer to the [Known limitations](#known-limitations) section for additional info.
 
@@ -79,13 +79,13 @@ Note the following instructions use the 'PowerUserAccess' permissions policy, wh
 If you don't already have one, the first step is to create your AWS root account.
 
 1. If you are working on behalf of an organization and have the ability to create email aliases, we suggest you first create 'awsroot@your-domain.com' and use that to sign up.
-2. Navigate to [aws.amozon.com](https://aws.amazon.com/).
+2. Navigate to [aws.amazon.com](https://aws.amazon.com/).
 3. Click 'Create an AWS Account' or 'Create a Free Account'.
 4. Fill out the required information.
 
 ### SSO authentication
 
-SSO authentication uses the new [AWS Identity Center](https://us-east-1.console.aws.amazon.com/singlesignon/home) to enable single-sign on across multiple AWS accounts. SSO is also integrated with the `aws` CLI tool.
+SSO authentication uses the new [AWS Identity Center](https://us-east-1.console.aws.amazon.com/singlesignon/home) to enable single-sign on across multiple AWS accounts. SSO is also integrated with the `aws` CLI tool and is the method by which we can create time-limited session credentials.
 
 #### Create SSO user, group, and set permissions
 
@@ -100,12 +100,12 @@ First, we need to create your SSO user. It's considered best practice to assign 
 7. Review the information and click 'Add user'.
 8. From the left-hand menu, select 'Groups'.
 9. Select 'Create group'.
-10. For group name, enter 'Cloudsite managers' (or whatever you prefer). In the 'Add users to group' section, click the checkmark by the user you just created.
+10. For group name, enter 'cloudsite-managers' (or whatever you prefer). In the 'Add users to group' section, click the checkmark by the user you just created.
 11. From the left-hand menu, select 'Permission sets'.
 12. Under 'Types', select 'Predefined permission set' and then select the radio button for 'PowerUserAccess'.
-13. On the 'Specify permission set details' page, the 'Permission set name'. You can up the 'Session duration' if you like.
+13. On the 'Specify permission set details' page, the 'Permission set name' is prefilled and you can leave as is. Increase the 'Session duration' if you like. When done, hit 'Next'.
 14. Review and click 'Create'.
-15. From the left-hand menu, select click 'AWS accounts'.
+15. From the left-hand menu, select 'AWS accounts'.
 16. You should see your root account listed. Click the checkbox next to the root account and click 'Assign users or groups'.
 17. Select the 'Cloudsite managers' group you just created (or whatever you called it).
 18. On the 'Assign permission sets' page, select 'PowerUserAccess' and click 'Next'.
@@ -129,25 +129,28 @@ First, we need to create your SSO user. It's considered best practice to assign 
    7. Next, you should be asked for the 'CLI default client Region'. We recommend 'us-east-1' (regardless of the region where your IAM Identity Center instance resides).[^2]
    8. For the 'CLI default output format', you can accept the default of 'None'.
    9. For the 'CLI profile name', enter something memorable. We used 'll-power-user'.
-5. At this point, you're already logged in, but in future, you'll want to run:
+5. Now you're all set. From now on, just execute the following to create temporary session credentials `cloudsite` can use:
    ```bash
    aws sso login --profile your-profile-name
    ```
-   Replacing 'your-profil-name' with the name of the profile created in the previous step.
+   Replace 'your-profile-name' with the name of the profile created in the previous step.
 
-You're now ready to use the `cloudsite` CLI tool. In future, you need only execute the `aws sso login --profile your-profile-name` command prior to using the command or if your session times out.
+You're now ready to use the `cloudsite` CLI tool. In future, you need only execute the `aws sso login --profile your-profile-name` command prior to using the `cloudsite` command or if your session times out.
 
 [^1: If you created your IAM Identity Center instance in a different region (than 'us-east-1'), you'll have to select the proper region. AWS provides an explanation and a link to your instance if you're in the wrong region.]
+
 [^2: This is just because the Certificate Manager service—which issues your site's SSL certificates—only operations out of the 'us-east-1' region. It should be possible to create your site in any region, but having all the infrastructure in one region is helpful and with the use of CDN, it shouldn't matter too much which region the rest of the infrastructure resides.]
 
 ### Authenticating with access keys
 
-As an alternate method to setting up SSO, you can also set up access keys. As mentioned, this is considered a bit less safe since anyone that gets ahold of your access keys would have access to your AWS account. For most people, it's a reasonable alternative.
+As an alternate method to setting up SSO, you can also set up access keys. You don't need to both unless you're setting up SSO authentication to replace access keys authentication.
+
+As mentioned, access keys are considered a bit less safe since anyone that gets ahold of your access keys would have access to your AWS account. For most individuals, access keys are reasonable alternative.
 
 We're going to start by following best practices and creating a group. We'll then add permissions to that group. Next, we create a non-root user and add them to the group we just created. Finally, we'll create access keys which we can use for local authentication.
 
-1. To create our non-root user, navigate to the [AWS console](https://us-east-1.console.aws.amazon.com/console/home) (and log in if necessary).
-2. In the 'Services' search in the upper left-hand side, search for 'IAM' and click the service. (Here, you want plain 'IAM', NOT 'IAM Identity Center'.)
+1. First, navigate to the [AWS console](https://us-east-1.console.aws.amazon.com/console/home) (and log in if necessary).
+2. In the 'Services' search in the upper left-hand side, search for 'IAM' and click the service. (Here, you want plain 'IAM', _NOT_ 'IAM Identity Center'.)
 3. From the left-hand side, select 'User groups' and click 'Create group'.
 4. For the group name, we recommend something like 'website-managers', but feel free to name it whatever you like.
 5. In the 'Attach permission policies' section, search for 'PowerUserAccess'. Find the 'PowerUserAccess' policy in the list and click the checkbox next to it.
@@ -161,7 +164,7 @@ We're going to start by following best practices and creating a group. We'll the
 13. Scroll down to 'Access keys' and click 'Create access key'.
 14. For 'Use case', select 'Local code'. Click the "I understand" checkbox below and hit 'Next'.
 15. Click 'Create access key'. Keep the next page, 'Retrieve access keys' open!
-16. Create the file `~/.aws/credentials` with the following text:
+16. Create (or modify) the file `~/.aws/credentials` with the following text:
     ```
     [default]
     aws_access_key_id = ABCDEFGHIJKLMOP
