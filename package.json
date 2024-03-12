@@ -1,6 +1,6 @@
 {
   "name": "cloudsite",
-  "version": "1.0.0-alpha.4",
+  "version": "1.0.0-alpha.5",
   "description": "Low cost, high performance cloud based website hosting manager.",
   "main": "dist/cloudsite.js",
   "scripts": {
