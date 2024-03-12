@@ -42,7 +42,7 @@ cloudsite destroy your-domain.com # destroys site infrastructure
 - [`update`](#cloudsite-update): Updates a website content and/or infrastructure.
 
 <span id="cloudsite-configuration"></span>
-#### `cloudsite configuration [command]`
+#### `cloudsite configuration [subcommand]`
 
 Command group for managing the Cloudsite CLI configuration.
 
@@ -50,7 +50,7 @@ Command group for managing the Cloudsite CLI configuration.
 
 |Option|Description|
 |------|------|
-|`[command]`|(_main argument_,_required_) The configuration action to perform.|
+|`[subcommand]`|(_main argument_,_required_) The configuration action to perform.|
 
 
 ##### Subcommands

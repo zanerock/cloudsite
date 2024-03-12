@@ -1,6 +1,6 @@
 # Cloudsite
 
-Setup and manage websites in the cloud. Cloudsite features CDN integration, DoS protection, free SSL certificates, and integrated contact form processing. In addition, since Cloudsite use "pay as you go" cloud infrastructure, hosting costs are generally well below typical market rates.
+Low cost, high performance cloud based website hosting manager. Cloudsite features CDN integration, DoS protection, free SSL certificates, and contact forms. In addition, since Cloudsite use "pay as you go" cloud infrastructure, hosting costs are generally well below typical market rates.
 
 ## Installation
 
