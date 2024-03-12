@@ -1,6 +1,7 @@
 import { emailRE } from 'regex-repo'
 
-import { CONTACT_EMAILER_ZIP_NAME, CONTACT_HANDLER_ZIP_NAME, REQUEST_SIGNER_ZIP_NAME } from './lib/constants'
+import { CONTACT_EMAILER_ZIP_NAME, REQUEST_SIGNER_ZIP_NAME } from './lib/constants'
+import { setupContactHandler } from './lib/setup-contact-handler'
 import { stageLambdaFunctionZipFiles } from './lib/stage-lambda-function-zip-files'
 
 const config = {
@@ -17,7 +18,6 @@ const config = {
 
 const stackConfig = async ({ siteTemplate, settings }) => {
   const { finalTemplate, resourceTypes, siteInfo } = siteTemplate
-  const { accountID } = siteInfo
   const contactHandlerPath = settings.path
   const contactHandlerFromEmail = settings.emailFrom
   const contactHandlerTargetEmail = settings.emailTo
@@ -27,43 +27,9 @@ const stackConfig = async ({ siteTemplate, settings }) => {
     throw new Error("Found site setting for 'emailTo', but no 'emailFrom'; 'emailFrom' must be set to activate email functionality.")
   }
 
-  const { lambdaFunctionsBucketName } = await stageLambdaFunctionZipFiles({ enableEmail, siteInfo })
+  const lambdaFunctionsBucketName = await stageLambdaFunctionZipFiles({ enableEmail, siteInfo })
 
-  finalTemplate.Resources.ContactHandlerRole = {
-    Type       : 'AWS::IAM::Role',
-    Properties : {
-      AssumeRolePolicyDocument : {
-        Version   : '2012-10-17',
-        Statement : [
-          {
-            Effect    : 'Allow',
-            Principal : {
-              Service : ['lambda.amazonaws.com']
-            },
-            Action : ['sts:AssumeRole']
-          }
-        ]
-      },
-      Path     : '/',
-      Policies : [
-        {
-          PolicyName     : lambdaFunctionsBucketName + '-contact-handler',
-          PolicyDocument : {
-            Version   : '2012-10-17',
-            Statement : [
-              {
-                Effect   : 'Allow',
-                Action   : '*',
-                Resource : '*'
-              }
-            ]
-          }
-        }
-      ]
-    }
-  }
-  finalTemplate.Outputs.ContactHandlerRole = { Value : { Ref : 'ContactHandlerRole' } }
-  resourceTypes['IAM::Role'] = true
+  setupContactHandler({ lambdaFunctionsBucketName, siteInfo })
 
   finalTemplate.Resources.RequestSignerRole = {
     Type       : 'AWS::IAM::Role',
@@ -99,74 +65,6 @@ const stackConfig = async ({ siteTemplate, settings }) => {
       ManagedPolicyArns : ['arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole']
     }
   }
-
-  const contactHandlerLogGroupName = lambdaFunctionsBucketName + '-contact-handler'
-
-  finalTemplate.Resources.ContactHandlerLogGroup = {
-    Type       : 'AWS::Logs::LogGroup',
-    Properties : {
-      LogGroupClass   : 'STANDARD', // TODO: support option for INFREQUENT_ACCESS
-      LogGroupName    : contactHandlerLogGroupName,
-      RetentionInDays : 180 // TODO: support options
-    }
-  }
-
-  const contactHandlerFunctionName = contactHandlerLogGroupName
-  finalTemplate.Resources.ContactHandlerLambdaFunction = {
-    Type       : 'AWS::Lambda::Function',
-    DependsOn  : ['ContactHandlerRole', 'ContactHandlerLogGroup'],
-    Properties : {
-      FunctionName : contactHandlerFunctionName,
-      Description  : 'Handles contact form submissions; creates DynamoDB entry and sends email.',
-      Code         : {
-        S3Bucket : lambdaFunctionsBucketName,
-        S3Key    : CONTACT_HANDLER_ZIP_NAME
-      },
-      Handler       : 'index.handler',
-      Role          : { 'Fn::GetAtt' : ['ContactHandlerRole', 'Arn'] },
-      Runtime       : 'nodejs20.x',
-      MemorySize    : 128,
-      Timeout       : 5,
-      LoggingConfig : {
-        ApplicationLogLevel : 'INFO', // support options
-        LogFormat           : 'JSON', // support options
-        LogGroup            : contactHandlerLogGroupName,
-        SystemLogLevel      : 'INFO' // support options
-      }
-    }
-  }
-  finalTemplate.Outputs.ContactHandlerLambdaFunction = { Value : { Ref : 'ContactHandlerLambdaFunction' } }
-  resourceTypes['Lambda::Function'] = true
-
-  finalTemplate.Resources.ContactHandlerLambdaPermission = {
-    Type       : 'AWS::Lambda::Permission',
-    DependsOn  : ['SiteCloudFrontDistribution', 'ContactHandlerLambdaFunction'],
-    Properties : {
-      Action              : 'lambda:InvokeFunctionUrl',
-      Principal           : 'cloudfront.amazonaws.com',
-      FunctionName        : contactHandlerFunctionName,
-      FunctionUrlAuthType : 'AWS_IAM',
-      SourceArn           : {
-        'Fn::Join' : ['', [`arn:aws:cloudfront::${accountID}:distribution/`, { 'Fn::GetAtt' : ['SiteCloudFrontDistribution', 'Id'] }]]
-      }
-    }
-  }
-
-  finalTemplate.Resources.ContactHandlerLambdaURL = {
-    Type       : 'AWS::Lambda::Url',
-    DependsOn  : ['ContactHandlerLambdaFunction'],
-    Properties : {
-      AuthType : 'AWS_IAM',
-      Cors     : {
-        AllowCredentials : true,
-        AllowHeaders     : ['*'],
-        AllowMethods     : ['POST'],
-        AllowOrigins     : ['*']
-      },
-      TargetFunctionArn : { 'Fn::GetAtt' : ['ContactHandlerLambdaFunction', 'Arn'] }
-    }
-  }
-  finalTemplate.Outputs.ContactHandlerLambdaURL = { Value : { Ref : 'ContactHandlerLambdaURL' } }
 
   finalTemplate.Resources.ContactHandlerDynamoDB = {
     Type       : 'AWS::DynamoDB::Table',
@@ -330,6 +228,16 @@ const stackConfig = async ({ siteTemplate, settings }) => {
   finalTemplate.Resources.SiteCloudFrontDistribution.DependsOn.push('SignRequestFunctionVersion')
 
   const signFunctionHandlerName = lambdaFunctionsBucketName + '-request-signer'
+
+  finalTemplate.Resources.RequestSignerLogGroup = {
+    Type       : 'AWS::Logs::LogGroup',
+    Properties : {
+      LogGroupClass   : 'STANDARD', // TODO: support option for INFREQUENT_ACCESS
+      LogGroupName    : signFunctionHandlerName,
+      RetentionInDays : 180 // TODO: support options
+    }
+  }
+
   finalTemplate.Resources.SignRequestFunction = {
     Type       : 'AWS::Lambda::Function',
     DependsOn  : ['RequestSignerRole'],
@@ -347,7 +255,7 @@ const stackConfig = async ({ siteTemplate, settings }) => {
       LoggingConfig : {
         ApplicationLogLevel : 'INFO', // support options
         LogFormat           : 'JSON', // support options
-        LogGroup            : contactHandlerLogGroupName,
+        LogGroup            : signFunctionHandlerName,
         SystemLogLevel      : 'INFO' // support options
       }
     }
