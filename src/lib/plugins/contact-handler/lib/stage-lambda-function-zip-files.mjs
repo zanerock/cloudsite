@@ -6,15 +6,17 @@ import { CreateBucketCommand, PutObjectCommand, S3Client } from '@aws-sdk/client
 import { CONTACT_EMAILER_ZIP_NAME, CONTACT_HANDLER_ZIP_NAME, REQUEST_SIGNER_ZIP_NAME } from './constants'
 import { convertDomainToBucketName } from '../../../shared/convert-domain-to-bucket-name'
 import { determineBucketName } from '../../../shared/determine-bucket-name'
-import { SiteTemplate } from '../../../actions/lib/site-template'
+// jsdoc wants this, but it causes a circular dependency
+// import { SiteTemplate } from '../../../actions/lib/site-template'
 
+/* eslint-disable  jsdoc/no-undefined-types */ // See note above re. SiteTemplate
 /**
  * Stages the zipped Lambda function packages on a common S3 bucket.
  * @param {object} input - Destructured input argument.
  * @param {boolean} input.enableEmail - True if the site is to be built with email on contact form submission support.
  * @param {object} input.siteInfo - See {@link SiteTemplate} for details.
  * @returns {string} The Lambda function bucket name.
- */
+ */ /* eslint-enable  jsdoc/no-undefined-types */
 const stageLambdaFunctionZipFiles = async ({ enableEmail, siteInfo }) => {
   const { apexDomain, credentials, region } = siteInfo
 

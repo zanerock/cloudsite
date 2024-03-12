@@ -1,7 +1,8 @@
 import { emailRE } from 'regex-repo'
 
-import { CONTACT_EMAILER_ZIP_NAME, REQUEST_SIGNER_ZIP_NAME } from './lib/constants'
+import { CONTACT_EMAILER_ZIP_NAME } from './lib/constants'
 import { setupContactHandler } from './lib/setup-contact-handler'
+import { setupRequestSigner } from './lib/setup-request-signer'
 import { stageLambdaFunctionZipFiles } from './lib/stage-lambda-function-zip-files'
 
 const config = {
@@ -30,41 +31,7 @@ const stackConfig = async ({ siteTemplate, settings }) => {
   const lambdaFunctionsBucketName = await stageLambdaFunctionZipFiles({ enableEmail, siteInfo })
 
   setupContactHandler({ lambdaFunctionsBucketName, siteInfo })
-
-  finalTemplate.Resources.RequestSignerRole = {
-    Type       : 'AWS::IAM::Role',
-    DependsOn  : ['ContactHandlerLambdaFunction'],
-    Properties : {
-      AssumeRolePolicyDocument : {
-        Version   : '2012-10-17',
-        Statement : [
-          {
-            Effect    : 'Allow',
-            Principal : { Service : ['lambda.amazonaws.com', 'edgelambda.amazonaws.com'] },
-            Action    : ['sts:AssumeRole']
-          }
-        ]
-      },
-      Path     : '/',
-      Policies : [
-        {
-          PolicyName     : lambdaFunctionsBucketName + '-request-signer',
-          PolicyDocument : {
-            Version   : '2012-10-17',
-            Statement : [
-              {
-                Effect   : 'Allow',
-                Action   : 'lambda:InvokeFunctionUrl',
-                Resource : { 'Fn::GetAtt' : ['ContactHandlerLambdaFunction', 'Arn'] }
-              }
-            ]
-          }
-        }
-      ],
-      // AWSLambdaBasicExecutionRole: allows logging to CloudWatch
-      ManagedPolicyArns : ['arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole']
-    }
-  }
+  setupRequestSigner({ lambdaFunctionsBucketName, siteInfo })
 
   finalTemplate.Resources.ContactHandlerDynamoDB = {
     Type       : 'AWS::DynamoDB::Table',
@@ -226,48 +193,6 @@ const stackConfig = async ({ siteTemplate, settings }) => {
 
   finalTemplate.Resources.SiteCloudFrontDistribution.Properties.DistributionConfig.CacheBehaviors = cfCacheBehaviors
   finalTemplate.Resources.SiteCloudFrontDistribution.DependsOn.push('SignRequestFunctionVersion')
-
-  const signFunctionHandlerName = lambdaFunctionsBucketName + '-request-signer'
-
-  finalTemplate.Resources.RequestSignerLogGroup = {
-    Type       : 'AWS::Logs::LogGroup',
-    Properties : {
-      LogGroupClass   : 'STANDARD', // TODO: support option for INFREQUENT_ACCESS
-      LogGroupName    : signFunctionHandlerName,
-      RetentionInDays : 180 // TODO: support options
-    }
-  }
-
-  finalTemplate.Resources.SignRequestFunction = {
-    Type       : 'AWS::Lambda::Function',
-    DependsOn  : ['RequestSignerRole'],
-    Properties : {
-      FunctionName : signFunctionHandlerName,
-      Handler      : 'index.handler',
-      Role         : { 'Fn::GetAtt' : ['RequestSignerRole', 'Arn'] },
-      Runtime      : 'nodejs20.x',
-      MemorySize   : 128,
-      Timeout      : 5,
-      Code         : {
-        S3Bucket : lambdaFunctionsBucketName,
-        S3Key    : REQUEST_SIGNER_ZIP_NAME
-      },
-      LoggingConfig : {
-        ApplicationLogLevel : 'INFO', // support options
-        LogFormat           : 'JSON', // support options
-        LogGroup            : signFunctionHandlerName,
-        SystemLogLevel      : 'INFO' // support options
-      }
-    }
-  }
-
-  finalTemplate.Resources.SignRequestFunctionVersion = {
-    Type       : 'AWS::Lambda::Version',
-    DependsOn  : ['SignRequestFunction'],
-    Properties : {
-      FunctionName : { 'Fn::GetAtt' : ['SignRequestFunction', 'Arn'] }
-    }
-  }
 }
 
 const contactHandler = { config, stackConfig }
