@@ -1,7 +1,7 @@
 {
   "name": "cloudsite",
   "version": "1.0.0-alpha.1",
-  "description": "Setup and manage websites in the cloud.",
+  "description": "Low cost, high performance cloud based website hosting manager.",
   "main": "dist/cloudsite.js",
   "scripts": {
     "build": "make",
