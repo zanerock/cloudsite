@@ -7,7 +7,7 @@ import { convertDomainToBucketName } from './convert-domain-to-bucket-name'
 
 const determineBucketName = async (args) => {
   const { apexDomain, credentials, findName = false, siteInfo } = args
-  let { bucketName } = args
+  let { bucketName, s3Client } = args
 
   if (bucketName === undefined) {
     bucketName = siteInfo.bucketName || convertDomainToBucketName(apexDomain)
@@ -21,7 +21,7 @@ const determineBucketName = async (args) => {
     siteInfo.accountID = accountID
   }
 
-  const s3Client = new S3Client({ credentials })
+  s3Client = s3Client || new S3Client({ credentials })
 
   while (true) {
     process.stdout.write(`Checking bucket '${bucketName}' is free...\n`)

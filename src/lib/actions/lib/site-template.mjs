@@ -3,7 +3,31 @@ import yaml from 'js-yaml'
 import * as plugins from '../../plugins'
 import { determineBucketName } from '../../shared/determine-bucket-name'
 
+/**
+ * Class encapsulating site stack configuration. Any enabled plugins are loaded and processed by this class.
+ * @class
+ */
 const SiteTemplate = class {
+  /* eslint-disable jsdoc/check-param-names */ // eslint doesn't believe our 2nd level destructure documentation
+  /**
+   * Creates a new {@link SiteTemplate}.
+   * @param {object} input - Destructured input argument.
+   * @param {object} input.credentials - credentials for AWS SDK clients.
+   * @param {object} input.siteInfo - Collection of site related data elements.
+   * @param {string} input.siteInfo.apexDomain - the sites apex domain
+   * @param {string} input.siteInfo.sourcePath - the path to the site's static source files, may be absolute or CWD
+   *   relative
+   * @param {string} input.siteInfo.region - the region of the site
+   * @param {string} input.siteInfo.certificateArn {string} - the AWS ARN for the site's SSL certificate
+   * @param {string} input.siteInfo.accountID - the ID of the account under which the stack resides (not ARN)
+   * @param {string} input.siteInfo.bucketName - the name of the bucket where the site's static files are stored
+   * @param {string} input.siteInfo.stackName - the name of the stack
+   * @param {string} input.siteInfo.stackArn - the stack's ARN
+   * @param {string} input.siteInfo.cloudFrontDistributionID - the stack's CloudfFront ID (not ARN)
+   * @param {object} input.siteInfo.pluginSettings - collection of plugin settings; settings are grouped/keyed by the
+   *   plugin's name; setting values are dependent on the plugin
+   * @param credentials.siteInfo
+   */ /* eslint-enable jsdoc/check-param-names */
   constructor ({ credentials, siteInfo }) {
     this.siteInfo = siteInfo
     this.credentials = credentials

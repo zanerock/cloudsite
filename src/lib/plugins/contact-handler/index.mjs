@@ -1,12 +1,7 @@
-import * as fsPath from 'node:path'
-import * as fs from 'node:fs'
-
 import { emailRE } from 'regex-repo'
 
-import { CreateBucketCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
-
-import { convertDomainToBucketName } from '../../shared/convert-domain-to-bucket-name'
-import { determineBucketName } from '../../shared/determine-bucket-name'
+import { CONTACT_EMAILER_ZIP_NAME, CONTACT_HANDLER_ZIP_NAME, REQUEST_SIGNER_ZIP_NAME } from './lib/constants'
+import { stageLambdaFunctionZipFiles } from './lib/stage-lambda-function-zip-files'
 
 const config = {
   options : {
@@ -21,64 +16,18 @@ const config = {
 }
 
 const stackConfig = async ({ siteTemplate, settings }) => {
-  const { credentials, finalTemplate, resourceTypes, siteInfo } = siteTemplate
-  const { accountID, apexDomain, region } = siteInfo
+  const { finalTemplate, resourceTypes, siteInfo } = siteTemplate
+  const { accountID } = siteInfo
   const contactHandlerPath = settings.path
   const contactHandlerFromEmail = settings.emailFrom
   const contactHandlerTargetEmail = settings.emailTo
+  const enableEmail = !!contactHandlerFromEmail
 
-  let lambdaFunctionsBucketName = convertDomainToBucketName(apexDomain) + '-lambda-functions'
-  lambdaFunctionsBucketName =
-    await determineBucketName({ bucketName : lambdaFunctionsBucketName, credentials, findName : true, siteInfo })
-
-  const s3Client = new S3Client({ credentials, region })
-  const createBucketCommand = new CreateBucketCommand({
-    ACL    : 'private',
-    Bucket : lambdaFunctionsBucketName
-  })
-  await s3Client.send(createBucketCommand)
-
-  const putCommands = []
-
-  const contactHandlerZipName = 'contact-handler-lambda.zip'
-  const contactHandlerZipPath = fsPath.join(__dirname, contactHandlerZipName)
-  const readStream = fs.createReadStream(contactHandlerZipPath)
-
-  const putObjectCommandCH = new PutObjectCommand({
-    Body        : readStream,
-    Bucket      : lambdaFunctionsBucketName,
-    Key         : contactHandlerZipName,
-    ContentType : 'application/zip'
-  })
-  putCommands.push(() => s3Client.send(putObjectCommandCH))
-
-  const requestSignerZipName = 'request-signer-lambda.zip'
-  const requestSignerZipPath = fsPath.join(__dirname, requestSignerZipName)
-  const rsReadStream = fs.createReadStream(requestSignerZipPath)
-
-  const putObjectCommandRS = new PutObjectCommand({
-    Body        : rsReadStream,
-    Bucket      : lambdaFunctionsBucketName,
-    Key         : requestSignerZipName,
-    ContentType : 'application/zip'
-  })
-  putCommands.push(() => s3Client.send(putObjectCommandRS))
-
-  const contactEmailerZipName = 'contact-emailer-lambda.zip'
-  if (contactHandlerFromEmail !== undefined) {
-    const contactEmailerZipPath = fsPath.join(__dirname, contactEmailerZipName)
-    const ceReadStream = fs.createReadStream(contactEmailerZipPath)
-
-    const putObjectCommandCE = new PutObjectCommand({
-      Body        : ceReadStream,
-      Bucket      : lambdaFunctionsBucketName,
-      Key         : contactEmailerZipName,
-      ContentType : 'application/zip'
-    })
-    putCommands.push(() => s3Client.send(putObjectCommandCE))
+  if (enableEmail !== true && contactHandlerTargetEmail) {
+    throw new Error("Found site setting for 'emailTo', but no 'emailFrom'; 'emailFrom' must be set to activate email functionality.")
   }
 
-  await Promise.all(putCommands.map((c) => c()))
+  const { lambdaFunctionsBucketName } = await stageLambdaFunctionZipFiles({ enableEmail, siteInfo })
 
   finalTemplate.Resources.ContactHandlerRole = {
     Type       : 'AWS::IAM::Role',
@@ -171,7 +120,7 @@ const stackConfig = async ({ siteTemplate, settings }) => {
       Description  : 'Handles contact form submissions; creates DynamoDB entry and sends email.',
       Code         : {
         S3Bucket : lambdaFunctionsBucketName,
-        S3Key    : contactHandlerZipName
+        S3Key    : CONTACT_HANDLER_ZIP_NAME
       },
       Handler       : 'index.handler',
       Role          : { 'Fn::GetAtt' : ['ContactHandlerRole', 'Arn'] },
@@ -309,7 +258,7 @@ const stackConfig = async ({ siteTemplate, settings }) => {
         Timeout      : 5,
         Code         : {
           S3Bucket : lambdaFunctionsBucketName,
-          S3Key    : contactEmailerZipName
+          S3Key    : CONTACT_EMAILER_ZIP_NAME
         },
         Environment : {
           Variables : {
@@ -393,7 +342,7 @@ const stackConfig = async ({ siteTemplate, settings }) => {
       Timeout      : 5,
       Code         : {
         S3Bucket : lambdaFunctionsBucketName,
-        S3Key    : requestSignerZipName
+        S3Key    : REQUEST_SIGNER_ZIP_NAME
       },
       LoggingConfig : {
         ApplicationLogLevel : 'INFO', // support options
