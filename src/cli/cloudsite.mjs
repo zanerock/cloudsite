@@ -1,6 +1,7 @@
 import * as fs from 'node:fs/promises'
 
 import commandLineArgs from 'command-line-args'
+import { commandLineDocumentation } from 'command-line-documentation'
 import isEqual from 'lodash/isEqual'
 
 import { cliSpec, GLOBAL_OPTIONS_PATH, SITES_INFO_PATH } from './constants'
@@ -51,6 +52,9 @@ const cloudsite = async () => {
         await handleCreate({ argv, globalOptions, sitesInfo }); break
       case 'destroy':
         await handleDestroy({ argv, globalOptions, sitesInfo }); break
+      case 'document':
+        console.log(commandLineDocumentation(cliSpec, { sectionDepth : 2, title : 'Command reference' }))
+        break
       case 'plugin-settings':
         await handlePluginSettings({ argv, globalOptions, sitesInfo }); break
       case 'update':

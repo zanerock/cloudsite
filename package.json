@@ -1,7 +1,7 @@
 {
   "name": "cloudsite",
   "version": "1.0.0-alpha.0",
-  "description": "",
+  "description": "Setup and manage websites in the cloud.",
   "main": "dist/cloudsite.js",
   "scripts": {
     "build": "make",
@@ -18,9 +18,20 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "keywords": [],
+  "keywords": [
+    "aws", 
+    "cdn", 
+    "cli", 
+    "cloud", 
+    "cloudfront", 
+    "hosting", 
+    "s3", 
+    "static website", 
+    "website", 
+    "website hosting"
+  ],
   "author": "Zane Rockenbaugh <zane@liquid-labs.com>",
-  "license": "UNLICENSED",
+  "license": "Apache-2.0",
   "repository": "git+ssh://git@github.com/liquid-labs/cloudsite.git",
   "bugs": {
     "url": "https://github.com/liquid-labs/cloudsite/issues"
