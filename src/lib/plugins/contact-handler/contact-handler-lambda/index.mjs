@@ -4,7 +4,7 @@ import { DynamoDBClient, PutItemCommand } from '@aws-sdk/client-dynamodb'
 import { v4 as uuidv4 } from 'uuid'
 
 const handler = async (event) => {
-  console.log('event:', event) // DEBUG
+  const tablePrefix = process.env.TABLE_PREFIX
 
   const body = event.isBase64Encoded === true ? Buffer.from(event.body, 'base64').toString() : event.body
 
@@ -16,7 +16,7 @@ const handler = async (event) => {
   }
 
   const putCommand = new PutItemCommand({
-    TableName : 'ContactFormEntries',
+    TableName : tablePrefix + '-ContactFormEntries',
     Item      : {
       SubmissionID   : { S : uuidv4() },
       SubmissionTime : { S : new Date().toISOString() },

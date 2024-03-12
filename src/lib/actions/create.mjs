@@ -12,7 +12,7 @@ import { determineBucketName } from '../shared/determine-bucket-name'
 import { errorOut } from '../../cli/lib/error-out'
 import { getCredentials } from './lib/get-credentials'
 import * as plugins from '../plugins'
-import { SiteTemplate } from './lib/site-template'
+import { SiteTemplate } from '../shared/site-template'
 import { syncSiteContent } from './lib/sync-site-content'
 
 const RECHECK_WAIT_TIME = 2000 // ms
@@ -136,8 +136,6 @@ const createSiteStack = async ({ credentials, noDeleteOnFailure, siteInfo }) => 
   await siteTemplate.loadPlugins()
 
   const cloudFormationTemplate = siteTemplate.render()
-
-  console.log('cloudFormationTemplate:', cloudFormationTemplate) // DEBUG
 
   const cloudFormationClient = new CloudFormationClient({ credentials, region })
   const stackName = siteInfo.stackName || convertDomainToBucketName(apexDomain) + '-stack'

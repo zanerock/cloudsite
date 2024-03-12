@@ -7,7 +7,7 @@ import { convertDomainToBucketName } from './convert-domain-to-bucket-name'
 
 const determineBucketName = async (args) => {
   const { apexDomain, credentials, findName = false, siteInfo } = args
-  let { bucketName } = args
+  let { bucketName, s3Client } = args
 
   if (bucketName === undefined) {
     bucketName = siteInfo.bucketName || convertDomainToBucketName(apexDomain)
@@ -21,10 +21,10 @@ const determineBucketName = async (args) => {
     siteInfo.accountID = accountID
   }
 
-  const s3Client = new S3Client({ credentials })
+  s3Client = s3Client || new S3Client({ credentials })
 
   while (true) {
-    process.stdout.write(`Checking bucket '${bucketName}' is free...\n`)
+    process.stdout.write(`Checking bucket '${bucketName}' is free... `)
 
     const input = { Bucket : bucketName, ExpectedBucketOwner : accountID }
 
@@ -36,11 +36,14 @@ const determineBucketName = async (args) => {
       }
     } catch (e) {
       if (e.name === 'NotFound') {
+        process.stdout.write('FREE\n')
         return bucketName
-      } else if (findName !== true) {
+      } else if (findName !== true || e.name === 'CredentialsProviderError') {
+        process.stdout.write('\n')
         throw e
       }
     }
+    process.stdout.write('NOT free\n')
     const bucketSalt = uuidv4().slice(0, 8)
     bucketName = bucketName.replace(/-[A-F0-9]{8}$/i, '')
     bucketName += '-' + bucketSalt
