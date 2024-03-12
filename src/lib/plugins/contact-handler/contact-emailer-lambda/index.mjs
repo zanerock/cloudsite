@@ -11,7 +11,7 @@ export const handler = async (event) => {
   const sendProcesses = []
   for (const record of event.Records) {
     const { eventName } = record
-    if (eventName !== 'INSERT') continue;
+    if (eventName !== 'INSERT') continue
     const tabledetails = record.dynamodb
     console.info(tabledetails)
 
