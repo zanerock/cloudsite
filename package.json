@@ -18,7 +18,18 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "keywords": [],
+  "keywords": [
+    "aws", 
+    "cdn", 
+    "cli", 
+    "cloud", 
+    "cloudfront", 
+    "hosting", 
+    "s3", 
+    "static website", 
+    "website", 
+    "website hosting"
+  ],
   "author": "Zane Rockenbaugh <zane@liquid-labs.com>",
   "license": "Apache-2.0",
   "repository": "git+ssh://git@github.com/liquid-labs/cloudsite.git",
