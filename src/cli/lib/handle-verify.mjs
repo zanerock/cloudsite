@@ -16,7 +16,8 @@ const handleVerify = async ({ argv, sitesInfo, globalOptions }) => {
 
   const siteInfo = getSiteInfo({ apexDomain, sitesInfo })
 
-  const results = await verify({ checkContent, checkSiteUp, checkStack, siteInfo, globalOptions })
+  const results =
+    await verify({ checkContent, checkSiteUp, checkStack, globalOptions, progressLogger : process.stdout, siteInfo })
   const summaryStatus = results.reduce((acc, { status : s }) => {
     if (s === 'error') { return 'error' } else if (s === 'failed') { return 'failed' } else { return acc }
   }, 'success')
