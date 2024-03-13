@@ -12,6 +12,7 @@ import { handleDetail } from './lib/handle-detail'
 import { handleList } from './lib/handle-list'
 import { handlePluginSettings } from './lib/handle-plugin-settings'
 import { handleUpdate } from './lib/handle-update'
+import { handleVerify } from './lib/handle-verify'
 
 const cloudsite = async () => {
   const mainOptions = commandLineArgs(cliSpec.mainOptions, { stopAtFirstUnknown : true })
@@ -65,6 +66,8 @@ const cloudsite = async () => {
         await handlePluginSettings({ argv, globalOptions, sitesInfo }); break
       case 'update':
         await handleUpdate({ argv, globalOptions, sitesInfo }); break
+      case 'verify':
+        await handleVerify({ argv, globalOptions, sitesInfo }); break
       default:
         process.stderr.write('Uknown command: ' + command + '\n\n')
       // TODO: handleHelp() (abstriact from cloudcraft)

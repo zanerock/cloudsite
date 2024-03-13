@@ -196,6 +196,7 @@ The `cloudsite` tool will now use your the above configured access key by defaul
 - [`list`](#cloudsite-list): Lists the sites registered in the local database.
 - [`plugin-settings`](#cloudsite-plugin-settings): Sets (or deletes) a site option.
 - [`update`](#cloudsite-update): Updates a website content and/or infrastructure.
+- [`verify`](#cloudsite-verify): Verifies the site is up and running and that the stack and content are up-to-date.
 
 <span id="cloudsite-configuration"></span>
 #### `cloudsite configuration [subcommand]`
@@ -307,6 +308,21 @@ Updates a website content and/or infrastructure.
 |`--do-dns`|Limits update to DNS entries and any other specified updates.|
 |`--no-build`|Supresses the default behavior of building before updating the site.|
 |`--no-cache-invalidation`|Suppresses the default behavior of invalidating the CloudFront cache after the files are updated. Note that invalidation events are chargeable thought at the time of this writing, each account gets 1,000 free requests per year.|
+
+<span id="cloudsite-verify"></span>
+#### `cloudsite verify <options> [apex-domain]`
+
+Verifies the site is up and running and that the stack and content are up-to-date.
+
+##### `verify` options
+
+|Option|Description|
+|------|------|
+|`[apex-domain]`|(_main argument_,_required_) The domain of the site to verify.|
+|`--check-content`|If set, then checks content and skips other checks unless also specifically specified.|
+|`--check-site-up`|If set, then checks that the site is up and skips other checks unless also specifically specified.|
+|`--check-stack`|If set, then checks for stack drift and skips other checks unless also specifically specified.|
+|`--format`|Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'.|
 
 
 

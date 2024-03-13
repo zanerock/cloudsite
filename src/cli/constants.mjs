@@ -192,6 +192,37 @@ const cliSpec = {
           description : 'Suppresses the default behavior of invalidating the CloudFront cache after the files are updated. Note that invalidation events are chargeable thought at the time of this writing, each account gets 1,000 free requests per year.'
         }
       ]
+    },
+    {
+      name      : 'verify',
+      summary   : 'Verifies the site is up and running and that the stack and content are up-to-date.',
+      arguments : [
+        {
+          name          : 'apex-domain',
+          description   : 'The domain of the site to verify.',
+          defaultOption : true,
+          required      : true
+        },
+        {
+          name        : 'check-content',
+          description : 'If set, then checks content and skips other checks unless also specifically specified.',
+          type        : Boolean
+        },
+        {
+          name        : 'check-site-up',
+          description : 'If set, then checks that the site is up and skips other checks unless also specifically specified.',
+          type        : Boolean
+        },
+        {
+          name        : 'check-stack',
+          description : 'If set, then checks for stack drift and skips other checks unless also specifically specified.',
+          type        : Boolean
+        },
+        {
+          name        : 'format',
+          description : "Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'."
+        }
+      ]
     }
   ]
 }

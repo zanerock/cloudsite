@@ -3,6 +3,7 @@ import commandLineArgs from 'command-line-args'
 import { cliSpec } from '../constants'
 import { errorOut } from './error-out'
 import { formatOutput } from './format-output'
+import { getSiteInfo } from './get-site-info'
 
 const handleDetail = ({ argv, sitesInfo }) => {
   const detailOptionsSpec = cliSpec.commands.find(({ name }) => name === 'detail').arguments
@@ -14,11 +15,7 @@ const handleDetail = ({ argv, sitesInfo }) => {
     errorOut('Apex domain must be specified.')
   }
 
-  const output = sitesInfo[apexDomain]
-
-  if (output === undefined) {
-    errorOut(`No such site '${apexDomain}' found.`)
-  }
+  const output = getSiteInfo({ apexDomain, sitesInfo })
 
   formatOutput({ output, format })
 }
