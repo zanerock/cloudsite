@@ -38,26 +38,30 @@ const SiteTemplate = class {
 
   async enableSharedLoggingBucket () {
     const { bucketName } = this.siteInfo
+    let { sharedLoggingBucket } = this.siteInfo
 
-    const sharedLoggingBucketName = await determineBucketName({
-      bucketName  : bucketName + '-common-logs',
-      credentials : this.credentials,
-      findName    : true,
-      siteInfo    : this.siteInfo
-    })
+    if (sharedLoggingBucket === undefined) {
+      sharedLoggingBucket = await determineBucketName({
+        bucketName  : bucketName + '-common-logs',
+        credentials : this.credentials,
+        findName    : true,
+        siteInfo    : this.siteInfo
+      })
+    }
+    this.siteInfo.sharedLoggingBucket = sharedLoggingBucket
 
     this.finalTemplate.Resources.SharedLoggingBucket = {
       Type       : 'AWS::S3::Bucket',
       Properties : {
         AccessControl     : 'Private',
-        BucketName        : sharedLoggingBucketName,
+        BucketName        : sharedLoggingBucket,
         OwnershipControls : { // this enables ACLs, as required by CloudFront standard logging
           Rules : [{ ObjectOwnership : 'BucketOwnerPreferred' }]
         }
       }
     }
 
-    return sharedLoggingBucketName
+    return sharedLoggingBucket
   }
 
   async loadPlugins () {

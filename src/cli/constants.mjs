@@ -183,6 +183,11 @@ const cliSpec = {
           type        : Boolean
         },
         {
+          name        : 'do-stack',
+          description : 'Limits update to stack infrastructure and any other specified updates.',
+          type        : Boolean
+        },
+        {
           name        : 'no-build',
           description : 'Supresses the default behavior of building before updating the site.',
           type        : Boolean
