@@ -5,7 +5,7 @@ import { formatOutput } from './format-output'
 import { getSiteInfo } from './get-site-info'
 import { verify } from '../../lib/actions/verify'
 
-const handleVerify = async ({ argv, sitesInfo, ...globalOptions }) => {
+const handleVerify = async ({ argv, sitesInfo, globalOptions }) => {
   const verifyOptionsSpec = cliSpec.commands.find(({ name }) => name === 'verify').arguments
   const verifyOptions = commandLineArgs(verifyOptionsSpec, { argv })
   const { format } = verifyOptions
@@ -16,14 +16,12 @@ const handleVerify = async ({ argv, sitesInfo, ...globalOptions }) => {
 
   const siteInfo = getSiteInfo({ apexDomain, sitesInfo })
 
-  const results = await verify({ checkContent, checkSiteUp, checkStack, siteInfo, ...globalOptions })
-  const summaryStatus = results.reduce((acc, s) => { 
-    if (s === 'error') { return 'error' }
-    else if (s === 'failed') { return 'failed' }
-    else { return acc}
+  const results = await verify({ checkContent, checkSiteUp, checkStack, siteInfo, globalOptions })
+  const summaryStatus = results.reduce((acc, { status : s }) => {
+    if (s === 'error') { return 'error' } else if (s === 'failed') { return 'failed' } else { return acc }
   }, 'success')
 
-  const output = { 'overall status': summaryStatus, checks: results }
+  const output = { 'overall status' : summaryStatus, checks : results }
   formatOutput({ output, format })
 }
 
