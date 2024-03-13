@@ -1,9 +1,8 @@
 import commandLineArgs from 'command-line-args'
-import yaml from 'js-yaml'
-import { jsonToPlainText } from 'json-to-plain-text'
 import pick from 'lodash/pick'
 
 import { cliSpec } from '../constants'
+import { formatOutput } from './format-output'
 
 const handleList = ({ argv, sitesInfo }) => {
   const listOptionsSpec = cliSpec.commands.find(({ name }) => name === 'list').arguments
@@ -20,16 +19,7 @@ const handleList = ({ argv, sitesInfo }) => {
       return trimmed
     })
 
-  if (format === 'json') {
-    process.stdout.write(JSON.stringify(output, null, '  ') + '\n')
-  } else if (format === 'yaml') {
-    process.stdout.write(yaml.dump(output))
-  } else {
-    const options = { color : format !== 'text' }
-    const text = jsonToPlainText(output, options)
-
-    process.stdout.write(text + '\n')
-  }
+  formatOutput({ output, format })
 }
 
 export { handleList }
