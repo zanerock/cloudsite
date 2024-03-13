@@ -306,6 +306,7 @@ Updates a website content and/or infrastructure.
 |`[apex-domain]`|(_main argument_,_required_) The apex domain identifying the site.|
 |`--do-content`|Limits update to site content and any other specified updates.|
 |`--do-dns`|Limits update to DNS entries and any other specified updates.|
+|`--do-stack`|Limits update to stack infrastructure and any other specified updates.|
 |`--no-build`|Supresses the default behavior of building before updating the site.|
 |`--no-cache-invalidation`|Suppresses the default behavior of invalidating the CloudFront cache after the files are updated. Note that invalidation events are chargeable thought at the time of this writing, each account gets 1,000 free requests per year.|
 

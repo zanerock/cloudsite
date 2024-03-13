@@ -25,7 +25,7 @@ const stackConfig = async ({ siteTemplate, settings }) => {
   const { credentials, siteInfo } = siteTemplate
   const enableEmail = !!settings.emailFrom
 
-  const lambdaFunctionsBucketName = await stageLambdaFunctionZipFiles({ credentials, enableEmail, siteInfo })
+  const lambdaFunctionsBucketName = await stageLambdaFunctionZipFiles({ credentials, enableEmail, settings, siteInfo })
 
   setupContactHandler({ lambdaFunctionsBucketName, siteInfo, siteTemplate })
   setupRequestSigner({ lambdaFunctionsBucketName, siteTemplate })

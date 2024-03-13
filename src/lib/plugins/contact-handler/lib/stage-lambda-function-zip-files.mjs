@@ -17,37 +17,41 @@ import { determineBucketName } from '../../../shared/determine-bucket-name'
  * @param {object} input.siteInfo - See {@link SiteTemplate} for details.
  * @returns {string} The Lambda function bucket name.
  */ /* eslint-enable  jsdoc/no-undefined-types */
-const stageLambdaFunctionZipFiles = async ({ credentials, enableEmail, siteInfo }) => {
+const stageLambdaFunctionZipFiles = async ({ credentials, enableEmail, settings, siteInfo }) => {
   process.stdout.write('Staging Lambda function zip files...\n')
 
+  let { lambdaFunctionsBucket } = settings
   const { apexDomain, region } = siteInfo
 
   const s3Client = new S3Client({ credentials, region })
 
-  let lambdaFunctionsBucketName = convertDomainToBucketName(apexDomain) + '-lambda-functions'
-  lambdaFunctionsBucketName =
-    await determineBucketName({
-      bucketName : lambdaFunctionsBucketName,
-      credentials,
-      findName   : true,
-      s3Client,
-      siteInfo
-    })
+  if (lambdaFunctionsBucket === undefined) {
+    lambdaFunctionsBucket = convertDomainToBucketName(apexDomain) + '-lambda-functions'
+    lambdaFunctionsBucket =
+      await determineBucketName({
+        bucketName : lambdaFunctionsBucket,
+        credentials,
+        findName   : true,
+        s3Client,
+        siteInfo
+      })
 
-  const createBucketCommand = new CreateBucketCommand({
-    ACL    : 'private',
-    Bucket : lambdaFunctionsBucketName
-  })
-  await s3Client.send(createBucketCommand)
+    const createBucketCommand = new CreateBucketCommand({
+      ACL    : 'private',
+      Bucket : lambdaFunctionsBucket
+    })
+    await s3Client.send(createBucketCommand)
+  }
+  settings.lambdaFunctionsBucket = lambdaFunctionsBucket
 
   const putCommands = [
-    putZipFile({ bucketName : lambdaFunctionsBucketName, fileName : CONTACT_HANDLER_ZIP_NAME, s3Client }),
-    putZipFile({ bucketName : lambdaFunctionsBucketName, fileName : REQUEST_SIGNER_ZIP_NAME, s3Client })
+    putZipFile({ bucketName : lambdaFunctionsBucket, fileName : CONTACT_HANDLER_ZIP_NAME, s3Client }),
+    putZipFile({ bucketName : lambdaFunctionsBucket, fileName : REQUEST_SIGNER_ZIP_NAME, s3Client })
   ]
 
   if (enableEmail === true) {
     putCommands.push(putZipFile({
-      bucketName : lambdaFunctionsBucketName,
+      bucketName : lambdaFunctionsBucket,
       fileName   : CONTACT_EMAILER_ZIP_NAME,
       s3Client
     }))
@@ -55,7 +59,7 @@ const stageLambdaFunctionZipFiles = async ({ credentials, enableEmail, siteInfo 
 
   await Promise.all(putCommands)
 
-  return lambdaFunctionsBucketName
+  return lambdaFunctionsBucket
 }
 
 const putZipFile = async ({ bucketName, fileName, s3Client }) => {
