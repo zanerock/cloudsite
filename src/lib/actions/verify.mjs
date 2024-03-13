@@ -133,7 +133,10 @@ const doCheckStack = async ({ credentials, progressLogger, siteInfo }) => {
     const stackDriftStatus = stackDriftDescribeResponse.StackDriftStatus
     if (detectionStatus === 'DETECTION_FAILED') {
       checkResult.status = 'error'
-      checkResult.message = stackDriftDescribeResponse.DetectionStatusReason
+      checkResult.message = stackDriftStatus === 'IN_SYCH' 
+        ? 'Stack as checked in sync, but: '
+        : 'Stack not in sync and: '
+        + stackDriftDescribeResponse.DetectionStatusReason
     } else if (stackDriftStatus === 'IN_SYNC') {
       checkResult.status = 'success'
       checkResult.message = stackName + ' is in sync with template'
