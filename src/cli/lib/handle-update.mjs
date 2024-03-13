@@ -10,12 +10,13 @@ const handleUpdate = async ({ argv, globalOptions, sitesInfo }) => {
   const apexDomain = updateOptions['apex-domain']
   const doContent = updateOptions['do-content']
   const doDNS = updateOptions['do-dns']
+  const doStack = updateOptions['do-stack']
   const noBuild = updateOptions['no-build']
   const noCacheInvalidation = updateOptions['no-cache-invalidation']
 
   const siteInfo = getSiteInfo({ apexDomain, sitesInfo })
 
-  await update({ doContent, doDNS, noBuild, noCacheInvalidation, siteInfo, ...globalOptions })
+  await update({ doContent, doDNS, doStack, noBuild, noCacheInvalidation, siteInfo, globalOptions })
 }
 
 export { handleUpdate }
