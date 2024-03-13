@@ -1,6 +1,6 @@
 import commandLineArgs from 'command-line-args'
 import yaml from 'js-yaml'
-import { jsonToPlainText, Options } from 'json-to-plain-text'
+import { jsonToPlainText } from 'json-to-plain-text'
 import pick from 'lodash/pick'
 
 import { cliSpec } from '../constants'
