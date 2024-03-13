@@ -1,10 +1,5 @@
 import { ACMClient, ListCertificatesCommand, RequestCertificateCommand } from '@aws-sdk/client-acm'
-import {
-  CloudFormationClient,
-  CreateStackCommand,
-  DeleteStackCommand,
-  DescribeStacksCommand
-} from '@aws-sdk/client-cloudformation'
+import { CloudFormationClient, CreateStackCommand } from '@aws-sdk/client-cloudformation'
 
 import { convertDomainToBucketName } from '../shared/convert-domain-to-bucket-name'
 import { createOrUpdateDNSRecords } from './lib/create-or-update-dns-records'
@@ -14,8 +9,9 @@ import { getCredentials } from './lib/get-credentials'
 import * as plugins from '../plugins'
 import { SiteTemplate } from '../shared/site-template'
 import { syncSiteContent } from './lib/sync-site-content'
+import { trackStackStatus } from './lib/track-stack-status'
+import { updateSiteInfo } from './lib/update-site-info'
 
-const RECHECK_WAIT_TIME = 2000 // ms
 const STACK_CREATE_TIMEOUT = 30 // min
 
 const create = async ({
@@ -154,55 +150,8 @@ const createSiteStack = async ({ credentials, noDeleteOnFailure, siteInfo }) => 
   siteInfo.stackName = stackName
   siteInfo.stackArn = StackId
 
-  const stackCreated = await trackStackCreationStatus({ cloudFormationClient, noDeleteOnFailure, stackName })
+  const stackCreated = await trackStackStatus({ cloudFormationClient, noDeleteOnFailure, stackName })
   return stackCreated
-}
-
-const trackStackCreationStatus = async ({ cloudFormationClient, noDeleteOnFailure, stackName }) => {
-  let stackStatus, previousStatus
-  do {
-    const describeInput = { StackName : stackName }
-    const describeCommand = new DescribeStacksCommand(describeInput)
-    const describeResponse = await cloudFormationClient.send(describeCommand)
-
-    stackStatus = describeResponse.Stacks[0].StackStatus
-
-    if (stackStatus === 'CREATE_IN_PROGRESS' && previousStatus === undefined) {
-      process.stdout.write('Creating stack')
-    } else if (stackStatus === 'ROLLBACK_IN_PROGRESS' && previousStatus !== 'ROLLBACK_IN_PROGRESS') {
-      process.stdout.write('\nRollback in progress')
-    } else {
-      process.stdout.write('.')
-    }
-
-    previousStatus = stackStatus
-    await new Promise(resolve => setTimeout(resolve, RECHECK_WAIT_TIME))
-  } while (stackStatus.match(/_IN_PROGRESS$/))
-
-  if (stackStatus === 'ROLLBACK_COMPLETE' && noDeleteOnFailure !== true) {
-    process.stdout.write(`\nDeleting stack '${stackName}'... `)
-    const deleteInput = { StackName : stackName }
-    const deleteCommand = new DeleteStackCommand(deleteInput)
-    await cloudFormationClient.send(deleteCommand)
-
-    process.stdout.write('done.\n')
-  } else {
-    process.stdout.write('\nStack status: ' + stackStatus + '\n')
-  }
-
-  return stackStatus === 'CREATE_COMPLETE'
-}
-
-const updateSiteInfo = async ({ credentials, siteInfo }) => {
-  const { region, stackName } = siteInfo
-  process.stdout.write('Gathering information from stack...\n')
-  const cloudFormationClient = new CloudFormationClient({ credentials, region })
-  const describeCommand = new DescribeStacksCommand({ StackName : stackName })
-  const describeResponse = await cloudFormationClient.send(describeCommand)
-  const cloudFrontDistributionID = describeResponse
-    .Stacks[0].Outputs.find(({ OutputKey }) => OutputKey === 'SiteCloudFrontDistribution').OutputValue
-
-  siteInfo.cloudFrontDistributionID = cloudFrontDistributionID
 }
 
 export { create }

@@ -183,9 +183,9 @@ const cliSpec = {
           type        : Boolean
         },
         {
-          name: 'do-stack',
-          description: 'Limits update to stack infrastructure and any other specified updates.',
-          type: Boolean
+          name        : 'do-stack',
+          description : 'Limits update to stack infrastructure and any other specified updates.',
+          type        : Boolean
         },
         {
           name        : 'no-build',

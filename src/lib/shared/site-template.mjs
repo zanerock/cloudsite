@@ -37,7 +37,8 @@ const SiteTemplate = class {
   }
 
   async enableSharedLoggingBucket () {
-    const { bucketName, sharedLoggingBucket } = this.siteInfo
+    const { bucketName } = this.siteInfo
+    let { sharedLoggingBucket } = this.siteInfo
 
     if (sharedLoggingBucket === undefined) {
       sharedLoggingBucket = await determineBucketName({
@@ -60,7 +61,7 @@ const SiteTemplate = class {
       }
     }
 
-    return sharedLoggingBucketName
+    return sharedLoggingBucket
   }
 
   async loadPlugins () {
