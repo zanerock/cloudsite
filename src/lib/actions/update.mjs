@@ -3,20 +3,28 @@ import { CloudFrontClient, CreateInvalidationCommand } from '@aws-sdk/client-clo
 import { createOrUpdateDNSRecords } from './lib/create-or-update-dns-records'
 import { getCredentials } from './lib/get-credentials'
 import { syncSiteContent } from './lib/sync-site-content'
+import { updateStack } from './lib/update-stack'
 
-const update = async ({ doContent, doDNS, noBuild, noCacheInvalidation, siteInfo, ...downstreamOptions }) => {
-  const doAll = !doContent && !doDNS
+const update = async ({ doContent, doDNS, doStack, noBuild, noCacheInvalidation, siteInfo, globalOptions }) => {
+  const doAll = doContent === undefined && doDNS === undefined && doStack === undefined
 
-  const credentials = getCredentials(downstreamOptions)
+  const credentials = getCredentials(globalOptions)
 
+  const updates = []
   if (doAll === true || doContent === true) {
     // method will report actions to user
-    await syncSiteContent({ credentials, noBuild, siteInfo })
+    updates.push(syncSiteContent({ credentials, noBuild, siteInfo }))
   }
 
   if (doAll === true || doDNS === true) {
-    await createOrUpdateDNSRecords({ credentials, siteInfo })
+    updates.push(createOrUpdateDNSRecords({ credentials, siteInfo }))
   }
+
+  if (doAll === true || doStack === true) {
+    updates.push(updateStack({ credentials, siteInfo }))
+  }
+
+  await Promise.all(updates)
 
   if ((doAll === true || doContent === true) && noCacheInvalidation !== true) {
     await invalidateCache({ credentials, siteInfo })
