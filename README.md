@@ -192,6 +192,7 @@ The `cloudsite` tool will now use your the above configured access key by defaul
 - [`configuration`](#cloudsite-configuration): Command group for managing the Cloudsite CLI configuration.
 - [`create`](#cloudsite-create): Creates a new website, setting up infrastructure and copying content.
 - [`destroy`](#cloudsite-destroy): Destroys the named site. I.e., deletes all cloud resources associated with the site.
+- [`list`](#cloudsite-list): Lists the sites registered in the local database.
 - [`plugin-settings`](#cloudsite-plugin-settings): Sets (or deletes) a site option.
 - [`update`](#cloudsite-update): Updates a website content and/or infrastructure.
 
@@ -251,6 +252,18 @@ Destroys the named site. I.e., deletes all cloud resources associated with the s
 |------|------|
 |`[apex-domain]`|(_main argument_,_required_) The domain of the site to delete.|
 |`--confirmed`|Skips the interactive confirmation and destroys the resources without further confirmation.|
+
+<span id="cloudsite-list"></span>
+#### `cloudsite list <options>`
+
+Lists the sites registered in the local database.
+
+##### `list` options
+
+|Option|Description|
+|------|------|
+|`--all-fields`|Includes all fields in the output.|
+|`--format`|Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'.|
 
 <span id="cloudsite-plugin-settings"></span>
 #### `cloudsite plugin-settings <options> [apex-domain]`

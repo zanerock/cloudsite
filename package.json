@@ -64,6 +64,7 @@
   "peerDependencies": {
     "command-line-args": "^5.2.1",
     "command-line-documentation": "^1.0.0-alpha.3",
+    "json-to-plain-text": "^1.1.4",
     "lodash": "^4.17.21",
     "question-and-answer": "^1.0.0-alpha.16"
   }
