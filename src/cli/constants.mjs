@@ -102,6 +102,21 @@ const cliSpec = {
       ]
     },
     {
+      name        : 'list',
+      description : 'Lists the sites registered in the local database.',
+      arguments   : [
+        {
+          name        : 'all-fields',
+          description : 'Includes all fields in the output.',
+          type        : Boolean
+        },
+        {
+          name        : 'format',
+          description : "Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'."
+        }
+      ]
+    },
+    {
       name        : 'plugin-settings',
       description : 'Sets (or deletes) a site option.',
       arguments   : [
