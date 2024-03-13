@@ -102,6 +102,22 @@ const cliSpec = {
       ]
     },
     {
+      name        : 'detail',
+      description : 'Prints details for the indicated site.',
+      arguments   : [
+        {
+          name          : 'apex-domain',
+          description   : 'The domain of the site to detail.',
+          defaultOption : true,
+          required      : true
+        },
+        {
+          name        : 'format',
+          description : "Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'."
+        }
+      ]
+    },
+    {
       name        : 'list',
       description : 'Lists the sites registered in the local database.',
       arguments   : [

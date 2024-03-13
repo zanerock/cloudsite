@@ -8,6 +8,7 @@ import { cliSpec, GLOBAL_OPTIONS_PATH, SITES_INFO_PATH } from './constants'
 import { handleConfiguration } from './lib/handle-configuration'
 import { handleCreate } from './lib/handle-create'
 import { handleDestroy } from './lib/handle-destroy'
+import { handleDetail } from './lib/handle-detail'
 import { handleList } from './lib/handle-list'
 import { handlePluginSettings } from './lib/handle-plugin-settings'
 import { handleUpdate } from './lib/handle-update'
@@ -53,6 +54,8 @@ const cloudsite = async () => {
         await handleCreate({ argv, globalOptions, sitesInfo }); break
       case 'destroy':
         await handleDestroy({ argv, globalOptions, sitesInfo }); break
+      case 'detail':
+        await handleDetail({ argv, globalOptions, sitesInfo }); break
       case 'document':
         console.log(commandLineDocumentation(cliSpec, { sectionDepth : 2, title : 'Command reference' }))
         break
