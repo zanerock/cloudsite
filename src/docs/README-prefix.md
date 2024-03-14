@@ -10,9 +10,9 @@ IDK. I probably would have held off on publishing the thing if I wasn't confiden
 
 So, it's ___alpha software___. Don't use it right now. If you really like the project, you can support me on [Patreon @zanecodes](https://patreon.com/zanecodes).
 
-```
+
 ♡( •ॢ◡-ॢ)✧˖° ♡
-```
+
 
 Low cost, high performance cloud based website hosting manager. Cloudsite features CDN integration, DoS protection, free SSL certificates, and contact forms. In addition, since Cloudsite use "pay as you go" cloud infrastructure, hosting costs are generally well below typical market rates.
 
