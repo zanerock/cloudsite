@@ -1,5 +1,19 @@
 # Cloudsite
 
+___This is alpha software and currently broken.___ I feel like the universe is gas lighting me a little because not only was it working yesterday, but I had tested it like a dozen times and it was fine. AWS was squirrely earlier, and also I found a long standing bug in my code. I think there was some interaction with my settings file, which I wasn't resetting, and my ability to carry out successful builds. It was skipping some step, wherein my bug resides.
+
+And, Amazon was also giving me weird results earlier. Basic drift detection on like ~18 resources kept failing with "Internal Error"s all over the place. I googled, and there were a few people mentioning "Internal Error"s, but none of them seemed to apply.
+
+And then another thing, the other day I was getting really descriptive messages in the 'Events' tab of my stack instance. But today, there's nothing. All the message data is blank. The weird thing is the events are spaced like the text is there, but then there's just a '-' in the middle.
+
+IDK. I probably would have held off on publishing the thing if I wasn't confident it was working but now that it's out, I don't want to mess around with unpublishing it either... and also I really like 'cloudsite' and I don't want to lose it. I'm working on a logo and everything.
+
+So, it's ___alpha software___. Don't use it right now. If you really like the project, you can support me on [Patreon @zanecodes](https://patreon.com/zanecodes).
+
+```
+♡( •ॢ◡-ॢ)✧˖° ♡
+```
+
 Low cost, high performance cloud based website hosting manager. Cloudsite features CDN integration, DoS protection, free SSL certificates, and contact forms. In addition, since Cloudsite use "pay as you go" cloud infrastructure, hosting costs are generally well below typical market rates.
 
 - [Installation](#installation)
