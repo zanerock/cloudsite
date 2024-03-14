@@ -13,6 +13,10 @@ So, it's ___alpha software___. Don't use it right now. If you really like the pr
 
 ♡( •ॢ◡-ॢ)✧˖° ♡
 
+OK, from here on out, is the actual package documentation. For this broken package. :(
+
+------------
+
 
 Low cost, high performance cloud based website hosting manager. Cloudsite features CDN integration, DoS protection, free SSL certificates, and contact forms. In addition, since Cloudsite use "pay as you go" cloud infrastructure, hosting costs are generally well below typical market rates.
 
