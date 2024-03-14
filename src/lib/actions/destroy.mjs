@@ -24,7 +24,7 @@ const destroy = async ({ globalOptions, progressLogger, siteInfo }) => {
     }
 
     if (plugin.preDestroyHandler !== undefined) {
-      await plugin.preDestroyHandler({ credentials, progressLogger, settings })
+      await plugin.preDestroyHandler({ credentials, progressLogger, settings, siteInfo })
     }
   }
 
@@ -32,7 +32,10 @@ const destroy = async ({ globalOptions, progressLogger, siteInfo }) => {
   const cloudFormationClient = new CloudFormationClient({ credentials })
   const deleteStackCommand = new DeleteStackCommand({ StackName : stackName })
   await cloudFormationClient.send(deleteStackCommand)
-  progressLogger?.write('Done!\n')
+  
+  const finalStatus = await trackStackStatus({ cloudFormationClient, noDeleteOnFailure : true, stackName })
+
+  return finalStatus
 }
 
 export { destroy }

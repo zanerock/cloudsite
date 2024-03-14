@@ -150,7 +150,8 @@ const createSiteStack = async ({ credentials, noDeleteOnFailure, siteInfo }) => 
   siteInfo.stackName = stackName
   siteInfo.stackArn = StackId
 
-  const stackCreated = await trackStackStatus({ cloudFormationClient, noDeleteOnFailure, stackName })
+  const stackCreated = 
+    (await trackStackStatus({ cloudFormationClient, noDeleteOnFailure, stackName })) === 'CREATE_COMPLETE'
   return stackCreated
 }
 

@@ -17,7 +17,19 @@ const handleDestroy = async ({ argv, globalOptions, sitesInfo }) => {
     process.exit(3) // eslint-disable-line no-process-exit
   }
 
-  await destroy({ globalOptions, progressLogger: process.stdout, siteInfo })
+  const finalStatus = await destroy({ globalOptions, progressLogger: process.stdout, siteInfo })
+
+  if (finalStatus === 'DELETE_FAILED') {
+    if ('contactHandler' in siteInfo.pluginSettings) {
+      process.stdout.write("Stack deletion failed. If this is the first time the stack has been deleted, this can be caused by distributed lambda functions in the 'contactHandler' plugin. These can take a little while to clear and they will block the stack deletion until AWS removes them. Try again in 15-30 min. If the problem persists, refer to the AWS console CloudFormation service. Select the stack and check the 'Events' tab for more information.")
+    }
+    else {
+      process.stdout.write("Stack deletion failed for unknown reasons. It may be due to lingering resources that cannot be deleted immediately. Try again in 15-30 min or refer to the AWS console CloudFormation service. Select the stack and check the 'Events' tab for more information.")
+    }
+  }
+  else {
+    process.stdout.write('Final stack status: ' + finalStatus)
+  }
 }
 
 export { handleDestroy }
