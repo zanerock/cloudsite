@@ -17,7 +17,7 @@ const handleDestroy = async ({ argv, globalOptions, sitesInfo }) => {
     process.exit(3) // eslint-disable-line no-process-exit
   }
 
-  await destroy({ siteInfo, ...globalOptions })
+  await destroy({ globalOptions, progressLogger: process.stdout, siteInfo })
 }
 
 export { handleDestroy }

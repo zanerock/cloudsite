@@ -1,4 +1,7 @@
 import { emailRE } from 'regex-repo'
+import { emptyBucket } from 's3-empty-bucket'
+
+import { S3Client } from '@aws-sdk/client-s3'
 
 import { setupContactFormTable } from './lib/setup-contact-form-table'
 import { setupContactEmailer } from './lib/setup-contact-emailer'
@@ -19,6 +22,16 @@ const config = {
   }
 }
 
+const preDestroyHandler = async ({ credentials, progressLogger, settings }) => {
+  const { lambdaFunctionsBucket } = settings
+
+  const s3Client = new S3Client({ credentials })
+
+  progressLogger?.write(`Deleting S3 bucket ${lambdaFunctionsBucket}... `)
+  await emptyBucket({ bucketName : lambdaFunctionsBucket, doDelete: true, s3Client })
+  progressLogger?.write('DELETED\n')
+}
+
 const stackConfig = async ({ siteTemplate, settings }) => {
   process.stdout.write('Preparing contact handler plugin...\n')
 
@@ -36,6 +49,6 @@ const stackConfig = async ({ siteTemplate, settings }) => {
   }
 }
 
-const contactHandler = { config, stackConfig }
+const contactHandler = { config, preDestroyHandler, stackConfig }
 
 export { contactHandler }
