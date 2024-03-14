@@ -22,7 +22,7 @@ const setupContactHandler = ({ lambdaFunctionsBucketName, siteInfo, siteTemplate
       Path     : '/',
       Policies : [
         {
-          PolicyName     : lambdaFunctionsBucketName + '-contact-handler',
+          PolicyName     : lambdaFunctionsBucketName + '-contact-handler-b', // DEBUG
           PolicyDocument : {
             Version   : '2012-10-17',
             Statement : [

@@ -44,7 +44,7 @@ const setupContactEmailer = ({ lambdaFunctionsBucketName, settings, siteTemplate
       Path     : '/',
       Policies : [
         {
-          PolicyName     : lambdaFunctionsBucketName + '-contact-handler',
+          PolicyName     : lambdaFunctionsBucketName + '-contact-emailer-b', // DEBUG
           PolicyDocument : {
             Version   : '2012-10-17',
             Statement : [
