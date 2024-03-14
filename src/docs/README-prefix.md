@@ -1,5 +1,17 @@
 # Cloudsite
 
+___This is alpha software and currently broken.___ I think the problem is the 'PowerUserAccess' isn't actually sufficient (it was working with 'AdministratorAccess'). I'm building up a more targeted permissions policy now.
+
+So, it's ___alpha software___. Don't use it right now. If you really like the project, you're welcome to contribute We provide support for developers on [our discord channel](https://discord.gg/QWAav6fZ5C). You can also support the project on [Patreon @zanecodes](https://patreon.com/zanecodes).
+
+
+♡( •ॢ◡-ॢ)✧˖° ♡
+
+OK, from here on out, is the actual package documentation. For this broken package. :(
+
+------------
+
+
 Low cost, high performance cloud based website hosting manager. Cloudsite features CDN integration, DoS protection, free SSL certificates, and contact forms. In addition, since Cloudsite use "pay as you go" cloud infrastructure, hosting costs are generally well below typical market rates.
 
 - [Installation](#installation)
