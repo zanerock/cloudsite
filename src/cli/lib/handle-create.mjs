@@ -16,7 +16,8 @@ const handleCreate = async ({ argv, globalOptions, sitesInfo }) => {
   const apexDomain = createOptions['apex-domain']
   const bucketName = createOptions['bucket-name']
   const noBuild = createOptions['no-build']
-  const sourcePath = createOptions['source-path']
+  // switch any relative sourcePath to absolute
+  const sourcePath = fsPath.resolve(createOptions['source-path'])
   let sourceType = createOptions['source-type']
   const stackName = createOptions['stack-name']
 
@@ -50,6 +51,14 @@ const handleCreate = async ({ argv, globalOptions, sitesInfo }) => {
     process.stderr(`Invalid bucket name. Must be valid AWS S3 Transfer Accelerated bucket name matching: ${awsS3TABucketNameREString}`)
     process.exit(2) // eslint-disable-line no-process-exit
   }
+
+  // update siteInfo in case these were manually specified
+  for (const [value, field] of [[bucketName, 'bucketName'], [sourcePath, 'sourcePath'], [sourceType, 'sourceType']]) {
+    if (value !== undefined) {
+      siteInfo[field] = value
+    }
+  }
+
 
   await create({ noBuild, noDeleteOnFailure, siteInfo, ...globalOptions })
 }
