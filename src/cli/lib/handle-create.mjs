@@ -59,7 +59,6 @@ const handleCreate = async ({ argv, globalOptions, sitesInfo }) => {
     }
   }
 
-
   await create({ noBuild, noDeleteOnFailure, siteInfo, ...globalOptions })
 }
 

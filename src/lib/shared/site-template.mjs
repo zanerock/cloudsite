@@ -152,10 +152,10 @@ const SiteTemplate = class {
     let { sharedLoggingBucket } = this.siteInfo
 
     const commonLogsBucketName = await determineBucketName({
-      bucketName: bucketName + '-common-logs',
-      credentials: this.credentials,
-      findName: true,
-      siteInfo: this.siteInfo
+      bucketName  : bucketName + '-common-logs',
+      credentials : this.credentials,
+      findName    : true,
+      siteInfo    : this.siteInfo
     })
 
     if (sharedLoggingBucket === undefined) {
