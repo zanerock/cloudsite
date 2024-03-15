@@ -2,6 +2,7 @@ import yaml from 'js-yaml'
 
 import * as plugins from '../plugins'
 import { determineBucketName } from './determine-bucket-name'
+import { determineOACName } from './determine-oac-name'
 
 /**
  * Class encapsulating site stack configuration. Any enabled plugins are loaded and processed by this class.
@@ -36,55 +37,16 @@ const SiteTemplate = class {
     this.finalTemplate = this.baseTemplate
   }
 
-  async enableSharedLoggingBucket () {
-    const { bucketName } = this.siteInfo
-    let { sharedLoggingBucket } = this.siteInfo
-
-    if (sharedLoggingBucket === undefined) {
-      sharedLoggingBucket = await determineBucketName({
-        bucketName  : bucketName + '-common-logs',
-        credentials : this.credentials,
-        findName    : true,
-        siteInfo    : this.siteInfo
-      })
-    }
-    this.siteInfo.sharedLoggingBucket = sharedLoggingBucket
-
-    this.finalTemplate.Resources.SharedLoggingBucket = {
-      Type       : 'AWS::S3::Bucket',
-      Properties : {
-        AccessControl     : 'Private',
-        BucketName        : sharedLoggingBucket,
-        OwnershipControls : { // this enables ACLs, as required by CloudFront standard logging
-          Rules : [{ ObjectOwnership : 'BucketOwnerPreferred' }]
-        }
-      }
-    }
-
-    return sharedLoggingBucket
-  }
-
-  async loadPlugins () {
-    const { siteInfo } = this
-    const { apexDomain, pluginSettings } = siteInfo
-
-    for (const [pluginKey, settings] of Object.entries(pluginSettings)) {
-      const plugin = plugins[pluginKey]
-      if (plugin === undefined) {
-        throw new Error(`Unknown plugin found in '${apexDomain}' plugin settings.`)
-      }
-
-      await plugin.stackConfig({
-        siteTemplate : this,
-        settings
-      })
-    }
-  }
-
-  get baseTemplate () {
+  async initializeTemplate () {
     const { accountID, apexDomain, bucketName, certificateArn, region } = this.siteInfo
 
-    return {
+    const oacName = await determineOACName({
+      baseName    : `${bucketName}-OAC`,
+      credentials : this.credentials,
+      siteInfo    : this.siteInfo
+    })
+
+    this.finalTemplate = {
       Resources : {
         SiteS3Bucket : {
           Type       : 'AWS::S3::Bucket',
@@ -98,7 +60,7 @@ const SiteTemplate = class {
           Properties : {
             OriginAccessControlConfig : {
               Description                   : 'Origin Access Control (OAC) allowing CloudFront Distribution to access site S3 bucket.',
-              Name                          : `${bucketName}-OAC`,
+              Name                          : oacName,
               OriginAccessControlOriginType : 's3',
               SigningBehavior               : 'always',
               SigningProtocol               : 'sigv4'
@@ -182,6 +144,58 @@ const SiteTemplate = class {
           Value : { Ref : 'SiteCloudFrontDistribution' }
         }
       }
+    }
+  }
+
+  async enableSharedLoggingBucket () {
+    const { bucketName } = this.siteInfo
+    let { sharedLoggingBucket } = this.siteInfo
+
+    const commonLogsBucketName = await determineBucketName({
+      bucketName: bucketName + '-common-logs',
+      credentials: this.credentials,
+      findName: true,
+      siteInfo: this.siteInfo
+    })
+
+    if (sharedLoggingBucket === undefined) {
+      sharedLoggingBucket = await determineBucketName({
+        bucketName  : commonLogsBucketName,
+        credentials : this.credentials,
+        findName    : true,
+        siteInfo    : this.siteInfo
+      })
+    }
+    this.siteInfo.sharedLoggingBucket = sharedLoggingBucket
+
+    this.finalTemplate.Resources.SharedLoggingBucket = {
+      Type       : 'AWS::S3::Bucket',
+      Properties : {
+        AccessControl     : 'Private',
+        BucketName        : sharedLoggingBucket,
+        OwnershipControls : { // this enables ACLs, as required by CloudFront standard logging
+          Rules : [{ ObjectOwnership : 'BucketOwnerPreferred' }]
+        }
+      }
+    }
+
+    return sharedLoggingBucket
+  }
+
+  async loadPlugins () {
+    const { siteInfo } = this
+    const { apexDomain, pluginSettings } = siteInfo
+
+    for (const [pluginKey, settings] of Object.entries(pluginSettings)) {
+      const plugin = plugins[pluginKey]
+      if (plugin === undefined) {
+        throw new Error(`Unknown plugin found in '${apexDomain}' plugin settings.`)
+      }
+
+      await plugin.stackConfig({
+        siteTemplate : this,
+        settings
+      })
     }
   }
 

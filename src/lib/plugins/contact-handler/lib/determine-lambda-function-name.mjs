@@ -16,7 +16,7 @@ const determineLambdaFunctionName = async ({ baseName, credentials, siteTemplate
     try {
       await lambdaClient.send(getFunctionCommand)
     } catch (e) {
-      if (e.name === 'NotFound' || e['$metadata']?.httpStatusCode === 404) {
+      if (e.name === 'NotFound' || e.$metadata?.httpStatusCode === 404) {
         progressLogger?.write('FREE\n')
         return currentName
       } else {

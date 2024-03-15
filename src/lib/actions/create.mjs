@@ -129,6 +129,7 @@ const createSiteStack = async ({ credentials, noDeleteOnFailure, siteInfo }) => 
   const { apexDomain, region } = siteInfo
 
   const siteTemplate = new SiteTemplate({ credentials, siteInfo })
+  await siteTemplate.initializeTemplate()
   await siteTemplate.loadPlugins()
 
   const cloudFormationTemplate = siteTemplate.render()

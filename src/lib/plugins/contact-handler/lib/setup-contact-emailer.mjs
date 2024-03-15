@@ -49,7 +49,7 @@ const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, set
       Path     : '/',
       Policies : [
         {
-          PolicyName     : lambdaFunctionsBucketName + '-contact-handler',
+          PolicyName     : emailerFunctionName,
           PolicyDocument : {
             Version   : '2012-10-17',
             Statement : [
