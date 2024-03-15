@@ -1,8 +1,18 @@
 import { CONTACT_HANDLER_ZIP_NAME } from './constants'
+import { determineLambdaFunctionName } from './determine-lambda-function-name'
 
-const setupContactHandler = ({ lambdaFunctionsBucketName, siteInfo, siteTemplate }) => {
+const setupContactHandler = async ({ credentials, lambdaFunctionsBucketName, siteInfo, siteTemplate }) => {
   const { accountID, bucketName } = siteInfo
   const { finalTemplate, resourceTypes } = siteTemplate
+
+  const contactHandlerFunctionName = await determineLambdaFunctionName({
+    baseName : lambdaFunctionsBucketName + '-contact-handler',
+    credentials,
+    siteTemplate
+  })
+
+  const contactHandlerLogGroupName = contactHandlerFunctionName
+  const contactHandlerPolicyName = contactHandlerFunctionName
 
   finalTemplate.Resources.ContactHandlerRole = {
     Type       : 'AWS::IAM::Role',
@@ -22,7 +32,7 @@ const setupContactHandler = ({ lambdaFunctionsBucketName, siteInfo, siteTemplate
       Path     : '/',
       Policies : [
         {
-          PolicyName     : lambdaFunctionsBucketName + '-contact-handler',
+          PolicyName     : contactHandlerPolicyName,
           PolicyDocument : {
             Version   : '2012-10-17',
             Statement : [
@@ -40,8 +50,6 @@ const setupContactHandler = ({ lambdaFunctionsBucketName, siteInfo, siteTemplate
   finalTemplate.Outputs.ContactHandlerRole = { Value : { Ref : 'ContactHandlerRole' } }
   resourceTypes['IAM::Role'] = true
 
-  const contactHandlerLogGroupName = lambdaFunctionsBucketName + '-contact-handler'
-
   finalTemplate.Resources.ContactHandlerLogGroup = {
     Type       : 'AWS::Logs::LogGroup',
     Properties : {
@@ -51,7 +59,6 @@ const setupContactHandler = ({ lambdaFunctionsBucketName, siteInfo, siteTemplate
     }
   }
 
-  const contactHandlerFunctionName = contactHandlerLogGroupName
   finalTemplate.Resources.ContactHandlerLambdaFunction = {
     Type       : 'AWS::Lambda::Function',
     DependsOn  : ['ContactHandlerRole', 'ContactHandlerLogGroup'],

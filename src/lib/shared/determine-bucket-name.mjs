@@ -4,6 +4,7 @@ import { S3Client, HeadBucketCommand } from '@aws-sdk/client-s3'
 import { STSClient, GetCallerIdentityCommand } from '@aws-sdk/client-sts'
 
 import { convertDomainToBucketName } from './convert-domain-to-bucket-name'
+import { progressLogger } from './progress-logger'
 
 const determineBucketName = async (args) => {
   const { apexDomain, credentials, findName = false, siteInfo } = args
@@ -15,7 +16,7 @@ const determineBucketName = async (args) => {
 
   let { accountID } = siteInfo
   if (accountID === undefined) {
-    process.stdout.write('Getting effective account ID...\n')
+    progressLogger.write('Getting effective account ID...\n')
     const response = await new STSClient({ credentials }).send(new GetCallerIdentityCommand({}))
     accountID = response.Account
     siteInfo.accountID = accountID
@@ -24,7 +25,7 @@ const determineBucketName = async (args) => {
   s3Client = s3Client || new S3Client({ credentials })
 
   while (true) {
-    process.stdout.write(`Checking bucket '${bucketName}' is free... `)
+    progressLogger.write(`Checking bucket '${bucketName}' is free... `)
 
     const input = { Bucket : bucketName, ExpectedBucketOwner : accountID }
 
@@ -36,14 +37,14 @@ const determineBucketName = async (args) => {
       }
     } catch (e) {
       if (e.name === 'NotFound') {
-        process.stdout.write('FREE\n')
+        progressLogger.write('FREE\n')
         return bucketName
       } else if (findName !== true || e.name === 'CredentialsProviderError') {
-        process.stdout.write('\n')
+        progressLogger.write('\n')
         throw e
       }
     }
-    process.stdout.write('NOT free\n')
+    progressLogger.write('NOT free\n')
     const bucketSalt = uuidv4().slice(0, 8)
     bucketName = bucketName.replace(/-[A-F0-9]{8}$/i, '')
     bucketName += '-' + bucketSalt

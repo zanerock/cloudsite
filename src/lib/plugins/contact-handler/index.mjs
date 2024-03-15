@@ -27,12 +27,12 @@ const stackConfig = async ({ siteTemplate, settings }) => {
 
   const lambdaFunctionsBucketName = await stageLambdaFunctionZipFiles({ credentials, enableEmail, settings, siteInfo })
 
-  setupContactHandler({ lambdaFunctionsBucketName, siteInfo, siteTemplate })
-  setupRequestSigner({ lambdaFunctionsBucketName, siteTemplate })
+  await setupContactHandler({ credentials, lambdaFunctionsBucketName, siteInfo, siteTemplate })
+  await setupRequestSigner({ credentials, lambdaFunctionsBucketName, siteTemplate })
   setupContactFormTable({ siteInfo, siteTemplate })
   updateCloudFrontDistribution({ settings, siteTemplate })
   if (enableEmail === true) {
-    setupContactEmailer({ lambdaFunctionsBucketName, settings, siteTemplate })
+    await setupContactEmailer({ credentials, lambdaFunctionsBucketName, settings, siteTemplate })
   }
 }
 

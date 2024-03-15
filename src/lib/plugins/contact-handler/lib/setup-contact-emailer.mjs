@@ -1,6 +1,7 @@
 import { CONTACT_EMAILER_ZIP_NAME } from './constants'
+import { determineLambdaFunctionName } from './determine-lambda-function-name'
 
-const setupContactEmailer = ({ lambdaFunctionsBucketName, settings, siteTemplate }) => {
+const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, settings, siteTemplate }) => {
   const { finalTemplate } = siteTemplate
   const contactHandlerFromEmail = settings.emailFrom
   const contactHandlerTargetEmail = settings.emailTo
@@ -14,7 +15,11 @@ const setupContactEmailer = ({ lambdaFunctionsBucketName, settings, siteTemplate
     StreamViewType : 'NEW_IMAGE'
   }
 
-  const emailerFunctionName = lambdaFunctionsBucketName + '-contact-emailer'
+  const emailerFunctionName = await determineLambdaFunctionName({
+    baseName : lambdaFunctionsBucketName + '-contact-emailer',
+    credentials,
+    siteTemplate
+  })
   const emailerFunctionLogGroupName = emailerFunctionName
 
   finalTemplate.Resources.ContactEmailerLogGroup = {
@@ -44,7 +49,7 @@ const setupContactEmailer = ({ lambdaFunctionsBucketName, settings, siteTemplate
       Path     : '/',
       Policies : [
         {
-          PolicyName     : lambdaFunctionsBucketName + '-contact-handler',
+          PolicyName     : emailerFunctionName,
           PolicyDocument : {
             Version   : '2012-10-17',
             Statement : [
