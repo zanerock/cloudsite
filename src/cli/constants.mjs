@@ -125,13 +125,13 @@ const cliSpec = {
       ]
     },
     {
-      name: 'get-iam-policy',
-      description: 'Prints an IAM policy suitable for operating cloudsite.',
-      arguments: [
-        { 
-          name: 'with-instructions',
-          description: 'When set, will print instructions for creating the policy along with the policy.',
-          type: Boolean
+      name        : 'get-iam-policy',
+      description : 'Prints an IAM policy suitable for operating cloudsite.',
+      arguments   : [
+        {
+          name        : 'with-instructions',
+          description : 'When set, will print instructions for creating the policy along with the policy.',
+          type        : Boolean
         }
       ]
     },
