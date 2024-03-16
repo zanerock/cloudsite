@@ -9,6 +9,7 @@ import { handleConfiguration } from './lib/handle-configuration'
 import { handleCreate } from './lib/handle-create'
 import { handleDestroy } from './lib/handle-destroy'
 import { handleDetail } from './lib/handle-detail'
+import { handleGetIAMPolicy } from './lib/handle-get-iam-policy'
 import { handleList } from './lib/handle-list'
 import { handlePluginSettings } from './lib/handle-plugin-settings'
 import { handleUpdate } from './lib/handle-update'
@@ -60,6 +61,8 @@ const cloudsite = async () => {
       case 'document':
         console.log(commandLineDocumentation(cliSpec, { sectionDepth : 2, title : 'Command reference' }))
         break
+      case 'get-iam-policy':
+        await handleGetIAMPolicy({ argv }); break
       case 'list':
         await handleList({ argv, globalOptions, sitesInfo }); break
       case 'plugin-settings':

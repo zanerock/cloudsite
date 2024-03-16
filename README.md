@@ -279,6 +279,7 @@ cloudsite update your-domain.com
 - [`create`](#cloudsite-create): Creates a new website, setting up infrastructure and copying content.
 - [`destroy`](#cloudsite-destroy): Destroys the named site. I.e., deletes all cloud resources associated with the site.
 - [`detail`](#cloudsite-detail): Prints details for the indicated site.
+- [`get-iam-policy`](#cloudsite-get-iam-policy): Prints an IAM policy suitable for operating cloudsite.
 - [`list`](#cloudsite-list): Lists the sites registered in the local database.
 - [`plugin-settings`](#cloudsite-plugin-settings): Sets (or deletes) a site option.
 - [`update`](#cloudsite-update): Updates a website content and/or infrastructure.
@@ -353,6 +354,17 @@ Prints details for the indicated site.
 |------|------|
 |`[apex-domain]`|(_main argument_,_required_) The domain of the site to detail.|
 |`--format`|Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'.|
+
+<span id="cloudsite-get-iam-policy"></span>
+#### `cloudsite get-iam-policy <options>`
+
+Prints an IAM policy suitable for operating cloudsite.
+
+##### `get-iam-policy` options
+
+|Option|Description|
+|------|------|
+|`--with-instructions`|When set, will print instructions for creating the policy along with the policy.|
 
 <span id="cloudsite-list"></span>
 #### `cloudsite list <options>`
