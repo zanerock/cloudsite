@@ -20,6 +20,6 @@ const stackConfig = async ({ siteTemplate, settings }) => {
   }
 }
 
-const cloudfrontLogs = { config, stackConfig }
+const cloudfrontLogs = { config, preStackDestroyHandler, stackConfig }
 
 export { cloudfrontLogs }

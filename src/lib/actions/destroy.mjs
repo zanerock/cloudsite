@@ -4,6 +4,8 @@ import { CloudFormationClient, DeleteStackCommand } from '@aws-sdk/client-cloudf
 import { emptyBucket } from 's3-empty-bucket'
 
 import { getCredentials } from './lib/get-credentials'
+import { progressLogger } from '../shared/progress-logger'
+import { SiteTemplate } from '../shared/site-template'
 import { trackStackStatus } from './lib/track-stack-status'
 
 const destroy = async ({ globalOptions, siteInfo, verbose }) => {
@@ -18,12 +20,12 @@ const destroy = async ({ globalOptions, siteInfo, verbose }) => {
   const siteTemplate = new SiteTemplate({ credentials, siteInfo })
   await siteTemplate.destroyPlugins()
 
-  process.stdout.write('Deleting stack...\n')
+  progressLogger.write('Deleting stack...\n')
   const cloudFormationClient = new CloudFormationClient({ credentials })
   const deleteStackCommand = new DeleteStackCommand({ StackName : stackName })
   await cloudFormationClient.send(deleteStackCommand)
-  
-  const finalStatus = await trackStackStatus({ cloudFormationClient, noDeleteOnFailure: true, stackName })
+
+  const finalStatus = await trackStackStatus({ cloudFormationClient, noDeleteOnFailure : true, stackName })
   progressLogger?.write('Final status: ' + finalStatus + '\n')
 }
 

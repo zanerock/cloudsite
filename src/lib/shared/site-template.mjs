@@ -153,15 +153,15 @@ const SiteTemplate = class {
     const { siteInfo } = this
     const { sharedLoggingBucket } = siteInfo
 
-    const s3Client = new S3Client({ credentials: this.credentials })
-    const deleteBucketCommand = new deleteBucketCommand({ Bucket: sharedLoggingBucket })
+    const s3Client = new S3Client({ credentials : this.credentials })
+    const deleteBucketCommand = new DeleteBucketCommand({ Bucket : sharedLoggingBucket })
     await s3Client.send(deleteBucketCommand)
     delete siteInfo.sharedLoggingBucket
   }
 
   async enableSharedLoggingBucket () {
     const { bucketName } = this.siteInfo // used to create a name for the shared logging bucket
-    let { sharedLoggingBucket = bucketName + '-common-logs'} = this.siteInfo
+    let { sharedLoggingBucket = bucketName + '-common-logs' } = this.siteInfo
 
     if (sharedLoggingBucket === undefined) {
       sharedLoggingBucket = await determineBucketName({
@@ -197,7 +197,7 @@ const SiteTemplate = class {
         throw new Error(`Unknown plugin found in '${apexDomain}' plugin settings.`)
       }
 
-      await plugin.preStackDestroyHandler({ siteTemplate: this, settings })
+      await plugin.preStackDestroyHandler({ siteTemplate : this, settings })
     }
   }
 
