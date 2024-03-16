@@ -6,6 +6,8 @@ import { awsS3TABucketNameRE, awsS3TABucketNameREString } from 'regex-repo'
 
 import { cliSpec, SOURCE_TYPES } from '../constants'
 import { create } from '../../lib/actions/create'
+import { getValueContainerAndKey } from './get-value-container-and-key'
+import * as optionsLib from './options'
 
 const handleCreate = async ({ argv, globalOptions, sitesInfo }) => {
   const createOptionsSpec = cliSpec.commands.find(({ name }) => name === 'create').arguments
@@ -20,7 +22,8 @@ const handleCreate = async ({ argv, globalOptions, sitesInfo }) => {
   const sourcePath = fsPath.resolve(createOptions['source-path'])
   let sourceType = createOptions['source-type']
   const stackName = createOptions['stack-name']
-  const options = optionsLib.mapRawOptions(setOptionOptions.options)
+  const options = optionsLib.mapRawOptions(createOptions.option)
+  console.log('options A:', options) // DEBUG
 
   const siteInfo = sitesInfo[apexDomain] || { apexDomain, bucketName, sourcePath, sourceType }
   siteInfo.region = createOptions.region || siteInfo.region || 'us-east-1'
@@ -53,7 +56,7 @@ const handleCreate = async ({ argv, globalOptions, sitesInfo }) => {
     process.exit(2) // eslint-disable-line no-process-exit
   }
 
-  optionLib.updatePluginSettings({ options, siteInfo })
+  optionsLib.updatePluginSettings({ options, siteInfo })
 
   // update siteInfo in case these were manually specified
   for (const [value, field] of [[bucketName, 'bucketName'], [sourcePath, 'sourcePath'], [sourceType, 'sourceType']]) {
