@@ -4,19 +4,15 @@ import { cliSpec } from '../constants'
 import { errorOut } from './error-out'
 import { getSiteInfo } from './get-site-info'
 import { getValueContainerAndKey } from './get-value-container-and-key'
-import * as plugins from '../../lib/plugins'
+import * as optionsLib from './options'
 import { smartConvert } from './smart-convert'
 
 const handlePluginSettings = async ({ argv, sitesInfo }) => {
   const setOptionOptionsSpec = cliSpec.commands.find(({ name }) => name === 'plugin-settings').arguments
   const setOptionOptions = commandLineArgs(setOptionOptionsSpec, { argv })
   const apexDomain = setOptionOptions['apex-domain']
-  const options = (setOptionOptions.option || []).map((spec) => {
-    let [name, value] = spec.split(/(?!\\):/)
-    value = value?.replaceAll(/\\:/g, ':')
+  const options = optionsLib.mapRawOptions(setOptionOptions.option)
 
-    return { name, value }
-  })
   const { delete: doDelete, name, value } = setOptionOptions
 
   // validate options
@@ -28,7 +24,7 @@ const handlePluginSettings = async ({ argv, sitesInfo }) => {
     errorOut("You must specify a '--name' when '--delete' is set.\n")
   } else if (doDelete !== true) {
     if (name !== undefined && value !== undefined) {
-      options.push({ name, value })
+      options.push({ name, value : smartConvert(value) }) // the 'option' values are already converted
     } else if (name !== undefined && value === undefined) {
       errorOut("You must specify a '--value' or '--delete' when '--name' is set.\n")
     } else if (name === undefined && value !== undefined) {
@@ -51,21 +47,7 @@ const handlePluginSettings = async ({ argv, sitesInfo }) => {
       delete siteInfo.options
     }
   } else {
-    for (const { name, value } of options) {
-      const [option] = name.split('.')
-
-      if (!(option in plugins)) {
-        errorOut(`No such option '${option}'; use one of: ${Object.keys(plugins).join(', ')}.\n`)
-      }
-
-      const optionsSpec = plugins[option].config?.options
-
-      const wrappedSpec = { [option] : optionsSpec } // so our option spec matches our path
-      const smartValue = smartConvert(value)
-      const { valueContainer, valueKey } =
-        getValueContainerAndKey({ path : name, rootContainer : pluginSettings, spec : wrappedSpec, value : smartValue })
-      valueContainer[valueKey] = smartValue
-    }
+    optionsLib.updatePluginSettings({ options, siteInfo })
   }
 
   siteInfo.pluginSettings = pluginSettings

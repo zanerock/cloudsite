@@ -3,20 +3,22 @@ import { errorOut } from './error-out'
 const getValueContainerAndKey = ({ path, rootContainer, spec, value }) => {
   const pathBits = path.split('.')
 
+  // walks the path, creating new containers along the way as necessary
   return pathBits.reduce(([currContainer, spec], bit, i) => {
+    // then we're at the terminal path bit; let's analyze whether it's valid and if value passes validation
     if (i === pathBits.length - 1) {
       spec = spec?.[bit]
       if (spec !== undefined) {
         const { matches, validation } = spec
         if (validation === undefined && matches === undefined) {
-          errorOut(`'${path}' does not appear to be a terminal path.\n`)
+          throw new Error(`'${path}' does not appear to be a terminal path.`)
         }
         if (matches !== undefined && value.match(matches) === null) {
-          errorOut(`Invalid value '${value}' for '${path}'; must match ${matches.toString()}.\n`)
+          throw new Error(`Invalid value '${value}' for '${path}'; must match ${matches.toString()}.`)
         }
 
         if (validation !== undefined && !validation(value)) {
-          errorOut(`Value '${value}' for '${path}' failed validation.\n`)
+          throw new Error(`Value '${value}' for '${path}' failed validation.`)
         }
       }
 

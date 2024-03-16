@@ -1,13 +1,6 @@
 # Cloudsite
 
-___This is alpha software and currently broken.___ I think the problem is the 'PowerUserAccess' isn't actually sufficient (it was working with 'AdministratorAccess'). I'm building up a more targeted permissions policy now.
-
-So, it's ___alpha software___. Don't use it right now. If you really like the project, you're welcome to contribute We provide support for developers on [our discord channel](https://discord.gg/QWAav6fZ5C). You can also support the project on [Patreon @zanecodes](https://patreon.com/zanecodes).
-
-
-♡( •ॢ◡-ॢ)✧˖° ♡
-
-OK, from here on out, is the actual package documentation. For this broken package. :(
+___This is alpha software and there's a bug in the documentation._  If you really like the project, you're welcome to contribute. Also, we provide support on [our discord channel](https://discord.gg/QWAav6fZ5C). You can also support the project on [Patreon @zanecodes](https://patreon.com/zanecodes).
 
 ------------
 
@@ -17,6 +10,8 @@ Low cost, high performance cloud based website hosting manager. Cloudsite featur
 - [Installation](#installation)
 - [Usage](#usage)
 - [AWS authentication](#aws-authentication)
+- [Plugins](#plugins)
+- [Updating your site](#updating-your-site)
 - [Command reference](#command-reference)
 - [Known limitations](#known-limitations)
 - [Contributing](#contributing)
@@ -47,8 +42,8 @@ All the peer dependencies are specific to the CLI, so if you're not using the CL
 aws sso login --profile your-sso-profile 
 
 cloudsite configuration initialize # walks you through setup questions
-
-cloudsite create your-domain.com --source-path . # deploys your site in the cloud
+# deploys a robust, high performance static site in the cloud
+cloudsite create your-domain.com --source-path . # see 'Plugins' for additional options
 cloudsite update your-domain.com # updates site content
 cloudsite destroy your-domain.com # destroys site infrastructure
 ```
@@ -185,7 +180,86 @@ We're going to start by following best practices and creating a group. We'll the
     Copy the 'Access key' from the 'Retrieve access keys' page and replace the value for 'aws_access_key_id'. Do the same with 'Secrete access key' from the 'Retrieve access keys' page and replace the value for 'aws_secrete_access_key'.
 
 The `cloudsite` tool will now use your the above configured access key by default.
-## Command reference
+
+## Plugins
+
+Cloudsite uses a simple plugin system and at the moment, it's more like "optional features" than full plugins, but it'll get there. There are currently two plugins supported: contact form and CloudFront logging.
+
+### Contact form
+
+Supports a single contact with set fields. [User defined fields will be supported in a future version.](https://github.com/liquid-labs/cloudsite/issues/69). Currently, the supported fields are:
+
+- `given_name`,
+- `family_name`,
+- `email`,
+- `topics`, and
+- `message`.
+
+When submitted, the form data will be saved in a DynamoDB table and the information will be optionally mailed to a user defined email address. The form processing routine supports both base64 form encoded data and a JSON body.
+
+<span id="contact-form-configuration-options"></span>
+#### Configuration options
+
+- `contactHandler.emailFrom` _(string)_: The SES verified email to use when sending a submission notification email.
+- `contactHandler.emailTo` _(string)_: The optional target email. If not provided, `emailFrom` will be used for both the sender and target.
+- `contactHandler.path` _(string)_: The absolute URL path (beginning with `/`) where the form submission handler is called. Use this path in the form action, or JS `fetch` call and the `POST` method.
+
+<span id="contact-form-usage"></span>
+#### Usage
+
+1. Set up the form on your website. Set the submit handler to whatever you like (we use '/contact-handler'). We will provide at least one template site for this soon. Until then, if you want immediate support, hit us up [on discord](https://discord.gg/QWAav6fZ5C).
+2. Activate AWS Simple Email Service (SES).
+   - Sign in to the AWS Management Console and open the Amazon SES console at https://console.aws.amazon.com/ses/.
+   - ___Make sure you're setting up SES in the same region as your site.___ This will be `us-east-1` unless you specified a different `--region` option when you create/created the site.
+   - Select 'Get started' (or 'Get set up' maybe) from the SES console home page and the wizard will walk you through the steps of setting up your SES account.
+3. It is recommended that you not use your personal email directly and instead create an alias your account. Then use the alias as the destination account.
+4. To create a site infrastructure with contact form support, you must at a minimum define `contactHandler.emailFrom` and `contacteHandler.path`. This can be done during site creation like so (can be combined with other options):
+   ```bash
+   cloudsite create your-domain.com --source-path . \
+     --option contactHandler.path:/contact-handler \
+     --option contactHandler.emailFrom:contactform@your-domain.com
+   ```
+5. Include the optional `contactHandler.emailTo` setting if you want to send the email to a different address than the "from" email.
+
+See also [Updating your site](#updating-your-site).
+
+### CloudFront logging
+
+Enables logging of CloudFront events to an S3 bucket. The infrastructure will create a common logging bucket to recieve the logs. Currently, the bucket name is hard coded and will be something like 'your-domain-com-common-logging'.
+
+<span id="cloudfront-logging-configuration-options"></span>
+#### Configuration options
+
+- `cloudfrontLogs.includeCookies` _(boolean)_: Indicates whether to include cookie data in the logs.
+
+<span id="cloudfront-logging-usage"></span>
+#### Usage
+
+To create infrastructure that includes CloudFront event logs, use the following command (can be combined with other options):
+```bash
+cloudsite create your-domain.com --source-path . \
+  --option cloudfrontLogs.includeCookies:true # or false
+```
+
+Setting the option, to either 'true' or 'false' is what enables the CloudFront logs.
+
+See also [Updating your site](#updating-your-site)
+
+## Updating your site
+
+You can update your site, to add, remove, or reconfigure plugins/options with the 'pluggin-settings' command. For instance, to activate contact form support, you could execute:
+
+```bash
+cloudite plugin-settings your-domain.com \
+  --option contactHandler.path:/contact-handler \
+  --option contactHandler.emailFrom:contactform@your-domain.com
+```
+
+and then run:
+
+```bash
+cloudsite update your-domain.com
+```## Command reference
 
 ### Usage
 
@@ -250,6 +324,7 @@ Creates a new website, setting up infrastructure and copying content.
 |`--bucket-name`|The name of the bucket to be used. If no option is given, cloudsite will generate a bucket name based on the apex domain.|
 |`--no-build`|Supresses the default behavior of building before uploading the site content.|
 |`--no-delete-on-failure`|When true, does not delete the site stack after setup failure.|
+|`--option`|A combined name-value paid, separated by ':'. Can be used multiple times.|
 |`--region`|The region where to create the site resources. Defaults to 'us-east-1'.|
 |`--source-path`|Local path to the static site root.|
 |`--source-type`|May be either 'vanilla' or 'docusaurus', otherwise process will attempt to guess.|
@@ -303,7 +378,7 @@ Sets (or deletes) a site option.
 |`[apex-domain]`|(_main argument_,_required_) The apex domain identifying the site.|
 |`--delete`|When set, then deletes the setting. Incompatible with the '--value' option.|
 |`--name`|The option name.|
-|`--option`|A combined name-value paid, separated by ':'. Used to set multiple setting values at one time.|
+|`--option`|A combined name-value paid, separated by ':'. Can be used multiple times.|
 |`--value`|The setting value. Incompatible with the '--delete' option.|
 
 <span id="cloudsite-update"></span>
