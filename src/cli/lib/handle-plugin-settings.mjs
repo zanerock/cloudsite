@@ -3,6 +3,7 @@ import commandLineArgs from 'command-line-args'
 import { cliSpec } from '../constants'
 import { errorOut } from './error-out'
 import { getSiteInfo } from './get-site-info'
+import { getValueContainerAndKey } from './get-value-container-and-key'
 import * as optionsLib from './options'
 import { smartConvert } from './smart-convert'
 
@@ -23,7 +24,7 @@ const handlePluginSettings = async ({ argv, sitesInfo }) => {
     errorOut("You must specify a '--name' when '--delete' is set.\n")
   } else if (doDelete !== true) {
     if (name !== undefined && value !== undefined) {
-      options.push({ name, value: smartConvert(value) }) // the 'option' values are already converted
+      options.push({ name, value : smartConvert(value) }) // the 'option' values are already converted
     } else if (name !== undefined && value === undefined) {
       errorOut("You must specify a '--value' or '--delete' when '--name' is set.\n")
     } else if (name === undefined && value !== undefined) {

@@ -6,7 +6,6 @@ import { awsS3TABucketNameRE, awsS3TABucketNameREString } from 'regex-repo'
 
 import { cliSpec, SOURCE_TYPES } from '../constants'
 import { create } from '../../lib/actions/create'
-import { getValueContainerAndKey } from './get-value-container-and-key'
 import * as optionsLib from './options'
 
 const handleCreate = async ({ argv, globalOptions, sitesInfo }) => {
