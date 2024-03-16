@@ -1,5 +1,7 @@
 import yaml from 'js-yaml'
 
+import { S3Client, DeleteBucketCommand } from '@aws-sdk/client-s3'
+
 import * as plugins from '../plugins'
 import { determineBucketName } from './determine-bucket-name'
 import { determineOACName } from './determine-oac-name'
@@ -147,20 +149,23 @@ const SiteTemplate = class {
     }
   }
 
-  async enableSharedLoggingBucket () {
-    const { bucketName } = this.siteInfo
-    let { sharedLoggingBucket } = this.siteInfo
+  async destroySharedLoggingBucket () {
+    const { siteInfo } = this
+    const { sharedLoggingBucket } = siteInfo
 
-    const commonLogsBucketName = await determineBucketName({
-      bucketName  : bucketName + '-common-logs',
-      credentials : this.credentials,
-      findName    : true,
-      siteInfo    : this.siteInfo
-    })
+    const s3Client = new S3Client({ credentials: this.credentials })
+    const deleteBucketCommand = new deleteBucketCommand({ Bucket: sharedLoggingBucket })
+    await s3Client.send(deleteBucketCommand)
+    delete siteInfo.sharedLoggingBucket
+  }
+
+  async enableSharedLoggingBucket () {
+    const { bucketName } = this.siteInfo // used to create a name for the shared logging bucket
+    let { sharedLoggingBucket = bucketName + '-common-logs'} = this.siteInfo
 
     if (sharedLoggingBucket === undefined) {
       sharedLoggingBucket = await determineBucketName({
-        bucketName  : commonLogsBucketName,
+        bucketName  : sharedLoggingBucket,
         credentials : this.credentials,
         findName    : true,
         siteInfo    : this.siteInfo
@@ -182,6 +187,20 @@ const SiteTemplate = class {
     return sharedLoggingBucket
   }
 
+  async destroyPlugins () {
+    const { siteInfo } = this
+    const { apexDomain, pluginSettings } = siteInfo
+
+    for (const [pluginKey, settings] of Object.entries(pluginSettings)) {
+      const plugin = plugins[pluginKey]
+      if (plugin === undefined) {
+        throw new Error(`Unknown plugin found in '${apexDomain}' plugin settings.`)
+      }
+
+      await plugin.preStackDestroyHandler({ siteTemplate: this, settings })
+    }
+  }
+
   async loadPlugins () {
     const { siteInfo } = this
     const { apexDomain, pluginSettings } = siteInfo
@@ -192,10 +211,7 @@ const SiteTemplate = class {
         throw new Error(`Unknown plugin found in '${apexDomain}' plugin settings.`)
       }
 
-      await plugin.stackConfig({
-        siteTemplate : this,
-        settings
-      })
+      await plugin.stackConfig({ siteTemplate : this, settings })
     }
   }
 

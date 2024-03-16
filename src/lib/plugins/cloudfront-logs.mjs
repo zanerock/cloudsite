@@ -4,6 +4,10 @@ const config = {
   }
 }
 
+const preStackDestroyHandler = async ({ siteTemplate }) => {
+  await siteTemplate.destroySharedLoggingBucket()
+}
+
 const stackConfig = async ({ siteTemplate, settings }) => {
   const { finalTemplate } = siteTemplate
 
