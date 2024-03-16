@@ -6,6 +6,12 @@ const GLOBAL_OPTIONS_PATH = fsPath.join(process.env.HOME, '.config', 'cloudsite'
 
 const SITES_INFO_PATH = fsPath.join(process.env.HOME, '.config', 'cloudsite', 'sites.json')
 
+const optionSpec = {
+  name        : 'option',
+  description : "A combined name-value paid, separated by ':'. Can be used multiple times.",
+  multiple    : true
+}
+
 const cliSpec = {
   mainCommand : 'cloudsite',
   mainOptions : [
@@ -64,6 +70,7 @@ const cliSpec = {
           description : 'When true, does not delete the site stack after setup failure.',
           type        : Boolean
         },
+        optionSpec,
         {
           name        : 'region',
           description : "The region where to create the site resources. Defaults to 'us-east-1'.",
@@ -151,11 +158,7 @@ const cliSpec = {
           name        : 'name',
           description : 'The option name.'
         },
-        {
-          name        : 'option',
-          description : "A combined name-value paid, separated by ':'. Used to set multiple setting values at one time.",
-          multiple    : true
-        },
+        optionSpec,
         {
           name        : 'value',
           description : "The setting value. Incompatible with the '--delete' option."

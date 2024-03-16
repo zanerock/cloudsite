@@ -4,19 +4,15 @@ import { cliSpec } from '../constants'
 import { errorOut } from './error-out'
 import { getSiteInfo } from './get-site-info'
 import { getValueContainerAndKey } from './get-value-container-and-key'
+import * as optionLib from './options'
 import * as plugins from '../../lib/plugins'
-import { smartConvert } from './smart-convert'
 
 const handlePluginSettings = async ({ argv, sitesInfo }) => {
   const setOptionOptionsSpec = cliSpec.commands.find(({ name }) => name === 'plugin-settings').arguments
   const setOptionOptions = commandLineArgs(setOptionOptionsSpec, { argv })
   const apexDomain = setOptionOptions['apex-domain']
-  const options = (setOptionOptions.option || []).map((spec) => {
-    let [name, value] = spec.split(/(?!\\):/)
-    value = value?.replaceAll(/\\:/g, ':')
+  const options = optionsLib.mapRawOptions(setOptionOptions.options)
 
-    return { name, value }
-  })
   const { delete: doDelete, name, value } = setOptionOptions
 
   // validate options
@@ -51,21 +47,7 @@ const handlePluginSettings = async ({ argv, sitesInfo }) => {
       delete siteInfo.options
     }
   } else {
-    for (const { name, value } of options) {
-      const [option] = name.split('.')
-
-      if (!(option in plugins)) {
-        errorOut(`No such option '${option}'; use one of: ${Object.keys(plugins).join(', ')}.\n`)
-      }
-
-      const optionsSpec = plugins[option].config?.options
-
-      const wrappedSpec = { [option] : optionsSpec } // so our option spec matches our path
-      const smartValue = smartConvert(value)
-      const { valueContainer, valueKey } =
-        getValueContainerAndKey({ path : name, rootContainer : pluginSettings, spec : wrappedSpec, value : smartValue })
-      valueContainer[valueKey] = smartValue
-    }
+    optionLib.updatePluginSettings({ options, siteInfo })
   }
 
   siteInfo.pluginSettings = pluginSettings
