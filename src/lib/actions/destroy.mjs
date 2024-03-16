@@ -4,21 +4,29 @@ import { CloudFormationClient, DeleteStackCommand } from '@aws-sdk/client-cloudf
 import { emptyBucket } from 's3-empty-bucket'
 
 import { getCredentials } from './lib/get-credentials'
+import { progressLogger } from '../shared/progress-logger'
+import { SiteTemplate } from '../shared/site-template'
+import { trackStackStatus } from './lib/track-stack-status'
 
-const destroy = async ({ siteInfo, ...downstreamOptions }) => {
+const destroy = async ({ globalOptions, siteInfo, verbose }) => {
   const { bucketName, stackName } = siteInfo
 
-  const credentials = getCredentials(downstreamOptions)
+  const credentials = getCredentials(globalOptions)
   const s3Client = new S3Client({ credentials })
 
   // this method provides user udptaes
-  await emptyBucket({ bucketName, s3Client })
+  await emptyBucket({ bucketName, s3Client, verbose })
 
-  process.stdout.write('Deleting stack...\n')
+  const siteTemplate = new SiteTemplate({ credentials, siteInfo })
+  await siteTemplate.destroyPlugins()
+
+  progressLogger.write('Deleting stack...\n')
   const cloudFormationClient = new CloudFormationClient({ credentials })
   const deleteStackCommand = new DeleteStackCommand({ StackName : stackName })
   await cloudFormationClient.send(deleteStackCommand)
-  process.stdout.write('Done!\n')
+
+  const finalStatus = await trackStackStatus({ cloudFormationClient, noDeleteOnFailure : true, stackName })
+  progressLogger?.write('Final status: ' + finalStatus + '\n')
 }
 
 export { destroy }
