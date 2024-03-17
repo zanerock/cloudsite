@@ -15,6 +15,9 @@
   "files": [
     "dist/*"
   ],
+  "bin": {
+    "cloudsite": "./dist/cloudsite-exec.js"
+  },
   "engines": {
     "node": ">=18.0.0"
   },
