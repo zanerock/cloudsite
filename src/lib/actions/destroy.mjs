@@ -17,7 +17,7 @@ const destroy = async ({ globalOptions, siteInfo, verbose }) => {
   // this method provides user udptaes
   try {
     progressLogger?.write('Deleting site bucket...\n')
-    await emptyBucket({ bucketName, s3Client, verbose })
+    await emptyBucket({ bucketName, doDelete : true, s3Client, verbose })
   } catch (e) {
     if (e.name === 'NoSuchBucket') {
       progressLogger?.write('Bucket already deleted.\n')
@@ -39,8 +39,8 @@ const destroy = async ({ globalOptions, siteInfo, verbose }) => {
     const finalStatus = await trackStackStatus({ cloudFormationClient, noDeleteOnFailure : true, stackName })
     progressLogger?.write('Final status: ' + finalStatus + '\n')
 
-    if (finalStatus === 'DELETE_FAILED' && progressLogger !== undefined) {
-      progressLogger.write('\nThe delete is expected to fail at first because the \'replicated Lambda functions\' take a while to clear and the stack cannot be fully deleted until AWS clears the replicated functions. Give it at least 30 min and up to a few hours and try again.')
+    if (finalStatus === 'DELETE_FAILED') {
+      progressLogger?.write('\nThe delete is expected to fail at first because the \'replicated Lambda functions\' take a while to clear and the stack cannot be fully deleted until AWS clears the replicated functions. Give it at least 30 min and up to a few hours and try again.')
       return false
     } else if (finalStatus === 'DELETE_COMPLETE') {
       return true
