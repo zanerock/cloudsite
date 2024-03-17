@@ -36,7 +36,7 @@ const trackStackStatus = async ({ cloudFormationClient, noDeleteOnFailure, stack
     process.stdout.write('\nStack status: ' + stackStatus + '\n')
   }
 
-  return stackStatus === 'CREATE_COMPLETE'
+  return stackStatus
 }
 
 export { trackStackStatus }
