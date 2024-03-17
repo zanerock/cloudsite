@@ -90,8 +90,7 @@ const cloudsite = async () => {
       process.stderr.write(e.message + '\n')
       process.exit(3) // eslint-disable-line no-process-exit
     }
-  }
-  finally {
+  } finally {
     await checkAndUpdateSitesInfo({ origSitesInfo, sitesInfo })
   }
 }
