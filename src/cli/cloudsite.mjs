@@ -76,7 +76,6 @@ const cloudsite = async () => {
       // TODO: handleHelp() (abstriact from cloudcraft)
     }
   } catch (e) {
-    await checkAndUpdateSitesInfo({ origSitesInfo, sitesInfo })
     if (throwError === true) {
       throw e
     } else if (e.name === 'CredentialsProviderError') {
@@ -91,8 +90,9 @@ const cloudsite = async () => {
       process.stderr.write(e.message + '\n')
       process.exit(3) // eslint-disable-line no-process-exit
     }
+  } finally {
+    await checkAndUpdateSitesInfo({ origSitesInfo, sitesInfo })
   }
-  await checkAndUpdateSitesInfo({ origSitesInfo, sitesInfo })
 }
 
 const checkAndUpdateSitesInfo = async ({ origSitesInfo, sitesInfo }) => {
