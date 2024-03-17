@@ -2,9 +2,10 @@ import yaml from 'js-yaml'
 
 import { S3Client, DeleteBucketCommand } from '@aws-sdk/client-s3'
 
-import * as plugins from '../plugins'
 import { determineBucketName } from './determine-bucket-name'
 import { determineOACName } from './determine-oac-name'
+import * as plugins from '../plugins'
+import { progressLogger } from './progress-logger'
 
 /**
  * Class encapsulating site stack configuration. Any enabled plugins are loaded and processed by this class.
@@ -153,6 +154,7 @@ const SiteTemplate = class {
     const { siteInfo } = this
     const { sharedLoggingBucket } = siteInfo
 
+    progressLogger.write('Deleting shared logging bucket...\n')
     const s3Client = new S3Client({ credentials : this.credentials })
     const deleteBucketCommand = new DeleteBucketCommand({ Bucket : sharedLoggingBucket })
     await s3Client.send(deleteBucketCommand)
@@ -197,7 +199,10 @@ const SiteTemplate = class {
         throw new Error(`Unknown plugin found in '${apexDomain}' plugin settings.`)
       }
 
-      await plugin.preStackDestroyHandler({ siteTemplate : this, settings })
+      const { preStackDestroyHandler } = plugin
+      if (preStackDestroyHandler !== undefined) {
+        await preStackDestroyHandler({ siteTemplate : this, settings })
+      }
     }
   }
 

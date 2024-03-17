@@ -17,7 +17,12 @@ const handleDestroy = async ({ argv, globalOptions, sitesInfo }) => {
     process.exit(3) // eslint-disable-line no-process-exit
   }
 
-  await destroy({ globalOptions, siteInfo, verbose : true })
+  const deleted = await destroy({ globalOptions, siteInfo, verbose : true })
+
+  if (deleted === true) {
+    process.stdout.write(`Removing ${apexDomain} from local DB.\n`)
+    delete sitesInfo[apexDomain]
+  }
 }
 
 export { handleDestroy }
