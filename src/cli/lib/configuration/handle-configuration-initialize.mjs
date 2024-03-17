@@ -22,11 +22,10 @@ const handleConfigurationInitialize = async () => {
   const results = questioner.results
     .reduce((acc, { parameter, value }) => { acc[parameter] = value; return acc }, {})
 
-  const globalOptionsPath = GLOBAL_OPTIONS_PATH
   const globalOptionsContents = JSON.stringify(results, null, '  ')
 
-  await fs.mkdir(fsPath.dirname(globalOptionsPath), { recursive : true })
-  await fs.writeFile(globalOptionsPath, globalOptionsContents, { encoding : 'utf8' })
+  await fs.mkdir(fsPath.dirname(GLOBAL_OPTIONS_PATH), { recursive : true })
+  await fs.writeFile(GLOBAL_OPTIONS_PATH, globalOptionsContents, { encoding : 'utf8' })
 }
 
 export { handleConfigurationInitialize }
