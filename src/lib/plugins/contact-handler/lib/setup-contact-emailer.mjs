@@ -2,6 +2,8 @@ import { CONTACT_EMAILER_ZIP_NAME } from './constants'
 import { determineLambdaFunctionName } from './determine-lambda-function-name'
 
 const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, update, settings, siteTemplate }) => {
+  console.log('setupContactEmailer update:', update) // DEBUG
+
   const { finalTemplate, siteInfo } = siteTemplate
   const { apexDomain, emailFrom : contactHandlerFromEmail, emailTo : contactHandlerTargetEmail } = siteInfo
 
@@ -16,11 +18,11 @@ const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, upd
 
   const emailerFunctionName = update
     ? settings.emailerFunctionName
-    : await determineLambdaFunctionName({
-      baseName : lambdaFunctionsBucketName + '-contact-emailer',
-      credentials,
-      siteTemplate
-    })
+    : (await determineLambdaFunctionName({
+        baseName : lambdaFunctionsBucketName + '-contact-emailer',
+        credentials,
+        siteTemplate
+      }))
   settings.emailerFunctionName = emailerFunctionName
   const emailerFunctionLogGroupName = emailerFunctionName
 

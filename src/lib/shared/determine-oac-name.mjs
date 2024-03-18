@@ -36,7 +36,7 @@ const getAllOACNames = async ({ credentials, region }) => {
     })
 
     const oacListResponse = await cloudfrontClient.send(listOACCommand)
-    const items = oacListResponse.OriginAccessControlList.Items
+    const items = oacListResponse.OriginAccessControlList.Items || []
 
     result.push(...items.map(({ Name : name }) => name))
 

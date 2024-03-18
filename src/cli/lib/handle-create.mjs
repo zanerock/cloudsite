@@ -22,7 +22,6 @@ const handleCreate = async ({ argv, globalOptions, sitesInfo }) => {
   let sourceType = createOptions['source-type']
   const stackName = createOptions['stack-name']
   const options = optionsLib.mapRawOptions(createOptions.option)
-  console.log('options A:', options) // DEBUG
 
   const siteInfo = sitesInfo[apexDomain] || { apexDomain, bucketName, sourcePath, sourceType }
   siteInfo.region = createOptions.region || siteInfo.region || 'us-east-1'

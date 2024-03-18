@@ -39,7 +39,7 @@ const updateStack = async ({ credentials, siteInfo }) => {
 
   await cloudFormationClient.send(stackUpdateCommand)
 
-  await trackStackStatus({ cloudFormationClient, noDeleteOnFailure : true, stackName })
+  const finalStatus = await trackStackStatus({ cloudFormationClient, noDeleteOnFailure : true, stackName })
 
   await updateSiteInfo({ credentials, siteInfo }) // needed by createOrUpdateDNSRecords
 
@@ -55,7 +55,11 @@ const updateStack = async ({ credentials, siteInfo }) => {
     ])
   }
 
-  process.stdout.write('Stack created.\n')
+  if (finalStatus === 'UPDATE_COMPLETE') {
+    process.stdout.write('Stack updated.\n')
+  }
+
+  return finalStatus
 }
 
 export { updateStack }

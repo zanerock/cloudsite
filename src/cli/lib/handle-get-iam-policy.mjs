@@ -11,6 +11,7 @@ const iamPolicy = {
       Action : [
         'acm:ListCertificates',
         'acm:RequestCertificate',
+        'ce:UpdateCostAllocationTagsStatus',
         'cloudformation:DescribeStackDriftDetectionStatus',
         'cloudformation:DescribeStackEvents',
         'cloudformation:DescribeStacks',
@@ -59,6 +60,10 @@ const iamPolicy = {
         'lambda:ListFunctions',
         'lambda:ListFunctionUrlConfigs',
         'lambda:ListVersionsByFunction',
+        'lambda:UpdateFunction',
+        'lambda:UpdateEventSourceMapping',
+        'lambda:UpdateFunctionConfiguration',
+        'lambda:UpdateFunctionUrlConfig',
         'iam:PassRole',
         'lambda:PublishVersion',
         'lambda:RemovePermission',

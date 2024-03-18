@@ -1,8 +1,10 @@
 import { CloudFrontClient, CreateInvalidationCommand } from '@aws-sdk/client-cloudfront'
 
 import { addTagsToHostedZone } from './lib/add-tags-to-hosted-zone'
+import { associateCostAllocationTags } from './lib/associate-cost-allocation-tags'
 import { createOrUpdateDNSRecords } from './lib/create-or-update-dns-records'
 import { getCredentials } from './lib/get-credentials'
+import { getSiteTag } from '../shared/get-site-tag'
 import { syncSiteContent } from './lib/sync-site-content'
 import { updatePlugins } from './lib/update-plugins'
 import { updateStack } from './lib/update-stack'
@@ -12,27 +14,39 @@ const update = async ({ doContent, doDNS, doStack, noBuild, noCacheInvalidation,
 
   const credentials = getCredentials(globalOptions)
 
-  const updates = []
+  const firstRoundUpdates = []
   if (doAll === true || doContent === true) {
     // method will report actions to user
-    updates.push(syncSiteContent({ credentials, noBuild, siteInfo }))
+    firstRoundUpdates.push(syncSiteContent({ credentials, noBuild, siteInfo }))
   }
 
   if (doAll === true || doDNS === true) {
-    updates.push(createOrUpdateDNSRecords({ credentials, siteInfo }))
-    updates.push(addTagsToHostedZone({ credentials, siteInfo }))
+    firstRoundUpdates.push(createOrUpdateDNSRecords({ credentials, siteInfo }))
   }
 
+  await Promise.all(firstRoundUpdates)
+
+  const secondRoundUpdates = []
+  let stackUpdateStatus
   if (doAll === true || doStack === true) {
-    updates.push(updateStack({ credentials, siteInfo }))
-    updates.push(updatePlugins({ credentials, siteInfo }))
+    stackUpdateStatus = await updateStack({ credentials, siteInfo })
+    if (stackUpdateStatus === 'UPDATE_COMPLETE') {
+      secondRoundUpdates.push(updatePlugins({ credentials, siteInfo }))
+      // have to do this after the other updates so that the tags get created first
+      const siteTag = getSiteTag(siteInfo)
+      secondRoundUpdates.push(await associateCostAllocationTags({ credentials, tag : siteTag }))
+    }
   }
 
-  await Promise.all(updates)
+  if (doAll === true || doDNS === true) {
+    secondRoundUpdates.push(addTagsToHostedZone({ credentials, siteInfo }))
+  }
 
   if ((doAll === true || doContent === true) && noCacheInvalidation !== true) {
-    await invalidateCache({ credentials, siteInfo })
+    secondRoundUpdates.push(invalidateCache({ credentials, siteInfo }))
   }
+
+  await Promise.all(secondRoundUpdates)
 }
 
 const invalidateCache = async ({ credentials, siteInfo }) => {

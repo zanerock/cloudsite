@@ -1,6 +1,8 @@
 import yaml from 'js-yaml'
 
-import { S3Client, DeleteBucketCommand } from '@aws-sdk/client-s3'
+import { emptyBucket } from 's3-empty-bucket'
+
+import { S3Client } from '@aws-sdk/client-s3'
 
 import { determineBucketName } from './determine-bucket-name'
 import { determineOACName } from './determine-oac-name'
@@ -41,12 +43,12 @@ const SiteTemplate = class {
     this.finalTemplate = this.baseTemplate
   }
 
-  async initializeTemplate ({ update }) {
+  async initializeTemplate ({ update } = {}) {
     const { siteInfo } = this
     const { accountID, apexDomain, bucketName, certificateArn, region } = siteInfo
     const siteTag = getSiteTag(siteInfo)
 
-    const oacName = update
+    const oacName = update === true
       ? siteInfo.oacName
       : await determineOACName({
         baseName    : `${bucketName}-OAC`,
@@ -163,11 +165,19 @@ const SiteTemplate = class {
     const { siteInfo } = this
     const { sharedLoggingBucket } = siteInfo
 
-    progressLogger.write('Deleting shared logging bucket...\n')
-    const s3Client = new S3Client({ credentials : this.credentials })
-    const deleteBucketCommand = new DeleteBucketCommand({ Bucket : sharedLoggingBucket })
-    await s3Client.send(deleteBucketCommand)
-    delete siteInfo.sharedLoggingBucket
+    if (sharedLoggingBucket !== undefined) {
+      progressLogger.write('Deleting shared logging bucket...\n')
+      const s3Client = new S3Client({ credentials : this.credentials })
+      emptyBucket({ 
+        bucketName: siteInfo.sharedLoggingBucket, 
+        doDelete: true, s3Client, 
+        verbose : progressLogger !== undefined
+      })
+      delete siteInfo.sharedLoggingBucket
+    }
+    else {
+      progressLogger?.write('Looks like the shared logging bucket has already been deleted; skipping.\n')
+    }
   }
 
   async enableSharedLoggingBucket () {
@@ -217,7 +227,8 @@ const SiteTemplate = class {
     }
   }
 
-  async loadPlugins ({ update }) {
+  async loadPlugins ({ update } = {}) {
+    console.log('loadPlugins update:', update) // DEBUG
     const { siteInfo } = this
     const { apexDomain, pluginSettings } = siteInfo
 

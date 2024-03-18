@@ -41,14 +41,25 @@ const stageLambdaFunctionZipFiles = async ({ credentials, enableEmail, settings,
       Bucket : lambdaFunctionsBucket
     })
     await s3Client.send(createBucketCommand)
+/*
+    await new Promise(resolve => setTimeout(resolve, 1000)) // DEBUG
 
+    console.log('\nA\n') // DEBUG
     const putBucketTaggingCommand = new PutBucketTaggingCommand({
       Bucket  : lambdaFunctionsBucket,
       Tagging : {
         TagSet : [{ Key : siteTag, Value : '' }]
       }
     })
+    console.log('putBucketTaggingCommand:', putBucketTaggingCommand) // DEBUG
+    /*console.log('serialized:', await putBucketTaggingCommand.serialize({
+      Bucket  : lambdaFunctionsBucket,
+      Tagging : {
+        TagSet : [{ Key : siteTag, Value : '123' }]
+      }
+    })) // DEBUG * /
     await s3Client.send(putBucketTaggingCommand)
+    console.log('\nB\n') // DEBUG */
   }
   settings.lambdaFunctionsBucket = lambdaFunctionsBucket
 
