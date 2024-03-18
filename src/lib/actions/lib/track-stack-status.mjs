@@ -11,12 +11,10 @@ const trackStackStatus = async ({ cloudFormationClient, noDeleteOnFailure, stack
 
     stackStatus = describeResponse.Stacks[0].StackStatus
 
-    if (stackStatus === 'CREATE_IN_PROGRESS' && previousStatus === undefined) {
-      process.stdout.write('Creating stack')
-    } else if (stackStatus === 'UPDATE_IN_PROGRESS' && previousStatus === undefined) {
-      process.stdout.write('Updating stack')
-    } else if (stackStatus === 'ROLLBACK_IN_PROGRESS' && previousStatus !== 'ROLLBACK_IN_PROGRESS') {
-      process.stdout.write('\nRollback in progress')
+    if (stackStatus !== previousStatus) {
+      // convert to sentence case
+      const statusMessage = stackStatus.charAt(0) + stackStatus.slice(1).toLowerCase().replace('_', ' ')
+      process.stdout.write(stackStatus)
     } else {
       process.stdout.write('.')
     }

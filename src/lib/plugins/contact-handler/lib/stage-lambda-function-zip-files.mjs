@@ -1,7 +1,7 @@
 import { join as pathJoin } from 'node:path'
 import { createReadStream } from 'node:fs'
 
-import { CreateBucketCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
+import { CreateBucketCommand, PutBucketTaggingCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 
 import { CONTACT_EMAILER_ZIP_NAME, CONTACT_HANDLER_ZIP_NAME, REQUEST_SIGNER_ZIP_NAME } from './constants'
 import { convertDomainToBucketName } from '../../../shared/convert-domain-to-bucket-name'
@@ -21,7 +21,7 @@ const stageLambdaFunctionZipFiles = async ({ credentials, enableEmail, settings,
   process.stdout.write('Staging Lambda function zip files...\n')
 
   let { lambdaFunctionsBucket } = settings
-  const { apexDomain, region } = siteInfo
+  const { apexDomain, region, siteTag } = siteInfo
 
   const s3Client = new S3Client({ credentials, region })
 
@@ -41,6 +41,14 @@ const stageLambdaFunctionZipFiles = async ({ credentials, enableEmail, settings,
       Bucket : lambdaFunctionsBucket
     })
     await s3Client.send(createBucketCommand)
+
+    const putBucketTaggingCommand = new PutBucketTaggingCommand({
+      Bucket  : lambdaFunctionsBucket,
+      Tagging : {
+        TagSet : [{ Key : siteTag, Value : '' }]
+      }
+    })
+    await s3Client.send(putBucketTaggingCommand)
   }
   settings.lambdaFunctionsBucket = lambdaFunctionsBucket
 

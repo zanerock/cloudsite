@@ -4,6 +4,7 @@ import { S3Client, DeleteBucketCommand } from '@aws-sdk/client-s3'
 
 import { determineBucketName } from './determine-bucket-name'
 import { determineOACName } from './determine-oac-name'
+import { getSiteTag } from './get-site-tag'
 import * as plugins from '../plugins'
 import { progressLogger } from './progress-logger'
 
@@ -40,14 +41,20 @@ const SiteTemplate = class {
     this.finalTemplate = this.baseTemplate
   }
 
-  async initializeTemplate () {
-    const { accountID, apexDomain, bucketName, certificateArn, region } = this.siteInfo
+  async initializeTemplate ({ update }) {
+    const { siteInfo } = this
+    const { accountID, apexDomain, bucketName, certificateArn, region } = siteInfo
+    const siteTag = getSiteTag(siteInfo)
 
-    const oacName = await determineOACName({
-      baseName    : `${bucketName}-OAC`,
-      credentials : this.credentials,
-      siteInfo    : this.siteInfo
-    })
+    const oacName = update
+      ? siteInfo.oacName
+      : await determineOACName({
+        baseName    : `${bucketName}-OAC`,
+        credentials : this.credentials,
+        siteInfo    : this.siteInfo
+      })
+    progressLogger?.write(`Using OAC name: ${oacName}\n`)
+    this.siteInfo.oacName = oacName
 
     this.finalTemplate = {
       Resources : {
@@ -55,7 +62,8 @@ const SiteTemplate = class {
           Type       : 'AWS::S3::Bucket',
           Properties : {
             AccessControl : 'Private',
-            BucketName    : bucketName
+            BucketName    : bucketName,
+            Tags          : [{ Key : siteTag, Value : '' }]
           }
         },
         SiteCloudFrontOriginAccessControl : {
@@ -105,8 +113,9 @@ const SiteTemplate = class {
                 TargetOriginId       : 'static-hosting',
                 ViewerProtocolPolicy : 'redirect-to-https'
               }
-            }
-          }
+            }, // DistributionConfig
+            Tags : [{ Key : siteTag, Value : '' }]
+          } // Properties
         }, // SiteCloudFrontDistribution
         SiteBucketPolicy : {
           Type       : 'AWS::S3::BucketPolicy',
@@ -164,6 +173,7 @@ const SiteTemplate = class {
   async enableSharedLoggingBucket () {
     const { bucketName } = this.siteInfo // used to create a name for the shared logging bucket
     let { sharedLoggingBucket = bucketName + '-common-logs' } = this.siteInfo
+    const siteTag = getSiteTag(this.siteInfo)
 
     if (sharedLoggingBucket === undefined) {
       sharedLoggingBucket = await determineBucketName({
@@ -182,7 +192,8 @@ const SiteTemplate = class {
         BucketName        : sharedLoggingBucket,
         OwnershipControls : { // this enables ACLs, as required by CloudFront standard logging
           Rules : [{ ObjectOwnership : 'BucketOwnerPreferred' }]
-        }
+        },
+        Tags : [{ Key : siteTag, Value : '' }]
       }
     }
 
@@ -206,18 +217,21 @@ const SiteTemplate = class {
     }
   }
 
-  async loadPlugins () {
+  async loadPlugins ({ update }) {
     const { siteInfo } = this
     const { apexDomain, pluginSettings } = siteInfo
 
+    const pluginConfigs = []
     for (const [pluginKey, settings] of Object.entries(pluginSettings)) {
       const plugin = plugins[pluginKey]
       if (plugin === undefined) {
         throw new Error(`Unknown plugin found in '${apexDomain}' plugin settings.`)
       }
 
-      await plugin.stackConfig({ siteTemplate : this, settings })
+      pluginConfigs.push(plugin.stackConfig({ siteTemplate : this, settings, update }))
     }
+
+    await Promise.all(pluginConfigs)
   }
 
   render () {

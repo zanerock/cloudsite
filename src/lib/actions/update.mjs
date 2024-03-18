@@ -1,8 +1,10 @@
 import { CloudFrontClient, CreateInvalidationCommand } from '@aws-sdk/client-cloudfront'
 
+import { addTagsToHostedZone } from './lib/add-tags-to-hosted-zone'
 import { createOrUpdateDNSRecords } from './lib/create-or-update-dns-records'
 import { getCredentials } from './lib/get-credentials'
 import { syncSiteContent } from './lib/sync-site-content'
+import { updatePlugins } from './lib/update-plugins'
 import { updateStack } from './lib/update-stack'
 
 const update = async ({ doContent, doDNS, doStack, noBuild, noCacheInvalidation, siteInfo, globalOptions }) => {
@@ -18,10 +20,12 @@ const update = async ({ doContent, doDNS, doStack, noBuild, noCacheInvalidation,
 
   if (doAll === true || doDNS === true) {
     updates.push(createOrUpdateDNSRecords({ credentials, siteInfo }))
+    updates.push(addTagsToHostedZone({ credentials, siteInfo }))
   }
 
   if (doAll === true || doStack === true) {
     updates.push(updateStack({ credentials, siteInfo }))
+    updates.push(updatePlugins({ credentials, siteInfo }))
   }
 
   await Promise.all(updates)

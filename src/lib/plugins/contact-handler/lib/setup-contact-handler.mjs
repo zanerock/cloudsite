@@ -1,15 +1,18 @@
 import { CONTACT_HANDLER_ZIP_NAME } from './constants'
 import { determineLambdaFunctionName } from './determine-lambda-function-name'
 
-const setupContactHandler = async ({ credentials, lambdaFunctionsBucketName, siteInfo, siteTemplate }) => {
+const setupContactHandler = async ({ credentials, lambdaFunctionsBucketName, settings, siteInfo, siteTemplate, update }) => {
   const { accountID, bucketName } = siteInfo
   const { finalTemplate, resourceTypes } = siteTemplate
 
-  const contactHandlerFunctionName = await determineLambdaFunctionName({
-    baseName : lambdaFunctionsBucketName + '-contact-handler',
-    credentials,
-    siteTemplate
-  })
+  const contactHandlerFunctionName = update === true
+    ? settings.contactHandlerFunctioName
+    : await determineLambdaFunctionName({
+      baseName : lambdaFunctionsBucketName + '-contact-handler',
+      credentials,
+      siteTemplate
+    })
+  settings.contactHandlerFunctioName = contactHandlerFunctionName
 
   const contactHandlerLogGroupName = contactHandlerFunctionName
   const contactHandlerPolicyName = contactHandlerFunctionName

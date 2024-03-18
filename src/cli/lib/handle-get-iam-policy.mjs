@@ -69,6 +69,7 @@ const iamPolicy = {
         'logs:PutRetentionPolicy',
         'route53:ListHostedZones',
         'route53:ChangeResourceRecordSets',
+        'route53:ChangeTagsForResource',
         'route53:ListResourceRecordSets',
         's3:CreateBucket',
         's3:PutObject',
@@ -79,6 +80,7 @@ const iamPolicy = {
         's3:ListBucket',
         's3:PutBucketAcl',
         's3:PutBucketPolicy',
+        's3:PutBucketTagging',
         's3:*'
       ],
       Resource : [

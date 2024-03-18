@@ -1,7 +1,7 @@
 import { REQUEST_SIGNER_ZIP_NAME } from './constants'
 import { determineLambdaFunctionName } from './determine-lambda-function-name'
 
-const setupRequestSigner = async ({ credentials, lambdaFunctionsBucketName, siteTemplate }) => {
+const setupRequestSigner = async ({ credentials, lambdaFunctionsBucketName, update, settings, siteTemplate }) => {
   const { finalTemplate } = siteTemplate
 
   finalTemplate.Resources.RequestSignerRole = {
@@ -39,11 +39,14 @@ const setupRequestSigner = async ({ credentials, lambdaFunctionsBucketName, site
     }
   }
 
-  const signFunctionHandlerName = await determineLambdaFunctionName({
-    baseName : lambdaFunctionsBucketName + '-request-signer',
-    credentials,
-    siteTemplate
-  })
+  const signFunctionHandlerName = update === true
+    ? settings.requestSignerFunctionName
+    : await determineLambdaFunctionName({
+      baseName : lambdaFunctionsBucketName + '-request-signer',
+      credentials,
+      siteTemplate
+    })
+  settings.requestSignerFunctionName = signFunctionHandlerName
 
   finalTemplate.Resources.RequestSignerLogGroup = {
     Type       : 'AWS::Logs::LogGroup',

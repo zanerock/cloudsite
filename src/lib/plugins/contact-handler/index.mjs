@@ -1,8 +1,9 @@
 import { emailRE } from 'regex-repo'
 import { emptyBucket } from 's3-empty-bucket'
 
-import { S3Client } from '@aws-sdk/client-s3'
+import { PutBucketTaggingCommand, S3Client } from '@aws-sdk/client-s3'
 
+import { getSiteTag } from '../../shared/get-site-tag'
 import { progressLogger } from '../../shared/progress-logger'
 import { setupContactFormTable } from './lib/setup-contact-form-table'
 import { setupContactEmailer } from './lib/setup-contact-emailer'
@@ -46,8 +47,8 @@ const stackConfig = async ({ siteTemplate, settings }) => {
 
   const lambdaFunctionsBucketName = await stageLambdaFunctionZipFiles({ credentials, enableEmail, settings, siteInfo })
 
-  await setupContactHandler({ credentials, lambdaFunctionsBucketName, siteInfo, siteTemplate })
-  await setupRequestSigner({ credentials, lambdaFunctionsBucketName, siteTemplate })
+  await setupContactHandler({ credentials, lambdaFunctionsBucketName, settings, siteInfo, siteTemplate })
+  await setupRequestSigner({ credentials, lambdaFunctionsBucketName, settings, siteTemplate })
   setupContactFormTable({ siteInfo, siteTemplate })
   updateCloudFrontDistribution({ settings, siteTemplate })
   if (enableEmail === true) {
@@ -55,6 +56,20 @@ const stackConfig = async ({ siteTemplate, settings }) => {
   }
 }
 
-const contactHandler = { config, preStackDestroyHandler, stackConfig }
+const updateHandler = async ({ credentials, settings, siteInfo }) => {
+  const { lambdaFunctionsBucket } = settings
+  const siteTag = getSiteTag(siteInfo)
+
+  const s3Client = new S3Client({ credentials })
+  const putBucketTaggingCommand = new PutBucketTaggingCommand({
+    Bucket  : lambdaFunctionsBucket,
+    Tagging : {
+      TagSet : [{ Key : siteTag, Value : '' }]
+    }
+  })
+  await s3Client.send(putBucketTaggingCommand)
+}
+
+const contactHandler = { config, preStackDestroyHandler, stackConfig, updateHandler }
 
 export { contactHandler }

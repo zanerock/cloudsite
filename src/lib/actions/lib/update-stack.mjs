@@ -10,8 +10,8 @@ const updateStack = async ({ credentials, siteInfo }) => {
   const { region, stackName } = siteInfo
 
   const siteTemplate = new SiteTemplate({ credentials, siteInfo })
-  await siteTemplate.initializeTemplate()
-  await siteTemplate.loadPlugins()
+  await siteTemplate.initializeTemplate({ update : true })
+  await siteTemplate.loadPlugins({ update : true })
 
   const newTemplate = siteTemplate.render()
 
