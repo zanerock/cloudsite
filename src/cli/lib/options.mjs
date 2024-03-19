@@ -16,7 +16,6 @@ const updatePluginSettings = ({ options, siteInfo }) => {
   const { pluginSettings = {} } = siteInfo
 
   for (const { name, value } of options) {
-    console.log('processing option:', name, '/', value) // DEBUG
     const [option] = name.split('.')
 
     if (!(option in plugins)) {
@@ -31,7 +30,6 @@ const updatePluginSettings = ({ options, siteInfo }) => {
     valueContainer[valueKey] = value
   }
 
-  console.log('pluginSettings:', pluginSettings) // DEBUG
   siteInfo.pluginSettings = pluginSettings
 }
 

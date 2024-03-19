@@ -6,6 +6,8 @@ const handler = () => {
   throw new Error('Not yet implemented')
 }
 
-const accessLogs = { config, handler }
+const importHandler = () => {}
+
+const accessLogs = { config, handler, importHandler }
 
 export { accessLogs }

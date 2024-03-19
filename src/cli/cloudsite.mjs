@@ -11,6 +11,7 @@ import { handleDestroy } from './lib/handle-destroy'
 import { handleDetail } from './lib/handle-detail'
 import { handleGetIAMPolicy } from './lib/handle-get-iam-policy'
 import { handleList } from './lib/handle-list'
+import { handleImport } from './lib/handle-import'
 import { handlePluginSettings } from './lib/handle-plugin-settings'
 import { handleUpdate } from './lib/handle-update'
 import { handleVerify } from './lib/handle-verify'
@@ -65,6 +66,8 @@ const cloudsite = async () => {
         await handleGetIAMPolicy({ argv }); break
       case 'list':
         await handleList({ argv, globalOptions, sitesInfo }); break
+      case 'import':
+        await handleImport({ argv, globalOptions, sitesInfo }); break
       case 'plugin-settings':
         await handlePluginSettings({ argv, globalOptions, sitesInfo }); break
       case 'update':

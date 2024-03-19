@@ -12,6 +12,11 @@ const optionSpec = {
   multiple    : true
 }
 
+const sourceTypeArgSpec = {
+  name        : 'source-type',
+  description : "May be either 'vanilla' or 'docusaurus', otherwise process will attempt to guess."
+}
+
 const cliSpec = {
   mainCommand : 'cloudsite',
   mainOptions : [
@@ -81,10 +86,7 @@ const cliSpec = {
           description : 'Local path to the static site root.',
           required    : true
         },
-        {
-          name        : 'source-type',
-          description : "May be either 'vanilla' or 'docusaurus', otherwise process will attempt to guess."
-        },
+        sourceTypeArgSpec,
         {
           name        : 'stack-name',
           description : 'Specify the name of the stack to be created and override the default name.'
@@ -148,6 +150,39 @@ const cliSpec = {
           name        : 'format',
           description : "Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'."
         }
+      ]
+    },
+    {
+      name        : 'import',
+      description : 'Generates a site database based on currently deployed site stacks.',
+      arguments   : [
+        {
+          name        : 'common-logs-bucket',
+          description : "Specifies the common logs bucket name. This is only necessary if there are multiple candidates, otherwise cloudsite can usually guess. Set to 'NONE' to suppress guessing and assume there is on common logs bucket."
+        },
+        {
+          name          : 'domain-and-stack',
+          description   : 'The domain and stack are specified as positional parameters, in either order.',
+          defaultOption : true,
+          multiple      : true,
+          required      : true
+        },
+        {
+          name        : 'refresh',
+          description : "By defaualt, cloudsite will refuse to overwrite existing site DB entries. if '--refresh' is true, then it will update/refresh the existing entry.",
+          type        : Boolean
+        },
+        {
+          name        : 'region',
+          description : 'Specifies the region where the stack is to be found.',
+          required    : true
+        },
+        {
+          name        : 'source-path',
+          description : 'Local path to the static site root.',
+          required    : true
+        },
+        sourceTypeArgSpec
       ]
     },
     {

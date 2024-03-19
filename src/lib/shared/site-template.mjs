@@ -145,48 +145,51 @@ const SiteTemplate = class {
         },
         SiteCloudFrontDistribution : {
           Value : { Ref : 'SiteCloudFrontDistribution' }
+        },
+        OriginAccessControl : {
+          Value : { Ref : 'SiteCloudFrontOriginAccessControl' }
         }
       }
     }
   }
 
-  async destroySharedLoggingBucket () {
+  async destroyCommonLogsBucket () {
     const { siteInfo } = this
-    const { sharedLoggingBucket } = siteInfo
+    const { commonLogsBucket } = siteInfo
 
     progressLogger.write('Deleting shared logging bucket...\n')
     const s3Client = new S3Client({ credentials : this.credentials })
-    const deleteBucketCommand = new DeleteBucketCommand({ Bucket : sharedLoggingBucket })
+    const deleteBucketCommand = new DeleteBucketCommand({ Bucket : commonLogsBucket })
     await s3Client.send(deleteBucketCommand)
-    delete siteInfo.sharedLoggingBucket
+    delete siteInfo.commonLogsBucket
   }
 
-  async enableSharedLoggingBucket () {
+  async enableCommonLogsBucket () {
     const { bucketName } = this.siteInfo // used to create a name for the shared logging bucket
-    let { sharedLoggingBucket = bucketName + '-common-logs' } = this.siteInfo
+    let { commonLogsBucket = bucketName + '-common-logs' } = this.siteInfo
 
-    if (sharedLoggingBucket === undefined) {
-      sharedLoggingBucket = await determineBucketName({
-        bucketName  : sharedLoggingBucket,
+    if (commonLogsBucket === undefined) {
+      commonLogsBucket = await determineBucketName({
+        bucketName  : commonLogsBucket,
         credentials : this.credentials,
         findName    : true,
         siteInfo    : this.siteInfo
       })
     }
-    this.siteInfo.sharedLoggingBucket = sharedLoggingBucket
+    this.siteInfo.commonLogsBucket = commonLogsBucket
 
-    this.finalTemplate.Resources.SharedLoggingBucket = {
+    this.finalTemplate.Resources.commonLogsBucket = {
       Type       : 'AWS::S3::Bucket',
       Properties : {
         AccessControl     : 'Private',
-        BucketName        : sharedLoggingBucket,
+        BucketName        : commonLogsBucket,
         OwnershipControls : { // this enables ACLs, as required by CloudFront standard logging
           Rules : [{ ObjectOwnership : 'BucketOwnerPreferred' }]
         }
       }
     }
 
-    return sharedLoggingBucket
+    return commonLogsBucket
   }
 
   async destroyPlugins () {
