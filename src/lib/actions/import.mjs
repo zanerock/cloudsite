@@ -64,7 +64,17 @@ const doImport = async ({ commonLogsBucket, domain, globalOptions, region, sourc
     }
   } // for (... of stackOutputs)
 
+  progressLogger?.write('Loading plugins data...\n')
 
+  const { apexDomain, pluginSettings } = siteInfo
+
+  for (const { importHandler, name } of plugins) {
+    if (importHandler === undefined) {
+      throw new Error(`Plugin '${name}' does not define 'importHandler'; cannot  continue with import.`)
+    }
+
+    await importHandler({ credentials, siteInfo })
+  }
 
   console.log(JSON.stringify(stacksInfo, null, '  '))
 
