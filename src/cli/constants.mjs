@@ -168,6 +168,11 @@ const cliSpec = {
           required      : true
         },
         {
+          name: 'refresh',
+          description: "By defaualt, cloudsite will refuse to overwrite existing site DB entries. if '--refresh' is true, then it will update/refresh the existing entry.",
+          type: Boolean
+        },
+        {
           name        : 'region',
           description : 'Specifies the region where the stack is to be found.',
           required    : true

@@ -12,7 +12,7 @@ const handleImport = async ({ argv, globalOptions, sitesInfo }) => {
   const importOptions = commandLineArgs(importOptionsSpec, { argv })
   const commonLogsBucket = importOptions['common-logs-bucket']
   const domainAndStack = importOptions['domain-and-stack']
-  const { region } = importOptions
+  const { refresh, region } = importOptions
   const sourcePath = resolvePath(importOptions['source-path'])
   const sourceType = processSourceType({ sourcePath, sourceType : importOptions['source-type'] })
 
@@ -24,6 +24,10 @@ const handleImport = async ({ argv, globalOptions, sitesInfo }) => {
   }
   if (sourcePath === undefined) {
     errorOut("You must specify the '--source-path' parameter.\n")
+  }
+
+  if (sitesInfo[domain] !== undefined && refresh !== true) {
+    errorOut(`Domain '${domain}' is already in the sites DB. To update/refresh the values, use the '--refresh' option.`)
   }
 
   let domain, stack
@@ -42,8 +46,8 @@ const handleImport = async ({ argv, globalOptions, sitesInfo }) => {
   }
 
   const dbEntry = await doImport({ commonLogsBucket, domain, globalOptions, region, sourcePath, sourceType, stack })
-  console.log('dbEntry:', dbEntry) // DEBUG
-  // sitesInfo[domain] = dbEntry
+  process.stdout.write(`Updating DB entry for '${domain}'...\n`)
+  sitesInfo[domain] = dbEntry
 }
 
 export { handleImport }
