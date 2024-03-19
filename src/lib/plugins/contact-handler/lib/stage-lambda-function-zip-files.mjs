@@ -41,7 +41,7 @@ const stageLambdaFunctionZipFiles = async ({ credentials, enableEmail, settings,
       Bucket : lambdaFunctionsBucket
     })
     await s3Client.send(createBucketCommand)
-/*
+    /*
     await new Promise(resolve => setTimeout(resolve, 1000)) // DEBUG
 
     console.log('\nA\n') // DEBUG

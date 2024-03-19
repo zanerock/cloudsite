@@ -1,4 +1,4 @@
-import { ACMClient, ListCertificatesCommand, RequestCertificateCommand } from '@aws-sdk/client-acm'
+import { ACMClient, RequestCertificateCommand } from '@aws-sdk/client-acm'
 import { CloudFormationClient, CreateStackCommand } from '@aws-sdk/client-cloudformation'
 
 import { associateCostAllocationTags } from './lib/associate-cost-allocation-tags'
@@ -6,6 +6,7 @@ import { convertDomainToBucketName } from '../shared/convert-domain-to-bucket-na
 import { createOrUpdateDNSRecords } from './lib/create-or-update-dns-records'
 import { determineBucketName } from '../shared/determine-bucket-name'
 import { errorOut } from '../../cli/lib/error-out'
+import { findCertificate } from './lib/find-certificate'
 import { getCredentials } from './lib/get-credentials'
 import { getSiteTag } from '../shared/get-site-tag'
 import * as plugins from '../plugins'
@@ -73,26 +74,6 @@ const create = async ({
   } else {
     errorOut('Stack creation error.\n')
   }
-}
-
-const findCertificate = async ({ apexDomain, acmClient, nextToken }) => {
-  process.stdout.write('Searching for existing certificate...\n')
-  const listCertificateInput = { CertificateStatuses : ['PENDING_VALIDATION', 'ISSUED'] }
-  const listCertificatesCommand = new ListCertificatesCommand(listCertificateInput)
-  const listResponse = await acmClient.send(listCertificatesCommand)
-
-  const domain = '*.' + apexDomain
-  for (const { CertificateArn, DomainName, Status } of listResponse.CertificateSummaryList) {
-    if (DomainName === domain) {
-      return { certificateArn : CertificateArn, status : Status }
-    }
-  }
-  nextToken = listResponse.NextToken
-  if (nextToken !== undefined) {
-    return await findCertificate({ apexDomain, acmClient, nextToken })
-  }
-  // else
-  return { certificateArn : null, status : null }
 }
 
 const createCertificate = async ({ acmClient, apexDomain }) => {

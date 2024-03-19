@@ -1,12 +1,12 @@
-import { existsSync as fileExists } from 'node:fs'
 import * as fsPath from 'node:path'
 
 import commandLineArgs from 'command-line-args'
 import { awsS3TABucketNameRE, awsS3TABucketNameREString } from 'regex-repo'
 
-import { cliSpec, SOURCE_TYPES } from '../constants'
+import { cliSpec } from '../constants'
 import { create } from '../../lib/actions/create'
 import * as optionsLib from './options'
+import { processSourceType } from './process-source-type'
 
 const handleCreate = async ({ argv, globalOptions, sitesInfo }) => {
   const createOptionsSpec = cliSpec.commands.find(({ name }) => name === 'create').arguments
@@ -41,13 +41,7 @@ const handleCreate = async ({ argv, globalOptions, sitesInfo }) => {
   }
   // TODO: verify apex domain matches apex domain RE
 
-  if (sourceType === undefined) {
-    const docusaurusConfigPath = fsPath.resolve(sourcePath, '..', 'docusaurus.config.js')
-    sourceType = fileExists(docusaurusConfigPath) ? 'docusaurus' : 'vanilla'
-  } else if (!SOURCE_TYPES.includes(sourceType)) {
-    process.stderr(`Invalid site source type '${sourceType}'; must be one of ${SOURCE_TYPES.join(', ')}.\n`)
-    process.exit(2) // eslint-disable-line no-process-exit
-  }
+  sourceType = processSourceType({ sourcePath, sourceType })
 
   if (bucketName !== undefined && !awsS3TABucketNameRE.test(bucketName)) {
     process.stderr(`Invalid bucket name. Must be valid AWS S3 Transfer Accelerated bucket name matching: ${awsS3TABucketNameREString}`)

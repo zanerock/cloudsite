@@ -156,50 +156,53 @@ const SiteTemplate = class {
         },
         SiteCloudFrontDistribution : {
           Value : { Ref : 'SiteCloudFrontDistribution' }
+        },
+        OriginAccessControl : {
+          Value : { Ref : 'SiteCloudFrontOriginAccessControl' }
         }
       }
     }
   }
 
-  async destroySharedLoggingBucket () {
+  async destroyCommonLogsBucket () {
     const { siteInfo } = this
-    const { sharedLoggingBucket } = siteInfo
+    const { commonLogsBucket } = siteInfo
 
-    if (sharedLoggingBucket !== undefined) {
-      progressLogger.write('Deleting shared logging bucket...\n')
+    if (commonLogsBucket !== undefined) {
+      progressLogger.write('Deleting common logs bucket...\n')
       const s3Client = new S3Client({ credentials : this.credentials })
-      emptyBucket({ 
-        bucketName: siteInfo.sharedLoggingBucket, 
-        doDelete: true, s3Client, 
-        verbose : progressLogger !== undefined
+      emptyBucket({
+        bucketName : commonLogsBucket,
+        doDelete   : true,
+        s3Client,
+        verbose    : progressLogger !== undefined
       })
-      delete siteInfo.sharedLoggingBucket
-    }
-    else {
+      delete siteInfo.commonLogsBucket
+    } else {
       progressLogger?.write('Looks like the shared logging bucket has already been deleted; skipping.\n')
     }
   }
 
-  async enableSharedLoggingBucket () {
+  async enableCommonLogsBucket () {
     const { bucketName } = this.siteInfo // used to create a name for the shared logging bucket
-    let { sharedLoggingBucket = bucketName + '-common-logs' } = this.siteInfo
+    let { commonLogsBucket = bucketName + '-common-logs' } = this.siteInfo
     const siteTag = getSiteTag(this.siteInfo)
 
-    if (sharedLoggingBucket === undefined) {
-      sharedLoggingBucket = await determineBucketName({
-        bucketName  : sharedLoggingBucket,
+    if (commonLogsBucket === undefined) {
+      commonLogsBucket = await determineBucketName({
+        bucketName  : commonLogsBucket,
         credentials : this.credentials,
         findName    : true,
         siteInfo    : this.siteInfo
       })
     }
-    this.siteInfo.sharedLoggingBucket = sharedLoggingBucket
+    this.siteInfo.commonLogsBucket = commonLogsBucket
 
-    this.finalTemplate.Resources.SharedLoggingBucket = {
+    this.finalTemplate.Resources.commonLogsBucket = {
       Type       : 'AWS::S3::Bucket',
       Properties : {
         AccessControl     : 'Private',
-        BucketName        : sharedLoggingBucket,
+        BucketName        : commonLogsBucket,
         OwnershipControls : { // this enables ACLs, as required by CloudFront standard logging
           Rules : [{ ObjectOwnership : 'BucketOwnerPreferred' }]
         },
@@ -207,7 +210,7 @@ const SiteTemplate = class {
       }
     }
 
-    return sharedLoggingBucket
+    return commonLogsBucket
   }
 
   async destroyPlugins () {

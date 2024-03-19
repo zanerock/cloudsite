@@ -30,7 +30,6 @@ const updatePluginSettings = ({ options, siteInfo }) => {
     valueContainer[valueKey] = value
   }
 
-  console.log('pluginSettings:', pluginSettings) // DEBUG
   siteInfo.pluginSettings = pluginSettings
 }
 

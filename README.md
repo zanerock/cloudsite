@@ -237,7 +237,7 @@ See also [Updating your site](#updating-your-site).
 
 ### CloudFront logging
 
-Enables logging of CloudFront events to an S3 bucket. The infrastructure will create a common logging bucket to recieve the logs. Currently, the bucket name is hard coded and will be something like 'your-domain-com-common-logging'.
+Enables logging of CloudFront events to an S3 bucket. The infrastructure will create a common logging bucket to receive the logs. Currently, the bucket name is hard coded and will be something like 'your-domain-com-common-logs'.
 
 <span id="cloudfront-logging-configuration-options"></span>
 #### Configuration options
@@ -292,6 +292,7 @@ cloudsite update your-domain.com
 - [`destroy`](#cloudsite-destroy): Destroys the named site. I.e., deletes all cloud resources associated with the site.
 - [`detail`](#cloudsite-detail): Prints details for the indicated site.
 - [`get-iam-policy`](#cloudsite-get-iam-policy): Prints an IAM policy suitable for operating cloudsite.
+- [`import`](#cloudsite-import): Generates a site database based on currently deployed site stacks.
 - [`list`](#cloudsite-list): Lists the sites registered in the local database.
 - [`plugin-settings`](#cloudsite-plugin-settings): Sets (or deletes) a site option.
 - [`update`](#cloudsite-update): Updates a website content and/or infrastructure.
@@ -377,6 +378,22 @@ Prints an IAM policy suitable for operating cloudsite.
 |Option|Description|
 |------|------|
 |`--with-instructions`|When set, will print instructions for creating the policy along with the policy.|
+
+<span id="cloudsite-import"></span>
+#### `cloudsite import <options> [domain-and-stack]`
+
+Generates a site database based on currently deployed site stacks.
+
+##### `import` options
+
+|Option|Description|
+|------|------|
+|`[domain-and-stack]`|(_main argument_,_required_) The domain and stack are specified as positional parameters, in either order.|
+|`--common-logs-bucket`|Specifies the common logs bucket name. This is only necessary if there are multiple candidates, otherwise cloudsite can usually guess. Set to 'NONE' to suppress guessing and assume there is on common logs bucket.|
+|`--refresh`|By defaualt, cloudsite will refuse to overwrite existing site DB entries. if '--refresh' is true, then it will update/refresh the existing entry.|
+|`--region`|Specifies the region where the stack is to be found.|
+|`--source-path`|Local path to the static site root.|
+|`--source-type`|May be either 'vanilla' or 'docusaurus', otherwise process will attempt to guess.|
 
 <span id="cloudsite-list"></span>
 #### `cloudsite list <options>`

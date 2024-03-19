@@ -237,7 +237,7 @@ See also [Updating your site](#updating-your-site).
 
 ### CloudFront logging
 
-Enables logging of CloudFront events to an S3 bucket. The infrastructure will create a common logging bucket to recieve the logs. Currently, the bucket name is hard coded and will be something like 'your-domain-com-common-logging'.
+Enables logging of CloudFront events to an S3 bucket. The infrastructure will create a common logging bucket to receive the logs. Currently, the bucket name is hard coded and will be something like 'your-domain-com-common-logs'.
 
 <span id="cloudfront-logging-configuration-options"></span>
 #### Configuration options
