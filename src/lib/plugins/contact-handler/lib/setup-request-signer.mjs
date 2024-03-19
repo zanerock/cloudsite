@@ -86,7 +86,7 @@ const setupRequestSigner = async ({ credentials, lambdaFunctionsBucketName, site
   }
 
   finalTemplate.Outputs.SignRequestFunction = {
-    Value: { Ref: 'SignRequestFunction' }
+    Value : { Ref : 'SignRequestFunction' }
   }
 }
 

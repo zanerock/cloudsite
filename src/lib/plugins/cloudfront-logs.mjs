@@ -4,7 +4,7 @@ const config = {
   }
 }
 
-const importHandler = ({ credentials, name, pluginSettings, siteInfo, template }) => {
+const importHandler = ({ /* credentials, */ name, pluginSettings, /* siteInfo, */ template }) => {
   const cloudFrontLoggingConfig = template.Resources.SiteCloudFrontDistribution.Properties.DistributionConfig.Logging
   if (cloudFrontLoggingConfig !== undefined) {
     const settings = {

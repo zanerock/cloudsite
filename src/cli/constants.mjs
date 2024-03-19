@@ -156,9 +156,9 @@ const cliSpec = {
       name        : 'import',
       description : 'Generates a site database based on currently deployed site stacks.',
       arguments   : [
-        { 
-          name: 'common-logs-bucket',
-          description: "Specifies the common logs bucket name. This is only necessary if there are multiple candidates, otherwise cloudsite can usually guess. Set to 'NONE' to suppress guessing and assume there is on common logs bucket."
+        {
+          name        : 'common-logs-bucket',
+          description : "Specifies the common logs bucket name. This is only necessary if there are multiple candidates, otherwise cloudsite can usually guess. Set to 'NONE' to suppress guessing and assume there is on common logs bucket."
         },
         {
           name          : 'domain-and-stack',
@@ -168,9 +168,9 @@ const cliSpec = {
           required      : true
         },
         {
-          name: 'refresh',
-          description: "By defaualt, cloudsite will refuse to overwrite existing site DB entries. if '--refresh' is true, then it will update/refresh the existing entry.",
-          type: Boolean
+          name        : 'refresh',
+          description : "By defaualt, cloudsite will refuse to overwrite existing site DB entries. if '--refresh' is true, then it will update/refresh the existing entry.",
+          type        : Boolean
         },
         {
           name        : 'region',

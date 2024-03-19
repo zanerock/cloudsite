@@ -8,6 +8,7 @@ import { errorOut } from './error-out'
 import { processSourceType } from './process-source-type'
 
 const handleImport = async ({ argv, globalOptions, sitesInfo }) => {
+  // gather parameter values
   const importOptionsSpec = cliSpec.commands.find(({ name }) => name === 'import').arguments
   const importOptions = commandLineArgs(importOptionsSpec, { argv })
   const commonLogsBucket = importOptions['common-logs-bucket']
@@ -16,6 +17,7 @@ const handleImport = async ({ argv, globalOptions, sitesInfo }) => {
   const sourcePath = resolvePath(importOptions['source-path'])
   const sourceType = processSourceType({ sourcePath, sourceType : importOptions['source-type'] })
 
+  // verify input parameters form correct
   if (domainAndStack?.length !== 2) {
     errorOut(`Unexpected number of positional arguments, expect 2 (domain and stack name), but got ${domainAndStack?.length || '0'}.\n`)
   }
@@ -26,10 +28,6 @@ const handleImport = async ({ argv, globalOptions, sitesInfo }) => {
     errorOut("You must specify the '--source-path' parameter.\n")
   }
 
-  if (sitesInfo[domain] !== undefined && refresh !== true) {
-    errorOut(`Domain '${domain}' is already in the sites DB. To update/refresh the values, use the '--refresh' option.`)
-  }
-
   let domain, stack
   for (const domainOrStack of domainAndStack) {
     if (domainOrStack.match(/\./)) {
@@ -38,6 +36,9 @@ const handleImport = async ({ argv, globalOptions, sitesInfo }) => {
       stack = domainOrStack
     }
   }
+  if (sitesInfo[domain] !== undefined && refresh !== true) {
+    errorOut(`Domain '${domain}' is already in the sites DB. To update/refresh the values, use the '--refresh' option.`)
+  }
   if (domain === undefined) {
     errorOut(`Could not determine domain name from arguments (${domainAndStack}).\n`)
   }
@@ -45,6 +46,7 @@ const handleImport = async ({ argv, globalOptions, sitesInfo }) => {
     errorOut(`Could not determine stack name from arguments (${domainAndStack}).\n`)
   }
 
+  // now, actually do the import
   const dbEntry = await doImport({ commonLogsBucket, domain, globalOptions, region, sourcePath, sourceType, stack })
   process.stdout.write(`Updating DB entry for '${domain}'...\n`)
   sitesInfo[domain] = dbEntry

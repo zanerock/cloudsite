@@ -2,8 +2,6 @@ import yaml from 'js-yaml'
 
 import { ACMClient } from '@aws-sdk/client-acm'
 import { CloudFormationClient, DescribeStacksCommand, GetTemplateCommand } from '@aws-sdk/client-cloudformation'
-import { CloudFrontClient } from '@aws-sdk/client-cloudfront'
-import { S3Client, ListBucketsCommand } from '@aws-sdk/client-s3'
 
 import { getAccountID } from '../shared/get-account-id'
 import { getCredentials } from './lib/get-credentials'
@@ -28,7 +26,7 @@ const doImport = async ({ commonLogsBucket, domain, globalOptions, region, sourc
   const describeStacksCommand = new DescribeStacksCommand({ StackName : stack })
   const stacksInfo = await cloudFormationClient.send(describeStacksCommand)
 
-  const getTemplateCommand = new GetTemplateCommand({ StackName: stack })
+  const getTemplateCommand = new GetTemplateCommand({ StackName : stack })
   const templateBody = (await cloudFormationClient.send(getTemplateCommand)).TemplateBody
   const template = yaml.load(templateBody)
 
@@ -40,9 +38,9 @@ const doImport = async ({ commonLogsBucket, domain, globalOptions, region, sourc
       siteInfo.bucketName = value
 
       if (commonLogsBucket === undefined) {
-        commonLogsBucket = await findBucketLike({ 
-          credentials, 
-          description: 'common logs', 
+        commonLogsBucket = await findBucketLike({
+          credentials,
+          description : 'common logs',
           partialName : value + '-common-logs'
         })
       }
@@ -66,7 +64,7 @@ const doImport = async ({ commonLogsBucket, domain, globalOptions, region, sourc
       throw new Error(`Plugin '${pluginName}' does not define 'importHandler'; cannot  continue with import.`)
     }
 
-    await importHandler({ credentials, name: pluginName, pluginSettings, siteInfo, template })
+    await importHandler({ credentials, name : pluginName, pluginSettings, siteInfo, template })
   }
 
   return siteInfo

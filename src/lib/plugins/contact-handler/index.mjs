@@ -26,7 +26,6 @@ const config = {
 }
 
 const importHandler = async ({ credentials, name, pluginSettings, siteInfo, template }) => {
-  const signRequestFunctionName = template.Resources.SignRequestFunction.Properties.FunctionName
   const cacheBehaviors =
     template.Resources.SiteCloudFrontDistribution.Properties.DistributionConfig.CacheBehaviors || []
   const contactHandlingCacheBehavaiors = cacheBehaviors.filter((cb) =>
@@ -34,19 +33,18 @@ const importHandler = async ({ credentials, name, pluginSettings, siteInfo, temp
 
   if (contactHandlingCacheBehavaiors.length > 1) {
     throw new Error("Unexpected template has multiple cache behaviors targeting 'ContactHandlerLambdaOrigin'; cannot proceed with import.")
-  }
-  else if (contactHandlingCacheBehavaiors.length === 1) { // then we are enabled
+  } else if (contactHandlingCacheBehavaiors.length === 1) { // then we are enabled
     const contactHandlingCacheBehavaior = contactHandlingCacheBehavaiors[0]
-    const emailFrom = 
+    const emailFrom =
       template.Resources.ContactEmailerFunction.Properties.Environment.Variables.EMAIL_HANDLER_SOURCE_EMAIL
-    const emailTo = 
+    const emailTo =
       template.Resources.ContactEmailerFunction.Properties.Environment.Variables.EMAIL_HANDLER_TARGET_EMAIL
     const emailerFunctionName = template.Resources.ContactEmailerFunction.Properties.FunctionName
     const requestSignerFunctionName = template.Resources.ContactEmailerFunction.Properties.FunctionName
     const baseBucketName = convertDomainToBucketName(siteInfo.apexDomain)
     const lambdaFunctionsBucket = await findBucketLike({
-      credentials, 
-      description: 'Lambda functions', 
+      credentials,
+      description : 'Lambda functions',
       partialName : baseBucketName + '-lambda-functions'
     })
     if (lambdaFunctionsBucket === undefined) {

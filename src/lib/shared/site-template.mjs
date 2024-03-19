@@ -146,8 +146,8 @@ const SiteTemplate = class {
         SiteCloudFrontDistribution : {
           Value : { Ref : 'SiteCloudFrontDistribution' }
         },
-        OriginAccessControl: {
-          Value: { Ref: 'SiteCloudFrontOriginAccessControl' }
+        OriginAccessControl : {
+          Value : { Ref : 'SiteCloudFrontOriginAccessControl' }
         }
       }
     }

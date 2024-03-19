@@ -16,7 +16,7 @@ const updateCloudFrontDistribution = ({ settings, siteTemplate }) => {
     }
   })
 
-  const cfCacheBehaviors = 
+  const cfCacheBehaviors =
     finalTemplate.Resources.SiteCloudFrontDistribution.Properties.DistributionConfig.CacheBehaviors || []
   cfCacheBehaviors.push({
     AllowedMethods             : ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'PATCH', 'POST', 'PUT'],

@@ -9,19 +9,17 @@ const findBucketLike = async ({ credentials, description, partialName }) => {
   const { Buckets : buckets } = await s3Client.send(listBucketsCommand)
 
   const possibleMatches = buckets.filter(({ Name : name }) => name.startsWith(partialName))
-  
+
   if (possibleMatches.length === 0) {
     progressLogger?.write('NONE found\n')
-  }
-  else if (possibleMatches.length === 1) {
+  } else if (possibleMatches.length === 1) {
     const commonLogsBucket = possibleMatches[0].Name
     progressLogger?.write('found: ' + commonLogsBucket + '\n')
     return commonLogsBucket
-  }
-  else { // possible matches greater than one, but commonLogsBucket not set
+  } else { // possible matches greater than one, but commonLogsBucket not set
     // TODO: tailor the message for CLI or library...
     progressLogger?.write('found multiple\n')
-    throw new Exception("Found multiple possible 'common logs' buckets; specify which to use with '--common-logs-bucket': " +
+    throw new Error("Found multiple possible 'common logs' buckets; specify which to use with '--common-logs-bucket': " +
         possibleMatches.map(({ Name : name }) => name).join(', '))
   }
 }
