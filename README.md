@@ -292,6 +292,7 @@ cloudsite update your-domain.com
 - [`destroy`](#cloudsite-destroy): Destroys the named site. I.e., deletes all cloud resources associated with the site.
 - [`detail`](#cloudsite-detail): Prints details for the indicated site.
 - [`get-iam-policy`](#cloudsite-get-iam-policy): Prints an IAM policy suitable for operating cloudsite.
+- [`import`](#cloudsite-import): Generates a site database based on currently deployed site stacks.
 - [`list`](#cloudsite-list): Lists the sites registered in the local database.
 - [`plugin-settings`](#cloudsite-plugin-settings): Sets (or deletes) a site option.
 - [`update`](#cloudsite-update): Updates a website content and/or infrastructure.
@@ -377,6 +378,18 @@ Prints an IAM policy suitable for operating cloudsite.
 |Option|Description|
 |------|------|
 |`--with-instructions`|When set, will print instructions for creating the policy along with the policy.|
+
+<span id="cloudsite-import"></span>
+#### `cloudsite import <options> [domain-and-stack]`
+
+Generates a site database based on currently deployed site stacks.
+
+##### `import` options
+
+|Option|Description|
+|------|------|
+|`[domain-and-stack]`|(_main argument_,_required_) The domain and stack are specified as positional parameters, in either order.|
+|`--region`|Specifies the region where the stack is to be found.|
 
 <span id="cloudsite-list"></span>
 #### `cloudsite list <options>`

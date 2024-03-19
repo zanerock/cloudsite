@@ -151,6 +151,24 @@ const cliSpec = {
       ]
     },
     {
+      name        : 'import',
+      description : 'Generates a site database based on currently deployed site stacks.',
+      arguments   : [
+        {
+          name          : 'domain-and-stack',
+          description   : 'The domain and stack are specified as positional parameters, in either order.',
+          defaultOption : true,
+          multiple      : true,
+          required      : true
+        },
+        {
+          name        : 'region',
+          description : 'Specifies the region where the stack is to be found.',
+          required    : true
+        }
+      ]
+    },
+    {
       name        : 'plugin-settings',
       description : 'Sets (or deletes) a site option.',
       arguments   : [

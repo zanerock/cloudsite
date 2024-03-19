@@ -1,5 +1,7 @@
-import { Route53Client, ChangeResourceRecordSetsCommand, ListHostedZonesCommand } from '@aws-sdk/client-route-53'
+import { Route53Client, ChangeResourceRecordSetsCommand } from '@aws-sdk/client-route-53'
 import { CloudFrontClient, GetDistributionCommand } from '@aws-sdk/client-cloudfront'
+
+import { getHostedZoneID } from './get-hosted-zone-id'
 
 const createOrUpdateDNSRecords = async ({ credentials, siteInfo }) => {
   const { apexDomain, cloudFrontDistributionID, region } = siteInfo
@@ -35,21 +37,6 @@ const createOrUpdateDNSRecords = async ({ credentials, siteInfo }) => {
   })
   process.stdout.write(`Creating/updating Route 53 resource record sets/DNS entries for ${domains.join(', ')}...\n`)
   await route53Client.send(changeResourceRecordSetCommand)
-}
-
-const getHostedZoneID = async ({ markerToken, route53Client, siteInfo }) => {
-  const listHostedZonesCommand = new ListHostedZonesCommand({ marker : markerToken })
-  const listHostedZonesResponse = await route53Client.send(listHostedZonesCommand)
-
-  for (const { Id, Name } of listHostedZonesResponse.HostedZones) {
-    if (Name === siteInfo.apexDomain + '.') {
-      return Id.replace(/\/[^/]+\/(.+)/, '$1') // /hostedzone/XXX -> XXX
-    }
-  }
-
-  if (listHostedZonesResponse.IsTruncated === true) {
-    return await getHostedZoneID({ markerToken : listHostedZonesResponse.NewMarker, route53Client, siteInfo })
-  }
 }
 
 export { createOrUpdateDNSRecords }
