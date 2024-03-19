@@ -12,6 +12,11 @@ const optionSpec = {
   multiple    : true
 }
 
+const sourceTypeArgSpec = {
+  name        : 'source-type',
+  description : "May be either 'vanilla' or 'docusaurus', otherwise process will attempt to guess."
+}
+
 const cliSpec = {
   mainCommand : 'cloudsite',
   mainOptions : [
@@ -81,10 +86,7 @@ const cliSpec = {
           description : 'Local path to the static site root.',
           required    : true
         },
-        {
-          name        : 'source-type',
-          description : "May be either 'vanilla' or 'docusaurus', otherwise process will attempt to guess."
-        },
+        sourceTypeArgSpec,
         {
           name        : 'stack-name',
           description : 'Specify the name of the stack to be created and override the default name.'
@@ -165,7 +167,13 @@ const cliSpec = {
           name        : 'region',
           description : 'Specifies the region where the stack is to be found.',
           required    : true
-        }
+        },
+        {
+          name        : 'source-path',
+          description : 'Local path to the static site root.',
+          required    : true
+        },
+        sourceTypeArgSpec
       ]
     },
     {

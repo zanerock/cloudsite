@@ -22,7 +22,7 @@
         "includeCookies": false
       }
     },
-    "sharedLoggingBucket": "liquid-labs-com-common-logs",
+    "commonLogsBucket": "liquid-labs-com-common-logs",
     "oacName": "liquid-labs-com-OAC"
   }
 }

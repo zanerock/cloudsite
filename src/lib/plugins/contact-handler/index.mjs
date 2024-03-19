@@ -11,6 +11,8 @@ import { setupRequestSigner } from './lib/setup-request-signer'
 import { stageLambdaFunctionZipFiles } from './lib/stage-lambda-function-zip-files'
 import { updateCloudFrontDistribution } from './lib/update-cloud-front-distribution'
 
+const name = 'contact-handler'
+
 const config = {
   options : {
     email : {
@@ -21,6 +23,10 @@ const config = {
       matches : /^\/(?:[a-z0-9_-]+\/?)+$/
     }
   }
+}
+
+const importHandler = ({ credentials, siteInfo }) => {
+
 }
 
 const preStackDestroyHandler = async ({ settings, siteTemplate }) => {
@@ -55,6 +61,6 @@ const stackConfig = async ({ siteTemplate, settings }) => {
   }
 }
 
-const contactHandler = { config, preStackDestroyHandler, stackConfig }
+const contactHandler = { config, importHandler, name, preStackDestroyHandler, stackConfig }
 
 export { contactHandler }

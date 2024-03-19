@@ -237,7 +237,7 @@ See also [Updating your site](#updating-your-site).
 
 ### CloudFront logging
 
-Enables logging of CloudFront events to an S3 bucket. The infrastructure will create a common logging bucket to recieve the logs. Currently, the bucket name is hard coded and will be something like 'your-domain-com-common-logging'.
+Enables logging of CloudFront events to an S3 bucket. The infrastructure will create a common logging bucket to receive the logs. Currently, the bucket name is hard coded and will be something like 'your-domain-com-common-logs'.
 
 <span id="cloudfront-logging-configuration-options"></span>
 #### Configuration options
@@ -390,6 +390,8 @@ Generates a site database based on currently deployed site stacks.
 |------|------|
 |`[domain-and-stack]`|(_main argument_,_required_) The domain and stack are specified as positional parameters, in either order.|
 |`--region`|Specifies the region where the stack is to be found.|
+|`--source-path`|Local path to the static site root.|
+|`--source-type`|May be either 'vanilla' or 'docusaurus', otherwise process will attempt to guess.|
 
 <span id="cloudsite-list"></span>
 #### `cloudsite list <options>`

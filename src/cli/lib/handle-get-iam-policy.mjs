@@ -76,6 +76,7 @@ const iamPolicy = {
         's3:DeleteBucket',
         's3:DeleteBucketPolicy',
         's3:GetObject',
+        's3:ListAllMyBuckets',
         's3:ListBucket',
         's3:PutBucketAcl',
         's3:PutBucketPolicy',
