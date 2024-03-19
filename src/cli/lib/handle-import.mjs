@@ -10,6 +10,7 @@ import { processSourceType } from './process-source-type'
 const handleImport = async ({ argv, globalOptions, sitesInfo }) => {
   const importOptionsSpec = cliSpec.commands.find(({ name }) => name === 'import').arguments
   const importOptions = commandLineArgs(importOptionsSpec, { argv })
+  const commonLogsBucket = importOptions['common-logs-bucket']
   const domainAndStack = importOptions['domain-and-stack']
   const { region } = importOptions
   const sourcePath = resolvePath(importOptions['source-path'])
@@ -40,7 +41,7 @@ const handleImport = async ({ argv, globalOptions, sitesInfo }) => {
     errorOut(`Could not determine stack name from arguments (${domainAndStack}).\n`)
   }
 
-  const dbEntry = await doImport({ domain, globalOptions, region, sourcePath, sourceType, stack })
+  const dbEntry = await doImport({ commonLogsBucket, domain, globalOptions, region, sourcePath, sourceType, stack })
   console.log('dbEntry:', dbEntry) // DEBUG
   // sitesInfo[domain] = dbEntry
 }

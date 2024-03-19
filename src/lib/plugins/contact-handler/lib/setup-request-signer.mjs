@@ -84,6 +84,10 @@ const setupRequestSigner = async ({ credentials, lambdaFunctionsBucketName, site
       FunctionName : { 'Fn::GetAtt' : ['SignRequestFunction', 'Arn'] }
     }
   }
+
+  finalTemplate.Outputs.SignRequestFunction = {
+    Value: { Ref: 'SignRequestFunction' }
+  }
 }
 
 export { setupRequestSigner }

@@ -389,6 +389,7 @@ Generates a site database based on currently deployed site stacks.
 |Option|Description|
 |------|------|
 |`[domain-and-stack]`|(_main argument_,_required_) The domain and stack are specified as positional parameters, in either order.|
+|`--common-logs-bucket`|Specifies the common logs bucket name. This is only necessary if there are multiple candidates, otherwise cloudsite can usually guess. Set to 'NONE' to suppress guessing and assume there is on common logs bucket.|
 |`--region`|Specifies the region where the stack is to be found.|
 |`--source-path`|Local path to the static site root.|
 |`--source-type`|May be either 'vanilla' or 'docusaurus', otherwise process will attempt to guess.|

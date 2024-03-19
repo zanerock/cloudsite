@@ -1,5 +1,3 @@
-const name = 'access-logs'
-
 const config = {
   options : { default : true, validation : (v) => typeof v === 'boolean' }
 }
@@ -10,6 +8,6 @@ const handler = () => {
 
 const importHandler = () => {}
 
-const accessLogs = { config, handler, importHandler, name }
+const accessLogs = { config, handler, importHandler }
 
 export { accessLogs }

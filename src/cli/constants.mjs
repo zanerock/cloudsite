@@ -156,6 +156,10 @@ const cliSpec = {
       name        : 'import',
       description : 'Generates a site database based on currently deployed site stacks.',
       arguments   : [
+        { 
+          name: 'common-logs-bucket',
+          description: "Specifies the common logs bucket name. This is only necessary if there are multiple candidates, otherwise cloudsite can usually guess. Set to 'NONE' to suppress guessing and assume there is on common logs bucket."
+        },
         {
           name          : 'domain-and-stack',
           description   : 'The domain and stack are specified as positional parameters, in either order.',
