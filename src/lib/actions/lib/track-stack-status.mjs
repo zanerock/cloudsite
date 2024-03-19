@@ -13,7 +13,7 @@ const trackStackStatus = async ({ cloudFormationClient, noDeleteOnFailure, stack
 
     if (stackStatus !== previousStatus) {
       // convert to sentence case
-      const statusMessage = stackStatus.charAt(0) + stackStatus.slice(1).toLowerCase().replace('_', ' ')
+      const statusMessage = stackStatus.charAt(0) + stackStatus.slice(1).toLowerCase().replaceAll(/_/g, ' ')
       process.stdout.write((previousStatus !== undefined ? '\n' : '') + statusMessage)
     } else {
       process.stdout.write('.')
