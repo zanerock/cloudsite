@@ -231,7 +231,6 @@ const SiteTemplate = class {
   }
 
   async loadPlugins ({ update } = {}) {
-    console.log('loadPlugins update:', update) // DEBUG
     const { siteInfo } = this
     const { apexDomain, pluginSettings } = siteInfo
 

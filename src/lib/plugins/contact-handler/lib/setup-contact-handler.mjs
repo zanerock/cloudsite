@@ -9,7 +9,6 @@ const setupContactHandler = async ({
   siteTemplate,
   update
 }) => {
-  console.log('setupContactHandler update:', update) // DEBUG
 
   const { accountID, bucketName } = siteInfo
   const { finalTemplate, resourceTypes } = siteTemplate
