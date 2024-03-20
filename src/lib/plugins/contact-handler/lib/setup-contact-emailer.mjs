@@ -1,5 +1,6 @@
 import { CONTACT_EMAILER_ZIP_NAME } from './constants'
 import { determineLambdaFunctionName } from './determine-lambda-function-name'
+import { getSiteTag } from '../../../shared/get-site-tag'
 
 const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, update, settings, siteTemplate }) => {
   const { finalTemplate, siteInfo } = siteTemplate
@@ -23,6 +24,9 @@ const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, upd
       }))
   settings.emailerFunctionName = emailerFunctionName
   const emailerFunctionLogGroupName = emailerFunctionName
+
+  const siteTag = getSiteTag(siteInfo)
+  const tags = [{ Key: siteTag, Value: '' }]
 
   finalTemplate.Resources.ContactEmailerLogGroup = {
     Type       : 'AWS::Logs::LogGroup',
@@ -69,8 +73,9 @@ const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, upd
         'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole',
         // Allows reading from DynamoDB streams
         'arn:aws:iam::aws:policy/service-role/AWSLambdaDynamoDBExecutionRole'
-      ]
-    }
+      ],
+      Tags: tags
+    } // Properties
   }
 
   finalTemplate.Resources.ContactEmailerFunction = {
@@ -99,8 +104,9 @@ const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, upd
         LogFormat           : 'JSON', // support options
         LogGroup            : emailerFunctionLogGroupName,
         SystemLogLevel      : 'INFO' // support options
-      }
-    }
+      },
+      Tags: tags
+    } // Properties
   }
 
   finalTemplate.Resources.ContactEmailerEventsSource = {

@@ -1,5 +1,6 @@
 import { CONTACT_HANDLER_ZIP_NAME } from './constants'
 import { determineLambdaFunctionName } from './determine-lambda-function-name'
+import { getSiteTag } from '../../../get-site-tag'
 
 const setupContactHandler = async ({
   credentials,
@@ -24,6 +25,9 @@ const setupContactHandler = async ({
 
   const contactHandlerLogGroupName = contactHandlerFunctionName
   const contactHandlerPolicyName = contactHandlerFunctionName
+
+  const siteTag = getSiteTag(siteInfo)
+  const tags = [{ Key: siteTag, Value: '' }]
 
   finalTemplate.Resources.ContactHandlerRole = {
     Type       : 'AWS::IAM::Role',
@@ -55,8 +59,9 @@ const setupContactHandler = async ({
             ]
           }
         }
-      ]
-    }
+      ],
+      Tags: tags
+    } // Properties
   }
   finalTemplate.Outputs.ContactHandlerRole = { Value : { Ref : 'ContactHandlerRole' } }
   resourceTypes['IAM::Role'] = true
@@ -66,7 +71,8 @@ const setupContactHandler = async ({
     Properties : {
       LogGroupClass   : 'STANDARD', // TODO: support option for INFREQUENT_ACCESS
       LogGroupName    : contactHandlerLogGroupName,
-      RetentionInDays : 180 // TODO: support options
+      RetentionInDays : 180 // TODO: support options,
+      Tags: tags
     }
   }
 
@@ -94,7 +100,8 @@ const setupContactHandler = async ({
         LogGroup            : contactHandlerLogGroupName,
         SystemLogLevel      : 'INFO' // support options
       }
-    }
+      Tags: tags
+    } // Properties
   }
   finalTemplate.Outputs.ContactHandlerLambdaFunction = { Value : { Ref : 'ContactHandlerLambdaFunction' } }
   resourceTypes['Lambda::Function'] = true
