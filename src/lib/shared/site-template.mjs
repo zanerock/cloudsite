@@ -258,7 +258,8 @@ const SiteTemplate = class {
     this.finalTemplate
     )
 
-    const output = yaml.dump(outputTemplate, { lineWidth : 0 })
+    // turn off multi-line blocks and (must) turn off refs to prevent aliasing of repeated tags objects
+    const output = yaml.dump(outputTemplate, { lineWidth : 0, noRefs : true })
     return output
   }
 }

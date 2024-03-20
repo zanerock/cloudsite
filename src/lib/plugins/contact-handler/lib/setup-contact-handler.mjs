@@ -10,7 +10,6 @@ const setupContactHandler = async ({
   siteTemplate,
   update
 }) => {
-
   const { accountID, bucketName } = siteInfo
   const { finalTemplate, resourceTypes } = siteTemplate
 
@@ -27,7 +26,7 @@ const setupContactHandler = async ({
   const contactHandlerPolicyName = contactHandlerFunctionName
 
   const siteTag = getSiteTag(siteInfo)
-  const tags = [{ Key: siteTag, Value: '' }]
+  const tags = [{ Key : siteTag, Value : '' }]
 
   finalTemplate.Resources.ContactHandlerRole = {
     Type       : 'AWS::IAM::Role',
@@ -60,7 +59,7 @@ const setupContactHandler = async ({
           }
         }
       ],
-      Tags: tags
+      Tags : tags
     } // Properties
   }
   finalTemplate.Outputs.ContactHandlerRole = { Value : { Ref : 'ContactHandlerRole' } }
@@ -72,7 +71,7 @@ const setupContactHandler = async ({
       LogGroupClass   : 'STANDARD', // TODO: support option for INFREQUENT_ACCESS
       LogGroupName    : contactHandlerLogGroupName,
       RetentionInDays : 180, // TODO: support options,
-      Tags: tags
+      Tags            : tags
     }
   }
 
@@ -100,7 +99,7 @@ const setupContactHandler = async ({
         LogGroup            : contactHandlerLogGroupName,
         SystemLogLevel      : 'INFO' // support options
       },
-      Tags: tags
+      Tags : tags
     } // Properties
   }
   finalTemplate.Outputs.ContactHandlerLambdaFunction = { Value : { Ref : 'ContactHandlerLambdaFunction' } }

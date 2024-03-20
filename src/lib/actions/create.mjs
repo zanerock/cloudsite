@@ -1,7 +1,10 @@
 import { ACMClient, RequestCertificateCommand } from '@aws-sdk/client-acm'
 import { CloudFormationClient, CreateStackCommand } from '@aws-sdk/client-cloudformation'
 
-import { associateCostAllocationTags } from './lib/associate-cost-allocation-tags'
+import {
+  associateCostAllocationTags,
+  handleAssociateCostAllocationTagsError
+} from './lib/associate-cost-allocation-tags'
 import { convertDomainToBucketName } from '../shared/convert-domain-to-bucket-name'
 import { createOrUpdateDNSRecords } from './lib/create-or-update-dns-records'
 import { determineBucketName } from '../shared/determine-bucket-name'
@@ -75,9 +78,7 @@ const create = async ({
     try {
       await associateCostAllocationTags({ credentials, tag : siteTag })
     } catch (e) {
-      console.log(JSON.stringify(e)) // DEBUG
-
-      process.stdout.write(`\nThe attempt to setup your cost allocation tags has failed. This is expected as AWS must 'discover' your tags before they can be activated for cost allocation. Wait a little while and try setting up the cost allocation tags again with:\n\ncloudsite update ${apexDomain} --do-billing\n\n`)
+      handleAssociateCostAllocationTagsError({ e, siteInfo })
     }
   } else {
     errorOut('Stack creation error.\n')

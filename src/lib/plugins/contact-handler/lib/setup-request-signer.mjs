@@ -3,10 +3,10 @@ import { determineLambdaFunctionName } from './determine-lambda-function-name'
 import { getSiteTag } from '../../../shared/get-site-tag'
 
 const setupRequestSigner = async ({ credentials, lambdaFunctionsBucketName, update, settings, siteTemplate }) => {
-  const { finalTemplate } = siteTemplate
+  const { finalTemplate, siteInfo } = siteTemplate
 
   const siteTag = getSiteTag(siteInfo)
-  const tags = [{ Key: siteTag, Value: '' }]
+  const tags = [{ Key : siteTag, Value : '' }]
 
   finalTemplate.Resources.RequestSignerRole = {
     Type       : 'AWS::IAM::Role',
@@ -40,7 +40,7 @@ const setupRequestSigner = async ({ credentials, lambdaFunctionsBucketName, upda
       ],
       // AWSLambdaBasicExecutionRole: allows logging to CloudWatch
       ManagedPolicyArns : ['arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'],
-      Tags: tags
+      Tags              : tags
     } // Properties
   }
 
@@ -59,7 +59,7 @@ const setupRequestSigner = async ({ credentials, lambdaFunctionsBucketName, upda
       LogGroupClass   : 'STANDARD', // TODO: support option for INFREQUENT_ACCESS
       LogGroupName    : signFunctionHandlerName,
       RetentionInDays : 180, // TODO: support options,
-      Tags: tags
+      Tags            : tags
     }
   }
 
@@ -83,7 +83,7 @@ const setupRequestSigner = async ({ credentials, lambdaFunctionsBucketName, upda
         LogGroup            : signFunctionHandlerName,
         SystemLogLevel      : 'INFO' // support options
       },
-      Tags: tags
+      Tags : tags
     } // Properties
   }
 
