@@ -5,6 +5,7 @@ import { awsS3TABucketNameRE, awsS3TABucketNameREString } from 'regex-repo'
 
 import { cliSpec } from '../constants'
 import { create } from '../../lib/actions/create'
+import { errorOut } from './error-out'
 import * as optionsLib from './options'
 import { processSourceType } from './process-source-type'
 
@@ -34,9 +35,8 @@ const handleCreate = async ({ argv, globalOptions, sitesInfo }) => {
   // verify the parameters/options
   for (const option of ['apex-domain', 'source-path']) {
     if (createOptions[option] === undefined) {
-      process.stderr.write(`Missing required '${option}' option.\n`)
+      errorOut(`Missing required '${option}' option.\n`, 2)
       // TODO: handleHelp({ argv : ['create'] })
-      process.exit(2) // eslint-disable-line no-process-exit
     }
   }
   // TODO: verify apex domain matches apex domain RE
@@ -44,8 +44,9 @@ const handleCreate = async ({ argv, globalOptions, sitesInfo }) => {
   sourceType = processSourceType({ sourcePath, sourceType })
 
   if (bucketName !== undefined && !awsS3TABucketNameRE.test(bucketName)) {
-    process.stderr(`Invalid bucket name. Must be valid AWS S3 Transfer Accelerated bucket name matching: ${awsS3TABucketNameREString}`)
-    process.exit(2) // eslint-disable-line no-process-exit
+    // we're not using Transfer Accelerated ATM, but we might want to at some point.
+
+    errorOut(`Invalid bucket name. Must be valid AWS S3 Transfer Accelerated bucket name matching: ${awsS3TABucketNameREString}`, 2)
   }
 
   optionsLib.updatePluginSettings({ options, siteInfo })
