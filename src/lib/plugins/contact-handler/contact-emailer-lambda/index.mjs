@@ -8,7 +8,6 @@ export const handler = async (event) => {
   if (apexDomain === undefined) {
     throw new Error("Environment variable 'APEX_DOMAIN' is not defined; bailing out. (" + JSON.stringify(process.env) + ')')
   }
-  const siteTag = 'site:' + apexDomain
 
   if (sourceEmail === undefined) {
     throw new Error("Environment variable 'EMAIL_HANDLER_SOURCE_EMAIL' not defined; bailing out. (" + JSON.stringify(process.env) + ')')
@@ -59,7 +58,8 @@ export const handler = async (event) => {
       ReplyToAddresses : [email],
       Tags             : [
         { Name : 'source', Value : 'contact-form' },
-        { Name : siteTag, Value : '' }
+        // SES dosen't allow ':' or '.', so we can't do 'site:<apexDomain>' like you might expect
+        { Name : 'site', Value : apexDomain.replaceAll(/\./g, '_') }
       ]
     })
 

@@ -5,7 +5,8 @@ import { getSiteTag } from '../../../shared/get-site-tag'
 
 const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, update, settings, siteTemplate }) => {
   const { finalTemplate, siteInfo } = siteTemplate
-  const { apexDomain, emailFrom : contactHandlerFromEmail, emailTo : contactHandlerTargetEmail } = siteInfo
+  const { apexDomain } = siteInfo
+  const { emailFrom : contactHandlerFromEmail, emailTo : contactHandlerTargetEmail } = settings
 
   if (contactHandlerFromEmail === undefined && contactHandlerTargetEmail !== undefined) {
     throw new Error("Found site setting for 'emailTo', but no 'emailFrom'; 'emailFrom' must be set to activate email functionality.")
