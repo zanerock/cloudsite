@@ -9,8 +9,17 @@ import { syncSiteContent } from './lib/sync-site-content'
 import { updatePlugins } from './lib/update-plugins'
 import { updateStack } from './lib/update-stack'
 
-const update = async ({ doContent, doDNS, doStack, noBuild, noCacheInvalidation, siteInfo, globalOptions }) => {
-  const doAll = doContent === undefined && doDNS === undefined && doStack === undefined
+const update = async ({ 
+  doBilling, 
+  doContent, 
+  doDNS, 
+  doStack, 
+  noBuild, 
+  noCacheInvalidation, 
+  siteInfo, 
+  globalOptions 
+}) => {
+  const doAll = doBilling === undefined && doContent === undefined && doDNS === undefined && doStack === undefined
 
   const credentials = getCredentials(globalOptions)
 
@@ -26,16 +35,20 @@ const update = async ({ doContent, doDNS, doStack, noBuild, noCacheInvalidation,
 
   await Promise.all(firstRoundUpdates)
 
-  const secondRoundUpdates = []
   let stackUpdateStatus
   if (doAll === true || doStack === true) {
     stackUpdateStatus = await updateStack({ credentials, siteInfo })
     if (stackUpdateStatus === 'UPDATE_COMPLETE') {
-      secondRoundUpdates.push(updatePlugins({ credentials, siteInfo }))
+      await updatePlugins({ credentials, siteInfo })
       // have to do this after the other updates so that the tags get created first
-      const siteTag = getSiteTag(siteInfo)
-      secondRoundUpdates.push(await associateCostAllocationTags({ credentials, tag : siteTag }))
     }
+  }
+
+  const secondRoundUpdates = []
+
+  if (doAll === true || doBilling === true) {
+    const siteTag = getSiteTag(siteInfo)
+    secondRoundUpdates.push(await associateCostAllocationTags({ credentials, tag : siteTag }))
   }
 
   if (doAll === true || doDNS === true) {

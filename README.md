@@ -432,6 +432,7 @@ Updates a website content and/or infrastructure.
 |Option|Description|
 |------|------|
 |`[apex-domain]`|(_main argument_,_required_) The apex domain identifying the site.|
+|`--do-billing`|Limits updates to billing related matters (cost allocation tags) and other other specified updates.|
 |`--do-content`|Limits update to site content and any other specified updates.|
 |`--do-dns`|Limits update to DNS entries and any other specified updates.|
 |`--do-stack`|Limits update to stack infrastructure and any other specified updates.|

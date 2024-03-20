@@ -222,6 +222,11 @@ const cliSpec = {
           required      : true
         },
         {
+          name : 'do-billing',
+          description: 'Limits updates to billing related matters (cost allocation tags) and other other specified updates.',
+          type: Boolean
+        },
+        {
           name        : 'do-content',
           description : 'Limits update to site content and any other specified updates.',
           type        : Boolean
