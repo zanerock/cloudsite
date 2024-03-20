@@ -29,7 +29,7 @@ const destroy = async ({ globalOptions, siteInfo, verbose }) => {
   const siteTemplate = new SiteTemplate({ credentials, siteInfo })
   await siteTemplate.destroyPlugins()
 
-  progressLogger.write('Deleting stack...')
+  progressLogger.write('Deleting stack...\n')
   const cloudFormationClient = new CloudFormationClient({ credentials })
   const deleteStackCommand = new DeleteStackCommand({ StackName : stackName })
   await cloudFormationClient.send(deleteStackCommand)
