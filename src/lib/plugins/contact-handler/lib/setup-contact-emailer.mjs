@@ -1,4 +1,5 @@
 import { CONTACT_EMAILER_ZIP_NAME } from './constants'
+import { convertDomainToBucketName } from '../../../shared/convert-domain-to-bucket-name'
 import { determineLambdaFunctionName } from './determine-lambda-function-name'
 import { getSiteTag } from '../../../shared/get-site-tag'
 
@@ -15,10 +16,11 @@ const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, upd
     StreamViewType : 'NEW_IMAGE'
   }
 
+  const emailerFunctionBaseName = convertDomainToBucketName(apexDomain) + '-contact-emailer'
   const emailerFunctionName = update
     ? settings.emailerFunctionName
     : (await determineLambdaFunctionName({
-        baseName : lambdaFunctionsBucketName + '-contact-emailer',
+        baseName : emailerFunctionBaseName,
         credentials,
         siteTemplate
       }))
@@ -52,7 +54,7 @@ const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, upd
           }
         ]
       },
-      Path     : '/',
+      Path     : '/cloudsite/contact-emailer/',
       Policies : [
         {
           PolicyName     : emailerFunctionName,
