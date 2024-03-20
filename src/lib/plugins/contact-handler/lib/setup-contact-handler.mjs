@@ -1,6 +1,6 @@
 import { CONTACT_HANDLER_ZIP_NAME } from './constants'
 import { determineLambdaFunctionName } from './determine-lambda-function-name'
-import { getSiteTag } from '../../../get-site-tag'
+import { getSiteTag } from '../../../shared/get-site-tag'
 
 const setupContactHandler = async ({
   credentials,
