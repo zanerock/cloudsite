@@ -52,7 +52,7 @@ const stageLambdaFunctionZipFiles = async ({ credentials, enableEmail, settings,
     }
   })
   await s3Client.send(putBucketTaggingCommand)
-  
+
   settings.lambdaFunctionsBucket = lambdaFunctionsBucket
 
   const putCommands = [
