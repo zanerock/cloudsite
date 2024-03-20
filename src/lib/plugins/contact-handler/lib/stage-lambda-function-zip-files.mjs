@@ -1,7 +1,7 @@
 import { join as pathJoin } from 'node:path'
 import { createReadStream } from 'node:fs'
 
-import { CreateBucketCommand/*, PutBucketTaggingCommand*/, PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
+import { CreateBucketCommand, PutBucketTaggingCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 
 import { CONTACT_EMAILER_ZIP_NAME, CONTACT_HANDLER_ZIP_NAME, REQUEST_SIGNER_ZIP_NAME } from './constants'
 import { convertDomainToBucketName } from '../../../shared/convert-domain-to-bucket-name'
@@ -42,28 +42,17 @@ const stageLambdaFunctionZipFiles = async ({ credentials, enableEmail, settings,
       Bucket : lambdaFunctionsBucket
     })
     await s3Client.send(createBucketCommand)
-    /*
-    await new Promise(resolve => setTimeout(resolve, 1000)) // DEBUG
-
-    const siteTag = getSiteTag(siteInfo)
-
-    console.log('\nA\n') // DEBUG
-    const putBucketTaggingCommand = new PutBucketTaggingCommand({
-      Bucket  : lambdaFunctionsBucket,
-      Tagging : {
-        TagSet : [{ Key : siteTag, Value : '' }]
-      }
-    })
-    console.log('putBucketTaggingCommand:', putBucketTaggingCommand) // DEBUG
-    /*console.log('serialized:', await putBucketTaggingCommand.serialize({
-      Bucket  : lambdaFunctionsBucket,
-      Tagging : {
-        TagSet : [{ Key : siteTag, Value : '123' }]
-      }
-    })) // DEBUG * /
-    await s3Client.send(putBucketTaggingCommand)
-    console.log('\nB\n') // DEBUG */
   }
+
+  const siteTag = getSiteTag(siteInfo)
+  const putBucketTaggingCommand = new PutBucketTaggingCommand({
+    Bucket  : lambdaFunctionsBucket,
+    Tagging : {
+      TagSet : [{ Key : siteTag, Value : '' }]
+    }
+  })
+  await s3Client.send(putBucketTaggingCommand)
+  
   settings.lambdaFunctionsBucket = lambdaFunctionsBucket
 
   const putCommands = [
