@@ -49,6 +49,7 @@ const cloudsite = async () => {
   }
   const origSitesInfo = structuredClone(sitesInfo)
 
+  let exitCode = 0
   try {
     switch (command) {
       case 'configuration':
@@ -63,7 +64,7 @@ const cloudsite = async () => {
         console.log(commandLineDocumentation(cliSpec, { sectionDepth : 2, title : 'Command reference' }))
         break
       case 'get-iam-policy':
-        await handleGetIAMPolicy({ argv }); break
+        await handleGetIAMPolicy({ argv, globalOptions }); break
       case 'list':
         await handleList({ argv, globalOptions, sitesInfo }); break
       case 'import':
@@ -88,14 +89,15 @@ const cloudsite = async () => {
       }
       message += '\n'
       process.stderr.write(message)
-      process.exit(2) // eslint-disable-line no-process-exit
+      exitCode = 2
     } else {
       process.stderr.write(e.message + '\n')
-      process.exit(3) // eslint-disable-line no-process-exit
+      exitCode = e.exitCode
     }
   } finally {
     await checkAndUpdateSitesInfo({ origSitesInfo, sitesInfo })
   }
+  process.exit(exitCode) // eslint-disable-line no-process-exit
 }
 
 const checkAndUpdateSitesInfo = async ({ origSitesInfo, sitesInfo }) => {

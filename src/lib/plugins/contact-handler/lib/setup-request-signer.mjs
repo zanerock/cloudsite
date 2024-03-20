@@ -1,12 +1,24 @@
 import { REQUEST_SIGNER_ZIP_NAME } from './constants'
+import { convertDomainToBucketName } from '../../../shared/convert-domain-to-bucket-name'
 import { determineLambdaFunctionName } from './determine-lambda-function-name'
 import { getSiteTag } from '../../../shared/get-site-tag'
 
 const setupRequestSigner = async ({ credentials, lambdaFunctionsBucketName, update, settings, siteTemplate }) => {
   const { finalTemplate, siteInfo } = siteTemplate
+  const { apexDomain } = siteInfo
 
   const siteTag = getSiteTag(siteInfo)
   const tags = [{ Key : siteTag, Value : '' }]
+
+  const requestSignerFunctionBaseName = convertDomainToBucketName(apexDomain) + '-request-signer'
+  const requestSignerFunctionName = update === true
+    ? settings.requestSignerFunctionName
+    : (await determineLambdaFunctionName({
+        baseName : requestSignerFunctionBaseName,
+        credentials,
+        siteTemplate
+      }))
+  settings.requestSignerFunctionName = requestSignerFunctionName
 
   finalTemplate.Resources.RequestSignerRole = {
     Type       : 'AWS::IAM::Role',
@@ -22,10 +34,10 @@ const setupRequestSigner = async ({ credentials, lambdaFunctionsBucketName, upda
           }
         ]
       },
-      Path     : '/',
+      Path     : '/cloudsite/request-signer/',
       Policies : [
         {
-          PolicyName     : lambdaFunctionsBucketName + '-request-signer',
+          PolicyName     : requestSignerFunctionName,
           PolicyDocument : {
             Version   : '2012-10-17',
             Statement : [
@@ -44,20 +56,11 @@ const setupRequestSigner = async ({ credentials, lambdaFunctionsBucketName, upda
     } // Properties
   }
 
-  const signFunctionHandlerName = update === true
-    ? settings.requestSignerFunctionName
-    : (await determineLambdaFunctionName({
-        baseName : lambdaFunctionsBucketName + '-request-signer',
-        credentials,
-        siteTemplate
-      }))
-  settings.requestSignerFunctionName = signFunctionHandlerName
-
   finalTemplate.Resources.RequestSignerLogGroup = {
     Type       : 'AWS::Logs::LogGroup',
     Properties : {
       LogGroupClass   : 'STANDARD', // TODO: support option for INFREQUENT_ACCESS
-      LogGroupName    : signFunctionHandlerName,
+      LogGroupName    : requestSignerFunctionName,
       RetentionInDays : 180, // TODO: support options,
       Tags            : tags
     }
@@ -67,7 +70,7 @@ const setupRequestSigner = async ({ credentials, lambdaFunctionsBucketName, upda
     Type       : 'AWS::Lambda::Function',
     DependsOn  : ['RequestSignerRole'],
     Properties : {
-      FunctionName : signFunctionHandlerName,
+      FunctionName : requestSignerFunctionName,
       Handler      : 'index.handler',
       Role         : { 'Fn::GetAtt' : ['RequestSignerRole', 'Arn'] },
       Runtime      : 'nodejs20.x',
@@ -80,7 +83,7 @@ const setupRequestSigner = async ({ credentials, lambdaFunctionsBucketName, upda
       LoggingConfig : {
         ApplicationLogLevel : 'INFO', // support options
         LogFormat           : 'JSON', // support options
-        LogGroup            : signFunctionHandlerName,
+        LogGroup            : requestSignerFunctionName,
         SystemLogLevel      : 'INFO' // support options
       },
       Tags : tags

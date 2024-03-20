@@ -8,9 +8,9 @@ const associateCostAllocationTags = async ({ credentials, tag }) => {
   await costExplorerClient.send(updateCostAllocationTagsStatusCommand)
 }
 
-const handleAssociateCostAllocationTagsError = ({ e, siteInfo }) => {
+const handleAssociateCostAllocationTagsError = ({ /* e, */ siteInfo }) => {
   const { apexDomain } = siteInfo
-  console.log(JSON.stringify(e)) // DEBUG
+  // console.log(JSON.stringify(e)) // DEBUG
 
   process.stdout.write(`\nThe attempt to setup your cost allocation tags has failed. This is expected as AWS must 'discover' your tags before they can be activated for cost allocation. Wait a little while and try setting up the cost allocation tags again with:\n\ncloudsite update ${apexDomain} --do-billing\n\n`)
 }

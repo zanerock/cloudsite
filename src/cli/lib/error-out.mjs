@@ -1,6 +1,5 @@
-const errorOut = (msg, code = 1) => {
-  process.stderr.write(msg)
-  process.exit(code) // eslint-disable-line no-process-exit
+const errorOut = (msg, exitCode = 1) => {
+  throw new Error(msg, { exitCode })
 }
 
 export { errorOut }

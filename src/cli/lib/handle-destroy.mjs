@@ -2,6 +2,7 @@ import commandLineArgs from 'command-line-args'
 
 import { cliSpec } from '../constants'
 import { destroy } from '../../lib/actions/destroy'
+import { errorOut } from './error-out'
 import { getSiteInfo } from './get-site-info'
 
 const handleDestroy = async ({ argv, globalOptions, sitesInfo }) => {
@@ -13,8 +14,7 @@ const handleDestroy = async ({ argv, globalOptions, sitesInfo }) => {
   const siteInfo = getSiteInfo({ apexDomain, sitesInfo })
 
   if (confirmed !== true) {
-    process.stderr.write("Interactive mode not yet implement. You must include the '--confirmed' option.\n")
-    process.exit(3) // eslint-disable-line no-process-exit
+    errorOut("Interactive mode not yet implement. You must include the '--confirmed' option.\n", 3)
   }
 
   const deleted = await destroy({ globalOptions, siteInfo, verbose : true })

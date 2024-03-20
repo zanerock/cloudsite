@@ -1,4 +1,5 @@
 import { CONTACT_HANDLER_ZIP_NAME } from './constants'
+import { convertDomainToBucketName } from '../../../shared/convert-domain-to-bucket-name'
 import { determineLambdaFunctionName } from './determine-lambda-function-name'
 import { getSiteTag } from '../../../shared/get-site-tag'
 
@@ -10,13 +11,14 @@ const setupContactHandler = async ({
   siteTemplate,
   update
 }) => {
-  const { accountID, bucketName } = siteInfo
+  const { accountID, apexDomain, bucketName } = siteInfo
   const { finalTemplate, resourceTypes } = siteTemplate
 
+  const contactHandlerFunctionBaseName = convertDomainToBucketName(apexDomain) + '-contact-handler'
   const contactHandlerFunctionName = update === true
     ? settings.contactHandlerFunctionName
     : (await determineLambdaFunctionName({
-        baseName : lambdaFunctionsBucketName + '-contact-handler',
+        baseName : contactHandlerFunctionBaseName,
         credentials,
         siteTemplate
       }))
@@ -43,7 +45,7 @@ const setupContactHandler = async ({
           }
         ]
       },
-      Path     : '/',
+      Path     : '/cloudsite/contact-processor/',
       Policies : [
         {
           PolicyName     : contactHandlerPolicyName,
