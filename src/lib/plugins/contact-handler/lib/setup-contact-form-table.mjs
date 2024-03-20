@@ -1,6 +1,11 @@
+import { getSiteTag } from '../../../shared/get-site-tag'
+
 const setupContactFormTable = ({ siteInfo, siteTemplate }) => {
   const { finalTemplate, resourceTypes } = siteTemplate
   const { bucketName } = siteInfo
+
+  const siteTag = getSiteTag(siteInfo)
+  const tags = [{ Key : siteTag, Value : '' }]
 
   finalTemplate.Resources.ContactHandlerDynamoDB = {
     Type       : 'AWS::DynamoDB::Table',
@@ -14,7 +19,8 @@ const setupContactFormTable = ({ siteInfo, siteTemplate }) => {
         { AttributeName : 'SubmissionID', KeyType : 'HASH' },
         { AttributeName : 'SubmissionTime', KeyType : 'RANGE' }
       ],
-      BillingMode : 'PAY_PER_REQUEST'
+      BillingMode : 'PAY_PER_REQUEST',
+      Tags        : tags
     }
   }
 

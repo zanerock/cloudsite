@@ -1,12 +1,17 @@
 import { ACMClient, RequestCertificateCommand } from '@aws-sdk/client-acm'
 import { CloudFormationClient, CreateStackCommand } from '@aws-sdk/client-cloudformation'
 
+import {
+  associateCostAllocationTags,
+  handleAssociateCostAllocationTagsError
+} from './lib/associate-cost-allocation-tags'
 import { convertDomainToBucketName } from '../shared/convert-domain-to-bucket-name'
 import { createOrUpdateDNSRecords } from './lib/create-or-update-dns-records'
 import { determineBucketName } from '../shared/determine-bucket-name'
 import { errorOut } from '../../cli/lib/error-out'
 import { findCertificate } from './lib/find-certificate'
 import { getCredentials } from './lib/get-credentials'
+import { getSiteTag } from '../shared/get-site-tag'
 import * as plugins from '../plugins'
 import { SiteTemplate } from '../shared/site-template'
 import { syncSiteContent } from './lib/sync-site-content'
@@ -51,12 +56,18 @@ const create = async ({
   const stackCreated = await createSiteStack({ credentials, noDeleteOnFailure, siteInfo })
 
   if (stackCreated === true) {
+    process.stdout.write('Stack created.\n')
+
     const postUpdateHandlers = Object.keys(siteInfo.pluginSettings || {}).map((pluginKey) =>
       [pluginKey, plugins[pluginKey].postUpdateHandler]
     )
       .filter(([, postUpdateHandler]) => postUpdateHandler !== undefined)
 
     await updateSiteInfo({ credentials, siteInfo }) // needed by createOrUpdateDNSRecords
+
+    const siteTag = getSiteTag(siteInfo)
+
+    // TODO: speeds things up, but if one fail, it all fails and is unclear; maybe we should break it up?
     await Promise.all([
       syncSiteContent({ credentials, noBuild, siteInfo }),
       createOrUpdateDNSRecords({ credentials, siteInfo }),
@@ -64,7 +75,11 @@ const create = async ({
         handler({ settings : siteInfo.pluginSettings[pluginKey], siteInfo })))
     ])
 
-    process.stdout.write('Stack created.\n')
+    try {
+      await associateCostAllocationTags({ credentials, tag : siteTag })
+    } catch (e) {
+      handleAssociateCostAllocationTagsError({ e, siteInfo })
+    }
   } else {
     errorOut('Stack creation error.\n')
   }

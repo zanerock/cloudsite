@@ -1,8 +1,9 @@
 import { emailRE } from 'regex-repo'
 import { emptyBucket } from 's3-empty-bucket'
 
-import { S3Client } from '@aws-sdk/client-s3'
+import { PutBucketTaggingCommand, S3Client } from '@aws-sdk/client-s3'
 
+import { getSiteTag } from '../../shared/get-site-tag'
 import { convertDomainToBucketName } from '../../shared/convert-domain-to-bucket-name'
 import { findBucketLike } from '../../shared/find-bucket-like'
 import { progressLogger } from '../../shared/progress-logger'
@@ -71,18 +72,22 @@ const preStackDestroyHandler = async ({ settings, siteTemplate }) => {
   const { credentials } = siteTemplate
   const { lambdaFunctionsBucket } = settings
 
-  progressLogger?.write(`Deleting ${lambdaFunctionsBucket} bucket...\n`)
-  const s3Client = new S3Client({ credentials })
-  await emptyBucket({
-    bucketName : lambdaFunctionsBucket,
-    doDelete   : true,
-    s3Client,
-    verbose    : progressLogger !== undefined
-  })
-  delete settings.lambdaFunctionsBucket
+  if (lambdaFunctionsBucket !== undefined) {
+    progressLogger?.write(`Deleting ${lambdaFunctionsBucket} bucket...\n`)
+    const s3Client = new S3Client({ credentials })
+    await emptyBucket({
+      bucketName : lambdaFunctionsBucket,
+      doDelete   : true,
+      s3Client,
+      verbose    : progressLogger !== undefined
+    })
+    delete settings.lambdaFunctionsBucket
+  } else {
+    progressLogger?.write('Looks like the Lambda function bucket has already been deleted; skipping.\n')
+  }
 }
 
-const stackConfig = async ({ siteTemplate, settings }) => {
+const stackConfig = async ({ siteTemplate, settings, update }) => {
   process.stdout.write('Preparing contact handler plugin...\n')
 
   const { credentials, siteInfo } = siteTemplate
@@ -90,15 +95,29 @@ const stackConfig = async ({ siteTemplate, settings }) => {
 
   const lambdaFunctionsBucketName = await stageLambdaFunctionZipFiles({ credentials, enableEmail, settings, siteInfo })
 
-  await setupContactHandler({ credentials, lambdaFunctionsBucketName, siteInfo, siteTemplate })
-  await setupRequestSigner({ credentials, lambdaFunctionsBucketName, siteTemplate })
+  await setupContactHandler({ credentials, lambdaFunctionsBucketName, settings, siteInfo, siteTemplate, update })
+  await setupRequestSigner({ credentials, lambdaFunctionsBucketName, settings, siteTemplate, update })
   setupContactFormTable({ siteInfo, siteTemplate })
   updateCloudFrontDistribution({ settings, siteTemplate })
   if (enableEmail === true) {
-    await setupContactEmailer({ credentials, lambdaFunctionsBucketName, settings, siteTemplate })
+    await setupContactEmailer({ credentials, lambdaFunctionsBucketName, settings, siteTemplate, update })
   }
 }
 
-const contactHandler = { config, importHandler, preStackDestroyHandler, stackConfig }
+const updateHandler = async ({ credentials, settings, siteInfo }) => {
+  const { lambdaFunctionsBucket } = settings
+  const siteTag = getSiteTag(siteInfo)
+
+  const s3Client = new S3Client({ credentials })
+  const putBucketTaggingCommand = new PutBucketTaggingCommand({
+    Bucket  : lambdaFunctionsBucket,
+    Tagging : {
+      TagSet : [{ Key : siteTag, Value : '' }]
+    }
+  })
+  await s3Client.send(putBucketTaggingCommand)
+}
+
+const contactHandler = { config, importHandler, preStackDestroyHandler, stackConfig, updateHandler }
 
 export { contactHandler }

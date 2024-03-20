@@ -1,18 +1,32 @@
 import { CONTACT_HANDLER_ZIP_NAME } from './constants'
 import { determineLambdaFunctionName } from './determine-lambda-function-name'
+import { getSiteTag } from '../../../shared/get-site-tag'
 
-const setupContactHandler = async ({ credentials, lambdaFunctionsBucketName, siteInfo, siteTemplate }) => {
+const setupContactHandler = async ({
+  credentials,
+  lambdaFunctionsBucketName,
+  settings,
+  siteInfo,
+  siteTemplate,
+  update
+}) => {
   const { accountID, bucketName } = siteInfo
   const { finalTemplate, resourceTypes } = siteTemplate
 
-  const contactHandlerFunctionName = await determineLambdaFunctionName({
-    baseName : lambdaFunctionsBucketName + '-contact-handler',
-    credentials,
-    siteTemplate
-  })
+  const contactHandlerFunctionName = update === true
+    ? settings.contactHandlerFunctionName
+    : (await determineLambdaFunctionName({
+        baseName : lambdaFunctionsBucketName + '-contact-handler',
+        credentials,
+        siteTemplate
+      }))
+  settings.contactHandlerFunctionName = contactHandlerFunctionName
 
   const contactHandlerLogGroupName = contactHandlerFunctionName
   const contactHandlerPolicyName = contactHandlerFunctionName
+
+  const siteTag = getSiteTag(siteInfo)
+  const tags = [{ Key : siteTag, Value : '' }]
 
   finalTemplate.Resources.ContactHandlerRole = {
     Type       : 'AWS::IAM::Role',
@@ -44,8 +58,9 @@ const setupContactHandler = async ({ credentials, lambdaFunctionsBucketName, sit
             ]
           }
         }
-      ]
-    }
+      ],
+      Tags : tags
+    } // Properties
   }
   finalTemplate.Outputs.ContactHandlerRole = { Value : { Ref : 'ContactHandlerRole' } }
   resourceTypes['IAM::Role'] = true
@@ -55,7 +70,8 @@ const setupContactHandler = async ({ credentials, lambdaFunctionsBucketName, sit
     Properties : {
       LogGroupClass   : 'STANDARD', // TODO: support option for INFREQUENT_ACCESS
       LogGroupName    : contactHandlerLogGroupName,
-      RetentionInDays : 180 // TODO: support options
+      RetentionInDays : 180, // TODO: support options,
+      Tags            : tags
     }
   }
 
@@ -82,8 +98,9 @@ const setupContactHandler = async ({ credentials, lambdaFunctionsBucketName, sit
         LogFormat           : 'JSON', // support options
         LogGroup            : contactHandlerLogGroupName,
         SystemLogLevel      : 'INFO' // support options
-      }
-    }
+      },
+      Tags : tags
+    } // Properties
   }
   finalTemplate.Outputs.ContactHandlerLambdaFunction = { Value : { Ref : 'ContactHandlerLambdaFunction' } }
   resourceTypes['Lambda::Function'] = true

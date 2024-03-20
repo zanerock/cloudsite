@@ -2,7 +2,13 @@ import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses'
 
 export const handler = async (event) => {
   const sourceEmail = process.env.EMAIL_HANDLER_SOURCE_EMAIL
+  // TODO: change to ...EMAILS
   const targetEmails = (process.env.EMAIL_HANDLER_TARGET_EMAIL || sourceEmail).split(',')
+  const apexDomain = process.env.APEX_DOMAIN
+  if (apexDomain === undefined) {
+    throw new Error("Environment variable 'APEX_DOMAIN' is not defined; bailing out. (" + JSON.stringify(process.env) + ')')
+  }
+  const siteTag = 'site:' + apexDomain
 
   if (sourceEmail === undefined) {
     throw new Error("Environment variable 'EMAIL_HANDLER_SOURCE_EMAIL' not defined; bailing out. (" + JSON.stringify(process.env) + ')')
@@ -51,7 +57,10 @@ export const handler = async (event) => {
         }
       },
       ReplyToAddresses : [email],
-      Tags             : [{ Name : 'source', Value : 'contact-form' }]
+      Tags             : [
+        { Name : 'source', Value : 'contact-form' },
+        { Name : siteTag, Value : '' }
+      ]
     })
 
     sendProcesses.push(sesClient.send(sendEmailCommand))

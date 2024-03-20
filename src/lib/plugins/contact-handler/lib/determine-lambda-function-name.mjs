@@ -11,7 +11,7 @@ const determineLambdaFunctionName = async ({ baseName, credentials, siteTemplate
 
   const lambdaClient = new LambdaClient({ credentials, region })
   while (true) {
-    progressLogger?.write(`Checking if lambda function name '${currentName}' is free...`)
+    progressLogger?.write(`Checking if Lambda function name '${currentName}' is free...`)
     const getFunctionCommand = new GetFunctionCommand({ FunctionName : currentName })
     try {
       await lambdaClient.send(getFunctionCommand)

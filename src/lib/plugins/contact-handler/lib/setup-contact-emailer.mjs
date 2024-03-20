@@ -1,10 +1,10 @@
 import { CONTACT_EMAILER_ZIP_NAME } from './constants'
 import { determineLambdaFunctionName } from './determine-lambda-function-name'
+import { getSiteTag } from '../../../shared/get-site-tag'
 
-const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, settings, siteTemplate }) => {
-  const { finalTemplate } = siteTemplate
-  const contactHandlerFromEmail = settings.emailFrom
-  const contactHandlerTargetEmail = settings.emailTo
+const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, update, settings, siteTemplate }) => {
+  const { finalTemplate, siteInfo } = siteTemplate
+  const { apexDomain, emailFrom : contactHandlerFromEmail, emailTo : contactHandlerTargetEmail } = siteInfo
 
   if (contactHandlerFromEmail === undefined && contactHandlerTargetEmail !== undefined) {
     throw new Error("Found site setting for 'emailTo', but no 'emailFrom'; 'emailFrom' must be set to activate email functionality.")
@@ -15,12 +15,18 @@ const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, set
     StreamViewType : 'NEW_IMAGE'
   }
 
-  const emailerFunctionName = await determineLambdaFunctionName({
-    baseName : lambdaFunctionsBucketName + '-contact-emailer',
-    credentials,
-    siteTemplate
-  })
+  const emailerFunctionName = update
+    ? settings.emailerFunctionName
+    : (await determineLambdaFunctionName({
+        baseName : lambdaFunctionsBucketName + '-contact-emailer',
+        credentials,
+        siteTemplate
+      }))
+  settings.emailerFunctionName = emailerFunctionName
   const emailerFunctionLogGroupName = emailerFunctionName
+
+  const siteTag = getSiteTag(siteInfo)
+  const tags = [{ Key : siteTag, Value : '' }]
 
   finalTemplate.Resources.ContactEmailerLogGroup = {
     Type       : 'AWS::Logs::LogGroup',
@@ -67,8 +73,9 @@ const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, set
         'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole',
         // Allows reading from DynamoDB streams
         'arn:aws:iam::aws:policy/service-role/AWSLambdaDynamoDBExecutionRole'
-      ]
-    }
+      ],
+      Tags : tags
+    } // Properties
   }
 
   finalTemplate.Resources.ContactEmailerFunction = {
@@ -87,7 +94,9 @@ const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, set
       },
       Environment : {
         Variables : {
+          APEX_DOMAIN                : apexDomain,
           EMAIL_HANDLER_SOURCE_EMAIL : contactHandlerFromEmail
+          // EMAIL_HANDSER_TARGET_EMAIL will be added late if defined
         }
       },
       LoggingConfig : {
@@ -95,8 +104,9 @@ const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, set
         LogFormat           : 'JSON', // support options
         LogGroup            : emailerFunctionLogGroupName,
         SystemLogLevel      : 'INFO' // support options
-      }
-    }
+      },
+      Tags : tags
+    } // Properties
   }
 
   finalTemplate.Resources.ContactEmailerEventsSource = {

@@ -1,9 +1,12 @@
 import yaml from 'js-yaml'
 
-import { S3Client, DeleteBucketCommand } from '@aws-sdk/client-s3'
+import { emptyBucket } from 's3-empty-bucket'
+
+import { S3Client } from '@aws-sdk/client-s3'
 
 import { determineBucketName } from './determine-bucket-name'
 import { determineOACName } from './determine-oac-name'
+import { getSiteTag } from './get-site-tag'
 import * as plugins from '../plugins'
 import { progressLogger } from './progress-logger'
 
@@ -40,14 +43,20 @@ const SiteTemplate = class {
     this.finalTemplate = this.baseTemplate
   }
 
-  async initializeTemplate () {
-    const { accountID, apexDomain, bucketName, certificateArn, region } = this.siteInfo
+  async initializeTemplate ({ update } = {}) {
+    const { siteInfo } = this
+    const { accountID, apexDomain, bucketName, certificateArn, region } = siteInfo
+    const siteTag = getSiteTag(siteInfo)
 
-    const oacName = await determineOACName({
-      baseName    : `${bucketName}-OAC`,
-      credentials : this.credentials,
-      siteInfo    : this.siteInfo
-    })
+    const oacName = update === true
+      ? siteInfo.oacName
+      : await determineOACName({
+        baseName    : `${bucketName}-OAC`,
+        credentials : this.credentials,
+        siteInfo    : this.siteInfo
+      })
+    progressLogger?.write(`Using OAC name: ${oacName}\n`)
+    this.siteInfo.oacName = oacName
 
     this.finalTemplate = {
       Resources : {
@@ -55,7 +64,8 @@ const SiteTemplate = class {
           Type       : 'AWS::S3::Bucket',
           Properties : {
             AccessControl : 'Private',
-            BucketName    : bucketName
+            BucketName    : bucketName,
+            Tags          : [{ Key : siteTag, Value : '' }]
           }
         },
         SiteCloudFrontOriginAccessControl : {
@@ -105,8 +115,9 @@ const SiteTemplate = class {
                 TargetOriginId       : 'static-hosting',
                 ViewerProtocolPolicy : 'redirect-to-https'
               }
-            }
-          }
+            }, // DistributionConfig
+            Tags : [{ Key : siteTag, Value : '' }]
+          } // Properties
         }, // SiteCloudFrontDistribution
         SiteBucketPolicy : {
           Type       : 'AWS::S3::BucketPolicy',
@@ -157,16 +168,25 @@ const SiteTemplate = class {
     const { siteInfo } = this
     const { commonLogsBucket } = siteInfo
 
-    progressLogger.write('Deleting shared logging bucket...\n')
-    const s3Client = new S3Client({ credentials : this.credentials })
-    const deleteBucketCommand = new DeleteBucketCommand({ Bucket : commonLogsBucket })
-    await s3Client.send(deleteBucketCommand)
-    delete siteInfo.commonLogsBucket
+    if (commonLogsBucket !== undefined) {
+      progressLogger.write('Deleting common logs bucket...\n')
+      const s3Client = new S3Client({ credentials : this.credentials })
+      emptyBucket({
+        bucketName : commonLogsBucket,
+        doDelete   : true,
+        s3Client,
+        verbose    : progressLogger !== undefined
+      })
+      delete siteInfo.commonLogsBucket
+    } else {
+      progressLogger?.write('Looks like the shared logging bucket has already been deleted; skipping.\n')
+    }
   }
 
   async enableCommonLogsBucket () {
     const { bucketName } = this.siteInfo // used to create a name for the shared logging bucket
     let { commonLogsBucket = bucketName + '-common-logs' } = this.siteInfo
+    const siteTag = getSiteTag(this.siteInfo)
 
     if (commonLogsBucket === undefined) {
       commonLogsBucket = await determineBucketName({
@@ -185,7 +205,8 @@ const SiteTemplate = class {
         BucketName        : commonLogsBucket,
         OwnershipControls : { // this enables ACLs, as required by CloudFront standard logging
           Rules : [{ ObjectOwnership : 'BucketOwnerPreferred' }]
-        }
+        },
+        Tags : [{ Key : siteTag, Value : '' }]
       }
     }
 
@@ -209,18 +230,21 @@ const SiteTemplate = class {
     }
   }
 
-  async loadPlugins () {
+  async loadPlugins ({ update } = {}) {
     const { siteInfo } = this
     const { apexDomain, pluginSettings } = siteInfo
 
+    const pluginConfigs = []
     for (const [pluginKey, settings] of Object.entries(pluginSettings)) {
       const plugin = plugins[pluginKey]
       if (plugin === undefined) {
         throw new Error(`Unknown plugin found in '${apexDomain}' plugin settings.`)
       }
 
-      await plugin.stackConfig({ siteTemplate : this, settings })
+      pluginConfigs.push(plugin.stackConfig({ siteTemplate : this, settings, update }))
     }
+
+    await Promise.all(pluginConfigs)
   }
 
   render () {
@@ -234,7 +258,8 @@ const SiteTemplate = class {
     this.finalTemplate
     )
 
-    const output = yaml.dump(outputTemplate, { lineWidth : 0 })
+    // turn off multi-line blocks and (must) turn off refs to prevent aliasing of repeated tags objects
+    const output = yaml.dump(outputTemplate, { lineWidth : 0, noRefs : true })
     return output
   }
 }

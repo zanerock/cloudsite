@@ -8,6 +8,7 @@ const handleUpdate = async ({ argv, globalOptions, sitesInfo }) => {
   const updateOptionsSpec = cliSpec.commands.find(({ name }) => name === 'update').arguments
   const updateOptions = commandLineArgs(updateOptionsSpec, { argv })
   const apexDomain = updateOptions['apex-domain']
+  const doBilling = updateOptions['do-billing']
   const doContent = updateOptions['do-content']
   const doDNS = updateOptions['do-dns']
   const doStack = updateOptions['do-stack']
@@ -16,7 +17,7 @@ const handleUpdate = async ({ argv, globalOptions, sitesInfo }) => {
 
   const siteInfo = getSiteInfo({ apexDomain, sitesInfo })
 
-  await update({ doContent, doDNS, doStack, noBuild, noCacheInvalidation, siteInfo, globalOptions })
+  await update({ doBilling, doContent, doDNS, doStack, noBuild, noCacheInvalidation, siteInfo, globalOptions })
 }
 
 export { handleUpdate }
