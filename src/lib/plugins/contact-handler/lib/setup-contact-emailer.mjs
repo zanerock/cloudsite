@@ -26,7 +26,7 @@ const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, upd
   const emailerFunctionLogGroupName = emailerFunctionName
 
   const siteTag = getSiteTag(siteInfo)
-  const tags = [{ Key: siteTag, Value: '' }]
+  const tags = [{ Key : siteTag, Value : '' }]
 
   finalTemplate.Resources.ContactEmailerLogGroup = {
     Type       : 'AWS::Logs::LogGroup',
@@ -74,7 +74,7 @@ const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, upd
         // Allows reading from DynamoDB streams
         'arn:aws:iam::aws:policy/service-role/AWSLambdaDynamoDBExecutionRole'
       ],
-      Tags: tags
+      Tags : tags
     } // Properties
   }
 
@@ -105,7 +105,7 @@ const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, upd
         LogGroup            : emailerFunctionLogGroupName,
         SystemLogLevel      : 'INFO' // support options
       },
-      Tags: tags
+      Tags : tags
     } // Properties
   }
 

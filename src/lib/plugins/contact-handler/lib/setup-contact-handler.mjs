@@ -99,7 +99,7 @@ const setupContactHandler = async ({
         LogFormat           : 'JSON', // support options
         LogGroup            : contactHandlerLogGroupName,
         SystemLogLevel      : 'INFO' // support options
-      }
+      },
       Tags: tags
     } // Properties
   }

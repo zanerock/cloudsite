@@ -58,7 +58,7 @@ const setupRequestSigner = async ({ credentials, lambdaFunctionsBucketName, upda
     Properties : {
       LogGroupClass   : 'STANDARD', // TODO: support option for INFREQUENT_ACCESS
       LogGroupName    : signFunctionHandlerName,
-      RetentionInDays : 180 // TODO: support options,
+      RetentionInDays : 180, // TODO: support options,
       Tags: tags
     }
   }

@@ -9,15 +9,15 @@ import { syncSiteContent } from './lib/sync-site-content'
 import { updatePlugins } from './lib/update-plugins'
 import { updateStack } from './lib/update-stack'
 
-const update = async ({ 
-  doBilling, 
-  doContent, 
-  doDNS, 
-  doStack, 
-  noBuild, 
-  noCacheInvalidation, 
-  siteInfo, 
-  globalOptions 
+const update = async ({
+  doBilling,
+  doContent,
+  doDNS,
+  doStack,
+  noBuild,
+  noCacheInvalidation,
+  siteInfo,
+  globalOptions
 }) => {
   const doAll = doBilling === undefined && doContent === undefined && doDNS === undefined && doStack === undefined
 

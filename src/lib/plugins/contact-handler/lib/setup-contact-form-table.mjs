@@ -5,7 +5,7 @@ const setupContactFormTable = ({ siteInfo, siteTemplate }) => {
   const { bucketName } = siteInfo
 
   const siteTag = getSiteTag(siteInfo)
-  const tags = [{ Key: siteTag, Value: '' }]
+  const tags = [{ Key : siteTag, Value : '' }]
 
   finalTemplate.Resources.ContactHandlerDynamoDB = {
     Type       : 'AWS::DynamoDB::Table',
@@ -20,7 +20,7 @@ const setupContactFormTable = ({ siteInfo, siteTemplate }) => {
         { AttributeName : 'SubmissionTime', KeyType : 'RANGE' }
       ],
       BillingMode : 'PAY_PER_REQUEST',
-      Tags: tags
+      Tags        : tags
     }
   }
 

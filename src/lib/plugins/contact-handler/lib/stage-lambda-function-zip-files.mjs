@@ -1,11 +1,12 @@
 import { join as pathJoin } from 'node:path'
 import { createReadStream } from 'node:fs'
 
-import { CreateBucketCommand, PutBucketTaggingCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
+import { CreateBucketCommand/*, PutBucketTaggingCommand*/, PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 
 import { CONTACT_EMAILER_ZIP_NAME, CONTACT_HANDLER_ZIP_NAME, REQUEST_SIGNER_ZIP_NAME } from './constants'
 import { convertDomainToBucketName } from '../../../shared/convert-domain-to-bucket-name'
 import { determineBucketName } from '../../../shared/determine-bucket-name'
+import { getSiteTag } from '../../../shared/get-site-tag'
 // jsdoc wants this, but it causes a circular dependency
 // import { SiteTemplate } from '../../../shared/site-template'
 
@@ -21,7 +22,7 @@ const stageLambdaFunctionZipFiles = async ({ credentials, enableEmail, settings,
   process.stdout.write('Staging Lambda function zip files...\n')
 
   let { lambdaFunctionsBucket } = settings
-  const { apexDomain, region, siteTag } = siteInfo
+  const { apexDomain, region } = siteInfo
 
   const s3Client = new S3Client({ credentials, region })
 
@@ -43,6 +44,8 @@ const stageLambdaFunctionZipFiles = async ({ credentials, enableEmail, settings,
     await s3Client.send(createBucketCommand)
     /*
     await new Promise(resolve => setTimeout(resolve, 1000)) // DEBUG
+
+    const siteTag = getSiteTag(siteInfo)
 
     console.log('\nA\n') // DEBUG
     const putBucketTaggingCommand = new PutBucketTaggingCommand({
