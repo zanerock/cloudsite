@@ -8,7 +8,7 @@ const associateCostAllocationTags = async ({ credentials, tag }) => {
   await costExplorerClient.send(updateCostAllocationTagsStatusCommand)
 }
 
-const handleAssociateCostAllocationTagsError = ({ e, siteInfo }) => {
+const handleAssociateCostAllocationTagsError = ({ /* e, */ siteInfo }) => {
   const { apexDomain } = siteInfo
   // console.log(JSON.stringify(e)) // DEBUG
 
