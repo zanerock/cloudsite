@@ -45,6 +45,8 @@ const iamPolicy = {
         'iam:GetRole',
         'iam:PassRole',
         'iam:PutRolePolicy',
+        'iam:TagRole',
+        'iam:UntagRole',
         'iam:UpdateRole',
         'lambda:AddPermission',
         'lambda:CreateFunction',
