@@ -71,7 +71,7 @@ const setupContactHandler = async ({
     Properties : {
       LogGroupClass   : 'STANDARD', // TODO: support option for INFREQUENT_ACCESS
       LogGroupName    : contactHandlerLogGroupName,
-      RetentionInDays : 180 // TODO: support options,
+      RetentionInDays : 180, // TODO: support options,
       Tags: tags
     }
   }
