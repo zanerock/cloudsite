@@ -53,6 +53,8 @@ const create = async ({
   const stackCreated = await createSiteStack({ credentials, noDeleteOnFailure, siteInfo })
 
   if (stackCreated === true) {
+    process.stdout.write('Stack created.\n')
+
     const postUpdateHandlers = Object.keys(siteInfo.pluginSettings || {}).map((pluginKey) =>
       [pluginKey, plugins[pluginKey].postUpdateHandler]
     )
@@ -62,15 +64,22 @@ const create = async ({
 
     const siteTag = getSiteTag(siteInfo)
 
+    // TODO: speeds things up, but if one fail, it all fails and is unclear; maybe we should break it up?
     await Promise.all([
       syncSiteContent({ credentials, noBuild, siteInfo }),
       createOrUpdateDNSRecords({ credentials, siteInfo }),
-      associateCostAllocationTags({ credentials, tag : siteTag }),
       ...(postUpdateHandlers.map(([pluginKey, handler]) =>
         handler({ settings : siteInfo.pluginSettings[pluginKey], siteInfo })))
     ])
 
-    process.stdout.write('Stack created.\n')
+    try {
+      await associateCostAllocationTags({ credentials, tag : siteTag })
+    }
+    catch (e) {
+      console.log(JSON.stringify(e)) // DEBUG
+
+      process.stdout.write(`\nThe attempt to setup your cost allocation tags has failed. This is expected as AWS must 'discover' your tags before they can be activated for cost allocation. Wait a little while and try setting up the cost allocation tags again with:\n\ncloudsite update ${apexDomain} --do-billing\n\n`)
+    }
   } else {
     errorOut('Stack creation error.\n')
   }
