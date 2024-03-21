@@ -6,7 +6,7 @@ import { getSiteTag } from '../../../shared/get-site-tag'
 const setupContactHandler = async ({
   credentials,
   lambdaFunctionsBucketName,
-  settings,
+  pluginData,
   siteInfo,
   siteTemplate,
   update
@@ -16,13 +16,13 @@ const setupContactHandler = async ({
 
   const contactHandlerFunctionBaseName = convertDomainToBucketName(apexDomain) + '-contact-handler'
   const contactHandlerFunctionName = update === true
-    ? settings.contactHandlerFunctionName
+    ? pluginData.contactHandlerFunctionName
     : (await determineLambdaFunctionName({
         baseName : contactHandlerFunctionBaseName,
         credentials,
         siteTemplate
       }))
-  settings.contactHandlerFunctionName = contactHandlerFunctionName
+  pluginData.contactHandlerFunctionName = contactHandlerFunctionName
 
   const contactHandlerLogGroupName = contactHandlerFunctionName
   const contactHandlerPolicyName = contactHandlerFunctionName

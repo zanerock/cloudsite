@@ -1,5 +1,5 @@
 import { S3Client } from '@aws-sdk/client-s3'
-import { CloudFormationClient, DeleteStackCommand } from '@aws-sdk/client-cloudformation'
+import { CloudFormationClient, DeleteStackCommand, DescribeStackResourcesCommand } from '@aws-sdk/client-cloudformation'
 
 import { emptyBucket } from 's3-empty-bucket'
 
@@ -40,7 +40,12 @@ const destroy = async ({ db, siteInfo, verbose }) => {
     progressLogger?.write('Final status: ' + finalStatus + '\n')
 
     if (finalStatus === 'DELETE_FAILED') {
-      progressLogger?.write('\nThe delete is expected to fail at first because the \'replicated Lambda functions\' take a while to clear and the stack cannot be fully deleted until AWS clears the replicated functions. Give it at least 30 min and up to a few hours and try again.')
+      progressLogger?.write('\nThe delete has failed, which is expected because the \'replicated Lambda functions\' need to be cleared by AWS. This can take 30 min to a few hours.\nScanning remaining resources...')
+      const describeStackResourcesCommand = new DescribeStackResourcesCommand({ StackName: stackName })
+      const resourceDescriptions = await cloudFormationClient.send(describeStackResourcesCommand)
+
+      console.log(JSON.stringify(resourceDescriptions, null, '  '))
+      
       return false
     } else if (finalStatus === 'DELETE_COMPLETE') {
       return true

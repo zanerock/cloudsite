@@ -31,7 +31,7 @@ const SiteTemplate = class {
    * @param {string} input.siteInfo.stackName - the name of the stack
    * @param {string} input.siteInfo.stackArn - the stack's ARN
    * @param {string} input.siteInfo.cloudFrontDistributionID - the stack's CloudfFront ID (not ARN)
-   * @param {object} input.siteInfo.pluginSettings - collection of plugin settings; settings are grouped/keyed by the
+   * @param {object} input.siteInfo.plugins - collection of plugin settings; settings are grouped/keyed by the
    *   plugin's name; setting values are dependent on the plugin
    * @param credentials.siteInfo
    */ /* eslint-enable jsdoc/check-param-names */
@@ -215,9 +215,10 @@ const SiteTemplate = class {
 
   async destroyPlugins () {
     const { siteInfo } = this
-    const { apexDomain, pluginSettings } = siteInfo
+    const { apexDomain } = siteInfo
+    const pluginsData = siteInfo.plugins || {}
 
-    for (const [pluginKey, settings] of Object.entries(pluginSettings)) {
+    for (const [pluginKey, pluginData] of Object.entries(pluginsData)) {
       const plugin = plugins[pluginKey]
       if (plugin === undefined) {
         throw new Error(`Unknown plugin found in '${apexDomain}' plugin settings.`)
@@ -225,23 +226,24 @@ const SiteTemplate = class {
 
       const { preStackDestroyHandler } = plugin
       if (preStackDestroyHandler !== undefined) {
-        await preStackDestroyHandler({ siteTemplate : this, settings })
+        await preStackDestroyHandler({ siteTemplate : this, pluginData })
       }
     }
   }
 
   async loadPlugins ({ update } = {}) {
     const { siteInfo } = this
-    const { apexDomain, pluginSettings } = siteInfo
+    const { apexDomain } = siteInfo
+    const pluginsData = siteInfo.plugins || {}
 
     const pluginConfigs = []
-    for (const [pluginKey, settings] of Object.entries(pluginSettings)) {
+    for (const [pluginKey, pluginData] of Object.entries(pluginsData)) {
       const plugin = plugins[pluginKey]
       if (plugin === undefined) {
         throw new Error(`Unknown plugin found in '${apexDomain}' plugin settings.`)
       }
 
-      pluginConfigs.push(plugin.stackConfig({ siteTemplate : this, settings, update }))
+      pluginConfigs.push(plugin.stackConfig({ siteTemplate : this, pluginData, update }))
     }
 
     await Promise.all(pluginConfigs)

@@ -56,10 +56,12 @@ const siteInfo = {
   "apexDomain": "your-website-domain.com",
   "sourceType": "docusaurus", // or 'vanilla'
   "sourcePath": "/Users/your-home-dir/path/to/website/source"
-  "pluginSettings": {
+  "plugins": {
     "contactHandler": {
-      "path": "/contact-handler",
-      "emailFrom": "contactform@your-website-domain.com"
+      "settings": {
+        "path": "/contact-handler",
+        "emailFrom": "contactform@your-website-domain.com"
+      }
     }
   }
 }

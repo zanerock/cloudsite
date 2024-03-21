@@ -26,7 +26,7 @@ const config = {
   }
 }
 
-const importHandler = async ({ credentials, name, pluginSettings, siteInfo, template }) => {
+const importHandler = async ({ credentials, name, pluginsData, siteInfo, template }) => {
   const cacheBehaviors =
     template.Resources.SiteCloudFrontDistribution.Properties.DistributionConfig.CacheBehaviors || []
   const contactHandlingCacheBehavaiors = cacheBehaviors.filter((cb) =>
@@ -40,8 +40,9 @@ const importHandler = async ({ credentials, name, pluginSettings, siteInfo, temp
       template.Resources.ContactEmailerFunction.Properties.Environment.Variables.EMAIL_HANDLER_SOURCE_EMAIL
     const emailTo =
       template.Resources.ContactEmailerFunction.Properties.Environment.Variables.EMAIL_HANDLER_TARGET_EMAIL
+    const contactHandlerFunctionName = template.Resources.ContactHandlerLambdaFunction.Properties.FunctionName
     const emailerFunctionName = template.Resources.ContactEmailerFunction.Properties.FunctionName
-    const requestSignerFunctionName = template.Resources.ContactEmailerFunction.Properties.FunctionName
+    const requestSignerFunctionName = template.Resources.SignRequestFunction.Properties.FunctionName
     const baseBucketName = convertDomainToBucketName(siteInfo.apexDomain)
     const lambdaFunctionsBucket = await findBucketLike({
       credentials,
@@ -52,10 +53,13 @@ const importHandler = async ({ credentials, name, pluginSettings, siteInfo, temp
       throw new Error(`Could not resolve the Lambda function bucket for the '${name}' plugin.`)
     }
 
-    pluginSettings[name] = {
-      path : contactHandlingCacheBehavaior.PathPattern,
-      emailFrom,
-      emailTo,
+    pluginsData[name] = {
+      settings : {
+        urlPath : contactHandlingCacheBehavaior.PathPattern,
+        emailFrom,
+        emailTo
+      },
+      contactHandlerFunctionName,
       emailerFunctionName,
       requestSignerFunctionName,
       lambdaFunctionsBucket
@@ -68,9 +72,9 @@ const importHandler = async ({ credentials, name, pluginSettings, siteInfo, temp
   // else, not enabled, nothing to do
 }
 
-const preStackDestroyHandler = async ({ settings, siteTemplate }) => {
+const preStackDestroyHandler = async ({ pluginData, siteTemplate }) => {
   const { credentials } = siteTemplate
-  const { lambdaFunctionsBucket } = settings
+  const { lambdaFunctionsBucket } = pluginData
 
   if (lambdaFunctionsBucket !== undefined) {
     progressLogger?.write(`Deleting ${lambdaFunctionsBucket} bucket...\n`)
@@ -81,31 +85,32 @@ const preStackDestroyHandler = async ({ settings, siteTemplate }) => {
       s3Client,
       verbose    : progressLogger !== undefined
     })
-    delete settings.lambdaFunctionsBucket
+    delete pluginData.lambdaFunctionsBucket
   } else {
     progressLogger?.write('Looks like the Lambda function bucket has already been deleted; skipping.\n')
   }
 }
 
-const stackConfig = async ({ siteTemplate, settings, update }) => {
+const stackConfig = async ({ pluginData, siteTemplate, update }) => {
   process.stdout.write('Preparing contact handler plugin...\n')
 
   const { credentials, siteInfo } = siteTemplate
-  const enableEmail = !!settings.emailFrom
+  const enableEmail = !!pluginData.settings.emailFrom
 
-  const lambdaFunctionsBucketName = await stageLambdaFunctionZipFiles({ credentials, enableEmail, settings, siteInfo })
+  const lambdaFunctionsBucketName = 
+    await stageLambdaFunctionZipFiles({ credentials, enableEmail, pluginData, siteInfo })
 
-  await setupContactHandler({ credentials, lambdaFunctionsBucketName, settings, siteInfo, siteTemplate, update })
-  await setupRequestSigner({ credentials, lambdaFunctionsBucketName, settings, siteTemplate, update })
+  await setupContactHandler({ credentials, lambdaFunctionsBucketName, pluginData, siteInfo, siteTemplate, update })
+  await setupRequestSigner({ credentials, lambdaFunctionsBucketName, pluginData, siteTemplate, update })
   setupContactFormTable({ siteInfo, siteTemplate })
-  updateCloudFrontDistribution({ settings, siteTemplate })
+  updateCloudFrontDistribution({ pluginData, siteTemplate })
   if (enableEmail === true) {
-    await setupContactEmailer({ credentials, lambdaFunctionsBucketName, settings, siteTemplate, update })
+    await setupContactEmailer({ credentials, lambdaFunctionsBucketName, pluginData, siteTemplate, update })
   }
 }
 
-const updateHandler = async ({ credentials, settings, siteInfo }) => {
-  const { lambdaFunctionsBucket } = settings
+const updateHandler = async ({ credentials, pluginData, siteInfo }) => {
+  const { lambdaFunctionsBucket } = pluginData
   const siteTag = getSiteTag(siteInfo)
 
   const s3Client = new S3Client({ credentials })

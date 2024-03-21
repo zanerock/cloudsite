@@ -3,7 +3,7 @@ import { convertDomainToBucketName } from '../../../shared/convert-domain-to-buc
 import { determineLambdaFunctionName } from './determine-lambda-function-name'
 import { getSiteTag } from '../../../shared/get-site-tag'
 
-const setupRequestSigner = async ({ credentials, lambdaFunctionsBucketName, update, settings, siteTemplate }) => {
+const setupRequestSigner = async ({ credentials, lambdaFunctionsBucketName, pluginData, update, siteTemplate }) => {
   const { finalTemplate, siteInfo } = siteTemplate
   const { apexDomain } = siteInfo
 
@@ -12,13 +12,13 @@ const setupRequestSigner = async ({ credentials, lambdaFunctionsBucketName, upda
 
   const requestSignerFunctionBaseName = convertDomainToBucketName(apexDomain) + '-request-signer'
   const requestSignerFunctionName = update === true
-    ? settings.requestSignerFunctionName
+    ? pluginData.requestSignerFunctionName
     : (await determineLambdaFunctionName({
         baseName : requestSignerFunctionBaseName,
         credentials,
         siteTemplate
       }))
-  settings.requestSignerFunctionName = requestSignerFunctionName
+  pluginData.requestSignerFunctionName = requestSignerFunctionName
 
   finalTemplate.Resources.RequestSignerRole = {
     Type       : 'AWS::IAM::Role',

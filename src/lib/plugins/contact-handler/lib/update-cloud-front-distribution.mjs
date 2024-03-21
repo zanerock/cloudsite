@@ -1,6 +1,6 @@
-const updateCloudFrontDistribution = ({ settings, siteTemplate }) => {
+const updateCloudFrontDistribution = ({ pluginData, siteTemplate }) => {
   const { finalTemplate } = siteTemplate
-  const contactHandlerPath = settings.urlPath
+  const contactHandlerPath = pluginData.settings.urlPath
 
   finalTemplate.Resources.SiteCloudFrontDistribution.DependsOn.push('ContactHandlerLambdaURL')
 
