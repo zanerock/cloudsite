@@ -16,10 +16,15 @@ import { updateCloudFrontDistribution } from './lib/update-cloud-front-distribut
 
 const config = {
   options : {
-    email : {
+    emailFrom : {
       matches : emailRE
     },
+    emailTo : {
+      required : true,
+      matches : emailRE,
+    },
     urlPath : {
+      required: true,
       default : '/contact-handler',
       matches : /^\/(?:[a-z0-9_-]+\/?)+$/
     }
