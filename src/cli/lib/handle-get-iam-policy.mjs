@@ -4,11 +4,11 @@ import { cliSpec } from '../constants'
 import { getAccountID } from '../../lib/shared/get-account-id'
 import { getCredentials } from '../../lib/actions/lib/get-credentials' // TODO: move to shared
 
-const generateIAMPolicy = async (globalOptions) => {
+const generateIAMPolicy = async (accountInfo) => {
   // TODO: once we refactor 'sites.json' into 'cloudsite-db.json', with 'accountID' at the top level, we can pass that
   // in here and avoid the 'getAccountID' call in many cases
-  const credentials = getCredentials(globalOptions)
-  const accountID = await getAccountID({ credentials })
+  const credentials = getCredentials(accountInfo.settings)
+  const accountID = accountInfo.accountID || await getAccountID({ credentials })
 
   return {
     Version   : '2012-10-17',
@@ -224,7 +224,7 @@ const instructions =
 5. Select the 'JSON' option.
 6. Replace the JSON with the text below.`
 
-const handleGetIAMPolicy = async ({ argv, globalOptions }) => {
+const handleGetIAMPolicy = async ({ argv, db }) => {
   const getIAMPolicyOptionsSpec = cliSpec.commands.find(({ name }) => name === 'get-iam-policy').arguments
   const getIAMPolicyOptions = commandLineArgs(getIAMPolicyOptionsSpec, { argv })
   const withInstructions = getIAMPolicyOptions['with-instructions']
@@ -232,7 +232,7 @@ const handleGetIAMPolicy = async ({ argv, globalOptions }) => {
   if (withInstructions === true) {
     process.stdout.write(instructions + '\n\n')
   }
-  process.stdout.write(JSON.stringify(await generateIAMPolicy(globalOptions), null, '  ') + '\n')
+  process.stdout.write(JSON.stringify(await generateIAMPolicy(globalOptions.account), null, '  ') + '\n')
 }
 
 export { handleGetIAMPolicy }

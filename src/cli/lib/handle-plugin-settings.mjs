@@ -7,7 +7,7 @@ import { getValueContainerAndKey } from './get-value-container-and-key'
 import * as optionsLib from './options'
 import { smartConvert } from './smart-convert'
 
-const handlePluginSettings = async ({ argv, sitesInfo }) => {
+const handlePluginSettings = async ({ argv, db }) => {
   const setOptionOptionsSpec = cliSpec.commands.find(({ name }) => name === 'plugin-settings').arguments
   const setOptionOptions = commandLineArgs(setOptionOptionsSpec, { argv })
   const apexDomain = setOptionOptions['apex-domain']
@@ -16,7 +16,7 @@ const handlePluginSettings = async ({ argv, sitesInfo }) => {
   const { delete: doDelete, name, value } = setOptionOptions
 
   // validate options
-  const siteInfo = getSiteInfo({ apexDomain, sitesInfo })
+  const siteInfo = getSiteInfo({ apexDomain, db })
 
   if (doDelete === true && (value !== undefined || options.length > 0)) {
     errorOut("The '--delete' option is incompatible with the '--value' and --name-value options.\n")
@@ -37,7 +37,7 @@ const handlePluginSettings = async ({ argv, sitesInfo }) => {
   }
 
   // take actions and update the options
-  const { pluginSettings = {} } = siteInfo
+  const pluginSettings = siteInfo.plugins?.setings || {}
 
   if (doDelete === true) {
     const { valueContainer, valueKey } = getValueContainerAndKey({ path : name, rootContainer : pluginSettings })
@@ -50,7 +50,7 @@ const handlePluginSettings = async ({ argv, sitesInfo }) => {
     optionsLib.updatePluginSettings({ options, siteInfo })
   }
 
-  siteInfo.pluginSettings = pluginSettings
+  siteInfo.plugins.settings = pluginSettings
 }
 
 export { handlePluginSettings }

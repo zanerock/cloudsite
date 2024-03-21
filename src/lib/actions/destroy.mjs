@@ -8,10 +8,10 @@ import { progressLogger } from '../shared/progress-logger'
 import { SiteTemplate } from '../shared/site-template'
 import { trackStackStatus } from './lib/track-stack-status'
 
-const destroy = async ({ globalOptions, siteInfo, verbose }) => {
+const destroy = async ({ db, siteInfo, verbose }) => {
   const { bucketName, stackName } = siteInfo
 
-  const credentials = getCredentials(globalOptions)
+  const credentials = getCredentials(db.account.settings)
   const s3Client = new S3Client({ credentials })
 
   // this method provides user udptaes

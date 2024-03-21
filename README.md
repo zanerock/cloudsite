@@ -321,9 +321,15 @@ Command group for managing the Cloudsite CLI configuration.
 Runs the initialization wizard and updates all options.
 
 <span id="cloudsite-configuration-show"></span>
-###### `cloudsite configuration show`
+###### `cloudsite configuration show <options>`
 
 Displays the current configuration.
+
+___`show` options___
+
+|Option|Description|
+|------|------|
+|`--format`|Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'.|
 
 <span id="cloudsite-create"></span>
 #### `cloudsite create <options> [apex-domain]`

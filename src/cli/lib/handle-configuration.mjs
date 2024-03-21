@@ -1,6 +1,6 @@
 import commandLineArgs from 'command-line-args'
 
-const { cliSpec } from '../constants'
+import { cliSpec } from '../constants'
 import { handleConfigurationInitialize } from './configuration/handle-configuration-initialize'
 import { handleConfigurationShow } from './configuration/handle-configuration-show'
 

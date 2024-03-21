@@ -10,11 +10,11 @@ import { getCredentials } from './lib/get-credentials'
 
 const RECHECK_WAIT_TIME = 2000 // ms
 
-const verify = async ({ checkContent, checkSiteUp, checkStack, globalOptions, progressLogger, siteInfo }) => {
+const verify = async ({ checkContent, checkSiteUp, checkStack, db, progressLogger, siteInfo }) => {
   const checkAll = checkContent === undefined && checkSiteUp === undefined && checkStack === undefined
   let credentials
   if (checkAll || checkContent || checkStack) {
-    credentials = getCredentials(globalOptions)
+    credentials = getCredentials(db.account.settings)
   }
 
   const checks = []

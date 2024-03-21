@@ -5,7 +5,7 @@ import { checkFormat } from './check-format'
 import { cliSpec } from '../constants'
 import { formatOutput } from './format-output'
 
-const handleList = ({ argv, sitesInfo }) => {
+const handleList = ({ argv, db }) => {
   const listOptionsSpec = cliSpec.commands.find(({ name }) => name === 'list').arguments
   const listOptions = commandLineArgs(listOptionsSpec, { argv })
   const allFields = listOptions['all-fields']
@@ -13,7 +13,7 @@ const handleList = ({ argv, sitesInfo }) => {
 
   checkFormat(format)
 
-  const sitesInfoArray = Object.values(sitesInfo)
+  const sitesInfoArray = Object.values(db.sites)
   const output = allFields === true
     ? sitesInfoArray
     : sitesInfoArray.map((siteInfo) => {

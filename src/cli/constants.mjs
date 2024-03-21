@@ -285,4 +285,4 @@ const cliSpec = {
   ]
 }
 
-export { cliSpec, DB_PATH, SOURCE_TYPES }
+export { cliSpec, DB_PATH, SOURCE_TYPES, VALID_FORMATS }

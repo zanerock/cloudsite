@@ -1,11 +1,11 @@
 import { errorOut } from './error-out'
 
-const getSiteInfo = ({ apexDomain, sitesInfo }) => {
+const getSiteInfo = ({ apexDomain, db }) => {
   if (apexDomain === undefined) {
     errorOut('Must specify site domain.\n')
   }
 
-  const siteInfo = sitesInfo[apexDomain]
+  const siteInfo = db.sites[apexDomain]
   if (siteInfo === undefined) {
     errorOut(`No such site '${apexDomain}' found.\n`)
   }
