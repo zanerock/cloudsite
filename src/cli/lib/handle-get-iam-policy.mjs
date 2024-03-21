@@ -45,6 +45,7 @@ const generateIAMPolicy = async (db) => {
           'cloudformation:DeleteStack',
           'cloudformation:DescribeStackDriftDetectionStatus',
           'cloudformation:DescribeStackEvents',
+          'cloudformation:DescribeStackResources',
           'cloudformation:DescribeStacks',
           'cloudformation:DetectStackDrift',
           'cloudformation:GetTemplate',
