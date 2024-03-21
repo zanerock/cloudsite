@@ -1,11 +1,21 @@
 import * as fs from 'node:fs/promises'
 
-import { GLOBAL_OPTIONS_PATH } from '../../constants'
+import { commandLineArgs } from 'command-line-args'
 
-const handleConfigurationShow = async () => {
-  const globalOptionsPath = GLOBAL_OPTIONS_PATH
-  const globalOptionsContents = await fs.readFile(globalOptionsPath, { encoding : 'utf8' })
-  process.stdout.write(globalOptionsContents)
+import { formatOutput } from '../format-output'
+
+import { cliSpec } from '../../constants'
+
+const handleConfigurationShow = async ({ argv, db }) => {
+  const showConfigurationCLISpec = cliSpec
+    .commands.find(({ name }) => name === 'configuration')
+    .commands.find(({ name }) => name === 'show')
+  const showConfigurationOptionsSpec = showConfigurationCLISpec.arguments
+  const showConfigurationOptions = commandLineArgs(showConfigurationOptionsSpec, { argv })
+  const { format } = configurationOptions
+
+  const accountSettings = db.account.settings || {}
+  process.stdout.write(formatOutput({ format, output: accountSettings })
 }
 
 export { handleConfigurationShow }

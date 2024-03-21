@@ -1,6 +1,7 @@
 import commandLineArgs from 'command-line-args'
 import pick from 'lodash/pick'
 
+import { checkFormat } from './check-format'
 import { cliSpec } from '../constants'
 import { formatOutput } from './format-output'
 
@@ -9,6 +10,8 @@ const handleList = ({ argv, sitesInfo }) => {
   const listOptions = commandLineArgs(listOptionsSpec, { argv })
   const allFields = listOptions['all-fields']
   const { format } = listOptions
+
+  checkFormat(format)
 
   const sitesInfoArray = Object.values(sitesInfo)
   const output = allFields === true

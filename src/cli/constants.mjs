@@ -2,9 +2,14 @@ import * as fsPath from 'node:path'
 
 const SOURCE_TYPES = ['docusaurus', 'vanilla']
 
-const GLOBAL_OPTIONS_PATH = fsPath.join(process.env.HOME, '.config', 'cloudsite', 'global-options.json')
+const VALID_FORMATS = ['json', 'terminal', 'text', 'yaml']
 
-const SITES_INFO_PATH = fsPath.join(process.env.HOME, '.config', 'cloudsite', 'sites.json')
+const DB_PATH = fsPath.join(process.env.HOME, '.config', 'cloudsite', 'cloudsite-db.json')
+
+const formatOption = {
+  name        : 'format',
+  description : "Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'."
+}
 
 const optionSpec = {
   name        : 'option',
@@ -47,7 +52,10 @@ const cliSpec = {
         },
         {
           name        : 'show',
-          description : 'Displays the current configuration.'
+          description : 'Displays the current configuration.',
+          arguments   : [
+            formatOption
+          ]
         }
       ]
     },
@@ -120,10 +128,7 @@ const cliSpec = {
           defaultOption : true,
           required      : true
         },
-        {
-          name        : 'format',
-          description : "Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'."
-        }
+        formatOption
       ]
     },
     {
@@ -146,10 +151,7 @@ const cliSpec = {
           description : 'Includes all fields in the output.',
           type        : Boolean
         },
-        {
-          name        : 'format',
-          description : "Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'."
-        }
+        formatOption
       ]
     },
     {
@@ -277,13 +279,10 @@ const cliSpec = {
           description : 'If set, then checks for stack drift and skips other checks unless also specifically specified.',
           type        : Boolean
         },
-        {
-          name        : 'format',
-          description : "Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'."
-        }
+        formatOption
       ]
     }
   ]
 }
 
-export { cliSpec, GLOBAL_OPTIONS_PATH, SITES_INFO_PATH, SOURCE_TYPES }
+export { cliSpec, DB_PATH, SOURCE_TYPES }

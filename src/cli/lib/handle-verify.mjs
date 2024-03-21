@@ -1,5 +1,6 @@
 import commandLineArgs from 'command-line-args'
 
+import { checkFormat } from './check-format'
 import { cliSpec } from '../constants'
 import { formatOutput } from './format-output'
 import { getSiteInfo } from './get-site-info'
@@ -13,6 +14,8 @@ const handleVerify = async ({ argv, sitesInfo, globalOptions }) => {
   const checkContent = verifyOptions['check-content']
   const checkSiteUp = verifyOptions['check-site-up']
   const checkStack = verifyOptions['check-stack']
+
+  checkFormat(format)
 
   const siteInfo = getSiteInfo({ apexDomain, sitesInfo })
 

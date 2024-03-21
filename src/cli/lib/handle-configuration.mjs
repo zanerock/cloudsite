@@ -1,9 +1,10 @@
 import commandLineArgs from 'command-line-args'
 
+const { cliSpec } from '../constants'
 import { handleConfigurationInitialize } from './configuration/handle-configuration-initialize'
 import { handleConfigurationShow } from './configuration/handle-configuration-show'
 
-const handleConfiguration = async ({ argv, cliSpec, globalOptions }) => {
+const handleConfiguration = async ({ argv, db }) => {
   const configurationCLISpec = cliSpec.commands.find(({ name }) => name === 'configuration')
   const configurationOptionsSpec = configurationCLISpec.arguments
   const configurationOptions = commandLineArgs(configurationOptionsSpec, { argv, stopAtFirstUnknown : true })
@@ -12,9 +13,9 @@ const handleConfiguration = async ({ argv, cliSpec, globalOptions }) => {
 
   switch (subcommand) {
     case 'initialize':
-      await handleConfigurationInitialize({ argv, configurationCLISpec, globalOptions }); break
+      await handleConfigurationInitialize({ argv, db }); break
     case 'show':
-      await handleConfigurationShow({ argv, configurationCLISpec, globalOptions }); break
+      await handleConfigurationShow({ argv, db }); break
     default:
       throw new Error('Unknown configuration command: ' + subcommand)
   }
