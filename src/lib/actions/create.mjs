@@ -21,15 +21,15 @@ import { updateSiteInfo } from './lib/update-site-info'
 const STACK_CREATE_TIMEOUT = 30 // min
 
 const create = async ({
+  db,
   noBuild,
   noDeleteOnFailure,
-  siteInfo,
-  ...downstreamOptions
+  siteInfo
 }) => {
   const { apexDomain } = siteInfo
   let { bucketName } = siteInfo
 
-  const credentials = getCredentials(downstreamOptions)
+  const credentials = getCredentials(db.account.settings)
 
   const acmClient = new ACMClient({
     credentials,

@@ -13,18 +13,18 @@ import { updatePlugins } from './lib/update-plugins'
 import { updateStack } from './lib/update-stack'
 
 const update = async ({
+  db,
   doBilling,
   doContent,
   doDNS,
   doStack,
   noBuild,
   noCacheInvalidation,
-  siteInfo,
-  globalOptions
+  siteInfo
 }) => {
   const doAll = doBilling === undefined && doContent === undefined && doDNS === undefined && doStack === undefined
 
-  const credentials = getCredentials(globalOptions)
+  const credentials = getCredentials(db.account.settings)
 
   const firstRoundUpdates = []
   if (doAll === true || doContent === true) {

@@ -7,7 +7,7 @@ import { doImport } from '../../lib/actions/import'
 import { errorOut } from './error-out'
 import { processSourceType } from './process-source-type'
 
-const handleImport = async ({ argv, globalOptions, sitesInfo }) => {
+const handleImport = async ({ argv, db }) => {
   // gather parameter values
   const importOptionsSpec = cliSpec.commands.find(({ name }) => name === 'import').arguments
   const importOptions = commandLineArgs(importOptionsSpec, { argv })
@@ -36,6 +36,9 @@ const handleImport = async ({ argv, globalOptions, sitesInfo }) => {
       stack = domainOrStack
     }
   }
+
+  const sitesInfo = db.sites
+
   if (sitesInfo[domain] !== undefined && refresh !== true) {
     errorOut(`Domain '${domain}' is already in the sites DB. To update/refresh the values, use the '--refresh' option.`)
   }
@@ -47,7 +50,7 @@ const handleImport = async ({ argv, globalOptions, sitesInfo }) => {
   }
 
   // now, actually do the import
-  const dbEntry = await doImport({ commonLogsBucket, domain, globalOptions, region, sourcePath, sourceType, stack })
+  const dbEntry = await doImport({ commonLogsBucket, db, domain, region, sourcePath, sourceType, stack })
   process.stdout.write(`Updating DB entry for '${domain}'...\n`)
   sitesInfo[domain] = dbEntry
 }

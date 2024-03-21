@@ -19,7 +19,7 @@ describe('handleConfigurationShow', () => {
   })
 
   test('prints the file contents', async () => {
-    await handleConfigurationShow()
-    expect(output).toBe(expectedOutput)
+    await handleConfigurationShow({ argv : [], db : { account : { settings : expectedOutput } } })
+    expect(output).toBe(expectedOutput + '\n')
   })
 })

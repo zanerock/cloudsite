@@ -1,16 +1,19 @@
 import commandLineArgs from 'command-line-args'
 import pick from 'lodash/pick'
 
+import { checkFormat } from './check-format'
 import { cliSpec } from '../constants'
 import { formatOutput } from './format-output'
 
-const handleList = ({ argv, sitesInfo }) => {
+const handleList = ({ argv, db }) => {
   const listOptionsSpec = cliSpec.commands.find(({ name }) => name === 'list').arguments
   const listOptions = commandLineArgs(listOptionsSpec, { argv })
   const allFields = listOptions['all-fields']
   const { format } = listOptions
 
-  const sitesInfoArray = Object.values(sitesInfo)
+  checkFormat(format)
+
+  const sitesInfoArray = Object.values(db.sites)
   const output = allFields === true
     ? sitesInfoArray
     : sitesInfoArray.map((siteInfo) => {
@@ -19,7 +22,7 @@ const handleList = ({ argv, sitesInfo }) => {
       return trimmed
     })
 
-  formatOutput({ output, format })
+  process.stdout.write(formatOutput({ output, format }))
 }
 
 export { handleList }

@@ -1,11 +1,12 @@
 import commandLineArgs from 'command-line-args'
 
+import { checkFormat } from './check-format'
 import { cliSpec } from '../constants'
 import { errorOut } from './error-out'
 import { formatOutput } from './format-output'
 import { getSiteInfo } from './get-site-info'
 
-const handleDetail = ({ argv, sitesInfo }) => {
+const handleDetail = ({ argv, db }) => {
   const detailOptionsSpec = cliSpec.commands.find(({ name }) => name === 'detail').arguments
   const detailOptions = commandLineArgs(detailOptionsSpec, { argv })
   const apexDomain = detailOptions['apex-domain']
@@ -14,10 +15,11 @@ const handleDetail = ({ argv, sitesInfo }) => {
   if (apexDomain === undefined) {
     errorOut('Apex domain must be specified.')
   }
+  checkFormat(format)
 
-  const output = getSiteInfo({ apexDomain, sitesInfo })
+  const output = getSiteInfo({ apexDomain, db })
 
-  formatOutput({ output, format })
+  process.stdout.write(formatOutput({ output, format }))
 }
 
 export { handleDetail }

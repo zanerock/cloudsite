@@ -2,13 +2,18 @@ import * as fsPath from 'node:path'
 
 const SOURCE_TYPES = ['docusaurus', 'vanilla']
 
-const GLOBAL_OPTIONS_PATH = fsPath.join(process.env.HOME, '.config', 'cloudsite', 'global-options.json')
+const VALID_FORMATS = ['json', 'terminal', 'text', 'yaml']
 
-const SITES_INFO_PATH = fsPath.join(process.env.HOME, '.config', 'cloudsite', 'sites.json')
+const DB_PATH = fsPath.join(process.env.HOME, '.config', 'cloudsite', 'cloudsite-db.json')
+
+const formatOption = {
+  name        : 'format',
+  description : "Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'."
+}
 
 const optionSpec = {
   name        : 'option',
-  description : "A combined name-value paid, separated by ':'. Can be used multiple times.",
+  description : "A combined name-value pair: <name>:<value>. Can be used multiple times. With '--delete', the value portion is ignored and can be omitted, e.g.: '--option <name>'.",
   multiple    : true
 }
 
@@ -47,7 +52,10 @@ const cliSpec = {
         },
         {
           name        : 'show',
-          description : 'Displays the current configuration.'
+          description : 'Displays the current configuration.',
+          arguments   : [
+            formatOption
+          ]
         }
       ]
     },
@@ -120,10 +128,7 @@ const cliSpec = {
           defaultOption : true,
           required      : true
         },
-        {
-          name        : 'format',
-          description : "Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'."
-        }
+        formatOption
       ]
     },
     {
@@ -146,10 +151,7 @@ const cliSpec = {
           description : 'Includes all fields in the output.',
           type        : Boolean
         },
-        {
-          name        : 'format',
-          description : "Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'."
-        }
+        formatOption
       ]
     },
     {
@@ -196,15 +198,20 @@ const cliSpec = {
           required      : true
         },
         {
+          name        : 'confirmed',
+          description : "When entirely deleting (disabling) a plugin, you must either confirm interactively or provide the '--confirmed' option.",
+          type        : Boolean
+        },
+        {
           name        : 'delete',
-          description : "When set, then deletes the setting. Incompatible with the '--value' option.",
+          description : "When set, then deletes the setting. Incompatible with the '--value' option. To delete all plugin settings (disable the plugin), set '--name' or '--option' to the bare plugin name; e.g.: --value aPlugin.",
           type        : Boolean
         },
         {
           name        : 'name',
           description : 'The option name.'
         },
-        optionSpec,
+        optionSpec, // the 'options' definition
         {
           name        : 'value',
           description : "The setting value. Incompatible with the '--delete' option."
@@ -277,13 +284,10 @@ const cliSpec = {
           description : 'If set, then checks for stack drift and skips other checks unless also specifically specified.',
           type        : Boolean
         },
-        {
-          name        : 'format',
-          description : "Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'."
-        }
+        formatOption
       ]
     }
   ]
 }
 
-export { cliSpec, GLOBAL_OPTIONS_PATH, SITES_INFO_PATH, SOURCE_TYPES }
+export { cliSpec, DB_PATH, SOURCE_TYPES, VALID_FORMATS }

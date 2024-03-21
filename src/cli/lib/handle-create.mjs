@@ -9,7 +9,7 @@ import { errorOut } from './error-out'
 import * as optionsLib from './options'
 import { processSourceType } from './process-source-type'
 
-const handleCreate = async ({ argv, globalOptions, sitesInfo }) => {
+const handleCreate = async ({ argv, db }) => {
   const createOptionsSpec = cliSpec.commands.find(({ name }) => name === 'create').arguments
   const createOptions = commandLineArgs(createOptionsSpec, { argv })
   // action behavior options
@@ -24,13 +24,14 @@ const handleCreate = async ({ argv, globalOptions, sitesInfo }) => {
   const stackName = createOptions['stack-name']
   const options = optionsLib.mapRawOptions(createOptions.option)
 
-  const siteInfo = sitesInfo[apexDomain] || { apexDomain, bucketName, sourcePath, sourceType }
+  // don't use 'getSiteInfo', it errors out on blanks
+  const siteInfo = db.sites[apexDomain] || { apexDomain, bucketName, sourcePath, sourceType }
   siteInfo.region = createOptions.region || siteInfo.region || 'us-east-1'
   if (stackName !== undefined) {
     siteInfo.stackName = stackName
   }
 
-  sitesInfo[apexDomain] = siteInfo
+  db.sites[apexDomain] = siteInfo
 
   // verify the parameters/options
   for (const option of ['apex-domain', 'source-path']) {
@@ -58,7 +59,7 @@ const handleCreate = async ({ argv, globalOptions, sitesInfo }) => {
     }
   }
 
-  await create({ noBuild, noDeleteOnFailure, siteInfo, ...globalOptions })
+  await create({ db, noBuild, noDeleteOnFailure, siteInfo })
 }
 
 export { handleCreate }

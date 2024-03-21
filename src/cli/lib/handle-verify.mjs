@@ -1,11 +1,12 @@
 import commandLineArgs from 'command-line-args'
 
+import { checkFormat } from './check-format'
 import { cliSpec } from '../constants'
 import { formatOutput } from './format-output'
 import { getSiteInfo } from './get-site-info'
 import { verify } from '../../lib/actions/verify'
 
-const handleVerify = async ({ argv, sitesInfo, globalOptions }) => {
+const handleVerify = async ({ argv, db }) => {
   const verifyOptionsSpec = cliSpec.commands.find(({ name }) => name === 'verify').arguments
   const verifyOptions = commandLineArgs(verifyOptionsSpec, { argv })
   const { format } = verifyOptions
@@ -14,16 +15,18 @@ const handleVerify = async ({ argv, sitesInfo, globalOptions }) => {
   const checkSiteUp = verifyOptions['check-site-up']
   const checkStack = verifyOptions['check-stack']
 
-  const siteInfo = getSiteInfo({ apexDomain, sitesInfo })
+  checkFormat(format)
+
+  const siteInfo = getSiteInfo({ apexDomain, db })
 
   const results =
-    await verify({ checkContent, checkSiteUp, checkStack, globalOptions, progressLogger : process.stdout, siteInfo })
+    await verify({ checkContent, checkSiteUp, checkStack, db, progressLogger : process.stdout, siteInfo })
   const summaryStatus = results.reduce((acc, { status : s }) => {
     if (s === 'error') { return 'error' } else if (s === 'failed') { return 'failed' } else { return acc }
   }, 'success')
 
   const output = { 'overall status' : summaryStatus, checks : results }
-  formatOutput({ output, format })
+  process.stdout.write(formatOutput({ output, format }))
 }
 
 export { handleVerify }

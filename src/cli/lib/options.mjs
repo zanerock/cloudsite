@@ -12,25 +12,48 @@ const mapRawOptions = (rawOptions = []) =>
     return { name, value }
   })
 
-const updatePluginSettings = ({ options, siteInfo }) => {
-  const { pluginSettings = {} } = siteInfo
-
+const updatePluginSettings = ({ confirmed, doDelete, options, siteInfo }) => {
   for (const { name, value } of options) {
-    const [option] = name.split('.')
+    const pathBits = name.split('.')
+    const pluginName = pathBits.shift()
 
-    if (!(option in plugins)) {
-      errorOut(`No such plugin '${option}'; use one of: ${Object.keys(plugins).join(', ')}.\n`)
+    const plugin = plugins[pluginName]
+    if (plugin === undefined) {
+      errorOut(`No such plugin '${pluginName}'; use one of: ${Object.keys(plugins).join(', ')}.\n`)
     }
 
-    const optionsSpec = plugins[option].config?.options
+    const pluginData = siteInfo.plugins[pluginName] || {}
+    siteInfo.plugins[pluginName] = pluginData // in case we just created it
+    const pluginSettings = siteInfo.plugins[pluginName].settings || {}
+    siteInfo.plugins[pluginName].settings = pluginSettings // in case we just created it
 
-    const wrappedSpec = { [option] : optionsSpec } // so our option spec matches our path
     const { valueContainer, valueKey } =
-      getValueContainerAndKey({ path : name, rootContainer : pluginSettings, spec : wrappedSpec, value })
-    valueContainer[valueKey] = value
-  }
+      getValueContainerAndKey({ path : pathBits, pathPrefix : pluginName + '.', rootContainer : pluginSettings })
 
-  siteInfo.pluginSettings = pluginSettings
+    if (doDelete === true && valueKey === undefined) { // then we're deleting/disabling the entire plugin
+      if (confirmed === true) {
+        const pluginSettings = siteInfo.plugins[pluginName]
+        delete siteInfo.plugins[pluginName]
+        process.stdout.write(`Deleted plugin settings for '${pluginName}'; was:\n${JSON.stringify(pluginSettings, null, '  ')}\n`)
+      } else {
+        errorOut("Interactive confirmation not yet enabled. Use the '--confirmed' option. Note, this will delete all plugin settings and data and cannot be recovered. You must run 'cloudsite update' for this change to take effect. To re-enable the plugin, you must re-initialize all required settings and update the site.\n", 3)
+      }
+    } else if (doDelete === true) {
+      const wasValue = valueContainer[valueKey]
+      delete valueContainer[valueKey]
+      process.stdout.write(`Deleted option '${name}' (was: '${wasValue}').\n`)
+    } else {
+      valueContainer[valueKey] = value
+      process.stdout.write(`Set '${name}' to '${value}'.\n`)
+    }
+
+    // delete settings object if empty
+    // TODO: this is insufficient if we have a nested option that's empty, we could get something like:
+    // { settings: { blah: {} }}; we need a recursive 'cleanEmptyObjects' or something.
+    if (Object.keys(pluginSettings).length === 0) {
+      delete siteInfo.plugins[plugin].settings
+    }
+  }
 }
 
 export { mapRawOptions, updatePluginSettings }

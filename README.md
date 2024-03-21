@@ -321,9 +321,15 @@ Command group for managing the Cloudsite CLI configuration.
 Runs the initialization wizard and updates all options.
 
 <span id="cloudsite-configuration-show"></span>
-###### `cloudsite configuration show`
+###### `cloudsite configuration show <options>`
 
 Displays the current configuration.
+
+___`show` options___
+
+|Option|Description|
+|------|------|
+|`--format`|Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'.|
 
 <span id="cloudsite-create"></span>
 #### `cloudsite create <options> [apex-domain]`
@@ -338,7 +344,7 @@ Creates a new website, setting up infrastructure and copying content.
 |`--bucket-name`|The name of the bucket to be used. If no option is given, cloudsite will generate a bucket name based on the apex domain.|
 |`--no-build`|Supresses the default behavior of building before uploading the site content.|
 |`--no-delete-on-failure`|When true, does not delete the site stack after setup failure.|
-|`--option`|A combined name-value paid, separated by ':'. Can be used multiple times.|
+|`--option`|A combined name-value pair: <name>:<value>. Can be used multiple times. With '--delete', the value portion is ignored and can be omitted, e.g.: '--option <name>'.|
 |`--region`|The region where to create the site resources. Defaults to 'us-east-1'.|
 |`--source-path`|Local path to the static site root.|
 |`--source-type`|May be either 'vanilla' or 'docusaurus', otherwise process will attempt to guess.|
@@ -417,9 +423,10 @@ Sets (or deletes) a site option.
 |Option|Description|
 |------|------|
 |`[apex-domain]`|(_main argument_,_required_) The apex domain identifying the site.|
-|`--delete`|When set, then deletes the setting. Incompatible with the '--value' option.|
+|`--confirmed`|When entirely deleting (disabling) a plugin, you must either confirm interactively or provide the '--confirmed' option.|
+|`--delete`|When set, then deletes the setting. Incompatible with the '--value' option. To delete all plugin settings (disable the plugin), set '--name' or '--option' to the bare plugin name; e.g.: --value aPlugin.|
 |`--name`|The option name.|
-|`--option`|A combined name-value paid, separated by ':'. Can be used multiple times.|
+|`--option`|A combined name-value pair: <name>:<value>. Can be used multiple times. With '--delete', the value portion is ignored and can be omitted, e.g.: '--option <name>'.|
 |`--value`|The setting value. Incompatible with the '--delete' option.|
 
 <span id="cloudsite-update"></span>
