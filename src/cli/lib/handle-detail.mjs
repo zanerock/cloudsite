@@ -19,7 +19,7 @@ const handleDetail = ({ argv, db }) => {
 
   const output = getSiteInfo({ apexDomain, db })
 
-  formatOutput({ output, format })
+  process.stdout.write(formatOutput({ output, format }))
 }
 
 export { handleDetail }

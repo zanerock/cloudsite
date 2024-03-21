@@ -10,7 +10,7 @@ const formatOutput = ({ output, format = 'terminal' }) => {
     const options = { color : format !== 'text' }
     const text = jsonToPlainText(output, options)
 
-    process.stdout.write(text + '\n')
+    return text + '\n'
   }
 }
 

@@ -22,7 +22,7 @@ const handleList = ({ argv, db }) => {
       return trimmed
     })
 
-  formatOutput({ output, format })
+  process.stdout.write(formatOutput({ output, format }))
 }
 
 export { handleList }

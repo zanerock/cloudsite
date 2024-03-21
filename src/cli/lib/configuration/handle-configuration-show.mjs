@@ -15,7 +15,7 @@ const handleConfigurationShow = async ({ argv, db }) => {
   const { format } = showConfigurationOptions
 
   const accountSettings = db.account.settings || {}
-  formatOutput({ format, output: accountSettings })
+  process.stdout.write(formatOutput({ format, output: accountSettings }))
 }
 
 export { handleConfigurationShow }
