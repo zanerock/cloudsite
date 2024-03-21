@@ -32,7 +32,7 @@ const cloudsite = async () => {
       throw e
     }
     // otherwise, it's fine, there just are no options
-    db = { account: { settings: {} }, sites: {}, todos: [], reminders: [] }
+    db = { account : { settings : {} }, sites : {}, todos : [], reminders : [] }
   }
 
   const origDB = structuredClone(db)
@@ -73,8 +73,8 @@ const cloudsite = async () => {
       throw e
     } else if (e.name === 'CredentialsProviderError') {
       let message = 'Your AWS login credentials may have expired. Update your credentials or try refreshing with:\n\naws sso login'
-      if (globalOptions.ssoProfile !== undefined) {
-        message += ' --profile ' + globalOptions.ssoProfile
+      if (db.account?.settings?.ssoProfile !== undefined) {
+        message += ' --profile ' + db.account.settings.ssoProfile
       }
       message += '\n'
       process.stderr.write(message)

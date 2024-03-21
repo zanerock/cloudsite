@@ -1,6 +1,3 @@
-import * as fs from 'node:fs/promises'
-import * as fsPath from 'node:path'
-
 import { Questioner } from 'question-and-answer'
 
 const handleConfigurationInitialize = async ({ db }) => {

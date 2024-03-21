@@ -1,5 +1,3 @@
-import * as fs from 'node:fs/promises'
-
 import commandLineArgs from 'command-line-args'
 
 import { formatOutput } from '../format-output'
@@ -15,7 +13,7 @@ const handleConfigurationShow = async ({ argv, db }) => {
   const { format } = showConfigurationOptions
 
   const accountSettings = db.account.settings || {}
-  process.stdout.write(formatOutput({ format, output: accountSettings }))
+  process.stdout.write(formatOutput({ format, output : accountSettings }))
 }
 
 export { handleConfigurationShow }

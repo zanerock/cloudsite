@@ -198,9 +198,9 @@ const cliSpec = {
           required      : true
         },
         {
-          name: 'confirmed',
-          description: "When entirely deleting (disabling) a plugin, you must either confirm interactively or provide the '--confirmed' option.",
-          type: Boolean
+          name        : 'confirmed',
+          description : "When entirely deleting (disabling) a plugin, you must either confirm interactively or provide the '--confirmed' option.",
+          type        : Boolean
         },
         {
           name        : 'delete',

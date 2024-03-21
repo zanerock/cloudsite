@@ -15,12 +15,12 @@ const getValueContainerAndKey = ({ path, pathPrefix, rootContainer, spec, value 
         if (validation === undefined && matches === undefined) {
           throw new Error(
             `Plugin option '${origPath}' spec must define either 'validation' or 'matches'.`,
-            { exitCode: 11 }
+            { exitCode : 11 }
           )
         }
         if (matches !== undefined && value.match(matches) === null) {
           throw new Error(
-            `Invalid value '${value}' for '${origPath}'; must match ${matches.toString()}.`, 
+            `Invalid value '${value}' for '${origPath}'; must match ${matches.toString()}.`,
             { exitCode : 3 }
           )
         }
@@ -28,9 +28,8 @@ const getValueContainerAndKey = ({ path, pathPrefix, rootContainer, spec, value 
         if (validation !== undefined && !validation(value)) {
           throw new Error(`Value '${value}' for '${origPath}' failed validation.`, { exitCode : 3 })
         }
-      }
-      else { // currSpec === undefined
-        throw new Error(`Path '${origPath}' incorrect; no such terminal bit '${bit}'.`, { exitCode: 3 })
+      } else { // currSpec === undefined
+        throw new Error(`Path '${origPath}' incorrect; no such terminal bit '${bit}'.`, { exitCode : 3 })
       }
 
       return { valueKey : path[i], valueContainer : currContainer }

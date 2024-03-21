@@ -4,11 +4,14 @@ import { cliSpec } from '../constants'
 import { getAccountID } from '../../lib/shared/get-account-id'
 import { getCredentials } from '../../lib/actions/lib/get-credentials' // TODO: move to shared
 
-const generateIAMPolicy = async (accountInfo) => {
+const generateIAMPolicy = async (db) => {
   // TODO: once we refactor 'sites.json' into 'cloudsite-db.json', with 'accountID' at the top level, we can pass that
   // in here and avoid the 'getAccountID' call in many cases
-  const credentials = getCredentials(accountInfo.settings)
-  const accountID = accountInfo.accountID || await getAccountID({ credentials })
+  let { accountID } = db.account
+  if (accountID === undefined) {
+    const credentials = getCredentials(db.account?.settings)
+    accountID = await getAccountID({ credentials })
+  }
 
   return {
     Version   : '2012-10-17',
@@ -232,7 +235,7 @@ const handleGetIAMPolicy = async ({ argv, db }) => {
   if (withInstructions === true) {
     process.stdout.write(instructions + '\n\n')
   }
-  process.stdout.write(JSON.stringify(await generateIAMPolicy(globalOptions.account), null, '  ') + '\n')
+  process.stdout.write(JSON.stringify(await generateIAMPolicy(db), null, '  ') + '\n')
 }
 
 export { handleGetIAMPolicy }

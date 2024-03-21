@@ -1,8 +1,5 @@
-import { writeFile as mockWriteFile } from 'node:fs/promises'
-
 import { Questioner } from 'question-and-answer'
 
-import { DB_PATH } from '../../../constants'
 import { handleConfigurationInitialize } from '../handle-configuration-initialize'
 
 jest.mock('node:fs/promises')
@@ -17,7 +14,7 @@ describe('handleConfigurationInitialize', () => {
     jest.spyOn(Questioner.prototype, 'results', 'get')
       .mockReturnValue(questionResults)
 
-    const db = { account: { settings: {}}}
+    const db = { account : { settings : {} } }
     await handleConfigurationInitialize({ db })
     expect(Questioner.prototype.question).toHaveBeenCalledTimes(1)
   })
@@ -26,8 +23,8 @@ describe('handleConfigurationInitialize', () => {
     jest.spyOn(Questioner.prototype, 'question').mockResolvedValue(undefined)
     jest.spyOn(Questioner.prototype, 'results', 'get').mockReturnValue(questionResults)
 
-    const db = { account: { settings: {}}}
+    const db = { account : { settings : {} } }
     await handleConfigurationInitialize({ db })
-    expect(db.account.settings).toEqual({ ssoProfile: questionResults[0].value})
+    expect(db.account.settings).toEqual({ ssoProfile : questionResults[0].value })
   })
 })
