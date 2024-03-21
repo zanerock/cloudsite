@@ -18,18 +18,14 @@ const handlePluginSettings = async ({ argv, db }) => {
   // validate options
   const siteInfo = getSiteInfo({ apexDomain, db })
 
-  if (doDelete === true && (value !== undefined || options.length > 0)) {
-    errorOut("The '--delete' option is incompatible with the '--value' and --name-value options.\n")
-  } else if (doDelete === true && name === undefined) {
-    errorOut("You must specify a '--name' when '--delete' is set.\n")
-  } else if (doDelete !== true) {
-    if (name !== undefined && value !== undefined) {
-      options.push({ name, value : smartConvert(value) }) // the 'option' values are already converted
-    } else if (name !== undefined && value === undefined) {
-      errorOut("You must specify a '--value' or '--delete' when '--name' is set.\n")
-    } else if (name === undefined && value !== undefined) {
-      errorOut("You must specify a '--name' when '--value' is set.\n")
-    }
+  if (doDelete === true && name === undefined && options.length === 0) {
+    errorOut("You must specify a '--name' or at least one '--option' when '--delete' is set.\n")
+  } else if (name !== undefined && (value !== undefined || doDelete === true)) {
+    options.push({ name, value : smartConvert(value) }) // the 'option' values are already converted
+  } else if (name !== undefined && value === undefined) { // but delete is not set (checked above)
+    errorOut("You must specify a '--value' or '--delete' when '--name' is set.\n")
+  } else if (name === undefined && value !== undefined) {
+    errorOut("You must specify a '--name' when '--value' is set.\n")
   }
 
   if (doDelete !== true && options.length === 0) {
@@ -37,20 +33,10 @@ const handlePluginSettings = async ({ argv, db }) => {
   }
 
   // take actions and update the options
-  const pluginSettings = siteInfo.plugins?.setings || {}
-
-  if (doDelete === true) {
-    const { valueContainer, valueKey } = getValueContainerAndKey({ path : name, rootContainer : pluginSettings })
-    delete valueContainer[valueKey]
-
-    if (Object.keys(pluginSettings).length === 0) {
-      delete siteInfo.options
-    }
-  } else {
-    optionsLib.updatePluginSettings({ options, siteInfo })
+  if (siteInfo.plugins === undefined) {
+    siteInfo.plugins = {}
   }
-
-  siteInfo.plugins.settings = pluginSettings
+  optionsLib.updatePluginSettings({ doDelete, options, siteInfo })
 }
 
 export { handlePluginSettings }

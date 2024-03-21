@@ -13,7 +13,7 @@ const formatOption = {
 
 const optionSpec = {
   name        : 'option',
-  description : "A combined name-value paid, separated by ':'. Can be used multiple times.",
+  description : "A combined name-value pair: <name>:<value>. Can be used multiple times. With '--delete', the value portion is ignored and can be omitted, e.g.: '--option <name>'.",
   multiple    : true
 }
 
@@ -206,7 +206,7 @@ const cliSpec = {
           name        : 'name',
           description : 'The option name.'
         },
-        optionSpec,
+        optionSpec, // the 'options' definition
         {
           name        : 'value',
           description : "The setting value. Incompatible with the '--delete' option."

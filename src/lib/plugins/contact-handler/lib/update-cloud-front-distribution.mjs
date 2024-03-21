@@ -1,6 +1,6 @@
 const updateCloudFrontDistribution = ({ settings, siteTemplate }) => {
   const { finalTemplate } = siteTemplate
-  const contactHandlerPath = settings.path
+  const contactHandlerPath = settings.urlPath
 
   finalTemplate.Resources.SiteCloudFrontDistribution.DependsOn.push('ContactHandlerLambdaURL')
 
