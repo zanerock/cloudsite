@@ -44,7 +44,14 @@ const destroy = async ({ db, siteInfo, verbose }) => {
       const describeStackResourcesCommand = new DescribeStackResourcesCommand({ StackName: stackName })
       const resourceDescriptions = await cloudFormationClient.send(describeStackResourcesCommand)
 
-      console.log(JSON.stringify(resourceDescriptions, null, '  '))
+      const { toCleanup } = db
+      const lastCleanupAttempt = new Date().toISOString()
+      for (const { PhysicalResourceId: resourceID, ResourceType: resourecType, ResourceStatus: status } of 
+        resourceDescriptions.StackResources) {
+        if (status !== 'DELETE_COMPLETE') {
+          toCleanup.push({ resourceID, resourecType, status, lastCleanupAttempt })
+        }
+      }
       
       return false
     } else if (finalStatus === 'DELETE_COMPLETE') {
