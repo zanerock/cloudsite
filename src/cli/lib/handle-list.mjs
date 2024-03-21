@@ -18,7 +18,7 @@ const handleList = ({ argv, db }) => {
     ? sitesInfoArray
     : sitesInfoArray.map((siteInfo) => {
       const trimmed = pick(siteInfo, ['apexDomain', 'region', 'sourcePath'])
-      trimmed.plugins = Object.keys(siteInfo.pluginSettings)
+      trimmed.plugins = Object.keys(siteInfo.plugins)
       return trimmed
     })
 
