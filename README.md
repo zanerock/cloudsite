@@ -423,7 +423,8 @@ Sets (or deletes) a site option.
 |Option|Description|
 |------|------|
 |`[apex-domain]`|(_main argument_,_required_) The apex domain identifying the site.|
-|`--delete`|When set, then deletes the setting. Incompatible with the '--value' option. To delete all plugin settings, set '--name' or '--option' to the bare plugin name; e.g.: --value aPlugin.|
+|`--confirmed`|When entirely deleting (disabling) a plugin, you must either confirm interactively or provide the '--confirmed' option.|
+|`--delete`|When set, then deletes the setting. Incompatible with the '--value' option. To delete all plugin settings (disable the plugin), set '--name' or '--option' to the bare plugin name; e.g.: --value aPlugin.|
 |`--name`|The option name.|
 |`--option`|A combined name-value pair: <name>:<value>. Can be used multiple times. With '--delete', the value portion is ignored and can be omitted, e.g.: '--option <name>'.|
 |`--value`|The setting value. Incompatible with the '--delete' option.|

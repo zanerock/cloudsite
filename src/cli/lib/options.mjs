@@ -12,7 +12,7 @@ const mapRawOptions = (rawOptions = []) =>
     return { name, value }
   })
 
-const updatePluginSettings = ({ doDelete, options, siteInfo }) => {
+const updatePluginSettings = ({ confirmed, doDelete, options, siteInfo }) => {
   for (const { name, value } of options) {
     const pathBits = name.split('.')
     const pluginName = pathBits.shift()
@@ -29,18 +29,28 @@ const updatePluginSettings = ({ doDelete, options, siteInfo }) => {
 
     const { valueContainer, valueKey } = getValueContainerAndKey({ path : pathBits, rootContainer : pluginSettings })
 
-    if (doDelete === true && valueKey === undefined) {
-      delete siteInfo.plugins[pluginName]
+    if (doDelete === true && valueKey === undefined) { // then we're deleting/disabling the entire plugin
+      if (confirmed === true) {
+        const pluginSettings = siteInfo.plugins[pluginName]
+        delete siteInfo.plugins[pluginName]
+        process.stdout.write(`Deleted plugin settings for '${pluginName}'; was:\n${JSON.stringify(pluginSettings, null, '  ')}\n`)
+      }
+      else {
+        errorOut("Interactive confirmation not yet enabled. Use the '--confirmed' option. Note, this will delete all plugin settings and data and cannot be recovered. You must run 'cloudsite update' for this change to take effect. To re-enable the plugin, you must re-initialize all required settings and update the site.\n", 3)
+      }
     }
     else if (doDelete === true) {
+      const wasValue = valueContainer[valueKey]
       delete valueContainer[valueKey]
+      process.stdout.write(`Deleted option '${name}' (was: '${wasValue}').\n`)
     } else {
       valueContainer[valueKey] = value
+      process.stdout.write(`Set '${name}' to '${value}'.\n`)
     }
 
     // delete settings object if empty
     // TODO: this is insufficient if we have a nested option that's empty, we could get something like:
-    // { settings: { blah: {} }}
+    // { settings: { blah: {} }}; we need a recursive 'cleanEmptyObjects' or something.
     if (Object.keys(pluginSettings).length === 0) {
       delete siteInfo.plugins[plugin].settings
     }

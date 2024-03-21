@@ -198,8 +198,13 @@ const cliSpec = {
           required      : true
         },
         {
+          name: 'confirmed',
+          description: "When entirely deleting (disabling) a plugin, you must either confirm interactively or provide the '--confirmed' option.",
+          type: Boolean
+        },
+        {
           name        : 'delete',
-          description : "When set, then deletes the setting. Incompatible with the '--value' option. To delete all plugin settings, set '--name' or '--option' to the bare plugin name; e.g.: --value aPlugin.",
+          description : "When set, then deletes the setting. Incompatible with the '--value' option. To delete all plugin settings (disable the plugin), set '--name' or '--option' to the bare plugin name; e.g.: --value aPlugin.",
           type        : Boolean
         },
         {

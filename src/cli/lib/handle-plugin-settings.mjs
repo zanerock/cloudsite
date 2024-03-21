@@ -13,7 +13,7 @@ const handlePluginSettings = async ({ argv, db }) => {
   const apexDomain = setOptionOptions['apex-domain']
   const options = optionsLib.mapRawOptions(setOptionOptions.option)
 
-  const { delete: doDelete, name, value } = setOptionOptions
+  const { confirmed, delete: doDelete, name, value } = setOptionOptions
 
   // validate options
   const siteInfo = getSiteInfo({ apexDomain, db })
@@ -36,7 +36,7 @@ const handlePluginSettings = async ({ argv, db }) => {
   if (siteInfo.plugins === undefined) {
     siteInfo.plugins = {}
   }
-  optionsLib.updatePluginSettings({ doDelete, options, siteInfo })
+  optionsLib.updatePluginSettings({ confirmed, doDelete, options, siteInfo })
 }
 
 export { handlePluginSettings }
