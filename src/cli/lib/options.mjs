@@ -29,7 +29,10 @@ const updatePluginSettings = ({ doDelete, options, siteInfo }) => {
 
     const { valueContainer, valueKey } = getValueContainerAndKey({ path : pathBits, rootContainer : pluginSettings })
 
-    if (doDelete === true) {
+    if (doDelete === true && valueKey === undefined) {
+      delete siteInfo.plugins[pluginName]
+    }
+    else if (doDelete === true) {
       delete valueContainer[valueKey]
     } else {
       valueContainer[valueKey] = value

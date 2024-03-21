@@ -199,7 +199,7 @@ const cliSpec = {
         },
         {
           name        : 'delete',
-          description : "When set, then deletes the setting. Incompatible with the '--value' option.",
+          description : "When set, then deletes the setting. Incompatible with the '--value' option. To delete all plugin settings, set '--name' or '--option' to the bare plugin name; e.g.: --value aPlugin.",
           type        : Boolean
         },
         {

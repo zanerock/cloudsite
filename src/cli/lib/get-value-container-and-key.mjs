@@ -1,6 +1,9 @@
 import { errorOut } from './error-out'
 
 const getValueContainerAndKey = ({ path, rootContainer, spec, value }) => {
+  if (path === undefined || path.length === 0) {
+    return [rootContainer, undefined]
+  }
   // walks the path, creating new containers along the way as necessary
   return path.reduce(([currContainer, spec], bit, i) => {
     // then we're at the terminal path bit; let's analyze whether it's valid and if value passes validation
