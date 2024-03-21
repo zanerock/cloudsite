@@ -27,7 +27,8 @@ const updatePluginSettings = ({ confirmed, doDelete, options, siteInfo }) => {
     const pluginSettings = siteInfo.plugins[pluginName].settings || {}
     siteInfo.plugins[pluginName].settings = pluginSettings // in case we just created it
 
-    const { valueContainer, valueKey } = getValueContainerAndKey({ path : pathBits, rootContainer : pluginSettings })
+    const { valueContainer, valueKey } =
+      getValueContainerAndKey({ path : pathBits, pathPrefix : pluginName + '.', rootContainer : pluginSettings })
 
     if (doDelete === true && valueKey === undefined) { // then we're deleting/disabling the entire plugin
       if (confirmed === true) {

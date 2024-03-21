@@ -3,7 +3,6 @@ import commandLineArgs from 'command-line-args'
 import { cliSpec } from '../constants'
 import { errorOut } from './error-out'
 import { getSiteInfo } from './get-site-info'
-import { getValueContainerAndKey } from './get-value-container-and-key'
 import * as optionsLib from './options'
 import { smartConvert } from './smart-convert'
 
