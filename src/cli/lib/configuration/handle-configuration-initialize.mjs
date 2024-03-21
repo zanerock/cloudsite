@@ -3,8 +3,6 @@ import * as fsPath from 'node:path'
 
 import { Questioner } from 'question-and-answer'
 
-import { GLOBAL_OPTIONS_PATH } from '../../constants'
-
 const handleConfigurationInitialize = async ({ db }) => {
   const interrogationBundle = {
     actions : [
