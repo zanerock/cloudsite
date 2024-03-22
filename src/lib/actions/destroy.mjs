@@ -9,7 +9,7 @@ import { SiteTemplate } from '../shared/site-template'
 import { trackStackStatus } from './lib/track-stack-status'
 
 const destroy = async ({ db, siteInfo, verbose }) => {
-  const { bucketName, stackName } = siteInfo
+  const { apexDomain, bucketName, stackName } = siteInfo
 
   const credentials = getCredentials(db.account.settings)
   const s3Client = new S3Client({ credentials })
@@ -29,20 +29,23 @@ const destroy = async ({ db, siteInfo, verbose }) => {
   const siteTemplate = new SiteTemplate({ credentials, siteInfo })
   await siteTemplate.destroyPlugins()
 
-  if (verbose === true) { progressLogger.write('Deleting stack') }
+  if (verbose === true) { progressLogger.write(`Deleting stack for ${apexDomain}`) }
   const cloudFormationClient = new CloudFormationClient({ credentials })
   const deleteStackCommand = new DeleteStackCommand({ StackName : stackName })
   await cloudFormationClient.send(deleteStackCommand)
 
   // the delete command is doesn't mind if the bucket doesn't exist, but trackStackStatus does
   try {
-    const finalStatus = await trackStackStatus({ cloudFormationClient, noDeleteOnFailure : true, stackName })
-    if (verbose === true) { progressLogger?.write('\nFinal status: ' + finalStatus + '.') }
+    const finalStatus = 
+      await trackStackStatus({ cloudFormationClient, noDeleteOnFailure : true, noInitialStatus : true stackName })
 
     if (finalStatus === 'DELETE_FAILED') {
       return false
     } else if (finalStatus === 'DELETE_COMPLETE') { // actually, we should never see this, see note below
       return true
+    }
+    else {
+      throw new Error(`Unexpected final status after delete: ${finalStatus}`)
     }
   } catch (e) {
     // if the stack does not exist we get a ValidationError; so this is the expected outcome when deleting a stack as

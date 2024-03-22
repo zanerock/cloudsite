@@ -2,7 +2,7 @@ import { DeleteStackCommand, DescribeStacksCommand } from '@aws-sdk/client-cloud
 
 const RECHECK_WAIT_TIME = 2000 // ms
 
-const trackStackStatus = async ({ cloudFormationClient, noDeleteOnFailure, stackName }) => {
+const trackStackStatus = async ({ cloudFormationClient, noDeleteOnFailure, noInitialStatus, stackName }) => {
   let stackStatus, previousStatus
   do {
     const describeInput = { StackName : stackName }
@@ -11,7 +11,7 @@ const trackStackStatus = async ({ cloudFormationClient, noDeleteOnFailure, stack
 
     stackStatus = describeResponse.Stacks[0].StackStatus
 
-    if (stackStatus !== previousStatus) {
+    if (stackStatus !== previousStatus && (noInitialStatus !== true || previousStatus !== undefined)) {
       // convert to sentence case
       const statusMessage = stackStatus.charAt(0) + stackStatus.slice(1).toLowerCase().replaceAll(/_/g, ' ')
       process.stdout.write((previousStatus !== undefined ? '\n' : '') + statusMessage)
@@ -24,14 +24,12 @@ const trackStackStatus = async ({ cloudFormationClient, noDeleteOnFailure, stack
   } while (stackStatus.endsWith('_IN_PROGRESS'))
 
   if (stackStatus === 'ROLLBACK_COMPLETE' && noDeleteOnFailure !== true) {
-    process.stdout.write(`\nDeleting stack '${stackName}'... `)
+    process.stdout.write(`\nDeleting stack '${stackName}' `)
     const deleteInput = { StackName : stackName }
     const deleteCommand = new DeleteStackCommand(deleteInput)
     await cloudFormationClient.send(deleteCommand)
 
-    process.stdout.write('done.\n')
-  } else {
-    process.stdout.write('\nStack status: ' + stackStatus + '\n')
+    trackStackStatus({ cloudFormationClient, noDeleteOnFailure: true, noInitialStatus :true, stackName})
   }
 
   return stackStatus
