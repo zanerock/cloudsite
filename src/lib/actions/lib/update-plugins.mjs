@@ -4,7 +4,7 @@ const updatePlugins = async ({ credentials, siteInfo }) => {
   const { apexDomain, plugins : pluginsData } = siteInfo
   const updates = []
 
-  for (const [pluginKey, settings] of Object.entries(pluginData)) {
+  for (const [pluginKey, pluginData] of Object.entries(pluginsData)) {
     const plugin = plugins[pluginKey]
     if (plugin === undefined) {
       throw new Error(`Unknown plugin found in '${apexDomain}' during update.`)

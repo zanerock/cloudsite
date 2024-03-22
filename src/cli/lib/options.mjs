@@ -31,11 +31,11 @@ const updatePluginSettings = ({ confirmed, doDelete, options, siteInfo }) => {
     siteInfo.plugins[pluginName].settings = pluginSettings // in case we just created it
     const spec = plugin.config.options
 
-    const { valueContainer, valueKey } = getValueContainerAndKey({ 
-      path : pathBits, 
-      pathPrefix : pluginName + '.', 
+    const { valueContainer, valueKey } = getValueContainerAndKey({
+      path          : pathBits,
+      pathPrefix    : pluginName + '.',
       rootContainer : pluginSettings,
-      spec, 
+      spec,
       value
     })
 

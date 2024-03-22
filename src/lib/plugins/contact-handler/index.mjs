@@ -21,12 +21,12 @@ const config = {
     },
     emailTo : {
       required : true,
-      matches : emailRE,
+      matches  : emailRE
     },
     urlPath : {
-      required: true,
-      default : '/contact-handler',
-      matches : /^\/(?:[a-z0-9_-]+\/?)+$/
+      required : true,
+      default  : '/contact-handler',
+      matches  : /^\/(?:[a-z0-9_-]+\/?)+$/
     }
   }
 }
@@ -71,7 +71,7 @@ const importHandler = async ({ credentials, name, pluginsData, siteInfo, templat
     }
     // we add 'emailTo' in order to keep in next to 'emailFrom', but if it's not defined, we don't want it
     if (emailTo === undefined) {
-      delete pluginSettings[name].emailTo
+      delete pluginsData[name].settings.emailTo
     }
   }
   // else, not enabled, nothing to do
@@ -102,7 +102,7 @@ const stackConfig = async ({ pluginData, siteTemplate, update }) => {
   const { credentials, siteInfo } = siteTemplate
   const enableEmail = !!pluginData.settings.emailFrom
 
-  const lambdaFunctionsBucketName = 
+  const lambdaFunctionsBucketName =
     await stageLambdaFunctionZipFiles({ credentials, enableEmail, pluginData, siteInfo })
 
   await setupContactHandler({ credentials, lambdaFunctionsBucketName, pluginData, siteInfo, siteTemplate, update })

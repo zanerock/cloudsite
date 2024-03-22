@@ -19,7 +19,7 @@ const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, upd
 
   const emailerFunctionBaseName = convertDomainToBucketName(apexDomain) + '-contact-emailer'
   const emailerFunctionName = update
-    ? plluginData.emailerFunctionName
+    ? pluginData.emailerFunctionName
     : (await determineLambdaFunctionName({
         baseName : emailerFunctionBaseName,
         credentials,

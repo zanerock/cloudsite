@@ -20,7 +20,21 @@ const handleDestroy = async ({ argv, db }) => {
   const deleted = await destroy({ db, siteInfo, verbose : true })
 
   if (deleted === true) {
-    process.stdout.write(`Removing ${apexDomain} from local DB.\n`)
+    process.stdout.write(`\n${apexDomain} deleted.\nRemoving ${apexDomain} from local DB.\n`)
+    delete db.sites[apexDomain]
+  } else {
+    process.stdout.write(`\nThe delete has failed, which is expected because the 'replicated Lambda functions' need to be cleared by AWS before all resources can be deleted. This can take 30 min to a few hours.\n\nThe site has been marked for cleanup and you can now create new sites using the '${apexDomain}' domain.\n\nYou can complete deletion by executing:\ncloudsite cleanup`)
+
+    const now = new Date()
+    const remindAfter = new Date(now.getTime() + 2 * 60 * 60 * 1000)
+    siteInfo.lastCleanupAttempt = now.toISOString()
+    db.toCleanup[apexDomain] = siteInfo
+    db.reminders.push({
+      todo        : `Cleanup partially deleted site '${apexDomain}'.`,
+      action      : 'cloudsite cleanup',
+      remindAfter : remindAfter.toISOString(),
+      references  : apexDomain
+    })
     delete db.sites[apexDomain]
   }
 }
