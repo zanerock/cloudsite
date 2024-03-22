@@ -35,6 +35,22 @@ const cliSpec = {
   ],
   commands : [
     {
+      name        : 'cleanup',
+      description : "Attempts to fully delete partially deleted sites in the 'needs to be cleaned up' state.",
+      arguments   : [
+        {
+          name          : 'apex-domain',
+          defaultOption : true,
+          description   : 'Specifies the site to clean up rather than trying to cleanup all pending sites.'
+        },
+        {
+          name        : 'list',
+          description : 'Lists the sites in need of cleaning up.',
+          type        : Boolean
+        }
+      ]
+    },
+    {
       name        : 'configuration',
       description : 'Command group for managing the Cloudsite CLI configuration.',
       arguments   : [

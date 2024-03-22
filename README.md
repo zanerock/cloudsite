@@ -56,10 +56,12 @@ const siteInfo = {
   "apexDomain": "your-website-domain.com",
   "sourceType": "docusaurus", // or 'vanilla'
   "sourcePath": "/Users/your-home-dir/path/to/website/source"
-  "pluginSettings": {
+  "plugins": {
     "contactHandler": {
-      "path": "/contact-handler",
-      "emailFrom": "contactform@your-website-domain.com"
+      "settings": {
+        "path": "/contact-handler",
+        "emailFrom": "contactform@your-website-domain.com"
+      }
     }
   }
 }
@@ -287,6 +289,7 @@ cloudsite update your-domain.com
 
 ### Commands
 
+- [`cleanup`](#cloudsite-cleanup): Attempts to fully delete partially deleted sites in the 'needs to be cleaned up' state.
 - [`configuration`](#cloudsite-configuration): Command group for managing the Cloudsite CLI configuration.
 - [`create`](#cloudsite-create): Creates a new website, setting up infrastructure and copying content.
 - [`destroy`](#cloudsite-destroy): Destroys the named site. I.e., deletes all cloud resources associated with the site.
@@ -297,6 +300,18 @@ cloudsite update your-domain.com
 - [`plugin-settings`](#cloudsite-plugin-settings): Sets (or deletes) a site option.
 - [`update`](#cloudsite-update): Updates a website content and/or infrastructure.
 - [`verify`](#cloudsite-verify): Verifies the site is up and running and that the stack and content are up-to-date.
+
+<span id="cloudsite-cleanup"></span>
+#### `cloudsite cleanup <options> <apex-domain>`
+
+Attempts to fully delete partially deleted sites in the 'needs to be cleaned up' state.
+
+##### `cleanup` options
+
+|Option|Description|
+|------|------|
+|`<apex-domain>`|(_main argument_,_optional_) Specifies the site to clean up rather than trying to cleanup all pending sites.|
+|`--list`|Lists the sites in need of cleaning up.|
 
 <span id="cloudsite-configuration"></span>
 #### `cloudsite configuration [subcommand]`

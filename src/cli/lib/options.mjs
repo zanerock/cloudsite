@@ -22,13 +22,22 @@ const updatePluginSettings = ({ confirmed, doDelete, options, siteInfo }) => {
       errorOut(`No such plugin '${pluginName}'; use one of: ${Object.keys(plugins).join(', ')}.\n`)
     }
 
+    if (siteInfo.plugins === undefined) {
+      siteInfo.plugins = {}
+    }
     const pluginData = siteInfo.plugins[pluginName] || {}
     siteInfo.plugins[pluginName] = pluginData // in case we just created it
     const pluginSettings = siteInfo.plugins[pluginName].settings || {}
     siteInfo.plugins[pluginName].settings = pluginSettings // in case we just created it
+    const spec = plugin.config.options
 
-    const { valueContainer, valueKey } =
-      getValueContainerAndKey({ path : pathBits, pathPrefix : pluginName + '.', rootContainer : pluginSettings })
+    const { valueContainer, valueKey } = getValueContainerAndKey({
+      path          : pathBits,
+      pathPrefix    : pluginName + '.',
+      rootContainer : pluginSettings,
+      spec,
+      value
+    })
 
     if (doDelete === true && valueKey === undefined) { // then we're deleting/disabling the entire plugin
       if (confirmed === true) {

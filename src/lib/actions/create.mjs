@@ -58,7 +58,7 @@ const create = async ({
   if (stackCreated === true) {
     process.stdout.write('Stack created.\n')
 
-    const postUpdateHandlers = Object.keys(siteInfo.pluginSettings || {}).map((pluginKey) =>
+    const postUpdateHandlers = Object.keys(siteInfo.plugins || {}).map((pluginKey) =>
       [pluginKey, plugins[pluginKey].postUpdateHandler]
     )
       .filter(([, postUpdateHandler]) => postUpdateHandler !== undefined)
@@ -72,7 +72,7 @@ const create = async ({
       syncSiteContent({ credentials, noBuild, siteInfo }),
       createOrUpdateDNSRecords({ credentials, siteInfo }),
       ...(postUpdateHandlers.map(([pluginKey, handler]) =>
-        handler({ settings : siteInfo.pluginSettings[pluginKey], siteInfo })))
+        handler({ pluginData : siteInfo.plugins[pluginKey], siteInfo })))
     ])
 
     try {

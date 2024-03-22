@@ -5,6 +5,7 @@ import { commandLineDocumentation } from 'command-line-documentation'
 import isEqual from 'lodash/isEqual'
 
 import { cliSpec, DB_PATH } from './constants'
+import { handleCleanup } from './lib/handle-cleanup'
 import { handleConfiguration } from './lib/handle-configuration'
 import { handleCreate } from './lib/handle-create'
 import { handleDestroy } from './lib/handle-destroy'
@@ -32,7 +33,7 @@ const cloudsite = async () => {
       throw e
     }
     // otherwise, it's fine, there just are no options
-    db = { account : { settings : {} }, sites : {}, todos : [], reminders : [] }
+    db = { account : { settings : {} }, sites : {}, toCleanup : {}, reminders : [] }
   }
 
   const origDB = structuredClone(db)
@@ -40,8 +41,10 @@ const cloudsite = async () => {
   let exitCode = 0
   try {
     switch (command) {
+      case 'cleanup':
+        await handleCleanup({ argv, db }); break
       case 'configuration':
-        await handleConfiguration({ argv, cliSpec, db }); break
+        await handleConfiguration({ argv, db }); break
       case 'create':
         await handleCreate({ argv, db }); break
       case 'destroy':

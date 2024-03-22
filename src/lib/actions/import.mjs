@@ -54,8 +54,8 @@ const doImport = async ({ commonLogsBucket, db, domain, region, sourcePath, sour
 
   progressLogger?.write('Loading plugins data...\n')
 
-  const pluginSettings = {}
-  siteInfo.pluginSettings = pluginSettings
+  const pluginsData = {}
+  siteInfo.plugins = pluginsData
 
   for (const pluginName of Object.keys(plugins)) {
     progressLogger?.write(`Importing plugin settings for '${pluginName}'...\n`)
@@ -64,7 +64,7 @@ const doImport = async ({ commonLogsBucket, db, domain, region, sourcePath, sour
       throw new Error(`Plugin '${pluginName}' does not define 'importHandler'; cannot  continue with import.`)
     }
 
-    await importHandler({ credentials, name : pluginName, pluginSettings, siteInfo, template })
+    await importHandler({ credentials, name : pluginName, pluginsData, siteInfo, template })
   }
 
   return siteInfo

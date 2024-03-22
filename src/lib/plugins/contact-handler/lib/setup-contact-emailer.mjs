@@ -3,10 +3,10 @@ import { convertDomainToBucketName } from '../../../shared/convert-domain-to-buc
 import { determineLambdaFunctionName } from './determine-lambda-function-name'
 import { getSiteTag } from '../../../shared/get-site-tag'
 
-const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, update, settings, siteTemplate }) => {
+const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, update, pluginData, siteTemplate }) => {
   const { finalTemplate, siteInfo } = siteTemplate
   const { apexDomain } = siteInfo
-  const { emailFrom : contactHandlerFromEmail, emailTo : contactHandlerTargetEmail } = settings
+  const { emailFrom : contactHandlerFromEmail, emailTo : contactHandlerTargetEmail } = pluginData.settings
 
   if (contactHandlerFromEmail === undefined && contactHandlerTargetEmail !== undefined) {
     throw new Error("Found site setting for 'emailTo', but no 'emailFrom'; 'emailFrom' must be set to activate email functionality.")
@@ -19,13 +19,13 @@ const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, upd
 
   const emailerFunctionBaseName = convertDomainToBucketName(apexDomain) + '-contact-emailer'
   const emailerFunctionName = update
-    ? settings.emailerFunctionName
+    ? pluginData.emailerFunctionName
     : (await determineLambdaFunctionName({
         baseName : emailerFunctionBaseName,
         credentials,
         siteTemplate
       }))
-  settings.emailerFunctionName = emailerFunctionName
+  pluginData.emailerFunctionName = emailerFunctionName
   const emailerFunctionLogGroupName = emailerFunctionName
 
   const siteTag = getSiteTag(siteInfo)

@@ -18,10 +18,10 @@ import { getSiteTag } from '../../../shared/get-site-tag'
  * @param {object} input.siteInfo - See {@link SiteTemplate} for details.
  * @returns {string} The Lambda function bucket name.
  */ /* eslint-enable  jsdoc/no-undefined-types */
-const stageLambdaFunctionZipFiles = async ({ credentials, enableEmail, settings, siteInfo }) => {
+const stageLambdaFunctionZipFiles = async ({ credentials, enableEmail, pluginData, siteInfo }) => {
   process.stdout.write('Staging Lambda function zip files...\n')
 
-  let { lambdaFunctionsBucket } = settings
+  let { lambdaFunctionsBucket } = pluginData
   const { apexDomain, region } = siteInfo
 
   const s3Client = new S3Client({ credentials, region })
@@ -53,7 +53,7 @@ const stageLambdaFunctionZipFiles = async ({ credentials, enableEmail, settings,
   })
   await s3Client.send(putBucketTaggingCommand)
 
-  settings.lambdaFunctionsBucket = lambdaFunctionsBucket
+  pluginData.lambdaFunctionsBucket = lambdaFunctionsBucket
 
   const putCommands = [
     putZipFile({ bucketName : lambdaFunctionsBucket, fileName : CONTACT_HANDLER_ZIP_NAME, s3Client }),
