@@ -30,8 +30,7 @@ const handleDestroy = async ({ argv, db }) => {
     siteInfo.lastCleanupAttempt = now.toISOString()
     db.toCleanup[apexDomain] = siteInfo
     db.reminders.push({
-      todo        : `Cleanup partially deleted site '${apexDomain}'.`,
-      action      : 'cloudsite cleanup',
+      todo        : `Cleanup partially deleted site '${apexDomain}'. Try:\ncloudsite cleanup`,
       remindAfter : remindAfter.toISOString(),
       references  : apexDomain
     })

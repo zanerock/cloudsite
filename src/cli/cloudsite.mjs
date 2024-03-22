@@ -5,6 +5,7 @@ import { commandLineDocumentation } from 'command-line-documentation'
 import isEqual from 'lodash/isEqual'
 
 import { cliSpec, DB_PATH } from './constants'
+import { checkReminders } from './lib/check-reminders'
 import { handleCleanup } from './lib/handle-cleanup'
 import { handleConfiguration } from './lib/handle-configuration'
 import { handleCreate } from './lib/handle-create'
@@ -35,6 +36,8 @@ const cloudsite = async () => {
     // otherwise, it's fine, there just are no options
     db = { account : { settings : {} }, sites : {}, toCleanup : {}, reminders : [] }
   }
+
+  checkReminders({ reminders : db.reminders })
 
   const origDB = structuredClone(db)
 
