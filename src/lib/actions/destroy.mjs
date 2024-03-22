@@ -9,7 +9,7 @@ import { SiteTemplate } from '../shared/site-template'
 import { trackStackStatus } from './lib/track-stack-status'
 
 const destroy = async ({ db, siteInfo, verbose }) => {
-  const { bucketName, stackName } = siteInfo
+  const { apexDomain, bucketName, stackName } = siteInfo
 
   const credentials = getCredentials(db.account.settings)
   const s3Client = new S3Client({ credentials })
@@ -40,18 +40,19 @@ const destroy = async ({ db, siteInfo, verbose }) => {
     progressLogger?.write('Final status: ' + finalStatus + '\n')
 
     if (finalStatus === 'DELETE_FAILED') {
-      progressLogger?.write('\nThe delete has failed, which is expected because the \'replicated Lambda functions\' need to be cleared by AWS. This can take 30 min to a few hours.\nScanning remaining resources...')
-      const describeStackResourcesCommand = new DescribeStackResourcesCommand({ StackName: stackName })
-      const resourceDescriptions = await cloudFormationClient.send(describeStackResourcesCommand)
+      progressLogger?.write(`\nThe delete has failed, which is expected because the \'replicated Lambda functions\' need to be cleared by AWS before all resources can be deleted. This can take 30 min to a few hours.\n\nThe site has been marked for cleanup and you can now create new sites using the '${apexDomain}' domain.\n\nYou can complete deletion by executing:\ncloudsite cleanup`)
 
-      const { toCleanup } = db
-      const lastCleanupAttempt = new Date().toISOString()
-      for (const { PhysicalResourceId: resourceID, ResourceType: resourecType, ResourceStatus: status } of 
-        resourceDescriptions.StackResources) {
-        if (status !== 'DELETE_COMPLETE') {
-          toCleanup.push({ resourceID, resourecType, status, lastCleanupAttempt })
-        }
-      }
+      const now = new Date()
+      const remindAfter = new Date(now.getTime() + 2 * 60 * 60 * 1000)
+      siteInfo.lastCleanupAttempt = now.toISOString()
+      db.toCleanup[apexDomain] = siteInfo
+      db.reminders.push({
+        todo: `Cleanup partially deleted site '${apexDomain}'.`,
+        action: 'cloudsite cleanup',
+        remindAfter: remindAfter.toISOString(),
+        references: apexDomain
+      })
+      delete db.sites[apexDomain]
       
       return false
     } else if (finalStatus === 'DELETE_COMPLETE') {
