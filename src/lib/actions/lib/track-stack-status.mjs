@@ -29,7 +29,7 @@ const trackStackStatus = async ({ cloudFormationClient, noDeleteOnFailure, noIni
     const deleteCommand = new DeleteStackCommand(deleteInput)
     await cloudFormationClient.send(deleteCommand)
 
-    trackStackStatus({ cloudFormationClient, noDeleteOnFailure: true, noInitialStatus :true, stackName})
+    trackStackStatus({ cloudFormationClient, noDeleteOnFailure : true, noInitialStatus : true, stackName })
   }
 
   return stackStatus

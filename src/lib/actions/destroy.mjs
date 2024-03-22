@@ -36,15 +36,14 @@ const destroy = async ({ db, siteInfo, verbose }) => {
 
   // the delete command is doesn't mind if the bucket doesn't exist, but trackStackStatus does
   try {
-    const finalStatus = 
-      await trackStackStatus({ cloudFormationClient, noDeleteOnFailure : true, noInitialStatus : true stackName })
+    const finalStatus =
+      await trackStackStatus({ cloudFormationClient, noDeleteOnFailure : true, noInitialStatus : true, stackName })
 
     if (finalStatus === 'DELETE_FAILED') {
       return false
     } else if (finalStatus === 'DELETE_COMPLETE') { // actually, we should never see this, see note below
       return true
-    }
-    else {
+    } else {
       throw new Error(`Unexpected final status after delete: ${finalStatus}`)
     }
   } catch (e) {
