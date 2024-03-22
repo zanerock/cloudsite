@@ -5,12 +5,11 @@ const checkReminders = ({ reminders }) => {
     return remindAfterEpoch <= now
   })
 
-
   if (currentReminders.length > 0) {
     const columnWidth = process.stdout.columns || 40
     const opener = '-- Reminder' + (currentReminders.lengith > 1 ? 's ' : ' ')
     process.stdout.write(opener + '-'.repeat(columnWidth - opener.length))
-    
+
     currentReminders.forEach(({ todo }, i) => {
       if (currentReminders.length > 1) {
         process.stdout.write(i + '.')
