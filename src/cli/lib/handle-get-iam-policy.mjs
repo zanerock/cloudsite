@@ -3,6 +3,7 @@ import commandLineArgs from 'command-line-args'
 import { cliSpec } from '../constants'
 import { getAccountID } from '../../lib/shared/get-account-id'
 import { getCredentials } from '../../lib/actions/lib/get-credentials' // TODO: move to shared
+import { progressLogger } from '../../lib/shared/progress-logger'
 
 const generateIAMPolicy = async (db) => {
   // TODO: once we refactor 'sites.json' into 'cloudsite-db.json', with 'accountID' at the top level, we can pass that
@@ -233,9 +234,9 @@ const handleGetIAMPolicy = async ({ argv, db }) => {
   const withInstructions = getIAMPolicyOptions['with-instructions']
 
   if (withInstructions === true) {
-    process.stdout.write(instructions + '\n\n')
+    progressLogger.write(instructions + '\n\n')
   }
-  process.stdout.write(JSON.stringify(await generateIAMPolicy(db), null, '  ') + '\n')
+  progressLogger.write(JSON.stringify(await generateIAMPolicy(db), null, '  ') + '\n')
 }
 
 export { handleGetIAMPolicy }

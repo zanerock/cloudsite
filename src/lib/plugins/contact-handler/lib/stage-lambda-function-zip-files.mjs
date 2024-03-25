@@ -7,6 +7,7 @@ import { CONTACT_EMAILER_ZIP_NAME, CONTACT_HANDLER_ZIP_NAME, REQUEST_SIGNER_ZIP_
 import { convertDomainToBucketName } from '../../../shared/convert-domain-to-bucket-name'
 import { determineBucketName } from '../../../shared/determine-bucket-name'
 import { getSiteTag } from '../../../shared/get-site-tag'
+import { progressLogger } from '../../../shared/progress-logger'
 // jsdoc wants this, but it causes a circular dependency
 // import { SiteTemplate } from '../../../shared/site-template'
 
@@ -19,7 +20,7 @@ import { getSiteTag } from '../../../shared/get-site-tag'
  * @returns {string} The Lambda function bucket name.
  */ /* eslint-enable  jsdoc/no-undefined-types */
 const stageLambdaFunctionZipFiles = async ({ credentials, enableEmail, pluginData, siteInfo }) => {
-  process.stdout.write('Staging Lambda function zip files...\n')
+  progressLogger.write('Staging Lambda function zip files...\n')
 
   let { lambdaFunctionsBucket } = pluginData
   const { apexDomain, region } = siteInfo

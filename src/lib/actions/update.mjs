@@ -8,6 +8,7 @@ import {
 import { createOrUpdateDNSRecords } from './lib/create-or-update-dns-records'
 import { getCredentials } from './lib/get-credentials'
 import { getSiteTag } from '../shared/get-site-tag'
+import { progressLogger } from '../shared/progress-logger'
 import { syncSiteContent } from './lib/sync-site-content'
 import { updatePlugins } from './lib/update-plugins'
 import { updateStack } from './lib/update-stack'
@@ -70,7 +71,7 @@ const update = async ({
 }
 
 const invalidateCache = async ({ credentials, siteInfo }) => {
-  process.stdout.write('Invalidating CloudFront cache...\n')
+  progressLogger.write('Invalidating CloudFront cache...\n')
 
   const { cloudFrontDistributionID } = siteInfo
 

@@ -2,6 +2,7 @@ import { CloudFormationClient, GetTemplateCommand, UpdateStackCommand } from '@a
 import isEqual from 'lodash/isEqual'
 
 import * as plugins from '../../plugins'
+import { progressLogger } from '../../shared/progress-logger'
 import { SiteTemplate } from '../../shared/site-template'
 import { trackStackStatus } from './track-stack-status'
 import { updateSiteInfo } from './update-site-info'
@@ -24,7 +25,7 @@ const updateStack = async ({ credentials, siteInfo }) => {
   const currentTemplate = getTemplateResponse.TemplateBody
 
   if (isEqual(currentTemplate, newTemplate)) {
-    process.stdout.write('No change to template; skipping stack update.\n')
+    progressLogger.write('No change to template; skipping stack update.\n')
     return
   }
   // else, the template has changed
@@ -56,7 +57,7 @@ const updateStack = async ({ credentials, siteInfo }) => {
   }
 
   if (finalStatus === 'UPDATE_COMPLETE') {
-    process.stdout.write('Stack updated.\n')
+    progressLogger.write('Stack updated.\n')
   }
 
   return finalStatus

@@ -97,7 +97,7 @@ const preStackDestroyHandler = async ({ pluginData, siteTemplate }) => {
 }
 
 const stackConfig = async ({ pluginData, siteTemplate, update }) => {
-  process.stdout.write('Preparing contact handler plugin...\n')
+  progressLogger.write('Preparing contact handler plugin...\n')
 
   const { credentials, siteInfo } = siteTemplate
   const enableEmail = !!pluginData.settings.emailFrom

@@ -3,8 +3,8 @@ import commandLineArgs from 'command-line-args'
 import { checkFormat } from './check-format'
 import { cliSpec } from '../constants'
 import { errorOut } from './error-out'
-import { formatOutput } from './format-output'
 import { getSiteInfo } from './get-site-info'
+import { progressLogger } from '../../lib/shared/progress-logger'
 
 const handleDetail = ({ argv, db }) => {
   const detailOptionsSpec = cliSpec.commands.find(({ name }) => name === 'detail').arguments
@@ -15,11 +15,12 @@ const handleDetail = ({ argv, db }) => {
   if (apexDomain === undefined) {
     errorOut('Apex domain must be specified.')
   }
+
   checkFormat(format)
 
   const output = getSiteInfo({ apexDomain, db })
 
-  process.stdout.write(formatOutput({ output, format }))
+  progressLogger.write(output, '', { format })
 }
 
 export { handleDetail }

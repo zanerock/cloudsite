@@ -6,6 +6,8 @@ import { tryExec } from '@liquid-labs/shell-toolkit'
 import mime from 'mime-types'
 import { S3SyncClient } from 's3-sync-client'
 
+import { progressLogger } from '../../shared/progress-logger'
+
 const syncSiteContent = async ({ credentials, noBuild, siteInfo }) => {
   const { bucketName, sourcePath, sourceType } = siteInfo
 
@@ -13,13 +15,13 @@ const syncSiteContent = async ({ credentials, noBuild, siteInfo }) => {
     const packageRoot = fsPath.resolve(sourcePath, '..')
     const packagePath = fsPath.join(packageRoot, 'package.json')
     if (fileExists(packagePath)) {
-      process.stdout.write('Rebuilding site... ')
+      progressLogger.write('Rebuilding site... ')
       tryExec(`cd "${packageRoot}" && npm run build`)
-      process.stdout.write('done.\n')
+      progressLogger.write('done.\n')
     }
   }
 
-  process.stdout.write(`Syncing files from ${sourcePath}...\n`)
+  progressLogger.write(`Syncing files from ${sourcePath}...\n`)
 
   const s3Client = new S3Client({ credentials })
   const { sync } = new S3SyncClient({ client : s3Client })

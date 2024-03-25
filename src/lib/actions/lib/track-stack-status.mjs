@@ -1,5 +1,7 @@
 import { DeleteStackCommand, DescribeStacksCommand } from '@aws-sdk/client-cloudformation'
 
+import { progressLogger } from '../../shared/progress-logger'
+
 const RECHECK_WAIT_TIME = 2000 // ms
 
 const trackStackStatus = async ({ cloudFormationClient, noDeleteOnFailure, noInitialStatus, stackName }) => {
@@ -14,9 +16,9 @@ const trackStackStatus = async ({ cloudFormationClient, noDeleteOnFailure, noIni
     if (stackStatus !== previousStatus && (noInitialStatus !== true || previousStatus !== undefined)) {
       // convert to sentence case
       const statusMessage = stackStatus.charAt(0) + stackStatus.slice(1).toLowerCase().replaceAll(/_/g, ' ')
-      process.stdout.write((previousStatus !== undefined ? '\n' : '') + statusMessage)
+      progressLogger.write((previousStatus !== undefined ? '\n' : '') + statusMessage)
     } else {
-      process.stdout.write('.')
+      progressLogger.write('.')
     }
 
     previousStatus = stackStatus
@@ -24,7 +26,7 @@ const trackStackStatus = async ({ cloudFormationClient, noDeleteOnFailure, noIni
   } while (stackStatus.endsWith('_IN_PROGRESS'))
 
   if (stackStatus === 'ROLLBACK_COMPLETE' && noDeleteOnFailure !== true) {
-    process.stdout.write(`\nDeleting stack '${stackName}' `)
+    progressLogger.write(`\nDeleting stack '${stackName}' `)
     const deleteInput = { StackName : stackName }
     const deleteCommand = new DeleteStackCommand(deleteInput)
     await cloudFormationClient.send(deleteCommand)

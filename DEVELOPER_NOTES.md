@@ -48,7 +48,7 @@ All the CLI dependencies are noted as peer dependencies. This is so that if the 
 See also the [Known limitations section in the README.md](./README.md#known-limitations).
 
 - The current implementation deals exclusively with apex domains. It would make a lot of sense to support sub-domains as well.
-- Reporting progress through `process.stdout` isn't ideal, especial for the _lib_ components. We think using something like the Winston logger might be useful.[^1]
+- We want to move to a more flexible and consistent output protocol. All actions should support 'quiet'-ing intermediate output and a single, formatable output object.[^1]
 
 [^1: We did a survey of "top javascript log libraries" and determined that Winston seemed to fit best. It had all the feataures we needed and is very well supported.]
 

@@ -1,6 +1,7 @@
 import { errorOut } from './error-out'
 import { getValueContainerAndKey } from './get-value-container-and-key'
 import * as plugins from '../../lib/plugins'
+import { progressLogger } from '../../lib/shared/progress-logger'
 import { smartConvert } from './smart-convert'
 
 const mapRawOptions = (rawOptions = []) =>
@@ -43,17 +44,17 @@ const updatePluginSettings = ({ confirmed, doDelete, options, siteInfo }) => {
       if (confirmed === true) {
         const pluginSettings = siteInfo.plugins[pluginName]
         delete siteInfo.plugins[pluginName]
-        process.stdout.write(`Deleted plugin settings for '${pluginName}'; was:\n${JSON.stringify(pluginSettings, null, '  ')}\n`)
+        progressLogger.write(`Deleted plugin settings for '${pluginName}'; was:\n${JSON.stringify(pluginSettings, null, '  ')}\n`)
       } else {
         errorOut("Interactive confirmation not yet enabled. Use the '--confirmed' option. Note, this will delete all plugin settings and data and cannot be recovered. You must run 'cloudsite update' for this change to take effect. To re-enable the plugin, you must re-initialize all required settings and update the site.\n", 3)
       }
     } else if (doDelete === true) {
       const wasValue = valueContainer[valueKey]
       delete valueContainer[valueKey]
-      process.stdout.write(`Deleted option '${name}' (was: '${wasValue}').\n`)
+      progressLogger.write(`Deleted option '${name}' (was: '${wasValue}').\n`)
     } else {
       valueContainer[valueKey] = value
-      process.stdout.write(`Set '${name}' to '${value}'.\n`)
+      progressLogger.write(`Set '${name}' to '${value}'.\n`)
     }
 
     // delete settings object if empty
