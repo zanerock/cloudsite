@@ -22,7 +22,7 @@ const handleList = ({ argv, db }) => {
       return trimmed
     })
 
-  progressLogger.write(output, { format })
+  progressLogger.write(output, '', { format })
 }
 
 export { handleList }
