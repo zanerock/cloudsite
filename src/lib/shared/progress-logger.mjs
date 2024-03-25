@@ -1,6 +1,6 @@
 import { getPrinter } from 'magic-print'
 
-let progressLogger = {}
+const progressLogger = {}
 
 const configureLogger = (options) => {
   progressLogger.write = getPrinter(options)
