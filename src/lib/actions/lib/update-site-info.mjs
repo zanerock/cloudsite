@@ -1,8 +1,10 @@
 import { CloudFormationClient, DescribeStacksCommand } from '@aws-sdk/client-cloudformation'
 
+import { progressLogger } from '../../shared/progress-logger'
+
 const updateSiteInfo = async ({ credentials, siteInfo }) => {
   const { region, stackName } = siteInfo
-  process.stdout.write('Gathering information from stack...\n')
+  progressLogger.write('Gathering information from stack...\n')
   const cloudFormationClient = new CloudFormationClient({ credentials, region })
   const describeCommand = new DescribeStacksCommand({ StackName : stackName })
   const describeResponse = await cloudFormationClient.send(describeCommand)

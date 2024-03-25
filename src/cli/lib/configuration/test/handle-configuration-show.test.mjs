@@ -1,25 +1,23 @@
+import { StringOut } from 'magic-print'
+
+import { configureLogger } from '../../../../lib/shared/progress-logger'
 import { handleConfigurationShow } from '../handle-configuration-show'
 
-const expectedOutput = 'hi'
+const settingsVal = 'hi'
 
 jest.mock('node:fs/promises', () => ({
-  readFile : () => expectedOutput
+  readFile : () => settingsVal
 }))
 
 describe('handleConfigurationShow', () => {
-  let output
-  let origWrite
-  beforeAll(() => {
-    origWrite = process.stdout.write
-    process.stdout.write = (chunk) => { output = chunk }
-  })
-
-  afterAll(() => {
-    process.stdout.write = origWrite
+  let stringOut
+  beforeEach(() => {
+    stringOut = new StringOut()
+    configureLogger({ out : stringOut })
   })
 
   test('prints the file contents', async () => {
-    await handleConfigurationShow({ argv : [], db : { account : { settings : expectedOutput } } })
-    expect(output).toBe(expectedOutput + '\n')
+    await handleConfigurationShow({ argv : [], db : { account : { settings : settingsVal } } })
+    expect(stringOut.string).toBe(settingsVal + '\n')
   })
 })

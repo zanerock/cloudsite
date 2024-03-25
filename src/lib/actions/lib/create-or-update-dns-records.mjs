@@ -2,6 +2,7 @@ import { Route53Client, ChangeResourceRecordSetsCommand } from '@aws-sdk/client-
 import { CloudFrontClient, GetDistributionCommand } from '@aws-sdk/client-cloudfront'
 
 import { getHostedZoneID } from './get-hosted-zone-id'
+import { progressLogger } from '../../shared/progress-logger'
 
 const createOrUpdateDNSRecords = async ({ credentials, siteInfo }) => {
   const { apexDomain, cloudFrontDistributionID, region } = siteInfo
@@ -35,7 +36,7 @@ const createOrUpdateDNSRecords = async ({ credentials, siteInfo }) => {
       }))
     }
   })
-  process.stdout.write(`Creating/updating Route 53 resource record sets/DNS entries for ${domains.join(', ')}...\n`)
+  progressLogger.write(`Creating/updating Route 53 resource record sets/DNS entries for ${domains.join(', ')}...\n`)
   await route53Client.send(changeResourceRecordSetCommand)
 }
 

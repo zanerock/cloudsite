@@ -6,6 +6,7 @@ import { cliSpec } from '../constants'
 import { doImport } from '../../lib/actions/import'
 import { errorOut } from './error-out'
 import { processSourceType } from './process-source-type'
+import { progressLogger } from '../../lib/shared/progress-logger'
 
 const handleImport = async ({ argv, db }) => {
   // gather parameter values
@@ -51,7 +52,7 @@ const handleImport = async ({ argv, db }) => {
 
   // now, actually do the import
   const dbEntry = await doImport({ commonLogsBucket, db, domain, region, sourcePath, sourceType, stack })
-  process.stdout.write(`Updating DB entry for '${domain}'...\n`)
+  progressLogger.write(`Updating DB entry for '${domain}'...\n`)
   sitesInfo[domain] = dbEntry
 }
 

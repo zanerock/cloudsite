@@ -13,6 +13,7 @@ import { findCertificate } from './lib/find-certificate'
 import { getCredentials } from './lib/get-credentials'
 import { getSiteTag } from '../shared/get-site-tag'
 import * as plugins from '../plugins'
+import { progressLogger } from '../shared/progress-logger'
 import { SiteTemplate } from '../shared/site-template'
 import { syncSiteContent } from './lib/sync-site-content'
 import { trackStackStatus } from './lib/track-stack-status'
@@ -38,7 +39,7 @@ const create = async ({
 
   let { certificateArn, status } = await findCertificate({ acmClient, apexDomain })
   if (certificateArn === null) {
-    process.stdout.write(`Creating wildcard certificate for '${apexDomain}'...`)
+    progressLogger.write(`Creating wildcard certificate for '${apexDomain}'...`)
     certificateArn = await createCertificate({ acmClient, apexDomain })
     status = 'PENDING_VALIDATION'
   }
@@ -56,7 +57,7 @@ const create = async ({
   const stackCreated = await createSiteStack({ credentials, noDeleteOnFailure, siteInfo })
 
   if (stackCreated === true) {
-    process.stdout.write('Stack created.\n')
+    progressLogger.write('Stack created.\n')
 
     const postUpdateHandlers = Object.keys(siteInfo.plugins || {}).map((pluginKey) =>
       [pluginKey, plugins[pluginKey].postUpdateHandler]
@@ -86,7 +87,7 @@ const create = async ({
 }
 
 const createCertificate = async ({ acmClient, apexDomain }) => {
-  process.stdout.write(`Creating wildcard certificate for '${apexDomain}'...`)
+  progressLogger.write(`Creating wildcard certificate for '${apexDomain}'...`)
   const input = { // RequestCertificateRequest
     DomainName              : '*.' + apexDomain, // TODO: support more narrow cert?
     ValidationMethod        : 'DNS', // TODO: support email

@@ -1,3 +1,9 @@
-const progressLogger = process.stdout
+import { getPrinter } from 'magic-print'
 
-export { progressLogger }
+const progressLogger = {}
+
+const configureLogger = (options) => {
+  progressLogger.write = getPrinter(options)
+}
+
+export { configureLogger, progressLogger }

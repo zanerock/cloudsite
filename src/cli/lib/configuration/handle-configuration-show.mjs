@@ -1,8 +1,7 @@
 import commandLineArgs from 'command-line-args'
 
-import { formatOutput } from '../format-output'
-
 import { cliSpec } from '../../constants'
+import { progressLogger } from '../../../lib/shared/progress-logger'
 
 const handleConfigurationShow = async ({ argv, db }) => {
   const showConfigurationCLISpec = cliSpec
@@ -13,7 +12,7 @@ const handleConfigurationShow = async ({ argv, db }) => {
   const { format } = showConfigurationOptions
 
   const accountSettings = db.account.settings || {}
-  process.stdout.write(formatOutput({ format, output : accountSettings }))
+  progressLogger.write(accountSettings, '', { format })
 }
 
 export { handleConfigurationShow }

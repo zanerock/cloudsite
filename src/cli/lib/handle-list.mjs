@@ -3,7 +3,7 @@ import pick from 'lodash/pick'
 
 import { checkFormat } from './check-format'
 import { cliSpec } from '../constants'
-import { formatOutput } from './format-output'
+import { progressLogger } from '../../lib/shared/progress-logger'
 
 const handleList = ({ argv, db }) => {
   const listOptionsSpec = cliSpec.commands.find(({ name }) => name === 'list').arguments
@@ -22,7 +22,7 @@ const handleList = ({ argv, db }) => {
       return trimmed
     })
 
-  process.stdout.write(formatOutput({ output, format }))
+  progressLogger.write(output, { format })
 }
 
 export { handleList }

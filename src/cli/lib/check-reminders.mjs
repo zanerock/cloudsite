@@ -1,3 +1,5 @@
+import { progressLogger } from '../../lib/shared/progress-logger'
+
 const checkReminders = ({ reminders }) => {
   const now = new Date().getTime()
   const currentReminders = reminders.filter(({ remindAfter }) => {
@@ -6,18 +8,15 @@ const checkReminders = ({ reminders }) => {
   })
 
   if (currentReminders.length > 0) {
-    const columnWidth = process.stdout.columns || 40
-    const opener = '-- Reminder' + (currentReminders.lengith > 1 ? 's ' : ' ')
-    process.stdout.write(opener + '-'.repeat(columnWidth - opener.length))
+    const columnWidth = progressLogger.write.width
+    const opener = '-- <yellow>Reminder<rst>' + (currentReminders.lengith > 1 ? 's ' : ' ')
+    progressLogger.write(opener + '-'.repeat(columnWidth - opener.length + '<yellow>'.length + '<rst>'.length) + '\n')
 
     currentReminders.forEach(({ todo }, i) => {
-      if (currentReminders.length > 1) {
-        process.stdout.write(i + '.')
-      }
-      process.stdout.write(todo + '\n')
+      progressLogger.write((currentReminders.length > 1 ? i + '.' : '') + todo + '\n')
     })
 
-    process.stdout.write('-'.repeat(columnWidth) + '\n')
+    progressLogger.write('-'.repeat(columnWidth) + '\n')
   }
 }
 
