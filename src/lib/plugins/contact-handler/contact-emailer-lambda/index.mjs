@@ -1,14 +1,35 @@
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses'
 
+// TODO: Currently, this code copied between 'contact-emailer-lambda' and 'contact-handler-lambda' we can't seem to
+// import files in the Lambda runtime
+
+// MAKE SURE THIS CODE IS IN SYNC on both 'contact-emailer-lambda' and 'contact-handler-lambda'
+
+const getFormFields = () => {
+  let formFields
+  try {
+    formFields = JSON.parse(process.env.FORM_FIELDS)
+  } catch (e) {
+    if (e.name === 'SyntaxError') {
+      throw new Error("Environment variable 'FORM_FIELDS' is not defined or is not valid JSON. (" + JSON.stringify(process.env) + ')')
+    } else {
+      throw e
+    }
+  }
+  // TODO: verify form of JSON
+  return formFields
+}
+
 export const handler = async (event) => {
   const sourceEmail = process.env.EMAIL_HANDLER_SOURCE_EMAIL
   // TODO: change to ...EMAILS
   const targetEmails = (process.env.EMAIL_HANDLER_TARGET_EMAIL || sourceEmail).split(',')
   const apexDomain = process.env.APEX_DOMAIN
+  const formFields = getFormFields() // this does it's own validation checking
+
   if (apexDomain === undefined) {
     throw new Error("Environment variable 'APEX_DOMAIN' is not defined; bailing out. (" + JSON.stringify(process.env) + ')')
   }
-
   if (sourceEmail === undefined) {
     throw new Error("Environment variable 'EMAIL_HANDLER_SOURCE_EMAIL' not defined; bailing out. (" + JSON.stringify(process.env) + ')')
   }
@@ -18,31 +39,28 @@ export const handler = async (event) => {
     const { eventName } = record
     if (eventName !== 'INSERT') continue
     const tabledetails = record.dynamodb
-    console.info(tabledetails)
 
     const submissionID = tabledetails.NewImage.SubmissionID.S
     const submissionTime = tabledetails.NewImage.SubmissionTime.S
-    const givenName = tabledetails.NewImage.given_name.S
-    const familyName = tabledetails.NewImage.family_name.S
-    const email = tabledetails.NewImage.email.S
-    const message = tabledetails.NewImage.message.S
-    const topics = tabledetails.NewImage.topics.SS
+
+    let messageBody = ''
+    let email
+    for (const [name, type] of Object.entries(formFields)) {
+      // convert to sentence case
+      const label = name.charAt(0) + name.slice(1).toLowerCase().replaceAll(/_/g, ' ')
+      const value = tabledetails.NewImage[name][type]
+      if (value) {
+        messageBody += `${label}: ${value}\n`
+      }
+
+      if (name === 'email') {
+        email = value
+      }
+    }
 
     const subject = `New contact form submission (${submissionID})`
 
-    let messageBody = ''
-    if (givenName) {
-      messageBody += `given name: ${givenName}\n`
-    }
-    if (familyName) {
-      messageBody += `given name: ${familyName}\n`
-    }
-    messageBody += `email: ${email}\n`
-    // might: [''] if they didn't designate any topics
-    if (topics && (topics.length > 1 || topics[0])) {
-      messageBody += `topics: ${topics.join(', ')}\n`
-    }
-    messageBody += '\n' + message + '\n\n'
+    messageBody += '\n\n'
     messageBody += 'Submitted at: ' + submissionTime + '\n'
 
     const sesClient = new SESClient()

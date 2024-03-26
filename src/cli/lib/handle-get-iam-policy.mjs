@@ -157,11 +157,13 @@ const generateIAMPolicy = async (db) => {
           'lambda:GetFunctionUrlConfig',
           'lambda:ListFunctions',
           'lambda:ListFunctionUrlConfigs',
+          'lambda:ListTags',
           'lambda:ListVersionsByFunction',
           'lambda:PublishVersion',
           'lambda:RemovePermission',
           'lambda:TagResource',
           'lambda:UpdateEventSourceMapping',
+          'lambda:UpdateFunctionCode',
           'lambda:UpdateFunctionConfiguration',
           'lambda:UpdateFunctionUrlConfig'
         ],

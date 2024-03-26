@@ -1,4 +1,6 @@
-import { CONTACT_EMAILER_ZIP_NAME } from './constants'
+import { LambdaClient, UpdateFunctionCodeCommand } from '@aws-sdk/client-lambda'
+
+import { CONTACT_EMAILER_ZIP_NAME, STANDARD_FORM_FIELDS } from './constants'
 import { convertDomainToBucketName } from '../../../shared/convert-domain-to-bucket-name'
 import { determineLambdaFunctionName } from './determine-lambda-function-name'
 import { getSiteTag } from '../../../shared/get-site-tag'
@@ -6,7 +8,11 @@ import { getSiteTag } from '../../../shared/get-site-tag'
 const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, update, pluginData, siteTemplate }) => {
   const { finalTemplate, siteInfo } = siteTemplate
   const { apexDomain } = siteInfo
-  const { emailFrom : contactHandlerFromEmail, emailTo : contactHandlerTargetEmail } = pluginData.settings
+  const {
+    emailFrom : contactHandlerFromEmail,
+    emailTo : contactHandlerTargetEmail,
+    formFields = 'standard'
+  } = pluginData.settings
 
   if (contactHandlerFromEmail === undefined && contactHandlerTargetEmail !== undefined) {
     throw new Error("Found site setting for 'emailTo', but no 'emailFrom'; 'emailFrom' must be set to activate email functionality.")
@@ -27,6 +33,10 @@ const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, upd
       }))
   pluginData.emailerFunctionName = emailerFunctionName
   const emailerFunctionLogGroupName = emailerFunctionName
+
+  const formFieldsSpec = formFields === 'standard'
+    ? JSON.stringify(STANDARD_FORM_FIELDS)
+    : formFields
 
   const siteTag = getSiteTag(siteInfo)
   const tags = [{ Key : siteTag, Value : '' }]
@@ -98,7 +108,8 @@ const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, upd
       Environment : {
         Variables : {
           APEX_DOMAIN                : apexDomain,
-          EMAIL_HANDLER_SOURCE_EMAIL : contactHandlerFromEmail
+          EMAIL_HANDLER_SOURCE_EMAIL : contactHandlerFromEmail,
+          FORM_FIELDS                : formFieldsSpec
           // EMAIL_HANDSER_TARGET_EMAIL will be added late if defined
         }
       },
@@ -125,6 +136,17 @@ const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, upd
   if (contactHandlerTargetEmail !== undefined) {
     finalTemplate.Resources.ContactEmailerFunction.Properties.Environment.Variables.EMAIL_HANDLER_TARGET_EMAIL =
       contactHandlerTargetEmail
+  }
+
+  if (update === true) {
+    const client = new LambdaClient({ credentials })
+    const command = new UpdateFunctionCodeCommand({ // UpdateFunctionCodeRequest
+      FunctionName : emailerFunctionName,
+      S3Bucket     : lambdaFunctionsBucketName,
+      S3Key        : CONTACT_EMAILER_ZIP_NAME
+      // Publish: true || false,
+    })
+    await client.send(command)
   }
 }
 

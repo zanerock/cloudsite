@@ -23,6 +23,31 @@ const config = {
       required : true,
       matches  : emailRE
     },
+    formFields : {
+      validation : (value) => {
+        if (value.match(/\s*standard\s*/i)) {
+          return true
+        } // else
+        let json
+        if (typeof value === 'string') {
+          try {
+            json = JSON.parse(value)
+          } catch (e) {
+            return false
+          }
+        } else if (typeof value === 'object') {
+          json = value
+        } else {
+          return false
+        }
+        for (const type of Object.values(json)) {
+          if (type !== 'S' && type !== 'SS') {
+            return false
+          }
+        }
+        return true
+      }
+    },
     urlPath : {
       required : true,
       default  : '/contact-handler',
