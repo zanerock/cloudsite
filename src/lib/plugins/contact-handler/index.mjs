@@ -23,8 +23,8 @@ const config = {
       required : true,
       matches  : emailRE
     },
-    formFields: {
-      validation: (value) => {
+    formFields : {
+      validation : (value) => {
         if (value.match(/\s*standard\s*/i)) {
           return true
         } // else
@@ -32,15 +32,12 @@ const config = {
         if (typeof value === 'string') {
           try {
             json = JSON.parse(value)
-          }
-          catch (e) {
+          } catch (e) {
             return false
           }
-        }
-        else if (typeof value === 'object') {
+        } else if (typeof value === 'object') {
           json = value
-        }
-        else {
+        } else {
           return false
         }
         for (const type of Object.values(json)) {

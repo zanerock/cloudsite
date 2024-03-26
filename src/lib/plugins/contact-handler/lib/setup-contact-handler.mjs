@@ -100,7 +100,7 @@ const setupContactHandler = async ({
       MemorySize  : 128,
       Timeout     : 5,
       Environment : {
-        Variables : { 
+        Variables : {
           TABLE_PREFIX : bucketName,
           FORM_FIELDS  : formFieldsSpec
         }
@@ -151,12 +151,12 @@ const setupContactHandler = async ({
   if (update === true) {
     const client = new LambdaClient({ credentials })
     const command = new UpdateFunctionCodeCommand({ // UpdateFunctionCodeRequest
-      FunctionName: contactHandlerFunctionName,
-      S3Bucket : lambdaFunctionsBucketName,
-      S3Key    : CONTACT_HANDLER_ZIP_NAME
+      FunctionName : contactHandlerFunctionName,
+      S3Bucket     : lambdaFunctionsBucketName,
+      S3Key        : CONTACT_HANDLER_ZIP_NAME
       // Publish: true || false,
     })
-    await client.send(command);
+    await client.send(command)
   }
 }
 

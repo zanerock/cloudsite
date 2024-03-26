@@ -8,9 +8,9 @@ import { getSiteTag } from '../../../shared/get-site-tag'
 const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, update, pluginData, siteTemplate }) => {
   const { finalTemplate, siteInfo } = siteTemplate
   const { apexDomain } = siteInfo
-  const { 
-    emailFrom : contactHandlerFromEmail, 
-    emailTo : contactHandlerTargetEmail, 
+  const {
+    emailFrom : contactHandlerFromEmail,
+    emailTo : contactHandlerTargetEmail,
     formFields = 'standard'
   } = pluginData.settings
 
@@ -141,12 +141,12 @@ const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, upd
   if (update === true) {
     const client = new LambdaClient({ credentials })
     const command = new UpdateFunctionCodeCommand({ // UpdateFunctionCodeRequest
-      FunctionName: emailerFunctionName,
-      S3Bucket : lambdaFunctionsBucketName,
-      S3Key    : CONTACT_EMAILER_ZIP_NAME
+      FunctionName : emailerFunctionName,
+      S3Bucket     : lambdaFunctionsBucketName,
+      S3Key        : CONTACT_EMAILER_ZIP_NAME
       // Publish: true || false,
     })
-    await client.send(command);
+    await client.send(command)
   }
 }
 

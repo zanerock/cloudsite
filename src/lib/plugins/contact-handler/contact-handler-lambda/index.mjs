@@ -3,7 +3,7 @@ import queryString from 'node:querystring'
 import { DynamoDBClient, PutItemCommand } from '@aws-sdk/client-dynamodb'
 import { v4 as uuidv4 } from 'uuid'
 
-// TODO: Currently, this code copied between 'contact-emailer-lambda' and 'contact-handler-lambda' we can't seem to 
+// TODO: Currently, this code copied between 'contact-emailer-lambda' and 'contact-handler-lambda' we can't seem to
 // import files in the Lambda runtime
 
 // MAKE SURE THIS CODE IS IN SYNC on both 'contact-emailer-lambda' and 'contact-handler-lambda'
@@ -12,12 +12,10 @@ const getFormFields = () => {
   let formFields
   try {
     formFields = JSON.parse(process.env.FORM_FIELDS)
-  }
-  catch (e) {
+  } catch (e) {
     if (e.name === 'SyntaxError') {
       throw new Error("Environment variable 'FORM_FIELDS' is not defined or is not valid JSON. (" + JSON.stringify(process.env) + ')')
-    }
-    else {
+    } else {
       throw e
     }
   }
@@ -41,21 +39,19 @@ const handler = async (event) => {
 
   const item = {
     SubmissionID   : { S : uuidv4() },
-    SubmissionTime : { S : new Date().toISOString() },
+    SubmissionTime : { S : new Date().toISOString() }
   }
 
   for (const [name, type] of Object.entries(formFields)) {
     let emptyValue
     if (type === 'S') {
       emptyValue = ''
-    }
-    else if (type === 'SS') {
+    } else if (type === 'SS') {
       emptyValue = ['']
-    }
-    else {
+    } else {
       throw new Error(`Unknown type '${type}' encoded in 'FORM_FIELDS'. Must be 'S' or 'SS'.`)
     }
-    item[name] = { [type] : data[name] || emptyValue}
+    item[name] = { [type] : data[name] || emptyValue }
   }
 
   const putCommand = new PutItemCommand({

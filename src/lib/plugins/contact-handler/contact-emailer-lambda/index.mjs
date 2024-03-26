@@ -1,6 +1,6 @@
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses'
 
-// TODO: Currently, this code copied between 'contact-emailer-lambda' and 'contact-handler-lambda' we can't seem to 
+// TODO: Currently, this code copied between 'contact-emailer-lambda' and 'contact-handler-lambda' we can't seem to
 // import files in the Lambda runtime
 
 // MAKE SURE THIS CODE IS IN SYNC on both 'contact-emailer-lambda' and 'contact-handler-lambda'
@@ -9,12 +9,10 @@ const getFormFields = () => {
   let formFields
   try {
     formFields = JSON.parse(process.env.FORM_FIELDS)
-  }
-  catch (e) {
+  } catch (e) {
     if (e.name === 'SyntaxError') {
       throw new Error("Environment variable 'FORM_FIELDS' is not defined or is not valid JSON. (" + JSON.stringify(process.env) + ')')
-    }
-    else {
+    } else {
       throw e
     }
   }
