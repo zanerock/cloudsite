@@ -87,6 +87,7 @@ const generateIAMPolicy = async (db) => {
           'dynamodb:DescribeTable',
           'dynamodb:ListTagsOfResource',
           'dynamodb:TagResource',
+          'dynamodb:UntagResource',
           'dynamodb:UpdateTable'
         ],
         Resource : [
@@ -178,8 +179,10 @@ const generateIAMPolicy = async (db) => {
           'logs:CreateLogGroup',
           'logs:DeleteLogGroup',
           'logs:DeleteRetentionPolicy',
+          'logs:ListTagsForResource',
           'logs:PutRetentionPolicy',
-          'logs:TagResource'
+          'logs:TagResource',
+          'logs:UntagResource'
         ],
         Resource : [
           '*'
