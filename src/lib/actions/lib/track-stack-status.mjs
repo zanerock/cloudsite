@@ -17,6 +17,9 @@ const trackStackStatus = async ({ cloudFormationClient, noDeleteOnFailure, noIni
       // convert to sentence case
       const statusMessage = stackStatus.charAt(0) + stackStatus.slice(1).toLowerCase().replaceAll(/_/g, ' ')
       progressLogger.write((previousStatus !== undefined ? '\n' : '') + statusMessage)
+      if (!stackStatus.endsWith('_PROGRESS')) {
+        progressLogger.write('\n')
+      }
     } else {
       progressLogger.write('.')
     }
