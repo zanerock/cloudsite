@@ -1,4 +1,6 @@
-import { CONTACT_HANDLER_ZIP_NAME } from './constants'
+import { LambdaClient, UpdateFunctionCodeCommand } from '@aws-sdk/client-lambda'
+
+import { CONTACT_HANDLER_ZIP_NAME, STANDARD_FORM_FIELDS } from './constants'
 import { convertDomainToBucketName } from '../../../shared/convert-domain-to-bucket-name'
 import { determineLambdaFunctionName } from './determine-lambda-function-name'
 import { getSiteTag } from '../../../shared/get-site-tag'
@@ -26,6 +28,11 @@ const setupContactHandler = async ({
 
   const contactHandlerLogGroupName = contactHandlerFunctionName
   const contactHandlerPolicyName = contactHandlerFunctionName
+
+  const { formFields = 'standard' } = pluginData.settings
+  const formFieldsSpec = formFields === 'standard'
+    ? JSON.stringify(STANDARD_FORM_FIELDS)
+    : formFields
 
   const siteTag = getSiteTag(siteInfo)
   const tags = [{ Key : siteTag, Value : '' }]
@@ -93,7 +100,10 @@ const setupContactHandler = async ({
       MemorySize  : 128,
       Timeout     : 5,
       Environment : {
-        Variables : { TABLE_PREFIX : bucketName }
+        Variables : { 
+          TABLE_PREFIX : bucketName,
+          FORM_FIELDS  : formFieldsSpec
+        }
       },
       LoggingConfig : {
         ApplicationLogLevel : 'INFO', // support options
@@ -137,6 +147,17 @@ const setupContactHandler = async ({
   }
   finalTemplate.Outputs.ContactHandlerLambdaURL = { Value : { Ref : 'ContactHandlerLambdaURL' } }
   resourceTypes['Lambda::Url'] = true
+
+  if (update === true) {
+    const client = new LambdaClient({ credentials })
+    const command = new UpdateFunctionCodeCommand({ // UpdateFunctionCodeRequest
+      FunctionName: contactHandlerFunctionName,
+      S3Bucket : lambdaFunctionsBucketName,
+      S3Key    : CONTACT_HANDLER_ZIP_NAME
+      // Publish: true || false,
+    })
+    await client.send(command);
+  }
 }
 
 export { setupContactHandler }
