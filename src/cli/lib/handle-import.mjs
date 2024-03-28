@@ -5,12 +5,13 @@ import commandLineArgs from 'command-line-args'
 import { cliSpec } from '../constants'
 import { doImport } from '../../lib/actions/import'
 import { errorOut } from './error-out'
+import { getOptionsSpec } from './get-options-spec'
 import { processSourceType } from './process-source-type'
 import { progressLogger } from '../../lib/shared/progress-logger'
 
 const handleImport = async ({ argv, db }) => {
   // gather parameter values
-  const importOptionsSpec = cliSpec.commands.find(({ name }) => name === 'import').arguments
+  const importOptionsSpec = getOptionsSpec({ cliSpec, name: 'import' })
   const importOptions = commandLineArgs(importOptionsSpec, { argv })
   const commonLogsBucket = importOptions['common-logs-bucket']
   const domainAndStack = importOptions['domain-and-stack']

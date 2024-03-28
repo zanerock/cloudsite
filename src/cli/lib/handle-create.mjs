@@ -8,6 +8,7 @@ import { checkAuthentication } from './check-authentication'
 import { cliSpec } from '../constants'
 import { create } from '../../lib/actions/create'
 import { errorOut } from './error-out'
+import { getOptionsSpec } from './get-options-spec'
 import * as optionsLib from './options'
 import * as plugins from '../../lib/plugins'
 import { processSourceType } from './process-source-type'
@@ -16,7 +17,7 @@ import { progressLogger } from '../../lib/shared/progress-logger'
 const handleCreate = async ({ argv, db }) => {
   await checkAuthentication({ db })
 
-  const createOptionsSpec = cliSpec.commands.find(({ name }) => name === 'create').arguments
+  const createOptionsSpec = getOptionsSpec({ cliSpec, name: 'create' })
   const createOptions = commandLineArgs(createOptionsSpec, { argv })
   // action behavior options
   const noDeleteOnFailure = createOptions['no-delete-on-failure']

@@ -3,6 +3,7 @@ import commandLineArgs from 'command-line-args'
 import { cliSpec } from '../constants'
 import { getAccountID } from '../../lib/shared/get-account-id'
 import { getCredentials } from '../../lib/actions/lib/get-credentials' // TODO: move to shared
+import { getOptionsSpec } from './get-options-spec'
 import { progressLogger } from '../../lib/shared/progress-logger'
 
 const generateIAMPolicy = async (db) => {
@@ -235,7 +236,7 @@ const instructions =
 6. Replace the JSON with the text below.`
 
 const handleGetIAMPolicy = async ({ argv, db }) => {
-  const getIAMPolicyOptionsSpec = cliSpec.commands.find(({ name }) => name === 'get-iam-policy').arguments
+  const getIAMPolicyOptionsSpec = getOptionsSpec({ cliSpec, name: 'get-iam-policy' })
   const getIAMPolicyOptions = commandLineArgs(getIAMPolicyOptionsSpec, { argv })
   const withInstructions = getIAMPolicyOptions['with-instructions']
 

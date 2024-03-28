@@ -2,10 +2,11 @@ import commandLineArgs from 'command-line-args'
 
 import { cliSpec } from '../constants'
 import { destroy } from '../../lib/actions/destroy'
+import { getOptionsSpec } from './get-options-spec'
 import { progressLogger } from '../../lib/shared/progress-logger'
 
 const handleCleanup = async ({ argv, db }) => {
-  const cleanupOptionsSpec = cliSpec.commands.find(({ name }) => name === 'cleanup').arguments
+  const cleanupOptionsSpec = getOptionsSpec({ cliSpec, name: 'cleanup' })
   const cleanupOptions = commandLineArgs(cleanupOptionsSpec, { argv })
   const apexDomain = cleanupOptions['apex-domain']
   const { list } = cleanupOptions

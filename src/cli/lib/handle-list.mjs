@@ -3,10 +3,11 @@ import pick from 'lodash/pick'
 
 import { checkFormat } from './check-format'
 import { cliSpec } from '../constants'
+import { getOptionsSpec } from './get-options-spec'
 import { progressLogger } from '../../lib/shared/progress-logger'
 
 const handleList = ({ argv, db }) => {
-  const listOptionsSpec = cliSpec.commands.find(({ name }) => name === 'list').arguments
+  const listOptionsSpec = getOptionsSpec({ cliSpec, name: 'list' })
   const listOptions = commandLineArgs(listOptionsSpec, { argv })
   const allFields = listOptions['all-fields']
   const { format } = listOptions

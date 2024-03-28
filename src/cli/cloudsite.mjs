@@ -18,13 +18,14 @@ import { handleImport } from './lib/handle-import'
 import { handlePluginSettings } from './lib/handle-plugin-settings'
 import { handleUpdate } from './lib/handle-update'
 import { handleVerify } from './lib/handle-verify'
+import { processGlobalOptions } from './lib/process-global-options'
 
 const cloudsite = async () => {
+  // we can 'stopAtFirstUnknown' because the globals are defined at the root level
   const mainOptions = commandLineArgs(cliSpec.mainOptions, { stopAtFirstUnknown : true })
   const argv = mainOptions._unknown || []
 
   const { command/*, quiet */ } = mainOptions
-  const throwError = mainOptions['throw-error']
 
   let db
   try {
@@ -38,7 +39,11 @@ const cloudsite = async () => {
     db = { account : { settings : {} }, sites : {}, toCleanup : {}, reminders : [] }
   }
 
-  configureLogger(db?.account?.settings?.terminal)
+  const globalOptions = getGlobalOptions({ db })
+  const { ssoProfile } = globalOptions
+  const throwError = globalOptions['throw-error']
+
+  configureLogger(globalOptions)
 
   checkReminders({ reminders : db.reminders })
 
@@ -82,8 +87,8 @@ const cloudsite = async () => {
       throw e
     } else if (e.name === 'CredentialsProviderError') {
       let message = 'Your AWS login credentials may have expired. Update your credentials or try refreshing with:\n\naws sso login'
-      if (db.account?.settings?.ssoProfile !== undefined) {
-        message += ' --profile ' + db.account.settings.ssoProfile
+      if (ssoProfile !== undefined) {
+        message += ' --profile ' + ssoProfile
       }
       message += '\n'
       process.stderr.write(message)

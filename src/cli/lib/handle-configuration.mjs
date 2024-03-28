@@ -1,11 +1,12 @@
 import commandLineArgs from 'command-line-args'
 
 import { cliSpec } from '../constants'
+import { getOptionsSpec } from './get-options-spec'
 import { handleConfigurationInitialize } from './configuration/handle-configuration-initialize'
 import { handleConfigurationShow } from './configuration/handle-configuration-show'
 
 const handleConfiguration = async ({ argv, db }) => {
-  const configurationCLISpec = cliSpec.commands.find(({ name }) => name === 'configuration')
+  const configurationCLISpec = getOptionsSpec({ cliSpec, name: 'configuration' })
   const configurationOptionsSpec = configurationCLISpec.arguments
   const configurationOptions = commandLineArgs(configurationOptionsSpec, { argv, stopAtFirstUnknown : true })
   const { subcommand } = configurationOptions

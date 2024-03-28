@@ -1,11 +1,12 @@
 import commandLineArgs from 'command-line-args'
 
 import { cliSpec } from '../constants'
+import { getOptionsSpec } from './get-options-spec'
 import { getSiteInfo } from './get-site-info'
 import { update } from '../../lib/actions/update'
 
 const handleUpdate = async ({ argv, db }) => {
-  const updateOptionsSpec = cliSpec.commands.find(({ name }) => name === 'update').arguments
+  const updateOptionsSpec = getOptionsSpec({ cliSpec, name: 'update' })
   const updateOptions = commandLineArgs(updateOptionsSpec, { argv })
   const apexDomain = updateOptions['apex-domain']
   const doBilling = updateOptions['do-billing']

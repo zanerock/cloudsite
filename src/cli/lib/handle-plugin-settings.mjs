@@ -2,12 +2,13 @@ import commandLineArgs from 'command-line-args'
 
 import { cliSpec } from '../constants'
 import { errorOut } from './error-out'
+import { getOptionsSpec } from './get-options-spec'
 import { getSiteInfo } from './get-site-info'
 import * as optionsLib from './options'
 import { smartConvert } from './smart-convert'
 
 const handlePluginSettings = async ({ argv, db }) => {
-  const setOptionOptionsSpec = cliSpec.commands.find(({ name }) => name === 'plugin-settings').arguments
+  const setOptionOptionsSpec = getOptionsSpec({ cliSpec, name: 'plugin-settings' })
   const setOptionOptions = commandLineArgs(setOptionOptionsSpec, { argv })
   const apexDomain = setOptionOptions['apex-domain']
   const options = optionsLib.mapRawOptions(setOptionOptions.option)

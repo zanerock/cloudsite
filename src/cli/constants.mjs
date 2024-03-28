@@ -6,10 +6,18 @@ const VALID_FORMATS = ['json', 'terminal', 'text', 'yaml']
 
 const DB_PATH = fsPath.join(process.env.HOME, '.config', 'cloudsite', 'cloudsite-db.json')
 
-const formatOption = {
-  name        : 'format',
-  description : "Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'."
-}
+const globalOptionsSpec = [
+  {
+    name        : 'format',
+    description : "Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'."
+  },
+  { name : 'quiet', alias : 'q', type : Boolean, description : 'Makes informational output less chatty.' },
+  {
+    name        : 'throw-error',
+    type        : Boolean,
+    description : 'In the case of an exception, the default is to print the message. When --throw-error is set, the exception is left uncaught.'
+  }
+]
 
 const optionSpec = {
   name        : 'option',
@@ -26,12 +34,7 @@ const cliSpec = {
   mainCommand : 'cloudsite',
   mainOptions : [
     { name : 'command', defaultOption : true, description : 'The command to run or a sub-command group.' },
-    { name : 'quiet', alias : 'q', type : Boolean, description : 'Makes informational output less chatty.' },
-    {
-      name        : 'throw-error',
-      type        : Boolean,
-      description : 'In the case of an exception, the default is to print the message. When --throw-error is set, the exception is left uncaught.'
-    }
+    ...globalOptionsSpec
   ],
   commands : [
     {
@@ -68,10 +71,7 @@ const cliSpec = {
         },
         {
           name        : 'show',
-          description : 'Displays the current configuration.',
-          arguments   : [
-            formatOption
-          ]
+          description : 'Displays the current configuration.'
         }
       ]
     },
@@ -147,8 +147,7 @@ const cliSpec = {
           description   : 'The domain of the site to detail.',
           defaultOption : true,
           required      : true
-        },
-        formatOption
+        }
       ]
     },
     {
@@ -170,8 +169,7 @@ const cliSpec = {
           name        : 'all-fields',
           description : 'Includes all fields in the output.',
           type        : Boolean
-        },
-        formatOption
+        }
       ]
     },
     {
@@ -303,11 +301,10 @@ const cliSpec = {
           name        : 'check-stack',
           description : 'If set, then checks for stack drift and skips other checks unless also specifically specified.',
           type        : Boolean
-        },
-        formatOption
+        }
       ]
     }
   ]
 }
 
-export { cliSpec, DB_PATH, SOURCE_TYPES, VALID_FORMATS }
+export { cliSpec, DB_PATH, globalOptionsSpec, SOURCE_TYPES, VALID_FORMATS }

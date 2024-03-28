@@ -3,11 +3,12 @@ import { Questioner } from 'question-and-answer'
 
 import { cliSpec } from '../constants'
 import { destroy } from '../../lib/actions/destroy'
+import { getOptionsSpec } from './get-options-spec'
 import { getSiteInfo } from './get-site-info'
 import { progressLogger } from '../../lib/shared/progress-logger'
 
 const handleDestroy = async ({ argv, db }) => {
-  const destroyOptionsSpec = cliSpec.commands.find(({ name }) => name === 'destroy').arguments
+  const destroyOptionsSpec = getOptionsSpec({ cliSpec, name: 'destroy' })
   const destroyOptions = commandLineArgs(destroyOptionsSpec, { argv })
   const apexDomain = destroyOptions['apex-domain']
   let { confirmed } = destroyOptions
