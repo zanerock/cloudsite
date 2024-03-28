@@ -6,8 +6,8 @@ const handleConfigurationInitialize = async ({ db }) => {
   const interrogationBundle = {
     actions : [
       {
-        prompt    : 'Set the SSO profile:',
-        parameter : 'ssoProfile'
+        prompt    : 'Which local AWS SSO profile should be used for authentication?',
+        parameter : 'sso-profile'
       },
       { review : 'questions' }
     ]

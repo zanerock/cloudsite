@@ -6,7 +6,8 @@ import isEqual from 'lodash/isEqual'
 
 import { cliSpec, DB_PATH } from './constants'
 import { checkReminders } from './lib/check-reminders'
-import { configureLogger } from '../lib/shared/progress-logger'
+import { configureLogger, progressLogger } from '../lib/shared/progress-logger'
+import { getGlobalOptions } from './lib/get-global-options'
 import { handleCleanup } from './lib/handle-cleanup'
 import { handleConfiguration } from './lib/handle-configuration'
 import { handleCreate } from './lib/handle-create'
@@ -40,7 +41,7 @@ const cloudsite = async () => {
   }
 
   const globalOptions = getGlobalOptions({ db })
-  const { ssoProfile } = globalOptions
+  const ssoProfile = globalOptions['sso-profile']
   const throwError = globalOptions['throw-error']
 
   configureLogger(globalOptions)
@@ -50,33 +51,34 @@ const cloudsite = async () => {
   const origDB = structuredClone(db)
 
   let exitCode = 0
+  let userMessage
   try {
     switch (command) {
       case 'cleanup':
-        await handleCleanup({ argv, db }); break
+        { success, userMessage } = await handleCleanup({ argv, db }); break
       case 'configuration':
-        await handleConfiguration({ argv, db }); break
+        userMessage = await handleConfiguration({ argv, db }); break
       case 'create':
-        await handleCreate({ argv, db }); break
+        userMessage = await handleCreate({ argv, db }); break
       case 'destroy':
-        await handleDestroy({ argv, db }); break
+        userMessage = await handleDestroy({ argv, db }); break
       case 'detail':
-        await handleDetail({ argv, db }); break
+        userMessage = await handleDetail({ argv, db }); break
       case 'document':
         console.log(commandLineDocumentation(cliSpec, { sectionDepth : 2, title : 'Command reference' }))
         break
       case 'get-iam-policy':
-        await handleGetIAMPolicy({ argv, db }); break
+        userMessage = await handleGetIAMPolicy({ argv, db }); break
       case 'list':
-        await handleList({ argv, db }); break
+        userMessage = await handleList({ argv, db }); break
       case 'import':
-        await handleImport({ argv, db }); break
+        userMessage = await handleImport({ argv, db }); break
       case 'plugin-settings':
-        await handlePluginSettings({ argv, db }); break
+        userMessage = await handlePluginSettings({ argv, db }); break
       case 'update':
-        await handleUpdate({ argv, db }); break
+        userMessage = await handleUpdate({ argv, db }); break
       case 'verify':
-        await handleVerify({ argv, db }); break
+        userMessage = await handleVerify({ argv, db }); break
       default:
         process.stderr.write('Uknown command: ' + command + '\n\n')
         exitCode = 10
@@ -86,20 +88,44 @@ const cloudsite = async () => {
     if (throwError === true) {
       throw e
     } else if (e.name === 'CredentialsProviderError') {
-      let message = 'Your AWS login credentials may have expired. Update your credentials or try refreshing with:\n\naws sso login'
+      userMessage = 'Your AWS login credentials may have expired. Update your credentials or try refreshing with:\n\naws sso login'
       if (ssoProfile !== undefined) {
-        message += ' --profile ' + ssoProfile
+        userMessage += ' --profile ' + ssoProfile
       }
-      message += '\n'
-      process.stderr.write(message)
       exitCode = 2
     } else {
-      process.stderr.write(e.message + '\n')
+      userMessage = e.message
       exitCode = e.exitCode || 11
     }
   } finally {
     await checkAndUpdateSitesInfo({ origDB, db })
   }
+
+  const actionStatus = {
+    success: exitCode === 0 && success === true,
+    status: exitCode !== 0 ? 'ERROR' : (success === true ? 'SUCCESS' : 'FAILURE'),
+    userMessage
+  }
+
+  const { format } = getGlobalOptions()
+
+  if (format === 'json' || format === 'yaml') {
+    progressLogger.write(actionStatus)
+  }
+  else {
+    const { status, userMessage } = actionStatus
+    const message = userMessage
+    if (status === 'ERROR') {
+      message = '<error>!! ERROR !!<rst>: ' + message
+    }
+    else if (status === 'FAILURE') {
+      message = '<warn>Command FAILED: </rst>' + message
+    }
+    progressLogger.write(message + '\n')
+  }
+
+  process.stderr.write(userMessage + '\n')
+
   process.exit(exitCode) // eslint-disable-line no-process-exit
 }
 

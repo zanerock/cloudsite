@@ -12,6 +12,7 @@ const globalOptionsSpec = [
     description : "Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'."
   },
   { name : 'quiet', alias : 'q', type : Boolean, description : 'Makes informational output less chatty.' },
+  { name : 'sso-profile', description: 'The AWS local SSO profile to use for authentication.' },
   {
     name        : 'throw-error',
     type        : Boolean,
