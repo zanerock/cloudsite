@@ -5,26 +5,20 @@ import { handleConfigurationInitialize } from '../handle-configuration-initializ
 jest.mock('node:fs/promises')
 
 describe('handleConfigurationInitialize', () => {
-  const questionResults = [{ parameter : 'ssoProfile', value : 'some-profile' }]
+  const questionValues = { ssoProfile : 'some-profile' }
+  let db
 
   afterEach(jest.clearAllMocks)
 
-  test('questions the user', async () => {
+  beforeAll(async () => {
     jest.spyOn(Questioner.prototype, 'question').mockResolvedValue(undefined)
-    jest.spyOn(Questioner.prototype, 'results', 'get')
-      .mockReturnValue(questionResults)
-
-    const db = { account : { settings : {} } }
+    jest.spyOn(Questioner.prototype, 'values', 'get').mockReturnValue(questionValues)
+    db = { account : { settings : {} } }
     await handleConfigurationInitialize({ db })
-    expect(Questioner.prototype.question).toHaveBeenCalledTimes(1)
   })
 
-  test('updates the account settings', async () => {
-    jest.spyOn(Questioner.prototype, 'question').mockResolvedValue(undefined)
-    jest.spyOn(Questioner.prototype, 'results', 'get').mockReturnValue(questionResults)
+  test('questions the user', async () => expect(Questioner.prototype.question).toHaveBeenCalledTimes(1))
 
-    const db = { account : { settings : {} } }
-    await handleConfigurationInitialize({ db })
-    expect(db.account.settings).toEqual({ ssoProfile : questionResults[0].value })
-  })
+  test('updates the account settings', async () =>
+    expect(db.account.settings).toEqual({ ssoProfile : questionValues.ssoProfile }))
 })

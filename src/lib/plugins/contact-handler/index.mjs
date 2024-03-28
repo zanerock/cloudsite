@@ -15,16 +15,24 @@ import { stageLambdaFunctionZipFiles } from './lib/stage-lambda-function-zip-fil
 import { updateCloudFrontDistribution } from './lib/update-cloud-front-distribution'
 
 const config = {
-  options : {
+  name        : 'Contact handler',
+  description : 'Enables contact form processing. Specifically, enters form data and optionally sends an email notification.',
+  options     : {
     emailFrom : {
-      matches : emailRE
+      description    : "The 'from' email.",
+      required       : true,
+      matches        : emailRE,
+      invalidMessage : 'Must be a valid email.'
     },
     emailTo : {
-      required : true,
-      matches  : emailRE
+      description    : "The optional 'to' email. If left blank, then the 'from' email will be used as both the 'to' and 'from'.",
+      matches        : emailRE,
+      invalidMessage : 'Must be a valid email.'
     },
     formFields : {
-      validation : (value) => {
+      description : "Specification of fields to process in from the contact form. For new forms, or where it works, we recommend setting the value to 'standard' and selecting the the desired fields from the standard set.",
+      default     : 'standard',
+      validation  : (value) => {
         if (value.match(/\s*standard\s*/i)) {
           return true
         } // else
@@ -46,12 +54,14 @@ const config = {
           }
         }
         return true
-      }
+      },
+      invalidMessage : "May be either 'standard' or a valid JSON fields specification."
     },
     urlPath : {
-      required : true,
-      default  : '/contact-handler',
-      matches  : /^\/(?:[a-z0-9_-]+\/?)+$/
+      description : 'The URL path to which to direct form submissions.',
+      required    : true,
+      default     : '/contact-handler',
+      matches     : /^\/(?:[a-z0-9_-]+\/?)+$/
     }
   }
 }

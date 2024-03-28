@@ -82,8 +82,7 @@ const cliSpec = {
         {
           name          : 'apex-domain',
           description   : 'The site apex domain.',
-          defaultOption : true,
-          required      : true
+          defaultOption : true
         },
         {
           name        : 'bucket-name',
@@ -97,6 +96,11 @@ const cliSpec = {
         {
           name        : 'no-delete-on-failure',
           description : 'When true, does not delete the site stack after setup failure.',
+          type        : Boolean
+        },
+        {
+          name        : 'no-interactive',
+          description : 'Suppresses activation of the interactive setup where it would otherwise be activated.',
           type        : Boolean
         },
         optionSpec,

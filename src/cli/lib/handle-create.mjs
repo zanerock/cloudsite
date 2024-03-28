@@ -2,27 +2,51 @@ import * as fsPath from 'node:path'
 
 import commandLineArgs from 'command-line-args'
 import { awsS3TABucketNameRE, awsS3TABucketNameREString } from 'regex-repo'
+import { Questioner } from 'question-and-answer'
 
+import { checkAuthentication } from './check-authentication'
 import { cliSpec } from '../constants'
 import { create } from '../../lib/actions/create'
 import { errorOut } from './error-out'
 import * as optionsLib from './options'
+import * as plugins from '../../lib/plugins'
 import { processSourceType } from './process-source-type'
+import { progressLogger } from '../../lib/shared/progress-logger'
 
 const handleCreate = async ({ argv, db }) => {
+  await checkAuthentication({ db })
+
   const createOptionsSpec = cliSpec.commands.find(({ name }) => name === 'create').arguments
   const createOptions = commandLineArgs(createOptionsSpec, { argv })
   // action behavior options
   const noDeleteOnFailure = createOptions['no-delete-on-failure']
   // siteInfo options
-  const apexDomain = createOptions['apex-domain']
+  let apexDomain = createOptions['apex-domain']
   const bucketName = createOptions['bucket-name']
   const noBuild = createOptions['no-build']
+  const noInteractive = createOptions['no-interactive']
   // switch any relative sourcePath to absolute
-  const sourcePath = fsPath.resolve(createOptions['source-path'])
+  let sourcePath = createOptions['source-path']
   let sourceType = createOptions['source-type']
   const stackName = createOptions['stack-name']
   const options = optionsLib.mapRawOptions(createOptions.option)
+
+  if (noInteractive !== true) {
+    const interrogationBundle = { actions : [{ review : 'questions' }] }
+    if (sourcePath === undefined) { // doing these in reverse order because we're 'unshifting' to the front
+      interrogationBundle.actions.unshift({ prompt : 'Source path:', parameter : 'sourcePath' })
+    }
+    if (apexDomain === undefined) {
+      interrogationBundle.actions.unshift({ prompt : 'Apex domain:', parameter : 'apexDomain' })
+    }
+    if (interrogationBundle.actions.length > 1) {
+      const questioner = new Questioner({ interrogationBundle, output : progressLogger })
+      await questioner.question()
+
+      ({ apexDomain = apexDomain, sourcePath = sourcePath } = questioner.values)
+    }
+  }
+  sourcePath = fsPath.resolve(sourcePath)
 
   // don't use 'getSiteInfo', it errors out on blanks
   const siteInfo = db.sites[apexDomain] || { apexDomain, bucketName, sourcePath, sourceType }
@@ -34,8 +58,8 @@ const handleCreate = async ({ argv, db }) => {
   db.sites[apexDomain] = siteInfo
 
   // verify the parameters/options
-  for (const option of ['apex-domain', 'source-path']) {
-    if (createOptions[option] === undefined) {
+  for (const [value, option] of [[apexDomain, 'apex-domain'], [sourcePath, 'source-path']]) {
+    if (value === undefined) {
       errorOut(`Missing required '${option}' option.\n`, 2)
       // TODO: handleHelp({ argv : ['create'] })
     }
@@ -46,8 +70,42 @@ const handleCreate = async ({ argv, db }) => {
 
   if (bucketName !== undefined && !awsS3TABucketNameRE.test(bucketName)) {
     // we're not using Transfer Accelerated ATM, but we might want to at some point.
-
     errorOut(`Invalid bucket name. Must be valid AWS S3 Transfer Accelerated bucket name matching: ${awsS3TABucketNameREString}`, 2)
+  }
+
+  if (options.length === 0 && noInteractive !== true) {
+    for (const [plugin, { config }] of Object.entries(plugins)) {
+      const { description, name, options: configOptions } = config
+      const interrogationBundle = {
+        actions : [
+          { statement : `<em>${name}<rst> plugin: ${description}` },
+          { prompt : `Enable '<em>${name}<rst>' plugin?`, options : ['yes', 'no'], default : 'no', parameter : 'enable' }
+        ]
+      }
+      const questioner = new Questioner({ interrogationBundle, output : progressLogger })
+      await questioner.question()
+      const enable = questioner.getResult('enable').value === 'yes'
+
+      if (enable === true) {
+        const interrogationBundle = { actions : [] }
+        for (const [parameter, configSpec] of Object.entries(configOptions)) {
+          const { default: defaultValue, description, invalidMessage, matches, required, type = 'string' } = configSpec
+          const questionSpec = {
+            default          : defaultValue,
+            invalidMessage,
+            prompt           : `<em>${parameter}<rst>: ${description}\nValue?`,
+            parameter,
+            requireSomething : required,
+            requireMatch     : matches,
+            type
+          }
+          interrogationBundle.actions.push(questionSpec)
+        }
+        const questioner = new Questioner({ interrogationBundle, output : progressLogger })
+        await questioner.question()
+        options.push(...questioner.results.map(({ parameter, value }) => ({ name : `${plugin}.${parameter}`, value })))
+      }
+    }
   }
 
   optionsLib.updatePluginSettings({ options, siteInfo })

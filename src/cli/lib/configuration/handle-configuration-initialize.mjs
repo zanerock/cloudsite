@@ -1,5 +1,7 @@
 import { Questioner } from 'question-and-answer'
 
+import { progressLogger } from '../../../lib/shared/progress-logger'
+
 const handleConfigurationInitialize = async ({ db }) => {
   const interrogationBundle = {
     actions : [
@@ -11,13 +13,10 @@ const handleConfigurationInitialize = async ({ db }) => {
     ]
   }
 
-  const questioner = new Questioner({ interrogationBundle })
+  const questioner = new Questioner({ interrogationBundle, output : progressLogger })
   await questioner.question()
 
-  const results = questioner.results
-    .reduce((acc, { parameter, value }) => { acc[parameter] = value; return acc }, {})
-
-  db.account.settings = results
+  db.account.settings = questioner.values
 }
 
 export { handleConfigurationInitialize }

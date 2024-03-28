@@ -1,6 +1,13 @@
 const config = {
-  options : {
-    includeCookies : { default : false, validation : (v) => typeof v === 'boolean' }
+  name        : 'CloudFront logs',
+  description : 'Enables logging of CloudFront events.',
+  options     : {
+    includeCookies : {
+      description : 'Whether to log cookies or not.',
+      default     : false,
+      type        : 'boolean',
+      validation  : (v) => typeof v === 'boolean'
+    }
   }
 }
 
