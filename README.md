@@ -286,7 +286,9 @@ cloudsite update your-domain.com
 |Option|Description|
 |------|------|
 |`<command>`|(_main argument_,_optional_) The command to run or a sub-command group.|
+|`--format`|Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'.|
 |`--quiet`, `-q`|Makes informational output less chatty.|
+|`--sso-profile`|The AWS local SSO profile to use for authentication.|
 |`--throw-error`|In the case of an exception, the default is to print the message. When --throw-error is set, the exception is left uncaught.|
 
 ### Commands
@@ -338,15 +340,9 @@ Command group for managing the Cloudsite CLI configuration.
 Runs the initialization wizard and updates all options.
 
 <span id="cloudsite-configuration-show"></span>
-###### `cloudsite configuration show <options>`
+###### `cloudsite configuration show`
 
 Displays the current configuration.
-
-___`show` options___
-
-|Option|Description|
-|------|------|
-|`--format`|Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'.|
 
 <span id="cloudsite-create"></span>
 #### `cloudsite create <options> <apex-domain>`
@@ -381,7 +377,7 @@ Destroys the named site. I.e., deletes all cloud resources associated with the s
 |`--confirmed`|Skips the interactive confirmation and destroys the resources without further confirmation.|
 
 <span id="cloudsite-detail"></span>
-#### `cloudsite detail <options> [apex-domain]`
+#### `cloudsite detail [apex-domain]`
 
 Prints details for the indicated site.
 
@@ -390,7 +386,6 @@ Prints details for the indicated site.
 |Option|Description|
 |------|------|
 |`[apex-domain]`|(_main argument_,_required_) The domain of the site to detail.|
-|`--format`|Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'.|
 
 <span id="cloudsite-get-iam-policy"></span>
 #### `cloudsite get-iam-policy <options>`
@@ -429,7 +424,6 @@ Lists the sites registered in the local database.
 |Option|Description|
 |------|------|
 |`--all-fields`|Includes all fields in the output.|
-|`--format`|Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'.|
 
 <span id="cloudsite-plugin-settings"></span>
 #### `cloudsite plugin-settings <options> [apex-domain]`
@@ -477,10 +471,10 @@ Verifies the site is up and running and that the stack and content are up-to-dat
 |`--check-content`|If set, then checks content and skips other checks unless also specifically specified.|
 |`--check-site-up`|If set, then checks that the site is up and skips other checks unless also specifically specified.|
 |`--check-stack`|If set, then checks for stack drift and skips other checks unless also specifically specified.|
-|`--format`|Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'.|
 
 
 
+Documentation generated.
 ## Known limitations
 
 - The permissions used by the 'ContactHandler' Lambda function are overly broad and need to be narrowed. See [issue #34](https://github.com/liquid-labs/cloudsite/issues/34).
