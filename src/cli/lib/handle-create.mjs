@@ -4,6 +4,7 @@ import commandLineArgs from 'command-line-args'
 import { awsS3TABucketNameRE, awsS3TABucketNameREString } from 'regex-repo'
 import { Questioner } from 'question-and-answer'
 
+import { checkAuthentication } from './check-authentication'
 import { cliSpec } from '../constants'
 import { create } from '../../lib/actions/create'
 import { errorOut } from './error-out'
@@ -13,6 +14,8 @@ import { processSourceType } from './process-source-type'
 import { progressLogger } from '../../lib/shared/progress-logger'
 
 const handleCreate = async ({ argv, db }) => {
+  await checkAuthentication({ db })
+
   const createOptionsSpec = cliSpec.commands.find(({ name }) => name === 'create').arguments
   const createOptions = commandLineArgs(createOptionsSpec, { argv })
   // action behavior options
@@ -78,7 +81,7 @@ const handleCreate = async ({ argv, db }) => {
       const interrogationBundle = {
         actions : [
           { statement : `<em>${name}<rst> plugin: ${description}` },
-          { prompt : `Enable '${name}' plugin?`, options : ['yes', 'no'], default : 'no', parameter : 'enable' }
+          { prompt : `Enable '<em>${name}<rst>' plugin?`, options : ['yes', 'no'], default : 'no', parameter : 'enable' }
         ]
       }
       const questioner = new Questioner({ interrogationBundle, output : progressLogger })
@@ -87,8 +90,18 @@ const handleCreate = async ({ argv, db }) => {
 
       if (enable === true) {
         const interrogationBundle = { actions : [] }
-        for (const [parameter, { default: defaultValue, description, required, type = 'string' }] of Object.entries(configOptions)) {
-          interrogationBundle.actions.push({ prompt : `<em>${parameter}<rst>: ${description}\nValue?`, parameter, requireSomething : required, type, default : defaultValue })
+        for (const [parameter, configSpec] of Object.entries(configOptions)) {
+          const { default: defaultValue, description, invalidMessage, matches, required, type = 'string' } = configSpec
+          const questionSpec = {
+            default : defaultValue,
+            invalidMessage,
+            prompt : `<em>${parameter}<rst>: ${description}\nValue?`,
+            parameter,
+            requireSomething : required,
+            requireMatch: matches,
+            type
+          }
+          interrogationBundle.actions.push(questionSpec)
         }
         const questioner = new Questioner({ interrogationBundle, output : progressLogger })
         await questioner.question()
