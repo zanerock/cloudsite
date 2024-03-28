@@ -19,7 +19,6 @@ import { handleImport } from './lib/handle-import'
 import { handlePluginSettings } from './lib/handle-plugin-settings'
 import { handleUpdate } from './lib/handle-update'
 import { handleVerify } from './lib/handle-verify'
-import { processGlobalOptions } from './lib/process-global-options'
 
 const cloudsite = async () => {
   // we can 'stopAtFirstUnknown' because the globals are defined at the root level
@@ -41,6 +40,7 @@ const cloudsite = async () => {
   }
 
   const globalOptions = getGlobalOptions({ db })
+  const { format } = globalOptions
   const ssoProfile = globalOptions['sso-profile']
   const throwError = globalOptions['throw-error']
 
@@ -52,10 +52,11 @@ const cloudsite = async () => {
 
   let exitCode = 0
   let userMessage
+  let success
   try {
     switch (command) {
       case 'cleanup':
-        { success, userMessage } = await handleCleanup({ argv, db }); break
+        ({ success, userMessage } = await handleCleanup({ argv, db })); break
       case 'configuration':
         userMessage = await handleConfiguration({ argv, db }); break
       case 'create':
@@ -66,6 +67,8 @@ const cloudsite = async () => {
         userMessage = await handleDetail({ argv, db }); break
       case 'document':
         console.log(commandLineDocumentation(cliSpec, { sectionDepth : 2, title : 'Command reference' }))
+        success = true
+        userMessage = 'Documentation generated.'
         break
       case 'get-iam-policy':
         userMessage = await handleGetIAMPolicy({ argv, db }); break
@@ -107,14 +110,12 @@ const cloudsite = async () => {
     userMessage
   }
 
-  const { format } = getGlobalOptions()
-
   if (format === 'json' || format === 'yaml') {
     progressLogger.write(actionStatus)
   }
   else {
     const { status, userMessage } = actionStatus
-    const message = userMessage
+    let message = userMessage
     if (status === 'ERROR') {
       message = '<error>!! ERROR !!<rst>: ' + message
     }

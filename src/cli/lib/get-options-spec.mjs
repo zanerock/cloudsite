@@ -1,4 +1,4 @@
-import { globalOptions } from '../constants'
+import { globalOptionsSpec } from '../constants'
 
 const getOptionsSpec = ({ cliSpec, optionsSpec, name }) => {
   optionsSpec = optionsSpec || cliSpec?.commands.find(({ name : testName }) => name === testName).arguments || []
@@ -6,7 +6,7 @@ const getOptionsSpec = ({ cliSpec, optionsSpec, name }) => {
     [
       ...optionsSpec,
       // this is so we can process the global options anywhere while also sounding alarm on unknown options
-      ...globalOptions
+      ...globalOptionsSpec
     ]
 
   return finalSpec
