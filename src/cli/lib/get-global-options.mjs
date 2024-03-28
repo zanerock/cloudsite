@@ -1,5 +1,6 @@
 import commandLineArgs from 'command-line-args'
 
+import { checkFormat } from './check-format'
 import { globalOptionsSpec } from '../constants'
 
 let globalOptionsCache
@@ -17,9 +18,12 @@ const getGlobalOptions = ({ db }) => {
   const globalOptions = Object.assign({}, defaultOptions, overrideOptions)
 
   const { format, verbose } = globalOptions
+
+  checkFormat(format)
+
   let { quiet } = globalOptions
   // process.stdin.isTTY =~ shell program (true) or pipe (false)
-  quiet = quiet || (verbose !== true && (format === 'json' || format === 'yaml' || process.stdin.isTTY))
+  quiet = quiet || (verbose !== true && (format === 'json' || format === 'yaml' || !process.stdin.isTTY))
   globalOptions.quiet = quiet
 
   globalOptionsCache = globalOptions

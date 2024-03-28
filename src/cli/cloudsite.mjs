@@ -50,6 +50,7 @@ const cloudsite = async () => {
 
   const origDB = structuredClone(db)
 
+  let data
   let exitCode = 0
   let userMessage
   let success
@@ -73,7 +74,7 @@ const cloudsite = async () => {
       case 'get-iam-policy':
         userMessage = await handleGetIAMPolicy({ argv, db }); break
       case 'list':
-        userMessage = await handleList({ argv, db }); break
+        ({ data, success } = await handleList({ argv, db })); break
       case 'import':
         userMessage = await handleImport({ argv, db }); break
       case 'plugin-settings':
@@ -104,29 +105,33 @@ const cloudsite = async () => {
     await checkAndUpdateSitesInfo({ origDB, db })
   }
 
-  const actionStatus = {
-    success: exitCode === 0 && success === true,
-    status: exitCode !== 0 ? 'ERROR' : (success === true ? 'SUCCESS' : 'FAILURE'),
-    userMessage
-  }
-
   globalOptions.quiet = false // always send the final status message
-  if (format === 'json' || format === 'yaml') {
-    progressLogger.write(actionStatus)
+
+  if (data === undefined) {
+    const actionStatus = {
+      success: exitCode === 0 && success === true,
+      status: exitCode !== 0 ? 'ERROR' : (success === true ? 'SUCCESS' : 'FAILURE'),
+      userMessage
+    }
+
+    if (format === 'json' || format === 'yaml') {
+      progressLogger.write(actionStatus)
+    }
+    else {
+      const { status, userMessage } = actionStatus
+      let message = userMessage
+      if (status === 'ERROR') {
+        message = '<error>!! ERROR !!<rst>: ' + message
+      }
+      else if (status === 'FAILURE') {
+        message = '<warn>Command FAILED: </rst>' + message
+      }
+      progressLogger.write(message + '\n')
+    }
   }
   else {
-    const { status, userMessage } = actionStatus
-    let message = userMessage
-    if (status === 'ERROR') {
-      message = '<error>!! ERROR !!<rst>: ' + message
-    }
-    else if (status === 'FAILURE') {
-      message = '<warn>Command FAILED: </rst>' + message
-    }
-    progressLogger.write(message + '\n')
+    progressLogger.write(data, '')
   }
-
-  process.stderr.write(userMessage + '\n')
 
   process.exit(exitCode) // eslint-disable-line no-process-exit
 }
