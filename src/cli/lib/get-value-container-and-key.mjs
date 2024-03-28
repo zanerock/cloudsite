@@ -18,7 +18,7 @@ const getValueContainerAndKey = ({ path, pathPrefix, rootContainer, spec, value 
             { exitCode : 11 }
           )
         }
-        if (matches !== undefined && value.match(matches) === null) {
+        if (matches !== undefined && value?.match(matches) === null) {
           throw new Error(
             `Invalid value '${value}' for '${origPath}'; must match ${matches.toString()}.`,
             { exitCode : 3 }

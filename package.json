@@ -54,6 +54,7 @@
     "@liquid-labs/shell-toolkit": "^1.0.0-alpha.10",
     "js-yaml": "^4.1.0",
     "mime-types": "^2.1.35",
+    "question-and-answer": "^1.0.0-alpha.17",
     "regex-repo": "^1.3.0",
     "s3-empty-bucket": "^1.0.0-alpha.8",
     "s3-sync-client": "^4.3.1",
@@ -63,7 +64,7 @@
     "@liquid-labs/sdlc-resource-babel-and-rollup": "^1.0.0-alpha.8",
     "@liquid-labs/sdlc-resource-eslint": "^1.0.0-alpha.11",
     "@liquid-labs/sdlc-resource-jest": "^1.0.0-alpha.7",
-    "magic-print": "^1.0.0-alpha.4"
+    "magic-print": "^1.0.0-alpha.7"
   },
   "_comply": {
     "orgKey": "@liquid-labs"
@@ -73,7 +74,6 @@
     "command-line-documentation": "^1.0.0-alpha.3",
     "json-to-plain-text": "^1.1.4",
     "lodash": "^4.17.21",
-    "magic-print": "^1.0.0-alpha.4",
-    "question-and-answer": "^1.0.0-alpha.16"
+    "magic-print": "^1.0.0-alpha.4"
   }
 }

@@ -347,7 +347,7 @@ ___`show` options___
 |`--format`|Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'.|
 
 <span id="cloudsite-create"></span>
-#### `cloudsite create <options> [apex-domain]`
+#### `cloudsite create <options> <apex-domain>`
 
 Creates a new website, setting up infrastructure and copying content.
 
@@ -355,10 +355,11 @@ Creates a new website, setting up infrastructure and copying content.
 
 |Option|Description|
 |------|------|
-|`[apex-domain]`|(_main argument_,_required_) The site apex domain.|
+|`<apex-domain>`|(_main argument_,_optional_) The site apex domain.|
 |`--bucket-name`|The name of the bucket to be used. If no option is given, cloudsite will generate a bucket name based on the apex domain.|
 |`--no-build`|Supresses the default behavior of building before uploading the site content.|
 |`--no-delete-on-failure`|When true, does not delete the site stack after setup failure.|
+|`--no-interactive`|Suppresses activation of the interactive setup where it would otherwise be activated.|
 |`--option`|A combined name-value pair: <name>:<value>. Can be used multiple times. With '--delete', the value portion is ignored and can be omitted, e.g.: '--option <name>'.|
 |`--region`|The region where to create the site resources. Defaults to 'us-east-1'.|
 |`--source-path`|Local path to the static site root.|

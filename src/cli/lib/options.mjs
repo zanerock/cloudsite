@@ -14,6 +14,7 @@ const mapRawOptions = (rawOptions = []) =>
   })
 
 const updatePluginSettings = ({ confirmed, doDelete, options, siteInfo }) => {
+  console.log('options:', options) // DEBUG
   for (const { name, value } of options) {
     const pathBits = name.split('.')
     const pluginName = pathBits.shift()
