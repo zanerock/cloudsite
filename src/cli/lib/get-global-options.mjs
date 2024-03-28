@@ -9,12 +9,16 @@ const getGlobalOptions = ({ db }) => {
     return globalOptionsCache
   } // else
 
-  const globalOptions = db.account?.settings || {}
+  const defaultOptions = db.account?.settings || {}
 
   const overrideOptions = commandLineArgs(globalOptionsSpec, { partial: true })
   delete overrideOptions._unknown // don't need or want this 
 
-  Object.assign({}, globalOptions, overrideOptions)
+  const globalOptions = Object.assign({}, defaultOptions, overrideOptions)
+
+  const { format, quiet, verbose } = globalOptions
+  quiet = quiet || (verbose !== true && (format === 'json' || format === 'yaml'))
+  globalOptions.quiet = quiet
 
   globalOptionsCache = globalOptions
 

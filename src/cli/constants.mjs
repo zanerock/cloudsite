@@ -17,6 +17,11 @@ const globalOptionsSpec = [
     name        : 'throw-error',
     type        : Boolean,
     description : 'In the case of an exception, the default is to print the message. When --throw-error is set, the exception is left uncaught.'
+  },
+  {
+    name: 'verbose',
+    type: Boolean,
+    description: 'Activates verbose (non-quiet mode) even in situations where quiet would normally be implied.'
   }
 ]
 
