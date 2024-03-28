@@ -1,4 +1,5 @@
 import commandLineArgs from 'command-line-args'
+import { Questioner } from 'question-and-answer'
 
 import { cliSpec } from '../constants'
 import { destroy } from '../../lib/actions/destroy'
@@ -10,12 +11,24 @@ const handleDestroy = async ({ argv, db }) => {
   const destroyOptionsSpec = cliSpec.commands.find(({ name }) => name === 'destroy').arguments
   const destroyOptions = commandLineArgs(destroyOptionsSpec, { argv })
   const apexDomain = destroyOptions['apex-domain']
-  const { confirmed } = destroyOptions
+  let { confirmed } = destroyOptions
 
   const siteInfo = getSiteInfo({ apexDomain, db })
 
   if (confirmed !== true) {
-    errorOut("Interactive mode not yet implement. You must include the '--confirmed' option.\n", 3)
+    const interrogationBundle = { actions: [{
+      prompt: `Confirm destruction of '${apexDomain}'?`,
+      paramType: 'boolean',
+      parameter: 'confirmed'
+    }]}
+    const questioner = new Questioner({ interrogationBundle, output: progressLogger })
+    await questioner.question()
+    confirmed = questioner.getResult('confirmed').value
+
+    if (confirmed !== true) {
+      progressLogger.write('Not confirmed; canceling operation.\n')
+      return
+    }
   }
 
   const deleted = await destroy({ db, siteInfo, verbose : true })
