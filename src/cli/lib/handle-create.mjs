@@ -93,12 +93,12 @@ const handleCreate = async ({ argv, db }) => {
         for (const [parameter, configSpec] of Object.entries(configOptions)) {
           const { default: defaultValue, description, invalidMessage, matches, required, type = 'string' } = configSpec
           const questionSpec = {
-            default : defaultValue,
+            default          : defaultValue,
             invalidMessage,
-            prompt : `<em>${parameter}<rst>: ${description}\nValue?`,
+            prompt           : `<em>${parameter}<rst>: ${description}\nValue?`,
             parameter,
             requireSomething : required,
-            requireMatch: matches,
+            requireMatch     : matches,
             type
           }
           interrogationBundle.actions.push(questionSpec)

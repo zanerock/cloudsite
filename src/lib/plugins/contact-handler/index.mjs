@@ -19,15 +19,15 @@ const config = {
   description : 'Enables contact form processing. Specifically, enters form data and optionally sends an email notification.',
   options     : {
     emailFrom : {
-      description : "The 'from' email.",
-      required    : true,
-      matches     : emailRE,
-      invalidMessage: 'Must be a valid email.'
+      description    : "The 'from' email.",
+      required       : true,
+      matches        : emailRE,
+      invalidMessage : 'Must be a valid email.'
     },
     emailTo : {
-      description : "The optional 'to' email. If left blank, then the 'from' email will be used as both the 'to' and 'from'.",
-      matches     : emailRE,
-      invalidMessage: 'Must be a valid email.'
+      description    : "The optional 'to' email. If left blank, then the 'from' email will be used as both the 'to' and 'from'.",
+      matches        : emailRE,
+      invalidMessage : 'Must be a valid email.'
     },
     formFields : {
       description : "Specification of fields to process in from the contact form. For new forms, or where it works, we recommend setting the value to 'standard' and selecting the the desired fields from the standard set.",
@@ -55,7 +55,7 @@ const config = {
         }
         return true
       },
-      invalidMessage: "May be either 'standard' or a valid JSON fields specification."
+      invalidMessage : "May be either 'standard' or a valid JSON fields specification."
     },
     urlPath : {
       description : 'The URL path to which to direct form submissions.',
