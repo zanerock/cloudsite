@@ -273,7 +273,9 @@ and then run:
 
 ```bash
 cloudsite update your-domain.com
-```## Command reference
+```
+
+## Command reference
 
 ### Usage
 
