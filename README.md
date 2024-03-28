@@ -290,6 +290,7 @@ cloudsite update your-domain.com
 |`--quiet`, `-q`|Makes informational output less chatty.|
 |`--sso-profile`|The AWS local SSO profile to use for authentication.|
 |`--throw-error`|In the case of an exception, the default is to print the message. When --throw-error is set, the exception is left uncaught.|
+|`--verbose`|Activates verbose (non-quiet mode) even in situations where quiet would normally be implied.|
 
 ### Commands
 

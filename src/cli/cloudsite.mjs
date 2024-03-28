@@ -110,6 +110,7 @@ const cloudsite = async () => {
     userMessage
   }
 
+  globalOptions.quiet = false // always send the final status message
   if (format === 'json' || format === 'yaml') {
     progressLogger.write(actionStatus)
   }
