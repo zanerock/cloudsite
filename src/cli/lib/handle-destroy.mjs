@@ -3,7 +3,6 @@ import { Questioner } from 'question-and-answer'
 
 import { cliSpec } from '../constants'
 import { destroy } from '../../lib/actions/destroy'
-import { errorOut } from './error-out'
 import { getSiteInfo } from './get-site-info'
 import { progressLogger } from '../../lib/shared/progress-logger'
 
@@ -16,12 +15,14 @@ const handleDestroy = async ({ argv, db }) => {
   const siteInfo = getSiteInfo({ apexDomain, db })
 
   if (confirmed !== true) {
-    const interrogationBundle = { actions: [{
-      prompt: `Confirm destruction of '${apexDomain}'?`,
-      paramType: 'boolean',
-      parameter: 'confirmed'
-    }]}
-    const questioner = new Questioner({ interrogationBundle, output: progressLogger })
+    const interrogationBundle = {
+      actions : [{
+        prompt    : `Confirm destruction of '${apexDomain}'?`,
+        paramType : 'boolean',
+        parameter : 'confirmed'
+      }]
+    }
+    const questioner = new Questioner({ interrogationBundle, output : progressLogger })
     await questioner.question()
     confirmed = questioner.getResult('confirmed').value
 
