@@ -57,9 +57,9 @@ const cloudsite = async () => {
   try {
     switch (command) {
       case 'cleanup':
-        ({ success, userMessage } = await handleCleanup({ argv, db })); break
+        ({ data, userMessage } = await handleCleanup({ argv, db })); break
       case 'configuration':
-        userMessage = await handleConfiguration({ argv, db }); break
+        ({ userMessage } = await handleConfiguration({ argv, db })); break
       case 'create':
         userMessage = await handleCreate({ argv, db }); break
       case 'destroy':

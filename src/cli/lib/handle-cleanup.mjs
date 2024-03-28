@@ -12,8 +12,7 @@ const handleCleanup = async ({ argv, db }) => {
   const { list } = cleanupOptions
 
   if (list === true) {
-    progressLogger.write(Object.keys(db.toCleanup).join('\n') + '\n')
-    return
+    return { data : Object.keys(db.toCleanup) || [] }
   }
 
   const listOfSitesToCleanup = apexDomain === undefined
@@ -40,6 +39,8 @@ const handleCleanup = async ({ argv, db }) => {
       db.reminders.splice(db.reminders.findIndex(({ apexDomain: testDomain }) => testDomain === apexDomain), 1)
     }
   })
+
+  return { userMessage: `Site '${apexDomain}' has been successfully cleaned.` }
 }
 
 export { handleCleanup }
