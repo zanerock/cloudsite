@@ -41,7 +41,7 @@ const handleCreate = async ({ argv, db }) => {
     }
     if (interrogationBundle.actions.length > 1) {
       const questioner = new Questioner({ interrogationBundle, output : progressLogger })
-      await questioner.question()
+      await questioner.question();
 
       ({ apexDomain = apexDomain, sourcePath = sourcePath } = questioner.values)
     }
