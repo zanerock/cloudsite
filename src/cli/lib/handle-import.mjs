@@ -16,10 +16,16 @@ const handleImport = async ({ argv, db }) => {
   const commonLogsBucket = importOptions['common-logs-bucket']
   const domainAndStack = importOptions['domain-and-stack']
   const { refresh, region } = importOptions
-  const sourcePath = resolvePath(importOptions['source-path'])
-  const sourceType = processSourceType({ sourcePath, sourceType : importOptions['source-type'] })
+  let sourcePath = importOptions['source-path']
 
   // verify input parameters form correct
+  if (sourcePath === undefined) {
+    throw new Error("Must define '--source-path'.")
+  }
+
+  sourcePath = resolvePath(sourcePath)
+  const sourceType = processSourceType({ sourcePath, sourceType : importOptions['source-type'] })
+
   if (domainAndStack?.length !== 2) {
     errorOut(`Unexpected number of positional arguments, expect 2 (domain and stack name), but got ${domainAndStack?.length || '0'}.\n`)
   }

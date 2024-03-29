@@ -78,7 +78,7 @@ const cloudsite = async () => {
       case 'list':
         ({ data, success } = await handleList({ argv, db })); break
       case 'import':
-        userMessage = await handleImport({ argv, db }); break
+        ({ success, userMessage } = await handleImport({ argv, db })); break
       case 'plugin-settings':
         userMessage = await handlePluginSettings({ argv, db }); break
       case 'update':
