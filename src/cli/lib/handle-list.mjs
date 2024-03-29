@@ -3,10 +3,9 @@ import pick from 'lodash/pick'
 
 import { cliSpec } from '../constants'
 import { getOptionsSpec } from './get-options-spec'
-import { progressLogger } from '../../lib/shared/progress-logger'
 
 const handleList = ({ argv, db }) => {
-  const listOptionsSpec = getOptionsSpec({ cliSpec, name: 'list' })
+  const listOptionsSpec = getOptionsSpec({ cliSpec, name : 'list' })
   const listOptions = commandLineArgs(listOptionsSpec, { argv })
   const allFields = listOptions['all-fields']
 
@@ -19,7 +18,7 @@ const handleList = ({ argv, db }) => {
       return trimmed
     })
 
-  return { data: output, success: true }
+  return { data : output, success : true }
 }
 
 export { handleList }

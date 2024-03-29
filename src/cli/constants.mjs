@@ -12,16 +12,16 @@ const globalOptionsSpec = [
     description : "Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'."
   },
   { name : 'quiet', alias : 'q', type : Boolean, description : 'Makes informational output less chatty.' },
-  { name : 'sso-profile', description: 'The AWS local SSO profile to use for authentication.' },
+  { name : 'sso-profile', description : 'The AWS local SSO profile to use for authentication.' },
   {
     name        : 'throw-error',
     type        : Boolean,
     description : 'In the case of an exception, the default is to print the message. When --throw-error is set, the exception is left uncaught.'
   },
   {
-    name: 'verbose',
-    type: Boolean,
-    description: 'Activates verbose (non-quiet mode) even in situations where quiet would normally be implied.'
+    name        : 'verbose',
+    type        : Boolean,
+    description : 'Activates verbose (non-quiet mode) even in situations where quiet would normally be implied.'
   }
 ]
 
@@ -215,18 +215,18 @@ const cliSpec = {
       name        : 'plugin-settings',
       description : 'Sets (or deletes) a site option.',
       arguments   : [
-        { 
-          name: 'subcommand',
-          description: 'The subcommand to execute.',
-          defaultOption: true,
-          required: true
+        {
+          name          : 'subcommand',
+          description   : 'The subcommand to execute.',
+          defaultOption : true,
+          required      : true
         }
       ],
-      commands: [
-        { 
-          name: 'set',
-          description: 'Sets and deletes the specified options.',
-          arguments: [
+      commands : [
+        {
+          name        : 'set',
+          description : 'Sets and deletes the specified options.',
+          arguments   : [
             {
               name          : 'apex-domain',
               description   : 'The apex domain of the site to configure.',
@@ -255,15 +255,15 @@ const cliSpec = {
           ]
         },
         {
-          name: 'show',
-          description: 'Displays the plugin settings for the specified site.',
-          arguments: [
+          name        : 'show',
+          description : 'Displays the plugin settings for the specified site.',
+          arguments   : [
             {
               name          : 'apex-domain',
               description   : 'The apex domain of the site whose settings are to be displayed.',
               defaultOption : true,
               required      : true
-            },
+            }
           ]
         }
       ]

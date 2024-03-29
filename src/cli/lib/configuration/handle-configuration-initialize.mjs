@@ -6,20 +6,20 @@ const handleConfigurationInitialize = async ({ db }) => {
   const interrogationBundle = {
     actions : [
       {
-        prompt    : "Which local AWS SSO profile should be used for authentication? Hit '\<enter>' to use the default profile.",
+        prompt    : "Which local AWS SSO profile should be used for authentication? Hit '<enter>' to use the default profile.",
         parameter : 'sso-profile'
       },
       {
-        prompt : 'Which default format would you prefer?',
-        options: ['json', 'text', 'terminal', 'yaml'],
-        default: 'terminal',
-        parameter: 'format'
+        prompt    : 'Which default format would you prefer?',
+        options   : ['json', 'text', 'terminal', 'yaml'],
+        default   : 'terminal',
+        parameter : 'format'
       },
       {
-        prompt: "In 'quiet' mode, you only get output when an command has completed. In 'non-quiet' mode, you will receive updates as the command is processed. Would you like to activate quiet mode?",
-        type: 'boolean',
-        default: false,
-        parameter: 'quiet'
+        prompt    : "In 'quiet' mode, you only get output when an command has completed. In 'non-quiet' mode, you will receive updates as the command is processed. Would you like to activate quiet mode?",
+        type      : 'boolean',
+        default   : false,
+        parameter : 'quiet'
       },
       { review : 'questions' }
     ]
@@ -30,7 +30,7 @@ const handleConfigurationInitialize = async ({ db }) => {
 
   db.account.settings = questioner.values
 
-  return { success: true, userMessage: 'Settings updated.'}
+  return { success : true, userMessage : 'Settings updated.' }
 }
 
 export { handleConfigurationInitialize }

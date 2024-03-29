@@ -16,7 +16,7 @@ import { progressLogger } from '../../lib/shared/progress-logger'
 const handleCreate = async ({ argv, db }) => {
   await checkAuthentication({ db })
 
-  const createOptionsSpec = getOptionsSpec({ cliSpec, name: 'create' })
+  const createOptionsSpec = getOptionsSpec({ cliSpec, name : 'create' })
   const createOptions = commandLineArgs(createOptionsSpec, { argv })
   // action behavior options
   const noDeleteOnFailure = createOptions['no-delete-on-failure']
@@ -60,7 +60,7 @@ const handleCreate = async ({ argv, db }) => {
   // verify the parameters/options
   for (const [value, option] of [[apexDomain, 'apex-domain'], [sourcePath, 'source-path']]) {
     if (value === undefined) {
-      throw new Error(`Missing required '${option}' option.`, { exitCode: 2 })
+      throw new Error(`Missing required '${option}' option.`, { exitCode : 2 })
       // TODO: handleHelp({ argv : ['create'] })
     }
   }
@@ -70,7 +70,7 @@ const handleCreate = async ({ argv, db }) => {
 
   if (bucketName !== undefined && !awsS3TABucketNameRE.test(bucketName)) {
     // we're not using Transfer Accelerated ATM, but we might want to at some point.
-    throw new Error(`Invalid bucket name. Must be valid AWS S3 Transfer Accelerated bucket name matching: ${awsS3TABucketNameREString}`, { exitCode: 2 })
+    throw new Error(`Invalid bucket name. Must be valid AWS S3 Transfer Accelerated bucket name matching: ${awsS3TABucketNameREString}`, { exitCode : 2 })
   }
 
   if (options.length === 0 && noInteractive !== true) {
@@ -118,13 +118,12 @@ const handleCreate = async ({ argv, db }) => {
   }
 
   let success
-  ({ stackName, success } = await create({ db, noBuild, noDeleteOnFailure, siteInfo }));
+  ({ stackName, success } = await create({ db, noBuild, noDeleteOnFailure, siteInfo }))
 
   if (success === true) {
-    return { success, userMessage: `Created stack '${stackName}'.` }
-  }
-  else {
-    return { success, userMessage: `Failed to create stack '${stackName}'.` }
+    return { success, userMessage : `Created stack '${stackName}'.` }
+  } else {
+    return { success, userMessage : `Failed to create stack '${stackName}'.` }
   }
 }
 

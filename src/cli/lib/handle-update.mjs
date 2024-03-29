@@ -6,7 +6,7 @@ import { getSiteInfo } from './get-site-info'
 import { update } from '../../lib/actions/update'
 
 const handleUpdate = async ({ argv, db }) => {
-  const updateOptionsSpec = getOptionsSpec({ cliSpec, name: 'update' })
+  const updateOptionsSpec = getOptionsSpec({ cliSpec, name : 'update' })
   const updateOptions = commandLineArgs(updateOptionsSpec, { argv })
   const apexDomain = updateOptions['apex-domain']
   const doBilling = updateOptions['do-billing']
@@ -20,7 +20,7 @@ const handleUpdate = async ({ argv, db }) => {
 
   await update({ db, doBilling, doContent, doDNS, doStack, noBuild, noCacheInvalidation, siteInfo })
 
-  return { success: true, userMessage: `Updated '${apexDomain}' site.` }
+  return { success : true, userMessage : `Updated '${apexDomain}' site.` }
 }
 
 export { handleUpdate }

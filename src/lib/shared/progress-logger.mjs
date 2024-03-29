@@ -1,7 +1,5 @@
 import { getPrinter } from 'magic-print'
 
-import { getGlobalOptions } from '../../cli/lib/get-global-options'
-
 const progressLogger = {}
 
 const configureLogger = (options) => {

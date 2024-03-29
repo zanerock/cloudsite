@@ -6,16 +6,16 @@ import { handlePluginSettingsSet } from './plugin-settings/handle-plugin-setting
 import { handlePluginSettingsShow } from './plugin-settings/handle-plugin-settings-show'
 
 const handlePluginSettings = async ({ argv, db }) => {
-  const setOptionOptionsSpec = getOptionsSpec({ cliSpec, name: 'plugin-settings' })
-  const setOptionOptions = commandLineArgs(setOptionOptionsSpec, { argv, stopAtFirstUnknown: true })
+  const setOptionOptionsSpec = getOptionsSpec({ cliSpec, name : 'plugin-settings' })
+  const setOptionOptions = commandLineArgs(setOptionOptionsSpec, { argv, stopAtFirstUnknown : true })
   const { subcommand } = setOptionOptions
   argv = setOptionOptions._unknown || []
 
   switch (subcommand) {
     case 'set':
-      return await handlePluginSettingsSet({ argv, db }); break
+      return await handlePluginSettingsSet({ argv, db })
     case 'show':
-      return await handlePluginSettingsShow({ argv, db }); break
+      return await handlePluginSettingsShow({ argv, db })
     default:
       throw new Error('Unknown plugin settings command: ' + subcommand)
   }

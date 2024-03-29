@@ -12,8 +12,8 @@ const getGlobalOptions = ({ db }) => {
 
   const defaultOptions = db?.account?.settings || {}
 
-  const overrideOptions = commandLineArgs(globalOptionsSpec, { partial: true })
-  delete overrideOptions._unknown // don't need or want this 
+  const overrideOptions = commandLineArgs(globalOptionsSpec, { partial : true })
+  delete overrideOptions._unknown // don't need or want this
 
   const globalOptions = Object.assign({}, defaultOptions, overrideOptions)
 

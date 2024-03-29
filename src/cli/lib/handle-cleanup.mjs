@@ -6,7 +6,7 @@ import { getOptionsSpec } from './get-options-spec'
 import { progressLogger } from '../../lib/shared/progress-logger'
 
 const handleCleanup = async ({ argv, db }) => {
-  const cleanupOptionsSpec = getOptionsSpec({ cliSpec, name: 'cleanup' })
+  const cleanupOptionsSpec = getOptionsSpec({ cliSpec, name : 'cleanup' })
   const cleanupOptions = commandLineArgs(cleanupOptionsSpec, { argv })
   const apexDomain = cleanupOptions['apex-domain']
   const { list } = cleanupOptions
@@ -44,7 +44,7 @@ const handleCleanup = async ({ argv, db }) => {
     ? `Site '${listOfSitesToCleanup[0]}' has been successfully cleaned.`
     : `Sites '${listOfSitesToCleanup.join("', '")}' have been successfully cleaned.`
 
-  return { success: true, userMessage }
+  return { success : true, userMessage }
 }
 
 export { handleCleanup }

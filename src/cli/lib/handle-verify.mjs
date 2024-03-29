@@ -4,11 +4,10 @@ import { checkFormat } from './check-format'
 import { cliSpec } from '../constants'
 import { getOptionsSpec } from './get-options-spec'
 import { getSiteInfo } from './get-site-info'
-import { progressLogger } from '../../lib/shared/progress-logger'
 import { verify } from '../../lib/actions/verify'
 
 const handleVerify = async ({ argv, db }) => {
-  const verifyOptionsSpec = getOptionsSpec({ cliSpec, name: 'verify' })
+  const verifyOptionsSpec = getOptionsSpec({ cliSpec, name : 'verify' })
   const verifyOptions = commandLineArgs(verifyOptionsSpec, { argv })
   const { format } = verifyOptions
   const apexDomain = verifyOptions['apex-domain']
@@ -28,7 +27,7 @@ const handleVerify = async ({ argv, db }) => {
 
   const output = { 'overall status' : summaryStatus, checks : results }
 
-  return { data: output }
+  return { data : output }
 }
 
 export { handleVerify }

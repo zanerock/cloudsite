@@ -5,10 +5,9 @@ import { cliSpec } from '../constants'
 import { errorOut } from './error-out'
 import { getOptionsSpec } from './get-options-spec'
 import { getSiteInfo } from './get-site-info'
-import { progressLogger } from '../../lib/shared/progress-logger'
 
 const handleDetail = ({ argv, db }) => {
-  const detailOptionsSpec = getOptionsSpec({ cliSpec, name: 'detail' })
+  const detailOptionsSpec = getOptionsSpec({ cliSpec, name : 'detail' })
   const detailOptions = commandLineArgs(detailOptionsSpec, { argv })
   const apexDomain = detailOptions['apex-domain']
   const { format } = detailOptions
@@ -21,7 +20,7 @@ const handleDetail = ({ argv, db }) => {
 
   const output = getSiteInfo({ apexDomain, db })
 
-  return { success: true, data: output }
+  return { success : true, data : output }
 }
 
 export { handleDetail }

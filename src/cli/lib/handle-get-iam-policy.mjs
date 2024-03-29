@@ -239,7 +239,7 @@ const instructions =
 7. Hit 'Next' and then 'Save'.`
 
 const handleGetIAMPolicy = async ({ argv, db }) => {
-  const getIAMPolicyOptionsSpec = getOptionsSpec({ cliSpec, name: 'get-iam-policy' })
+  const getIAMPolicyOptionsSpec = getOptionsSpec({ cliSpec, name : 'get-iam-policy' })
   const getIAMPolicyOptions = commandLineArgs(getIAMPolicyOptionsSpec, { argv })
   const withInstructions = getIAMPolicyOptions['with-instructions']
 
@@ -247,7 +247,7 @@ const handleGetIAMPolicy = async ({ argv, db }) => {
 
   if (withInstructions === true) {
     // As of 2024-03-29, smartIndent does not work with numbered lists, but it should in the future.
-    progressLogger.write('\n' + instructions + '\n', { smartIndent: true })
+    progressLogger.write('\n' + instructions + '\n', { smartIndent : true })
   }
 }
 

@@ -11,7 +11,7 @@ import { progressLogger } from '../../lib/shared/progress-logger'
 
 const handleImport = async ({ argv, db }) => {
   // gather parameter values
-  const importOptionsSpec = getOptionsSpec({ cliSpec, name: 'import' })
+  const importOptionsSpec = getOptionsSpec({ cliSpec, name : 'import' })
   const importOptions = commandLineArgs(importOptionsSpec, { argv })
   const commonLogsBucket = importOptions['common-logs-bucket']
   const domainAndStack = importOptions['domain-and-stack']
@@ -62,7 +62,7 @@ const handleImport = async ({ argv, db }) => {
   progressLogger.write(`Updating DB entry for '${domain}'...\n`)
   sitesInfo[domain] = dbEntry
 
-  return { success: true, userMessage: `Imported site '${domain}'.` }
+  return { success : true, userMessage : `Imported site '${domain}'.` }
 }
 
 export { handleImport }

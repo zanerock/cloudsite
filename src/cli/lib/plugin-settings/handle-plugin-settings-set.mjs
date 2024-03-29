@@ -12,7 +12,7 @@ const handlePluginSettingsSet = async ({ argv, db }) => {
     .commands.find(({ name }) => name === 'plugin-settings')
     .commands.find(({ name }) => name === 'set')
     .arguments || []
-  const pluginSettingsSetOptionsSpec = getOptionsSpec({ optionsSpec: myOptionsSpec })
+  const pluginSettingsSetOptionsSpec = getOptionsSpec({ optionsSpec : myOptionsSpec })
   const pluginSettingsSetOptions = commandLineArgs(pluginSettingsSetOptionsSpec, { argv })
   const apexDomain = pluginSettingsSetOptions['apex-domain']
   const options = optionsLib.mapRawOptions(pluginSettingsSetOptions.option)
@@ -42,7 +42,7 @@ const handlePluginSettingsSet = async ({ argv, db }) => {
   }
   optionsLib.updatePluginSettings({ confirmed, doDelete, options, siteInfo })
 
-  return { success: true, userMessage: `Plugin options updated for ${apexDomain}.` }
+  return { success : true, userMessage : `Plugin options updated for ${apexDomain}.` }
 }
 
 export { handlePluginSettingsSet }

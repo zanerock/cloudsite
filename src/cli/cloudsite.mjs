@@ -109,8 +109,8 @@ const cloudsite = async () => {
   globalOptions.quiet = false // always send the final status message
 
   const actionStatus = {
-    success: exitCode === 0 && success === true,
-    status: exitCode !== 0 ? 'ERROR' : (success === true ? 'SUCCESS' : 'FAILURE'),
+    success : exitCode === 0 && success === true,
+    status  : exitCode !== 0 ? 'ERROR' : (success === true ? 'SUCCESS' : 'FAILURE'),
     userMessage
   }
 
@@ -131,8 +131,7 @@ const cloudsite = async () => {
       let message = userMessage
       if (status === 'ERROR') {
         message = '<error>!! ERROR !!<rst>: ' + message
-      }
-      else if (status === 'FAILURE') {
+      } else if (status === 'FAILURE') {
         message = '<warn>Command FAILED: <rst>' + message
       }
       progressLogger.write(message + '\n')
@@ -147,10 +146,6 @@ const checkAndUpdateSitesInfo = async ({ origDB, db }) => {
     const dbContents = JSON.stringify(db, null, '  ')
     await fs.writeFile(DB_PATH, dbContents, { encoding : 'utf8' })
   }
-}
-
-const printUserMessage = ({ status, userMessage }) => {
-
 }
 
 export { cloudsite }

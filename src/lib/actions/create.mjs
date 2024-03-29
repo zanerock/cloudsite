@@ -8,7 +8,6 @@ import {
 import { convertDomainToBucketName } from '../shared/convert-domain-to-bucket-name'
 import { createOrUpdateDNSRecords } from './lib/create-or-update-dns-records'
 import { determineBucketName } from '../shared/determine-bucket-name'
-import { errorOut } from '../../cli/lib/error-out'
 import { findCertificate } from './lib/find-certificate'
 import { getCredentials } from './lib/get-credentials'
 import { getSiteTag } from '../shared/get-site-tag'
@@ -149,7 +148,7 @@ const createSiteStack = async ({ credentials, noDeleteOnFailure, siteInfo }) => 
   siteInfo.stackArn = StackId
 
   const finalStatus = await trackStackStatus({ cloudFormationClient, noDeleteOnFailure, stackName })
-  return { success: finalStatus === 'CREATE_COMPLETE', stackName }
+  return { success : finalStatus === 'CREATE_COMPLETE', stackName }
 }
 
 export { create }
