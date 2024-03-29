@@ -43,6 +43,7 @@ const cloudsite = async () => {
   const { format } = globalOptions
   const ssoProfile = globalOptions['sso-profile']
   const throwError = globalOptions['throw-error']
+  console.log('globalOptions:', globalOptions) // DEBUG
 
   configureLogger(globalOptions)
 
@@ -57,13 +58,13 @@ const cloudsite = async () => {
   try {
     switch (command) {
       case 'cleanup':
-        ({ data, userMessage } = await handleCleanup({ argv, db })); break
+        ({ success, userMessage } = await handleCleanup({ argv, db })); break
       case 'configuration':
-        ({ userMessage } = await handleConfiguration({ argv, db })); break
+        ({ success, userMessage } = await handleConfiguration({ argv, db })); break
       case 'create':
-        userMessage = await handleCreate({ argv, db }); break
+        ({ success, userMessage } = await handleCreate({ argv, db })); break
       case 'destroy':
-        userMessage = await handleDestroy({ argv, db }); break
+        ({ success, userMessage } = await handleDestroy({ argv, db })); break
       case 'detail':
         userMessage = await handleDetail({ argv, db }); break
       case 'document':
@@ -124,7 +125,7 @@ const cloudsite = async () => {
         message = '<error>!! ERROR !!<rst>: ' + message
       }
       else if (status === 'FAILURE') {
-        message = '<warn>Command FAILED: </rst>' + message
+        message = '<warn>Command FAILED: <rst>' + message
       }
       progressLogger.write(message + '\n')
     }

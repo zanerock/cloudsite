@@ -13,7 +13,7 @@ const handleConfigurationShow = async ({ argv, db }) => {
   const showConfigurationOptions = commandLineArgs(showConfigurationOptionsSpec, { argv })
 
   const accountSettings = db.account.settings || {}
-  progressLogger.write(accountSettings, '', { format })
+  return { data: accountSettings }
 }
 
 export { handleConfigurationShow }

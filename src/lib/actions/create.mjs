@@ -57,8 +57,6 @@ const create = async ({
   const stackCreated = await createSiteStack({ credentials, noDeleteOnFailure, siteInfo })
 
   if (stackCreated === true) {
-    progressLogger.write('Stack created.\n')
-
     const postUpdateHandlers = Object.keys(siteInfo.plugins || {}).map((pluginKey) =>
       [pluginKey, plugins[pluginKey].postUpdateHandler]
     )
@@ -81,8 +79,10 @@ const create = async ({
     } catch (e) {
       handleAssociateCostAllocationTagsError({ e, siteInfo })
     }
+
+    return true
   } else {
-    errorOut('Stack creation error.\n')
+    return false
   }
 }
 

@@ -29,6 +29,8 @@ const handleConfigurationInitialize = async ({ db }) => {
   await questioner.question()
 
   db.account.settings = questioner.values
+
+  return { success: true, userMessage: 'Settings updated.'}
 }
 
 export { handleConfigurationInitialize }

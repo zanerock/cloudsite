@@ -14,9 +14,9 @@ const handleConfiguration = async ({ argv, db }) => {
 
   switch (subcommand) {
     case 'initialize':
-      await handleConfigurationInitialize({ argv, db }); break
+      return await handleConfigurationInitialize({ argv, db }); break
     case 'show':
-      await handleConfigurationShow({ argv, db }); break
+      return await handleConfigurationShow({ argv, db }); break
     default:
       throw new Error('Unknown configuration command: ' + subcommand)
   }

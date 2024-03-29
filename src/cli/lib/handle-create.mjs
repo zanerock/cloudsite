@@ -7,7 +7,6 @@ import { Questioner } from 'question-and-answer'
 import { checkAuthentication } from './check-authentication'
 import { cliSpec } from '../constants'
 import { create } from '../../lib/actions/create'
-import { errorOut } from './error-out'
 import { getOptionsSpec } from './get-options-spec'
 import * as optionsLib from './options'
 import * as plugins from '../../lib/plugins'
@@ -61,7 +60,7 @@ const handleCreate = async ({ argv, db }) => {
   // verify the parameters/options
   for (const [value, option] of [[apexDomain, 'apex-domain'], [sourcePath, 'source-path']]) {
     if (value === undefined) {
-      errorOut(`Missing required '${option}' option.\n`, 2)
+      throw new Error(`Missing required '${option}' option.`, { exitCode: 2 })
       // TODO: handleHelp({ argv : ['create'] })
     }
   }
@@ -71,7 +70,7 @@ const handleCreate = async ({ argv, db }) => {
 
   if (bucketName !== undefined && !awsS3TABucketNameRE.test(bucketName)) {
     // we're not using Transfer Accelerated ATM, but we might want to at some point.
-    errorOut(`Invalid bucket name. Must be valid AWS S3 Transfer Accelerated bucket name matching: ${awsS3TABucketNameREString}`, 2)
+    throw new Error(`Invalid bucket name. Must be valid AWS S3 Transfer Accelerated bucket name matching: ${awsS3TABucketNameREString}`, { exitCode: 2 })
   }
 
   if (options.length === 0 && noInteractive !== true) {
@@ -118,7 +117,14 @@ const handleCreate = async ({ argv, db }) => {
     }
   }
 
-  await create({ db, noBuild, noDeleteOnFailure, siteInfo })
+  const stackCreated = await create({ db, noBuild, noDeleteOnFailure, siteInfo })
+
+  if (stackCreated === true) {
+    return { success: true, userMessage: `Created stack '${stackName}'.` }
+  }
+  else {
+    return { success: false, userMessage: `Failed to create stack '${stackName}'.` }
+  }
 }
 
 export { handleCreate }

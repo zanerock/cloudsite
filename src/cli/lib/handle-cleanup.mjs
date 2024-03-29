@@ -40,7 +40,11 @@ const handleCleanup = async ({ argv, db }) => {
     }
   })
 
-  return { userMessage: `Site '${apexDomain}' has been successfully cleaned.` }
+  const userMessage = listOfSitesToCleanup.length === 1
+    ? `Site '${apexDomain}' has been successfully cleaned.`
+    : `Sites '${listOfSitesToCleanup.join("', '")}' have been successfully cleaned.`
+
+  return { success: true, userMessage }
 }
 
 export { handleCleanup }
