@@ -2,17 +2,17 @@ import commandLineArgs from 'command-line-args'
 
 import { cliSpec } from '../constants'
 import { destroy } from '../../lib/actions/destroy'
+import { getOptionsSpec } from './get-options-spec'
 import { progressLogger } from '../../lib/shared/progress-logger'
 
 const handleCleanup = async ({ argv, db }) => {
-  const cleanupOptionsSpec = cliSpec.commands.find(({ name }) => name === 'cleanup').arguments
+  const cleanupOptionsSpec = getOptionsSpec({ cliSpec, name : 'cleanup' })
   const cleanupOptions = commandLineArgs(cleanupOptionsSpec, { argv })
   const apexDomain = cleanupOptions['apex-domain']
   const { list } = cleanupOptions
 
   if (list === true) {
-    progressLogger.write(Object.keys(db.toCleanup).join('\n') + '\n')
-    return
+    return { data : Object.keys(db.toCleanup) || [] }
   }
 
   const listOfSitesToCleanup = apexDomain === undefined
@@ -39,6 +39,12 @@ const handleCleanup = async ({ argv, db }) => {
       db.reminders.splice(db.reminders.findIndex(({ apexDomain: testDomain }) => testDomain === apexDomain), 1)
     }
   })
+
+  const userMessage = listOfSitesToCleanup.length === 1
+    ? `Site '${listOfSitesToCleanup[0]}' has been successfully cleaned.`
+    : `Sites '${listOfSitesToCleanup.join("', '")}' have been successfully cleaned.`
+
+  return { success : true, userMessage }
 }
 
 export { handleCleanup }

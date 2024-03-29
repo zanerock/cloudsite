@@ -33,9 +33,10 @@ const updatePluginSettings = ({ confirmed, doDelete, options, siteInfo }) => {
     const spec = plugin.config.options
 
     const { valueContainer, valueKey } = getValueContainerAndKey({
-      path          : pathBits,
-      pathPrefix    : pluginName + '.',
-      rootContainer : pluginSettings,
+      path           : pathBits,
+      pathPrefix     : pluginName + '.',
+      rootContainer  : pluginSettings,
+      skipValueCheck : doDelete,
       spec,
       value
     })

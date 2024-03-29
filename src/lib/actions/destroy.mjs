@@ -38,6 +38,7 @@ const destroy = async ({ db, siteInfo, verbose }) => {
   try {
     const finalStatus =
       await trackStackStatus({ cloudFormationClient, noDeleteOnFailure : true, noInitialStatus : true, stackName })
+    progressLogger.write('\n')
 
     if (finalStatus === 'DELETE_FAILED') {
       return false

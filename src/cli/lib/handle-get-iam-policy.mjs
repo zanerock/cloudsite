@@ -3,6 +3,7 @@ import commandLineArgs from 'command-line-args'
 import { cliSpec } from '../constants'
 import { getAccountID } from '../../lib/shared/get-account-id'
 import { getCredentials } from '../../lib/actions/lib/get-credentials' // TODO: move to shared
+import { getOptionsSpec } from './get-options-spec'
 import { progressLogger } from '../../lib/shared/progress-logger'
 
 const generateIAMPolicy = async (db) => {
@@ -230,19 +231,24 @@ const instructions =
 `1. Log into the AWS console.
 2. Select/navigate to the IAM service.
 3. Select 'Policies' from the left hand menu options.
-4. Select 'Create policy'.
-5. Select the 'JSON' option.
-6. Replace the JSON with the text below.`
+4. For a new policy, select 'Create policy' and name it 'CloudsiteManager'.
+   A. Select the 'JSON' option.
+5. For an existing policy, search for 'CloudsiteManager'.
+   A. Select 'Edit
+6. Copy and paste the above policy into the edit box.
+7. Hit 'Next' and then 'Save'.`
 
 const handleGetIAMPolicy = async ({ argv, db }) => {
-  const getIAMPolicyOptionsSpec = cliSpec.commands.find(({ name }) => name === 'get-iam-policy').arguments
+  const getIAMPolicyOptionsSpec = getOptionsSpec({ cliSpec, name : 'get-iam-policy' })
   const getIAMPolicyOptions = commandLineArgs(getIAMPolicyOptionsSpec, { argv })
   const withInstructions = getIAMPolicyOptions['with-instructions']
 
-  if (withInstructions === true) {
-    progressLogger.write(instructions + '\n\n')
-  }
   progressLogger.write(JSON.stringify(await generateIAMPolicy(db), null, '  ') + '\n')
+
+  if (withInstructions === true) {
+    // As of 2024-03-29, smartIndent does not work with numbered lists, but it should in the future.
+    progressLogger.write('\n' + instructions + '\n', { smartIndent : true })
+  }
 }
 
 export { handleGetIAMPolicy }

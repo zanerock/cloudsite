@@ -5,20 +5,27 @@ import commandLineArgs from 'command-line-args'
 import { cliSpec } from '../constants'
 import { doImport } from '../../lib/actions/import'
 import { errorOut } from './error-out'
+import { getOptionsSpec } from './get-options-spec'
 import { processSourceType } from './process-source-type'
 import { progressLogger } from '../../lib/shared/progress-logger'
 
 const handleImport = async ({ argv, db }) => {
   // gather parameter values
-  const importOptionsSpec = cliSpec.commands.find(({ name }) => name === 'import').arguments
+  const importOptionsSpec = getOptionsSpec({ cliSpec, name : 'import' })
   const importOptions = commandLineArgs(importOptionsSpec, { argv })
   const commonLogsBucket = importOptions['common-logs-bucket']
   const domainAndStack = importOptions['domain-and-stack']
   const { refresh, region } = importOptions
-  const sourcePath = resolvePath(importOptions['source-path'])
-  const sourceType = processSourceType({ sourcePath, sourceType : importOptions['source-type'] })
+  let sourcePath = importOptions['source-path']
 
   // verify input parameters form correct
+  if (sourcePath === undefined) {
+    throw new Error("Must define '--source-path'.")
+  }
+
+  sourcePath = resolvePath(sourcePath)
+  const sourceType = processSourceType({ sourcePath, sourceType : importOptions['source-type'] })
+
   if (domainAndStack?.length !== 2) {
     errorOut(`Unexpected number of positional arguments, expect 2 (domain and stack name), but got ${domainAndStack?.length || '0'}.\n`)
   }
@@ -54,6 +61,8 @@ const handleImport = async ({ argv, db }) => {
   const dbEntry = await doImport({ commonLogsBucket, db, domain, region, sourcePath, sourceType, stack })
   progressLogger.write(`Updating DB entry for '${domain}'...\n`)
   sitesInfo[domain] = dbEntry
+
+  return { success : true, userMessage : `Imported site '${domain}'.` }
 }
 
 export { handleImport }

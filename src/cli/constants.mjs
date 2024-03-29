@@ -6,10 +6,24 @@ const VALID_FORMATS = ['json', 'terminal', 'text', 'yaml']
 
 const DB_PATH = fsPath.join(process.env.HOME, '.config', 'cloudsite', 'cloudsite-db.json')
 
-const formatOption = {
-  name        : 'format',
-  description : "Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'."
-}
+const globalOptionsSpec = [
+  {
+    name        : 'format',
+    description : "Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'."
+  },
+  { name : 'quiet', alias : 'q', type : Boolean, description : 'Makes informational output less chatty.' },
+  { name : 'sso-profile', description : 'The AWS local SSO profile to use for authentication.' },
+  {
+    name        : 'throw-error',
+    type        : Boolean,
+    description : 'In the case of an exception, the default is to print the message. When --throw-error is set, the exception is left uncaught.'
+  },
+  {
+    name        : 'verbose',
+    type        : Boolean,
+    description : 'Activates verbose (non-quiet mode) even in situations where quiet would normally be implied.'
+  }
+]
 
 const optionSpec = {
   name        : 'option',
@@ -26,12 +40,7 @@ const cliSpec = {
   mainCommand : 'cloudsite',
   mainOptions : [
     { name : 'command', defaultOption : true, description : 'The command to run or a sub-command group.' },
-    { name : 'quiet', alias : 'q', type : Boolean, description : 'Makes informational output less chatty.' },
-    {
-      name        : 'throw-error',
-      type        : Boolean,
-      description : 'In the case of an exception, the default is to print the message. When --throw-error is set, the exception is left uncaught.'
-    }
+    ...globalOptionsSpec
   ],
   commands : [
     {
@@ -68,10 +77,7 @@ const cliSpec = {
         },
         {
           name        : 'show',
-          description : 'Displays the current configuration.',
-          arguments   : [
-            formatOption
-          ]
+          description : 'Displays the current configuration.'
         }
       ]
     },
@@ -147,8 +153,7 @@ const cliSpec = {
           description   : 'The domain of the site to detail.',
           defaultOption : true,
           required      : true
-        },
-        formatOption
+        }
       ]
     },
     {
@@ -170,8 +175,7 @@ const cliSpec = {
           name        : 'all-fields',
           description : 'Includes all fields in the output.',
           type        : Boolean
-        },
-        formatOption
+        }
       ]
     },
     {
@@ -212,29 +216,55 @@ const cliSpec = {
       description : 'Sets (or deletes) a site option.',
       arguments   : [
         {
-          name          : 'apex-domain',
-          description   : 'The apex domain identifying the site.',
+          name          : 'subcommand',
+          description   : 'The subcommand to execute.',
           defaultOption : true,
           required      : true
+        }
+      ],
+      commands : [
+        {
+          name        : 'set',
+          description : 'Sets and deletes the specified options.',
+          arguments   : [
+            {
+              name          : 'apex-domain',
+              description   : 'The apex domain of the site to configure.',
+              defaultOption : true,
+              required      : true
+            },
+            {
+              name        : 'confirmed',
+              description : "When entirely deleting (disabling) a plugin, you must either confirm interactively or provide the '--confirmed' option.",
+              type        : Boolean
+            },
+            {
+              name        : 'delete',
+              description : "When set, then deletes the setting. Incompatible with the '--value' option. To delete all plugin settings (disable the plugin), set '--name' or '--option' to the bare plugin name; e.g.: --value aPlugin.",
+              type        : Boolean
+            },
+            {
+              name        : 'name',
+              description : 'The option name.'
+            },
+            optionSpec, // the 'options' definition
+            {
+              name        : 'value',
+              description : "The setting value. Incompatible with the '--delete' option."
+            }
+          ]
         },
         {
-          name        : 'confirmed',
-          description : "When entirely deleting (disabling) a plugin, you must either confirm interactively or provide the '--confirmed' option.",
-          type        : Boolean
-        },
-        {
-          name        : 'delete',
-          description : "When set, then deletes the setting. Incompatible with the '--value' option. To delete all plugin settings (disable the plugin), set '--name' or '--option' to the bare plugin name; e.g.: --value aPlugin.",
-          type        : Boolean
-        },
-        {
-          name        : 'name',
-          description : 'The option name.'
-        },
-        optionSpec, // the 'options' definition
-        {
-          name        : 'value',
-          description : "The setting value. Incompatible with the '--delete' option."
+          name        : 'show',
+          description : 'Displays the plugin settings for the specified site.',
+          arguments   : [
+            {
+              name          : 'apex-domain',
+              description   : 'The apex domain of the site whose settings are to be displayed.',
+              defaultOption : true,
+              required      : true
+            }
+          ]
         }
       ]
     },
@@ -303,11 +333,10 @@ const cliSpec = {
           name        : 'check-stack',
           description : 'If set, then checks for stack drift and skips other checks unless also specifically specified.',
           type        : Boolean
-        },
-        formatOption
+        }
       ]
     }
   ]
 }
 
-export { cliSpec, DB_PATH, SOURCE_TYPES, VALID_FORMATS }
+export { cliSpec, DB_PATH, globalOptionsSpec, SOURCE_TYPES, VALID_FORMATS }

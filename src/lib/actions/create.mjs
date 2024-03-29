@@ -8,7 +8,6 @@ import {
 import { convertDomainToBucketName } from '../shared/convert-domain-to-bucket-name'
 import { createOrUpdateDNSRecords } from './lib/create-or-update-dns-records'
 import { determineBucketName } from '../shared/determine-bucket-name'
-import { errorOut } from '../../cli/lib/error-out'
 import { findCertificate } from './lib/find-certificate'
 import { getCredentials } from './lib/get-credentials'
 import { getSiteTag } from '../shared/get-site-tag'
@@ -57,8 +56,6 @@ const create = async ({
   const stackCreated = await createSiteStack({ credentials, noDeleteOnFailure, siteInfo })
 
   if (stackCreated === true) {
-    progressLogger.write('Stack created.\n')
-
     const postUpdateHandlers = Object.keys(siteInfo.plugins || {}).map((pluginKey) =>
       [pluginKey, plugins[pluginKey].postUpdateHandler]
     )
@@ -81,8 +78,10 @@ const create = async ({
     } catch (e) {
       handleAssociateCostAllocationTagsError({ e, siteInfo })
     }
+
+    return true
   } else {
-    errorOut('Stack creation error.\n')
+    return false
   }
 }
 
@@ -149,7 +148,7 @@ const createSiteStack = async ({ credentials, noDeleteOnFailure, siteInfo }) => 
   siteInfo.stackArn = StackId
 
   const finalStatus = await trackStackStatus({ cloudFormationClient, noDeleteOnFailure, stackName })
-  return finalStatus === 'CREATE_COMPLETE'
+  return { success : finalStatus === 'CREATE_COMPLETE', stackName }
 }
 
 export { create }

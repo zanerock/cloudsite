@@ -1,41 +1,24 @@
 import commandLineArgs from 'command-line-args'
 
 import { cliSpec } from '../constants'
-import { errorOut } from './error-out'
-import { getSiteInfo } from './get-site-info'
-import * as optionsLib from './options'
-import { smartConvert } from './smart-convert'
+import { getOptionsSpec } from './get-options-spec'
+import { handlePluginSettingsSet } from './plugin-settings/handle-plugin-settings-set'
+import { handlePluginSettingsShow } from './plugin-settings/handle-plugin-settings-show'
 
 const handlePluginSettings = async ({ argv, db }) => {
-  const setOptionOptionsSpec = cliSpec.commands.find(({ name }) => name === 'plugin-settings').arguments
-  const setOptionOptions = commandLineArgs(setOptionOptionsSpec, { argv })
-  const apexDomain = setOptionOptions['apex-domain']
-  const options = optionsLib.mapRawOptions(setOptionOptions.option)
+  const setOptionOptionsSpec = getOptionsSpec({ cliSpec, name : 'plugin-settings' })
+  const setOptionOptions = commandLineArgs(setOptionOptionsSpec, { argv, stopAtFirstUnknown : true })
+  const { subcommand } = setOptionOptions
+  argv = setOptionOptions._unknown || []
 
-  const { confirmed, delete: doDelete, name, value } = setOptionOptions
-
-  // validate options
-  const siteInfo = getSiteInfo({ apexDomain, db })
-
-  if (doDelete === true && name === undefined && options.length === 0) {
-    errorOut("You must specify a '--name' or at least one '--option' when '--delete' is set.\n")
-  } else if (name !== undefined && (value !== undefined || doDelete === true)) {
-    options.push({ name, value : smartConvert(value) }) // the 'option' values are already converted
-  } else if (name !== undefined && value === undefined) { // but delete is not set (checked above)
-    errorOut("You must specify a '--value' or '--delete' when '--name' is set.\n")
-  } else if (name === undefined && value !== undefined) {
-    errorOut("You must specify a '--name' when '--value' is set.\n")
+  switch (subcommand) {
+    case 'set':
+      return await handlePluginSettingsSet({ argv, db })
+    case 'show':
+      return await handlePluginSettingsShow({ argv, db })
+    default:
+      throw new Error('Unknown plugin settings command: ' + subcommand)
   }
-
-  if (doDelete !== true && options.length === 0) {
-    errorOut("Invalid options; specify '--name'+'--value', '--delete'/'--name', or one or more '--option' options.\n")
-  }
-
-  // take actions and update the options
-  if (siteInfo.plugins === undefined) {
-    siteInfo.plugins = {}
-  }
-  optionsLib.updatePluginSettings({ confirmed, doDelete, options, siteInfo })
 }
 
 export { handlePluginSettings }

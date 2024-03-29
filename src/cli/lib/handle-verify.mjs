@@ -2,12 +2,12 @@ import commandLineArgs from 'command-line-args'
 
 import { checkFormat } from './check-format'
 import { cliSpec } from '../constants'
+import { getOptionsSpec } from './get-options-spec'
 import { getSiteInfo } from './get-site-info'
-import { progressLogger } from '../../lib/shared/progress-logger'
 import { verify } from '../../lib/actions/verify'
 
 const handleVerify = async ({ argv, db }) => {
-  const verifyOptionsSpec = cliSpec.commands.find(({ name }) => name === 'verify').arguments
+  const verifyOptionsSpec = getOptionsSpec({ cliSpec, name : 'verify' })
   const verifyOptions = commandLineArgs(verifyOptionsSpec, { argv })
   const { format } = verifyOptions
   const apexDomain = verifyOptions['apex-domain']
@@ -26,7 +26,8 @@ const handleVerify = async ({ argv, db }) => {
   }, 'success')
 
   const output = { 'overall status' : summaryStatus, checks : results }
-  progressLogger.write({ output, format })
+
+  return { data : output }
 }
 
 export { handleVerify }

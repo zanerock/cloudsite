@@ -6,7 +6,8 @@ import isEqual from 'lodash/isEqual'
 
 import { cliSpec, DB_PATH } from './constants'
 import { checkReminders } from './lib/check-reminders'
-import { configureLogger } from '../lib/shared/progress-logger'
+import { configureLogger, progressLogger } from '../lib/shared/progress-logger'
+import { getGlobalOptions } from './lib/get-global-options'
 import { handleCleanup } from './lib/handle-cleanup'
 import { handleConfiguration } from './lib/handle-configuration'
 import { handleCreate } from './lib/handle-create'
@@ -20,11 +21,11 @@ import { handleUpdate } from './lib/handle-update'
 import { handleVerify } from './lib/handle-verify'
 
 const cloudsite = async () => {
+  // we can 'stopAtFirstUnknown' because the globals are defined at the root level
   const mainOptions = commandLineArgs(cliSpec.mainOptions, { stopAtFirstUnknown : true })
   const argv = mainOptions._unknown || []
 
   const { command/*, quiet */ } = mainOptions
-  const throwError = mainOptions['throw-error']
 
   let db
   try {
@@ -38,40 +39,51 @@ const cloudsite = async () => {
     db = { account : { settings : {} }, sites : {}, toCleanup : {}, reminders : [] }
   }
 
-  configureLogger(db?.account?.settings?.terminal)
+  const globalOptions = getGlobalOptions({ db })
+  const { format } = globalOptions
+  const ssoProfile = globalOptions['sso-profile']
+  const throwError = globalOptions['throw-error']
+
+  configureLogger(globalOptions)
 
   checkReminders({ reminders : db.reminders })
 
   const origDB = structuredClone(db)
 
+  let data
   let exitCode = 0
+  let userMessage
+  let success
   try {
     switch (command) {
       case 'cleanup':
-        await handleCleanup({ argv, db }); break
+        ({ success, userMessage } = await handleCleanup({ argv, db })); break
       case 'configuration':
-        await handleConfiguration({ argv, db }); break
+        ({ data, success, userMessage } = await handleConfiguration({ argv, db })); break
       case 'create':
-        await handleCreate({ argv, db }); break
+        ({ success, userMessage } = await handleCreate({ argv, db })); break
       case 'destroy':
-        await handleDestroy({ argv, db }); break
+        ({ success, userMessage } = await handleDestroy({ argv, db })); break
       case 'detail':
-        await handleDetail({ argv, db }); break
+        ({ data, success } = await handleDetail({ argv, db })); break
       case 'document':
         console.log(commandLineDocumentation(cliSpec, { sectionDepth : 2, title : 'Command reference' }))
+        success = true
+        userMessage = 'Documentation generated.'
         break
       case 'get-iam-policy':
-        await handleGetIAMPolicy({ argv, db }); break
+        await handleGetIAMPolicy({ argv, db })
+        return // get-iam-policy is handles it's own output as the IAM policy is always in JSON format
       case 'list':
-        await handleList({ argv, db }); break
+        ({ data, success } = await handleList({ argv, db })); break
       case 'import':
-        await handleImport({ argv, db }); break
+        ({ success, userMessage } = await handleImport({ argv, db })); break
       case 'plugin-settings':
-        await handlePluginSettings({ argv, db }); break
+        ({ data, success, userMessage } = await handlePluginSettings({ argv, db })); break
       case 'update':
-        await handleUpdate({ argv, db }); break
+        ({ success, userMessage } = await handleUpdate({ argv, db })); break
       case 'verify':
-        await handleVerify({ argv, db }); break
+        ({ data } = await handleVerify({ argv, db })); break
       default:
         process.stderr.write('Uknown command: ' + command + '\n\n')
         exitCode = 10
@@ -81,20 +93,51 @@ const cloudsite = async () => {
     if (throwError === true) {
       throw e
     } else if (e.name === 'CredentialsProviderError') {
-      let message = 'Your AWS login credentials may have expired. Update your credentials or try refreshing with:\n\naws sso login'
-      if (db.account?.settings?.ssoProfile !== undefined) {
-        message += ' --profile ' + db.account.settings.ssoProfile
+      userMessage = 'Your AWS login credentials may have expired. Update your credentials or try refreshing with:\n\naws sso login'
+      if (ssoProfile !== undefined) {
+        userMessage += ' --profile ' + ssoProfile
       }
-      message += '\n'
-      process.stderr.write(message)
       exitCode = 2
     } else {
-      process.stderr.write(e.message + '\n')
+      userMessage = e.message
       exitCode = e.exitCode || 11
     }
   } finally {
     await checkAndUpdateSitesInfo({ origDB, db })
   }
+
+  globalOptions.quiet = false // always send the final status message
+
+  const actionStatus = {
+    success : exitCode === 0 && success === true,
+    status  : exitCode !== 0 ? 'ERROR' : (success === true ? 'SUCCESS' : 'FAILURE'),
+    userMessage
+  }
+
+  if (data !== undefined) {
+    actionStatus.data = data
+  }
+
+  // is it a data format
+  if (format === 'json' || format === 'yaml') {
+    progressLogger.write(actionStatus, '')
+  } else { // then it's a 'human' format
+    if (data !== undefined) {
+      progressLogger.write(data, '')
+    }
+
+    if (userMessage !== undefined) {
+      const { status, userMessage } = actionStatus
+      let message = userMessage
+      if (status === 'ERROR') {
+        message = '<error>!! ERROR !!<rst>: ' + message
+      } else if (status === 'FAILURE') {
+        message = '<warn>Command FAILED: <rst>' + message
+      }
+      progressLogger.write(message + '\n')
+    }
+  }
+
   process.exit(exitCode) // eslint-disable-line no-process-exit
 }
 

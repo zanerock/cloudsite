@@ -45,7 +45,6 @@
     "@aws-sdk/client-cloudformation": "^3.521.0",
     "@aws-sdk/client-cloudfront": "^3.523.0",
     "@aws-sdk/client-cost-explorer": "^3.535.0",
-    "@aws-sdk/client-iam": "^3.540.0",
     "@aws-sdk/client-lambda": "^3.533.0",
     "@aws-sdk/client-route-53": "^3.523.0",
     "@aws-sdk/client-s3": "^3.536.0",
@@ -65,7 +64,7 @@
     "@liquid-labs/sdlc-resource-babel-and-rollup": "^1.0.0-alpha.8",
     "@liquid-labs/sdlc-resource-eslint": "^1.0.0-alpha.11",
     "@liquid-labs/sdlc-resource-jest": "^1.0.0-alpha.7",
-    "magic-print": "^1.0.0-alpha.7"
+    "magic-print": "^1.0.0-alpha.10"
   },
   "_comply": {
     "orgKey": "@liquid-labs"
