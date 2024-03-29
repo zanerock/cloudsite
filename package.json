@@ -45,7 +45,6 @@
     "@aws-sdk/client-cloudformation": "^3.521.0",
     "@aws-sdk/client-cloudfront": "^3.523.0",
     "@aws-sdk/client-cost-explorer": "^3.535.0",
-    "@aws-sdk/client-iam": "^3.540.0",
     "@aws-sdk/client-lambda": "^3.533.0",
     "@aws-sdk/client-route-53": "^3.523.0",
     "@aws-sdk/client-s3": "^3.536.0",
