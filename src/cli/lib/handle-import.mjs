@@ -55,6 +55,8 @@ const handleImport = async ({ argv, db }) => {
   const dbEntry = await doImport({ commonLogsBucket, db, domain, region, sourcePath, sourceType, stack })
   progressLogger.write(`Updating DB entry for '${domain}'...\n`)
   sitesInfo[domain] = dbEntry
+
+  return { success: true, userMessage: `Imported site '${domain}'.` }
 }
 
 export { handleImport }
