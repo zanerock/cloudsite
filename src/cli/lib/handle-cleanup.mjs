@@ -41,7 +41,7 @@ const handleCleanup = async ({ argv, db }) => {
   })
 
   const userMessage = listOfSitesToCleanup.length === 1
-    ? `Site '${apexDomain}' has been successfully cleaned.`
+    ? `Site '${listOfSitesToCleanup[0]}' has been successfully cleaned.`
     : `Sites '${listOfSitesToCleanup.join("', '")}' have been successfully cleaned.`
 
   return { success: true, userMessage }
