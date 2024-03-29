@@ -73,7 +73,8 @@ const cloudsite = async () => {
         userMessage = 'Documentation generated.'
         break
       case 'get-iam-policy':
-        userMessage = await handleGetIAMPolicy({ argv, db }); break
+        await handleGetIAMPolicy({ argv, db })
+        return // get-iam-policy is handles it's own output as the IAM policy is always in JSON format
       case 'list':
         ({ data, success } = await handleList({ argv, db })); break
       case 'import':
@@ -108,30 +109,33 @@ const cloudsite = async () => {
 
   globalOptions.quiet = false // always send the final status message
 
-  if (data === undefined) {
-    const actionStatus = {
-      success: exitCode === 0 && success === true,
-      status: exitCode !== 0 ? 'ERROR' : (success === true ? 'SUCCESS' : 'FAILURE'),
-      userMessage
+  const actionStatus = {
+    success: exitCode === 0 && success === true,
+    status: exitCode !== 0 ? 'ERROR' : (success === true ? 'SUCCESS' : 'FAILURE'),
+    userMessage
+  }
+
+  if (data !== undefined) {
+    actionStatus.data = data
+  }
+
+  // is it a data format
+  if (format === 'json' || format === 'yaml') {
+    progressLogger.write(actionStatus, '')
+  } else { // then it's a 'human' format
+    if (data !== undefined) {
+      progressLogger.write(data, '')
     }
 
-    if (format === 'json' || format === 'yaml') {
-      progressLogger.write(actionStatus)
+    const { status, userMessage } = actionStatus
+    let message = userMessage
+    if (status === 'ERROR') {
+      message = '<error>!! ERROR !!<rst>: ' + message
     }
-    else {
-      const { status, userMessage } = actionStatus
-      let message = userMessage
-      if (status === 'ERROR') {
-        message = '<error>!! ERROR !!<rst>: ' + message
-      }
-      else if (status === 'FAILURE') {
-        message = '<warn>Command FAILED: <rst>' + message
-      }
-      progressLogger.write(message + '\n')
+    else if (status === 'FAILURE') {
+      message = '<warn>Command FAILED: <rst>' + message
     }
-  }
-  else {
-    progressLogger.write(data, '')
+    progressLogger.write(message + '\n')
   }
 
   process.exit(exitCode) // eslint-disable-line no-process-exit
@@ -142,6 +146,10 @@ const checkAndUpdateSitesInfo = async ({ origDB, db }) => {
     const dbContents = JSON.stringify(db, null, '  ')
     await fs.writeFile(DB_PATH, dbContents, { encoding : 'utf8' })
   }
+}
+
+const printUserMessage = ({ status, userMessage }) => {
+
 }
 
 export { cloudsite }
