@@ -7,9 +7,7 @@ import { handleConfigurationShow } from './configuration/handle-configuration-sh
 
 const handleConfiguration = async ({ argv, db }) => {
   const configurationOptionsSpec = getOptionsSpec({ cliSpec, name: 'configuration' })
-  console.log('configurationOptionsSpec:', configurationOptionsSpec) // DEBUG
   const configurationOptions = commandLineArgs(configurationOptionsSpec, { argv, stopAtFirstUnknown : true })
-  console.log('configurationOptions:', configurationOptions) // DEBUG
   const { subcommand } = configurationOptions
   argv = configurationOptions._unknown || []
 

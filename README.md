@@ -275,6 +275,11 @@ and then run:
 cloudsite update your-domain.com
 ```
 
+globalOptions: {
+  'sso-profile': 'cloudsite-manager',
+  format: 'terminal',
+  quiet: false
+}
 ## Command reference
 
 ### Usage
@@ -427,7 +432,7 @@ Lists the sites registered in the local database.
 |`--all-fields`|Includes all fields in the output.|
 
 <span id="cloudsite-plugin-settings"></span>
-#### `cloudsite plugin-settings <options> [apex-domain]`
+#### `cloudsite plugin-settings [subcommand]`
 
 Sets (or deletes) a site option.
 
@@ -435,12 +440,40 @@ Sets (or deletes) a site option.
 
 |Option|Description|
 |------|------|
-|`[apex-domain]`|(_main argument_,_required_) The apex domain identifying the site.|
+|`[subcommand]`|(_main argument_,_required_) The subcommand to execute.|
+
+
+##### Subcommands
+
+- [`set`](#cloudsite-plugin-settings-set): Sets and deletes the specified options.
+- [`show`](#cloudsite-plugin-settings-show): Displays the plugin settings for the specified site.
+
+<span id="cloudsite-plugin-settings-set"></span>
+###### `cloudsite plugin-settings set <options> [apex-domain]`
+
+Sets and deletes the specified options.
+
+___`set` options___
+
+|Option|Description|
+|------|------|
+|`[apex-domain]`|(_main argument_,_required_) The apex domain of the site to configure.|
 |`--confirmed`|When entirely deleting (disabling) a plugin, you must either confirm interactively or provide the '--confirmed' option.|
 |`--delete`|When set, then deletes the setting. Incompatible with the '--value' option. To delete all plugin settings (disable the plugin), set '--name' or '--option' to the bare plugin name; e.g.: --value aPlugin.|
 |`--name`|The option name.|
 |`--option`|A combined name-value pair: <name>:<value>. Can be used multiple times. With '--delete', the value portion is ignored and can be omitted, e.g.: '--option <name>'.|
 |`--value`|The setting value. Incompatible with the '--delete' option.|
+
+<span id="cloudsite-plugin-settings-show"></span>
+###### `cloudsite plugin-settings show [apex-domain]`
+
+Displays the plugin settings for the specified site.
+
+___`show` options___
+
+|Option|Description|
+|------|------|
+|`[apex-domain]`|(_main argument_,_required_) The apex domain of the site whose settings are to be displayed.|
 
 <span id="cloudsite-update"></span>
 #### `cloudsite update <options> [apex-domain]`

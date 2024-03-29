@@ -36,6 +36,7 @@ const updatePluginSettings = ({ confirmed, doDelete, options, siteInfo }) => {
       path          : pathBits,
       pathPrefix    : pluginName + '.',
       rootContainer : pluginSettings,
+      skipValueCheck : doDelete,
       spec,
       value
     })

@@ -1,6 +1,6 @@
 import { errorOut } from './error-out'
 
-const getValueContainerAndKey = ({ path, pathPrefix, rootContainer, spec, value }) => {
+const getValueContainerAndKey = ({ path, pathPrefix, rootContainer, skipValueCheck, spec, value }) => {
   const origPath = (pathPrefix === undefined ? '' : pathPrefix) + path.join('.') // used if validation error
   if (path === undefined || path.length === 0) {
     return [rootContainer, undefined]
@@ -25,7 +25,7 @@ const getValueContainerAndKey = ({ path, pathPrefix, rootContainer, spec, value 
           )
         }
 
-        if (validation !== undefined && !validation(value)) {
+        if (skipValueCheck !== true && validation !== undefined && !validation(value)) {
           throw new Error(`Value '${value}' for '${origPath}' failed validation.`, { exitCode : 3 })
         }
       } else { // currSpec === undefined

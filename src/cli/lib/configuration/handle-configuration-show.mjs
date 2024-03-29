@@ -9,7 +9,6 @@ const handleConfigurationShow = async ({ argv, db }) => {
     .commands.find(({ name }) => name === 'configuration')
     .commands.find(({ name }) => name === 'show')
     .arguments || []
-  console.log('myOptionsSpec:', myOptionsSpec) // DEBUG
   const showConfigurationCLISpec = getOptionsSpec({ optionsSpec: myOptionsSpec })
   const showConfigurationOptionsSpec = showConfigurationCLISpec.arguments
   const showConfigurationOptions = commandLineArgs(showConfigurationOptionsSpec, { argv })

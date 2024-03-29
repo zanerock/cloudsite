@@ -43,7 +43,6 @@ const cloudsite = async () => {
   const { format } = globalOptions
   const ssoProfile = globalOptions['sso-profile']
   const throwError = globalOptions['throw-error']
-  console.log('globalOptions:', globalOptions) // DEBUG
 
   configureLogger(globalOptions)
 
@@ -80,7 +79,7 @@ const cloudsite = async () => {
       case 'import':
         ({ success, userMessage } = await handleImport({ argv, db })); break
       case 'plugin-settings':
-        userMessage = await handlePluginSettings({ argv, db }); break
+        ({ data, success, userMessage } = await handlePluginSettings({ argv, db })); break
       case 'update':
         userMessage = await handleUpdate({ argv, db }); break
       case 'verify':
@@ -127,15 +126,17 @@ const cloudsite = async () => {
       progressLogger.write(data, '')
     }
 
-    const { status, userMessage } = actionStatus
-    let message = userMessage
-    if (status === 'ERROR') {
-      message = '<error>!! ERROR !!<rst>: ' + message
+    if (userMessage !== undefined) {
+      const { status, userMessage } = actionStatus
+      let message = userMessage
+      if (status === 'ERROR') {
+        message = '<error>!! ERROR !!<rst>: ' + message
+      }
+      else if (status === 'FAILURE') {
+        message = '<warn>Command FAILED: <rst>' + message
+      }
+      progressLogger.write(message + '\n')
     }
-    else if (status === 'FAILURE') {
-      message = '<warn>Command FAILED: <rst>' + message
-    }
-    progressLogger.write(message + '\n')
   }
 
   process.exit(exitCode) // eslint-disable-line no-process-exit

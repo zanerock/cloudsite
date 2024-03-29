@@ -215,30 +215,56 @@ const cliSpec = {
       name        : 'plugin-settings',
       description : 'Sets (or deletes) a site option.',
       arguments   : [
-        {
-          name          : 'apex-domain',
-          description   : 'The apex domain identifying the site.',
-          defaultOption : true,
-          required      : true
+        { 
+          name: 'subcommand',
+          description: 'The subcommand to execute.',
+          defaultOption: true,
+          required: true
+        }
+      ],
+      commands: [
+        { 
+          name: 'set',
+          description: 'Sets and deletes the specified options.',
+          arguments: [
+            {
+              name          : 'apex-domain',
+              description   : 'The apex domain of the site to configure.',
+              defaultOption : true,
+              required      : true
+            },
+            {
+              name        : 'confirmed',
+              description : "When entirely deleting (disabling) a plugin, you must either confirm interactively or provide the '--confirmed' option.",
+              type        : Boolean
+            },
+            {
+              name        : 'delete',
+              description : "When set, then deletes the setting. Incompatible with the '--value' option. To delete all plugin settings (disable the plugin), set '--name' or '--option' to the bare plugin name; e.g.: --value aPlugin.",
+              type        : Boolean
+            },
+            {
+              name        : 'name',
+              description : 'The option name.'
+            },
+            optionSpec, // the 'options' definition
+            {
+              name        : 'value',
+              description : "The setting value. Incompatible with the '--delete' option."
+            }
+          ]
         },
         {
-          name        : 'confirmed',
-          description : "When entirely deleting (disabling) a plugin, you must either confirm interactively or provide the '--confirmed' option.",
-          type        : Boolean
-        },
-        {
-          name        : 'delete',
-          description : "When set, then deletes the setting. Incompatible with the '--value' option. To delete all plugin settings (disable the plugin), set '--name' or '--option' to the bare plugin name; e.g.: --value aPlugin.",
-          type        : Boolean
-        },
-        {
-          name        : 'name',
-          description : 'The option name.'
-        },
-        optionSpec, // the 'options' definition
-        {
-          name        : 'value',
-          description : "The setting value. Incompatible with the '--delete' option."
+          name: 'show',
+          description: 'Displays the plugin settings for the specified site.',
+          arguments: [
+            {
+              name          : 'apex-domain',
+              description   : 'The apex domain of the site whose settings are to be displayed.',
+              defaultOption : true,
+              required      : true
+            },
+          ]
         }
       ]
     },
