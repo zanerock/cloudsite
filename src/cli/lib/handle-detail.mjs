@@ -21,7 +21,7 @@ const handleDetail = ({ argv, db }) => {
 
   const output = getSiteInfo({ apexDomain, db })
 
-  progressLogger.write(output, '', { format })
+  return { success: true, data: output }
 }
 
 export { handleDetail }

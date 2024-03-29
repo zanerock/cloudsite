@@ -66,7 +66,7 @@ const cloudsite = async () => {
       case 'destroy':
         ({ success, userMessage } = await handleDestroy({ argv, db })); break
       case 'detail':
-        userMessage = await handleDetail({ argv, db }); break
+        ({ data, success } = await handleDetail({ argv, db })); break
       case 'document':
         console.log(commandLineDocumentation(cliSpec, { sectionDepth : 2, title : 'Command reference' }))
         success = true
