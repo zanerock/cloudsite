@@ -28,7 +28,7 @@ const handleCreate = async ({ argv, db }) => {
   // switch any relative sourcePath to absolute
   let sourcePath = createOptions['source-path']
   let sourceType = createOptions['source-type']
-  const stackName = createOptions['stack-name']
+  let stackName = createOptions['stack-name']
   const options = optionsLib.mapRawOptions(createOptions.option)
 
   if (noInteractive !== true) {
@@ -117,13 +117,14 @@ const handleCreate = async ({ argv, db }) => {
     }
   }
 
-  const stackCreated = await create({ db, noBuild, noDeleteOnFailure, siteInfo })
+  let success
+  ({ stackName, success } = await create({ db, noBuild, noDeleteOnFailure, siteInfo }));
 
-  if (stackCreated === true) {
-    return { success: true, userMessage: `Created stack '${stackName}'.` }
+  if (success === true) {
+    return { success, userMessage: `Created stack '${stackName}'.` }
   }
   else {
-    return { success: false, userMessage: `Failed to create stack '${stackName}'.` }
+    return { success, userMessage: `Failed to create stack '${stackName}'.` }
   }
 }
 
