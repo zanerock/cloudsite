@@ -19,6 +19,8 @@ const handleUpdate = async ({ argv, db }) => {
   const siteInfo = getSiteInfo({ apexDomain, db })
 
   await update({ db, doBilling, doContent, doDNS, doStack, noBuild, noCacheInvalidation, siteInfo })
+
+  return { success: true, userMessage: `Updated '${apexDomain}' site.` }
 }
 
 export { handleUpdate }

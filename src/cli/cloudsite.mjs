@@ -81,9 +81,9 @@ const cloudsite = async () => {
       case 'plugin-settings':
         ({ data, success, userMessage } = await handlePluginSettings({ argv, db })); break
       case 'update':
-        userMessage = await handleUpdate({ argv, db }); break
+        ({ success, userMessage } = await handleUpdate({ argv, db })); break
       case 'verify':
-        userMessage = await handleVerify({ argv, db }); break
+        ({ data } = await handleVerify({ argv, db })); break
       default:
         process.stderr.write('Uknown command: ' + command + '\n\n')
         exitCode = 10

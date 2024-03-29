@@ -27,7 +27,8 @@ const handleVerify = async ({ argv, db }) => {
   }, 'success')
 
   const output = { 'overall status' : summaryStatus, checks : results }
-  progressLogger.write({ output, format })
+
+  return { data: output }
 }
 
 export { handleVerify }
