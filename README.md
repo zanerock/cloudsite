@@ -275,11 +275,6 @@ and then run:
 cloudsite update your-domain.com
 ```
 
-globalOptions: {
-  'sso-profile': 'cloudsite-manager',
-  format: 'terminal',
-  quiet: false
-}
 ## Command reference
 
 ### Usage
