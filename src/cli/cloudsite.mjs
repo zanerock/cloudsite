@@ -60,7 +60,7 @@ const cloudsite = async () => {
       case 'cleanup':
         ({ success, userMessage } = await handleCleanup({ argv, db })); break
       case 'configuration':
-        ({ success, userMessage } = await handleConfiguration({ argv, db })); break
+        ({ data, success, userMessage } = await handleConfiguration({ argv, db })); break
       case 'create':
         ({ success, userMessage } = await handleCreate({ argv, db })); break
       case 'destroy':

@@ -8,12 +8,14 @@ const handleConfigurationShow = async ({ argv, db }) => {
   const myOptionsSpec = cliSpec
     .commands.find(({ name }) => name === 'configuration')
     .commands.find(({ name }) => name === 'show')
+    .arguments || []
+  console.log('myOptionsSpec:', myOptionsSpec) // DEBUG
   const showConfigurationCLISpec = getOptionsSpec({ optionsSpec: myOptionsSpec })
   const showConfigurationOptionsSpec = showConfigurationCLISpec.arguments
   const showConfigurationOptions = commandLineArgs(showConfigurationOptionsSpec, { argv })
 
   const accountSettings = db.account.settings || {}
-  return { data: accountSettings }
+  return { success: true, data: accountSettings }
 }
 
 export { handleConfigurationShow }
