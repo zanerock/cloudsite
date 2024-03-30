@@ -53,9 +53,9 @@ const create = async ({
 
   bucketName = await determineBucketName({ apexDomain, bucketName, credentials, findName : true, siteInfo })
   siteInfo.bucketName = bucketName
-  const stackCreated = await createSiteStack({ credentials, noDeleteOnFailure, siteInfo })
+  const { success, stackName } = await createSiteStack({ credentials, noDeleteOnFailure, siteInfo })
 
-  if (stackCreated === true) {
+  if (success === true) {
     const postUpdateHandlers = Object.keys(siteInfo.plugins || {}).map((pluginKey) =>
       [pluginKey, plugins[pluginKey].postUpdateHandler]
     )
@@ -79,9 +79,9 @@ const create = async ({
       handleAssociateCostAllocationTagsError({ e, siteInfo })
     }
 
-    return true
+    return { success, stackName }
   } else {
-    return false
+    return { success, stackName }
   }
 }
 

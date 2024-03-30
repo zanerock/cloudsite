@@ -27,6 +27,7 @@ const setupContactHandler = async ({
   pluginData.contactHandlerFunctionName = contactHandlerFunctionName
 
   const contactHandlerLogGroupName = contactHandlerFunctionName
+  const contactHandlerPolicyName = contactHandlerFunctionName
 
   const { formFields = 'standard' } = pluginData.settings
   const formFieldsSpec = formFields === 'standard'
@@ -54,31 +55,34 @@ const setupContactHandler = async ({
       Path     : '/cloudsite/contact-processor/',
       Policies : [
         {
-          Version   : '2012-10-17',
-          Statement : [
-            {
-              Action : [
-                'dynamodb:PutItem'
-              ],
-              Resource : { 'Fn::GetAtt' : ['ContactHandlerDynamoDB', 'Arn'] },
-              Effect   : 'Allow'
-            },
-            {
-              Effect   : 'Allow',
-              Action   : 'logs:CreateLogGroup',
-              Resource : `arn:aws:${region}:${accountID}:*`
-            },
-            {
-              Effect : 'Allow',
-              Action : [
-                'logs:CreateLogStream',
-                'logs:PutLogEvents'
-              ],
-              Resource : [
-                `arn:aws:logs:${region}:${accountID}:log-group:${contactHandlerLogGroupName}:*`
-              ]
-            }
-          ]
+          PolicyName     : contactHandlerPolicyName,
+          PolicyDocument : {
+            Version   : '2012-10-17',
+            Statement : [
+              {
+                Action : [
+                  'dynamodb:PutItem'
+                ],
+                Resource : { 'Fn::GetAtt' : ['ContactHandlerDynamoDB', 'Arn'] },
+                Effect   : 'Allow'
+              },
+              {
+                Effect   : 'Allow',
+                Action   : 'logs:CreateLogGroup',
+                Resource : `arn:aws:${region}:${accountID}:*`
+              },
+              {
+                Effect : 'Allow',
+                Action : [
+                  'logs:CreateLogStream',
+                  'logs:PutLogEvents'
+                ],
+                Resource : [
+                  `arn:aws:logs:${region}:${accountID}:log-group:${contactHandlerLogGroupName}:*`
+                ]
+              }
+            ]
+          }
         }
       ],
       Tags : tags

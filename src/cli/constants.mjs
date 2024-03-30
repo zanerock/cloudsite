@@ -6,6 +6,9 @@ const VALID_FORMATS = ['json', 'terminal', 'text', 'yaml']
 
 const DB_PATH = fsPath.join(process.env.HOME, '.config', 'cloudsite', 'cloudsite-db.json')
 
+const ACTION_CLEANUP = 'cleanup'
+const ACTION_SETUP_BILLING = 'setup billing'
+
 const globalOptionsSpec = [
   {
     name        : 'format',
@@ -345,4 +348,4 @@ const cliSpec = {
   ]
 }
 
-export { cliSpec, DB_PATH, globalOptionsSpec, SOURCE_TYPES, VALID_FORMATS }
+export { ACTION_CLEANUP, ACTION_SETUP_BILLING, cliSpec, DB_PATH, globalOptionsSpec, SOURCE_TYPES, VALID_FORMATS }
