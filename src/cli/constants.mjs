@@ -348,4 +348,4 @@ const cliSpec = {
   ]
 }
 
-export { cliSpec, DB_PATH, globalOptionsSpec, SOURCE_TYPES, VALID_FORMATS }
+export { ACTION_CLEANUP, ACTION_SETUP_BILLING, cliSpec, DB_PATH, globalOptionsSpec, SOURCE_TYPES, VALID_FORMATS }
