@@ -1,4 +1,3 @@
-import { errorOut } from './error-out'
 import { getValueContainerAndKey } from './get-value-container-and-key'
 import * as plugins from '../../lib/plugins'
 import { progressLogger } from '../../lib/shared/progress-logger'
@@ -20,7 +19,7 @@ const updatePluginSettings = ({ confirmed, doDelete, options, siteInfo }) => {
 
     const plugin = plugins[pluginName]
     if (plugin === undefined) {
-      errorOut(`No such plugin '${pluginName}'; use one of: ${Object.keys(plugins).join(', ')}.\n`)
+      throw new Error(`No such plugin '${pluginName}'; use one of: ${Object.keys(plugins).join(', ')}.\n`)
     }
 
     if (siteInfo.plugins === undefined) {
@@ -47,7 +46,7 @@ const updatePluginSettings = ({ confirmed, doDelete, options, siteInfo }) => {
         delete siteInfo.plugins[pluginName]
         progressLogger.write(`Deleted plugin settings for '${pluginName}'; was:\n${JSON.stringify(pluginSettings, null, '  ')}\n`)
       } else {
-        errorOut("Interactive confirmation not yet enabled. Use the '--confirmed' option. Note, this will delete all plugin settings and data and cannot be recovered. You must run 'cloudsite update' for this change to take effect. To re-enable the plugin, you must re-initialize all required settings and update the site.\n", 3)
+        throw new Error("Interactive confirmation not yet enabled. Use the '--confirmed' option. Note, this will delete all plugin settings and data and cannot be recovered. You must run 'cloudsite update' for this change to take effect. To re-enable the plugin, you must re-initialize all required settings and update the site.\n", 3)
       }
     } else if (doDelete === true) {
       const wasValue = valueContainer[valueKey]

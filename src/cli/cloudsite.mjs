@@ -26,6 +26,7 @@ const cloudsite = async () => {
   const argv = mainOptions._unknown || []
 
   const { command/*, quiet */ } = mainOptions
+  const noReminders = mainOptions['no-reminders']
 
   let db
   try {
@@ -46,7 +47,9 @@ const cloudsite = async () => {
 
   configureLogger(globalOptions)
 
-  checkReminders({ reminders : db.reminders })
+  if (noReminders !== true) {
+    checkReminders({ reminders : db.reminders })
+  }
 
   const origDB = structuredClone(db)
 

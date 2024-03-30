@@ -2,7 +2,6 @@ import commandLineArgs from 'command-line-args'
 
 import { checkFormat } from './check-format'
 import { cliSpec } from '../constants'
-import { errorOut } from './error-out'
 import { getOptionsSpec } from './get-options-spec'
 import { getSiteInfo } from './get-site-info'
 
@@ -13,7 +12,7 @@ const handleDetail = ({ argv, db }) => {
   const { format } = detailOptions
 
   if (apexDomain === undefined) {
-    errorOut('Apex domain must be specified.')
+    throw new Error('Apex domain must be specified.')
   }
 
   checkFormat(format)
