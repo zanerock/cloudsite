@@ -46,7 +46,8 @@ const handleDestroy = async ({ argv, db }) => {
     db.reminders.push({
       todo        : `Cleanup partially deleted site '${apexDomain}'. Try:\ncloudsite cleanup`,
       remindAfter : remindAfter.toISOString(),
-      references  : apexDomain
+      references  : apexDomain,
+      action      : 'cleanup'
     })
     delete db.sites[apexDomain]
 

@@ -36,7 +36,8 @@ const handleCleanup = async ({ argv, db }) => {
     progressLogger.write(`${apexDomain}: ${cleanupResult === true ? 'CLEANED' : 'NOT cleaned'}\n`)
     if (cleanupResult === true) {
       delete db.toCleanup[apexDomain]
-      db.reminders.splice(db.reminders.findIndex(({ apexDomain: testDomain }) => testDomain === apexDomain), 1)
+      db.reminders.splice(db.reminders.findIndex(({ action, apexDomain: testDomain }) => 
+        action === 'cleanup' && testDomain === apexDomain), 1)
     }
   })
 
