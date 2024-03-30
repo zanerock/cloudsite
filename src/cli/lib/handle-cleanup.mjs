@@ -1,6 +1,6 @@
 import commandLineArgs from 'command-line-args'
 
-import { cliSpec } from '../constants'
+import { ACTION_CLEANUP, cliSpec } from '../constants'
 import { destroy } from '../../lib/actions/destroy'
 import { getOptionsSpec } from './get-options-spec'
 import { progressLogger } from '../../lib/shared/progress-logger'
@@ -37,7 +37,7 @@ const handleCleanup = async ({ argv, db }) => {
     if (cleanupResult === true) {
       delete db.toCleanup[apexDomain]
       db.reminders.splice(db.reminders.findIndex(({ action, apexDomain: testDomain }) => 
-        action === 'cleanup' && testDomain === apexDomain), 1)
+        action === ACTION_CLEANUP && testDomain === apexDomain), 1)
     }
   })
 

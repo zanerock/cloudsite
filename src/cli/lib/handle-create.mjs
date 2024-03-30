@@ -4,8 +4,8 @@ import commandLineArgs from 'command-line-args'
 import { awsS3TABucketNameRE, awsS3TABucketNameREString } from 'regex-repo'
 import { Questioner } from 'question-and-answer'
 
+import { ACTION_SETUP_BILLING, cliSpec } from '../constants'
 import { checkAuthentication } from './check-authentication'
-import { cliSpec } from '../constants'
 import { create } from '../../lib/actions/create'
 import { getOptionsSpec } from './get-options-spec'
 import * as optionsLib from './options'
@@ -121,6 +121,13 @@ const handleCreate = async ({ argv, db }) => {
   ({ stackName, success } = await create({ db, noBuild, noDeleteOnFailure, siteInfo }))
 
   if (success === true) {
+    const remindAfter = new Date(now.getTime() + 4 * 60 * 60 * 1000) // give it 4 hours
+    db.reminders.push({
+      todo        : `Setup billing tags for site '${apexDomain}'. Try:\ncloudsite update ${apexDomain} --do-billing`,
+      remindAfter : remindAfter.toISOString(),
+      references  : apexDomain,
+      action      : ACTION_SETUP_BILLING
+    })
     return { success, userMessage : `Created stack '${stackName}'.` }
   } else {
     return { success, userMessage : `Failed to create stack '${stackName}'.` }

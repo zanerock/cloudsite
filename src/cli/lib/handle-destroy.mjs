@@ -1,7 +1,7 @@
 import commandLineArgs from 'command-line-args'
 import { Questioner } from 'question-and-answer'
 
-import { cliSpec } from '../constants'
+import { ACTION_CLEANUP, cliSpec } from '../constants'
 import { destroy } from '../../lib/actions/destroy'
 import { getOptionsSpec } from './get-options-spec'
 import { getSiteInfo } from './get-site-info'
@@ -40,14 +40,14 @@ const handleDestroy = async ({ argv, db }) => {
     return { success : true, userMessage : `${apexDomain} deleted.\nRemoved ${apexDomain} from local DB.\n` }
   } else {
     const now = new Date()
-    const remindAfter = new Date(now.getTime() + 2 * 60 * 60 * 1000)
+    const remindAfter = new Date(now.getTime() + 2 * 60 * 60 * 1000) // give it 2 hours
     siteInfo.lastCleanupAttempt = now.toISOString()
     db.toCleanup[apexDomain] = siteInfo
     db.reminders.push({
       todo        : `Cleanup partially deleted site '${apexDomain}'. Try:\ncloudsite cleanup`,
       remindAfter : remindAfter.toISOString(),
       references  : apexDomain,
-      action      : 'cleanup'
+      action      : ACTION_CLEANUP
     })
     delete db.sites[apexDomain]
 

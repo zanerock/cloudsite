@@ -68,6 +68,8 @@ const update = async ({
   }
 
   await Promise.all(secondRoundUpdates)
+
+  return { doAll }
 }
 
 const invalidateCache = async ({ credentials, siteInfo }) => {
