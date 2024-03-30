@@ -129,9 +129,9 @@ const handleCreate = async ({ argv, db }) => {
       references  : apexDomain,
       action      : ACTION_SETUP_BILLING
     })
-    return { success, userMessage : `Created stack '${stackName}'.` }
+    return { success, userMessage : `Created site '${stackName}'/'www.${stackName}'.` }
   } else {
-    return { success, userMessage : `Failed to create stack '${stackName}'.` }
+    return { success, userMessage : `Failed to create site '${stackName}'.` }
   }
 }
 
