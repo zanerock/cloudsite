@@ -1,6 +1,6 @@
 import commandLineArgs from 'command-line-args'
 
-import { ACTION_CLEANUP, cliSpec } from '../constants'
+import { cliSpec } from '../constants'
 import { destroy } from '../../lib/actions/destroy'
 import { getOptionsSpec } from './get-options-spec'
 import { progressLogger } from '../../lib/shared/progress-logger'
@@ -31,19 +31,18 @@ const handleCleanup = async ({ argv, db }) => {
   clearInterval(intervalID)
   progressLogger.write('\n')
 
+  const userMessages = []
   listOfSitesToCleanup.forEach((apexDomain, i) => {
     const cleanupResult = cleanupResults[i]
-    progressLogger.write(`${apexDomain}: ${cleanupResult === true ? 'CLEANED' : 'NOT cleaned'}\n`)
+    userMessages.push(`${apexDomain}: ${cleanupResult === true ? 'CLEANED' : 'NOT cleaned'}`)
     if (cleanupResult === true) {
       delete db.toCleanup[apexDomain]
-      db.reminders.splice(db.reminders.findIndex(({ action, apexDomain: testDomain }) => 
-        action === ACTION_CLEANUP && testDomain === apexDomain), 1)
+      // delete all reminders associated with the site
+      db.reminders = db.reminders.filter(({ apexDomain: testDomain }) => testDomain !== apexDomain)
     }
   })
 
-  const userMessage = listOfSitesToCleanup.length === 1
-    ? `Site '${listOfSitesToCleanup[0]}' has been successfully cleaned.`
-    : `Sites '${listOfSitesToCleanup.join("', '")}' have been successfully cleaned.`
+  const userMessage = userMessages.join('\n')
 
   return { success : true, userMessage }
 }

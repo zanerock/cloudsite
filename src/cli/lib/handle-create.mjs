@@ -121,6 +121,7 @@ const handleCreate = async ({ argv, db }) => {
   ({ stackName, success } = await create({ db, noBuild, noDeleteOnFailure, siteInfo }))
 
   if (success === true) {
+    const now = new Date()
     const remindAfter = new Date(now.getTime() + 4 * 60 * 60 * 1000) // give it 4 hours
     db.reminders.push({
       todo        : `Setup billing tags for site '${apexDomain}'. Try:\ncloudsite update ${apexDomain} --do-billing`,

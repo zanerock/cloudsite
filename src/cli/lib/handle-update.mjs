@@ -21,8 +21,8 @@ const handleUpdate = async ({ argv, db }) => {
   const { doAll } = await update({ db, doBilling, doContent, doDNS, doStack, noBuild, noCacheInvalidation, siteInfo })
 
   if (doAll === true || doBilling === true) {
-    db.reminders.splice(db.reminders.findIndex(({ action, apexDomain: testDomain }) => 
-        action === ACTION_SETUP_BILLING && testDomain === apexDomain), 1)
+    db.reminders.splice(db.reminders.findIndex(({ action, apexDomain: testDomain }) =>
+      action === ACTION_SETUP_BILLING && testDomain === apexDomain), 1)
   }
 
   return { success : true, userMessage : `Updated '${apexDomain}' site.` }
