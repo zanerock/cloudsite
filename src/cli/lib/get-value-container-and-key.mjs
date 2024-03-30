@@ -1,5 +1,3 @@
-import { errorOut } from './error-out'
-
 const getValueContainerAndKey = ({ path, pathPrefix, rootContainer, skipValueCheck, spec, value }) => {
   const origPath = (pathPrefix === undefined ? '' : pathPrefix) + path.join('.') // used if validation error
   if (path === undefined || path.length === 0) {
@@ -36,7 +34,7 @@ const getValueContainerAndKey = ({ path, pathPrefix, rootContainer, skipValueChe
     } else {
       const currSpec = spec?.[bit]
       if (currSpec === undefined && i > 0) {
-        errorOut(`Invalid option path '${origPath}'; no such element '${bit}'.\n`)
+        throw new Error(`Invalid option path '${origPath}'; no such element '${bit}'.\n`)
       }
       const container = currContainer[bit]
       if (container === undefined) {

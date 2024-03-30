@@ -1,7 +1,6 @@
 import commandLineArgs from 'command-line-args'
 
 import { cliSpec } from '../../constants'
-import { errorOut } from '../error-out'
 import { getOptionsSpec } from '../get-options-spec'
 import { getSiteInfo } from '../get-site-info'
 import * as optionsLib from '../options'
@@ -23,17 +22,17 @@ const handlePluginSettingsSet = async ({ argv, db }) => {
   const siteInfo = getSiteInfo({ apexDomain, db })
 
   if (doDelete === true && name === undefined && options.length === 0) {
-    errorOut("You must specify a '--name' or at least one '--option' when '--delete' is set.\n")
+    throw new Error("You must specify a '--name' or at least one '--option' when '--delete' is set.\n")
   } else if (name !== undefined && (value !== undefined || doDelete === true)) {
     options.push({ name, value : smartConvert(value) }) // the 'option' values are already converted
   } else if (name !== undefined && value === undefined) { // but delete is not set (checked above)
-    errorOut("You must specify a '--value' or '--delete' when '--name' is set.\n")
+    throw new Error("You must specify a '--value' or '--delete' when '--name' is set.\n")
   } else if (name === undefined && value !== undefined) {
-    errorOut("You must specify a '--name' when '--value' is set.\n")
+    throw new Error("You must specify a '--name' when '--value' is set.\n")
   }
 
   if (doDelete !== true && options.length === 0) {
-    errorOut("Invalid options; specify '--name'+'--value', '--delete'/'--name', or one or more '--option' options.\n")
+    throw new Error("Invalid options; specify '--name'+'--value', '--delete'/'--name', or one or more '--option' options.\n")
   }
 
   // take actions and update the options

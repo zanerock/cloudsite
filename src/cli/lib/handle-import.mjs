@@ -4,7 +4,6 @@ import commandLineArgs from 'command-line-args'
 
 import { cliSpec } from '../constants'
 import { doImport } from '../../lib/actions/import'
-import { errorOut } from './error-out'
 import { getOptionsSpec } from './get-options-spec'
 import { processSourceType } from './process-source-type'
 import { progressLogger } from '../../lib/shared/progress-logger'
@@ -27,13 +26,13 @@ const handleImport = async ({ argv, db }) => {
   const sourceType = processSourceType({ sourcePath, sourceType : importOptions['source-type'] })
 
   if (domainAndStack?.length !== 2) {
-    errorOut(`Unexpected number of positional arguments, expect 2 (domain and stack name), but got ${domainAndStack?.length || '0'}.\n`)
+    throw new Error(`Unexpected number of positional arguments, expect 2 (domain and stack name), but got ${domainAndStack?.length || '0'}.\n`)
   }
   if (region === undefined) {
-    errorOut("You must specify the '--region' parameter.\n")
+    throw new Error("You must specify the '--region' parameter.\n")
   }
   if (sourcePath === undefined) {
-    errorOut("You must specify the '--source-path' parameter.\n")
+    throw new Error("You must specify the '--source-path' parameter.\n")
   }
 
   let domain, stack
@@ -48,13 +47,13 @@ const handleImport = async ({ argv, db }) => {
   const sitesInfo = db.sites
 
   if (sitesInfo[domain] !== undefined && refresh !== true) {
-    errorOut(`Domain '${domain}' is already in the sites DB. To update/refresh the values, use the '--refresh' option.`)
+    throw new Error(`Domain '${domain}' is already in the sites DB. To update/refresh the values, use the '--refresh' option.`)
   }
   if (domain === undefined) {
-    errorOut(`Could not determine domain name from arguments (${domainAndStack}).\n`)
+    throw new Error(`Could not determine domain name from arguments (${domainAndStack}).\n`)
   }
   if (stack === undefined) {
-    errorOut(`Could not determine stack name from arguments (${domainAndStack}).\n`)
+    throw new Error(`Could not determine stack name from arguments (${domainAndStack}).\n`)
   }
 
   // now, actually do the import
