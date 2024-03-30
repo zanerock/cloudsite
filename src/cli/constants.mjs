@@ -11,11 +11,11 @@ const globalOptionsSpec = [
     name        : 'format',
     description : "Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'."
   },
-  { 
-    name: 'no-reminders', 
-    alias: 'R', 
-    type: Boolean, 
-    description: 'Suppresses any reminders. Particularly useful for programmatic usage where the extra output might break things.'
+  {
+    name        : 'no-reminders',
+    alias       : 'R',
+    type        : Boolean,
+    description : 'Suppresses any reminders. Particularly useful for programmatic usage where the extra output might break things.'
   },
   { name : 'quiet', alias : 'q', type : Boolean, description : 'Makes informational output less chatty.' },
   { name : 'sso-profile', description : 'The AWS local SSO profile to use for authentication.' },
