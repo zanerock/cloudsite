@@ -105,7 +105,7 @@ const cloudsite = async () => {
       case 'verify':
         ({ data } = await handleVerify({ argv, db })); break
       case undefined:
-        throw new Error("Must specify command or '--help' option.", { exitCode: 1 })
+        throw new Error("Must specify command or '--help' option.", { exitCode : 1 })
       default:
         throw new Error('Unknown command: ' + command, { exitCode : 10 })
     }
@@ -119,7 +119,7 @@ const cloudsite = async () => {
       }
       exitCode = 2
     } else {
-      userMessage = e.message + 
+      userMessage = e.message +
         `\n\nFor more information, try:\n<em>cloudsite --help${command === undefined ? '' : ' <command(s)>'}<rst>`
       exitCode = e.exitCode || 11
     }
