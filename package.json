@@ -52,6 +52,7 @@
     "@aws-sdk/credential-providers": "^3.515.0",
     "@aws-sdk/signature-v4-crt": "^3.535.0",
     "@liquid-labs/shell-toolkit": "^1.0.0-alpha.10",
+    "command-line-help": "^1.0.0-alpha.1",
     "js-yaml": "^4.1.0",
     "mime-types": "^2.1.35",
     "question-and-answer": "^1.0.0-alpha.19",
@@ -64,7 +65,7 @@
     "@liquid-labs/sdlc-resource-babel-and-rollup": "^1.0.0-alpha.8",
     "@liquid-labs/sdlc-resource-eslint": "^1.0.0-alpha.11",
     "@liquid-labs/sdlc-resource-jest": "^1.0.0-alpha.7",
-    "magic-print": "^1.0.0-alpha.10"
+    "magic-print": "^1.0.0-alpha.13"
   },
   "_comply": {
     "orgKey": "@liquid-labs"
@@ -72,6 +73,7 @@
   "peerDependencies": {
     "command-line-args": "^5.2.1",
     "command-line-documentation": "^1.0.0-alpha.3",
+    "command-line-usage": "^7.0.1",
     "json-to-plain-text": "^1.1.4",
     "lodash": "^4.17.21",
     "magic-print": "^1.0.0-alpha.4"

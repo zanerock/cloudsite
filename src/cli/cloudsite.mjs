@@ -2,9 +2,10 @@ import * as fs from 'node:fs/promises'
 
 import commandLineArgs from 'command-line-args'
 import { commandLineDocumentation } from 'command-line-documentation'
+import { commandLineHelp } from 'command-line-help'
 import isEqual from 'lodash/isEqual'
 
-import { cliSpec, DB_PATH } from './constants'
+import { cliSpec, DB_PATH, globalOptionsSpec } from './constants'
 import { checkReminders } from './lib/check-reminders'
 import { configureLogger, progressLogger } from '../lib/shared/progress-logger'
 import { getGlobalOptions } from './lib/get-global-options'
@@ -22,10 +23,10 @@ import { handleVerify } from './lib/handle-verify'
 
 const cloudsite = async () => {
   // we can 'stopAtFirstUnknown' because the globals are defined at the root level
-  const mainOptions = commandLineArgs(cliSpec.mainOptions, { stopAtFirstUnknown : true })
+  const mainOptions = commandLineArgs(cliSpec.mainOptions, { partial : true })
   const argv = mainOptions._unknown || []
 
-  const { command/*, quiet */ } = mainOptions
+  const { command, help /*, quiet */ } = mainOptions
   const noReminders = mainOptions['no-reminders']
 
   let db
@@ -42,10 +43,28 @@ const cloudsite = async () => {
 
   const globalOptions = getGlobalOptions({ db })
   const { format } = globalOptions
+  const noColor = globalOptions['no-color']
   const ssoProfile = globalOptions['sso-profile']
   const throwError = globalOptions['throw-error']
 
   configureLogger(globalOptions)
+
+  if (help === true) {
+    const commands = command === undefined
+      ? []
+      : [ command, ...(mainOptions._unknown?.filter((option) => !option.startsWith('--')) || []) ]
+
+
+    const clhOptions = { cliSpec, commands, mainOptionsGlobal: true, noColor }
+    if (commands.length !== 0) { // then we inject the globalOptions
+      clhOptions.globalOptions = globalOptionsSpec
+    }
+
+    const help = commandLineHelp(clhOptions)
+    const longestCommandLength = commands.reduce
+    progressLogger.write(help + '\n', { hangingIndent: 4 })
+    process.exit(0)
+  }
 
   if (noReminders !== true) {
     checkReminders({ reminders : db.reminders })
@@ -88,7 +107,7 @@ const cloudsite = async () => {
       case 'verify':
         ({ data } = await handleVerify({ argv, db })); break
       default:
-        process.stderr.write('Uknown command: ' + command + '\n\n')
+        process.stderr.write('Unknown command: ' + command + '\n\n')
         exitCode = 10
       // TODO: handleHelp() (abstriact from cloudcraft)
     }
