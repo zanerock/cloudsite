@@ -13,6 +13,8 @@ const configureLogger = (options) => {
       print(...chunks)
     }
   }
+
+  progressLogger.write.width = print.width
 }
 
 export { configureLogger, progressLogger }
