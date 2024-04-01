@@ -14,8 +14,8 @@ const globalOptionsSpec = [
     name        : 'format',
     description : "Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'."
   },
-  { name: 'help', alias: '?', type: Boolean, description: 'Prints general or command specific help.' },
-  { name: 'no-color', type: Boolean, description: 'Disables terminal colorization.' },
+  { name : 'help', alias : '?', type : Boolean, description : 'Prints general or command specific help.' },
+  { name : 'no-color', type : Boolean, description : 'Disables terminal colorization.' },
   {
     name        : 'no-reminders',
     alias       : 'R',
@@ -281,9 +281,9 @@ const cliSpec = {
       ]
     },
     {
-      name      : 'update',
-      description   : 'Updates a website content and/or infrastructure.',
-      arguments : [
+      name        : 'update',
+      description : 'Updates a website content and/or infrastructure.',
+      arguments   : [
         {
           name          : 'apex-domain',
           description   : 'The apex domain identifying the site.',
@@ -322,9 +322,9 @@ const cliSpec = {
       ]
     },
     {
-      name      : 'verify',
-      description   : 'Verifies the site is up and running and that the stack and content are up-to-date.',
-      arguments : [
+      name        : 'verify',
+      description : 'Verifies the site is up and running and that the stack and content are up-to-date.',
+      arguments   : [
         {
           name          : 'apex-domain',
           description   : 'The domain of the site to verify.',

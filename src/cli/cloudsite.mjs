@@ -52,18 +52,16 @@ const cloudsite = async () => {
   if (help === true) {
     const commands = command === undefined
       ? []
-      : [ command, ...(mainOptions._unknown?.filter((option) => !option.startsWith('--')) || []) ]
+      : [command, ...(mainOptions._unknown?.filter((option) => !option.startsWith('--')) || [])]
 
-
-    const clhOptions = { cliSpec, commands, mainOptionsGlobal: true, noColor }
+    const clhOptions = { cliSpec, commands, mainOptionsGlobal : true, noColor }
     if (commands.length !== 0) { // then we inject the globalOptions
       clhOptions.globalOptions = globalOptionsSpec
     }
 
     const help = commandLineHelp(clhOptions)
-    const longestCommandLength = commands.reduce
-    progressLogger.write(help + '\n', { hangingIndent: 4 })
-    process.exit(0)
+    progressLogger.write(help + '\n', { hangingIndent : 4 })
+    process.exit(0) // eslint-disable-line no-process-exit
   }
 
   if (noReminders !== true) {
