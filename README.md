@@ -287,6 +287,8 @@ cloudsite update your-domain.com
 |------|------|
 |`<command>`|(_main argument_,_optional_) The command to run or a sub-command group.|
 |`--format`|Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'.|
+|`--help`, `-?`|Prints general or command specific help.|
+|`--no-color`|Disables terminal colorization.|
 |`--no-reminders`, `-R`|Suppresses any reminders. Particularly useful for programmatic usage where the extra output might break things.|
 |`--quiet`, `-q`|Makes informational output less chatty.|
 |`--sso-profile`|The AWS local SSO profile to use for authentication.|

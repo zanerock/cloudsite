@@ -14,6 +14,8 @@ const globalOptionsSpec = [
     name        : 'format',
     description : "Sets the format for the output. May be 'terminal' (default), 'text', 'json', or 'yaml'."
   },
+  { name : 'help', alias : '?', type : Boolean, description : 'Prints general or command specific help.' },
+  { name : 'no-color', type : Boolean, description : 'Disables terminal colorization.' },
   {
     name        : 'no-reminders',
     alias       : 'R',
@@ -46,8 +48,9 @@ const sourceTypeArgSpec = {
 }
 
 const cliSpec = {
-  mainCommand : 'cloudsite',
-  mainOptions : [
+  mainCommand : 'cloudsite', // TODO: should just be command
+  description : 'Low cost, high performance cloud based website hosting manager.',
+  mainOptions : [ // TODO: should just be arguments
     { name : 'command', defaultOption : true, description : 'The command to run or a sub-command group.' },
     ...globalOptionsSpec
   ],
@@ -278,9 +281,9 @@ const cliSpec = {
       ]
     },
     {
-      name      : 'update',
-      summary   : 'Updates a website content and/or infrastructure.',
-      arguments : [
+      name        : 'update',
+      description : 'Updates a website content and/or infrastructure.',
+      arguments   : [
         {
           name          : 'apex-domain',
           description   : 'The apex domain identifying the site.',
@@ -319,9 +322,9 @@ const cliSpec = {
       ]
     },
     {
-      name      : 'verify',
-      summary   : 'Verifies the site is up and running and that the stack and content are up-to-date.',
-      arguments : [
+      name        : 'verify',
+      description : 'Verifies the site is up and running and that the stack and content are up-to-date.',
+      arguments   : [
         {
           name          : 'apex-domain',
           description   : 'The domain of the site to verify.',
