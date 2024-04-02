@@ -47,6 +47,13 @@ const sourceTypeArgSpec = {
   description : "May be either 'vanilla' or 'docusaurus', otherwise process will attempt to guess."
 }
 
+const subcommandSpec = {
+  name          : 'subcommand',
+  description   : 'The subcommand to execute.',
+  defaultOption : true,
+  required      : true
+}
+
 const cliSpec = {
   mainCommand : 'cloudsite', // TODO: should just be command
   description : 'Low cost, high performance cloud based website hosting manager.',
@@ -225,16 +232,9 @@ const cliSpec = {
     },
     {
       name        : 'plugin-settings',
-      description : 'Sets (or deletes) a site option.',
-      arguments   : [
-        {
-          name          : 'subcommand',
-          description   : 'The subcommand to execute.',
-          defaultOption : true,
-          required      : true
-        }
-      ],
-      commands : [
+      description : 'Command group for managing plugin settings.',
+      arguments   : [subcommandSpec],
+      commands    : [
         {
           name        : 'set',
           description : 'Sets and deletes the specified options.',
@@ -277,6 +277,17 @@ const cliSpec = {
               required      : true
             }
           ]
+        }
+      ]
+    },
+    {
+      name        : 'reminders',
+      description : 'Command group for managing reminders.',
+      arguments   : [subcommandSpec],
+      commands    : [
+        {
+          name        : 'list',
+          description : 'List currently active reminders.'
         }
       ]
     },
