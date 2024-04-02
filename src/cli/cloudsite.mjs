@@ -18,6 +18,7 @@ import { handleGetIAMPolicy } from './lib/handle-get-iam-policy'
 import { handleList } from './lib/handle-list'
 import { handleImport } from './lib/handle-import'
 import { handlePluginSettings } from './lib/handle-plugin-settings'
+import { handleReminders } from './lib/handle-reminders'
 import { handleUpdate } from './lib/handle-update'
 import { handleVerify } from './lib/handle-verify'
 
@@ -100,6 +101,8 @@ const cloudsite = async () => {
         ({ success, userMessage } = await handleImport({ argv, db })); break
       case 'plugin-settings':
         ({ data, success, userMessage } = await handlePluginSettings({ argv, db })); break
+      case 'reminders':
+        ({ data, success } = await handleReminders({ argv, db })); break
       case 'update':
         ({ success, userMessage } = await handleUpdate({ argv, db })); break
       case 'verify':

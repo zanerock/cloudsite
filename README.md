@@ -305,7 +305,8 @@ cloudsite update your-domain.com
 - [`get-iam-policy`](#cloudsite-get-iam-policy): Prints an IAM policy suitable for operating cloudsite.
 - [`import`](#cloudsite-import): Generates a site database based on currently deployed site stacks.
 - [`list`](#cloudsite-list): Lists the sites registered in the local database.
-- [`plugin-settings`](#cloudsite-plugin-settings): Sets (or deletes) a site option.
+- [`plugin-settings`](#cloudsite-plugin-settings): Command group for managing plugin settings.
+- [`reminders`](#cloudsite-reminders): Command group for managing reminders.
 - [`update`](#cloudsite-update): Updates a website content and/or infrastructure.
 - [`verify`](#cloudsite-verify): Verifies the site is up and running and that the stack and content are up-to-date.
 
@@ -432,7 +433,7 @@ Lists the sites registered in the local database.
 <span id="cloudsite-plugin-settings"></span>
 #### `cloudsite plugin-settings [subcommand]`
 
-Sets (or deletes) a site option.
+Command group for managing plugin settings.
 
 ##### `plugin-settings` options
 
@@ -472,6 +473,27 @@ ___`show` options___
 |Option|Description|
 |------|------|
 |`[apex-domain]`|(_main argument_,_required_) The apex domain of the site whose settings are to be displayed.|
+
+<span id="cloudsite-reminders"></span>
+#### `cloudsite reminders [subcommand]`
+
+Command group for managing reminders.
+
+##### `reminders` options
+
+|Option|Description|
+|------|------|
+|`[subcommand]`|(_main argument_,_required_) The subcommand to execute.|
+
+
+##### Subcommands
+
+- [`list`](#cloudsite-reminders-list): List currently active reminders.
+
+<span id="cloudsite-reminders-list"></span>
+###### `cloudsite reminders list`
+
+List currently active reminders.
 
 <span id="cloudsite-update"></span>
 #### `cloudsite update <options> [apex-domain]`
