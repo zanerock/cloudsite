@@ -6,8 +6,8 @@ const VALID_FORMATS = ['json', 'terminal', 'text', 'yaml']
 
 const DB_PATH = fsPath.join(process.env.HOME, '.config', 'cloudsite', 'cloudsite-db.json')
 
-const ACTION_CLEANUP = 'cleanup'
-const ACTION_SETUP_BILLING = 'setup billing'
+const ACTION_CLEANUP = 'CLEANUP'
+const ACTION_SETUP_BILLING = 'SETUP_BILLING'
 
 const globalOptionsSpec = [
   {
