@@ -6,7 +6,7 @@ import { SOURCE_TYPES } from '../constants'
 const processSourceType = ({ sourcePath, sourceType }) => {
   if (sourceType === undefined) {
     const docusaurusConfigPath = resolvePath(sourcePath, '..', 'docusaurus.config.js')
-    sourceType = fileExists(docusaurusConfigPath) ? 'docusaurus' : 'vanilla'
+    sourceType = fileExists(docusaurusConfigPath) === true ? 'docusaurus' : 'vanilla'
   } else if (!SOURCE_TYPES.includes(sourceType)) {
     throw new Error(`Invalid site source type '${sourceType}'; must be one of ${SOURCE_TYPES.join(', ')}.\n`, 2)
   }
