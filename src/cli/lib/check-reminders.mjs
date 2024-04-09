@@ -1,4 +1,5 @@
 import { progressLogger } from '../../lib/shared/progress-logger'
+import { todoTranslator } from './reminders/todo-translator'
 
 const checkReminders = ({ reminders }) => {
   const now = new Date().getTime()
@@ -12,8 +13,8 @@ const checkReminders = ({ reminders }) => {
     const opener = '-- <yellow>Reminder<rst>' + (currentReminders.lengith > 1 ? 's ' : ' ')
     progressLogger.write(opener + '-'.repeat(columnWidth - opener.length + '<yellow>'.length + '<rst>'.length) + '\n')
 
-    currentReminders.forEach(({ todo }, i) => {
-      progressLogger.write((currentReminders.length > 1 ? i + '.' : '') + todo + '\n')
+    currentReminders.forEach((todoEntry, i) => {
+      progressLogger.write((currentReminders.length > 1 ? i + '.' : '') + todoTranslator(todoEntry) + '\n')
     })
 
     progressLogger.write('-'.repeat(columnWidth) + '\n')

@@ -32,19 +32,21 @@ const handleCleanup = async ({ argv, db }) => {
   progressLogger.write('\n')
 
   const userMessages = []
+  let success = true
   listOfSitesToCleanup.forEach((apexDomain, i) => {
     const cleanupResult = cleanupResults[i]
+    success = success && cleanupResult
     userMessages.push(`${apexDomain}: ${cleanupResult === true ? 'CLEANED' : 'NOT cleaned'}`)
     if (cleanupResult === true) {
       delete db.toCleanup[apexDomain]
       // delete all reminders associated with the site
-      db.reminders = db.reminders.filter(({ apexDomain: testDomain }) => testDomain !== apexDomain)
+      db.reminders = db.reminders.filter(({ references }) => references !== apexDomain)
     }
   })
 
   const userMessage = userMessages.join('\n')
 
-  return { success : true, userMessage }
+  return { success, userMessage }
 }
 
 export { handleCleanup }
