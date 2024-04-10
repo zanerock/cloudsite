@@ -1,9 +1,9 @@
 import { emailRE } from 'regex-repo'
 import { emptyBucket } from 's3-empty-bucket'
 
-import { PutBucketTaggingCommand, S3Client } from '@aws-sdk/client-s3'
+import { S3Client } from '@aws-sdk/client-s3'
 
-import { getSiteTag } from '../../shared/get-site-tag'
+import { CONTACT_EMAILER_ZIP_NAME, CONTACT_HANDLER_ZIP_NAME, REQUEST_SIGNER_ZIP_NAME } from './lib/constants'
 import { convertDomainToBucketName } from '../../shared/convert-domain-to-bucket-name'
 import { findBucketLike } from '../../shared/find-bucket-like'
 import { progressLogger } from '../../shared/progress-logger'
@@ -11,7 +11,7 @@ import { setupContactFormTable } from './lib/setup-contact-form-table'
 import { setupContactEmailer } from './lib/setup-contact-emailer'
 import { setupContactHandler } from './lib/setup-contact-handler'
 import { setupRequestSigner } from './lib/setup-request-signer'
-import { stageLambdaFunctionZipFiles } from './lib/stage-lambda-function-zip-files'
+import { stageLambdaFunctionZipFiles } from '../shared/stage-lambda-function-zip-files'
 import { updateCloudFrontDistribution } from './lib/update-cloud-front-distribution'
 
 const config = {
@@ -137,8 +137,13 @@ const stackConfig = async ({ pluginData, siteTemplate, update }) => {
   const { credentials, siteInfo } = siteTemplate
   const enableEmail = !!pluginData.settings.emailFrom
 
+  const lambdaFileNames = [CONTACT_HANDLER_ZIP_NAME, REQUEST_SIGNER_ZIP_NAME]
+  if (enableEmail === true) {
+    lambdaFileNames.push(CONTACT_EMAILER_ZIP_NAME)
+  }
+
   const lambdaFunctionsBucketName =
-    await stageLambdaFunctionZipFiles({ credentials, enableEmail, pluginData, siteInfo })
+    await stageLambdaFunctionZipFiles({ credentials, lambdaFileNames, pluginData, siteInfo })
 
   await setupContactHandler({ credentials, lambdaFunctionsBucketName, pluginData, siteInfo, siteTemplate, update })
   await setupRequestSigner({ credentials, lambdaFunctionsBucketName, pluginData, siteTemplate, update })
@@ -149,20 +154,6 @@ const stackConfig = async ({ pluginData, siteTemplate, update }) => {
   }
 }
 
-const updateHandler = async ({ credentials, pluginData, siteInfo }) => {
-  const { lambdaFunctionsBucket } = pluginData
-  const siteTag = getSiteTag(siteInfo)
-
-  const s3Client = new S3Client({ credentials })
-  const putBucketTaggingCommand = new PutBucketTaggingCommand({
-    Bucket  : lambdaFunctionsBucket,
-    Tagging : {
-      TagSet : [{ Key : siteTag, Value : '' }]
-    }
-  })
-  await s3Client.send(putBucketTaggingCommand)
-}
-
-const contactHandler = { config, importHandler, preStackDestroyHandler, stackConfig, updateHandler }
+const contactHandler = { config, importHandler, preStackDestroyHandler, stackConfig }
 
 export { contactHandler }

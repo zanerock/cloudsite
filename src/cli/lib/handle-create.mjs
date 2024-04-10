@@ -88,7 +88,7 @@ const handleCreate = async ({ argv, db }) => {
 
       if (enable === true) {
         const interrogationBundle = { actions : [] }
-        for (const [parameter, configSpec] of Object.entries(configOptions)) {
+        for (const [parameter, configSpec] of Object.entries(configOptions || {})) {
           const { default: defaultValue, description, invalidMessage, matches, required, type = 'string' } = configSpec
           const questionSpec = {
             default          : defaultValue,
@@ -104,6 +104,9 @@ const handleCreate = async ({ argv, db }) => {
         const questioner = new Questioner({ interrogationBundle, output : progressLogger })
         await questioner.question()
         options.push(...questioner.results.map(({ parameter, value }) => ({ name : `${plugin}.${parameter}`, value })))
+      }
+      if (configOptions === undefined || Object.keys(configOptions).length === 0) {
+        options.push({ name: plugin, value: true })
       }
     }
   }

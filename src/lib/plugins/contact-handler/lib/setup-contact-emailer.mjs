@@ -2,7 +2,7 @@ import { LambdaClient, UpdateFunctionCodeCommand } from '@aws-sdk/client-lambda'
 
 import { CONTACT_EMAILER_ZIP_NAME, STANDARD_FORM_FIELDS } from './constants'
 import { convertDomainToBucketName } from '../../../shared/convert-domain-to-bucket-name'
-import { determineLambdaFunctionName } from './determine-lambda-function-name'
+import { determineLambdaFunctionName } from '../../shared/determine-lambda-function-name'
 import { getSiteTag } from '../../../shared/get-site-tag'
 
 const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, update, pluginData, siteTemplate }) => {
