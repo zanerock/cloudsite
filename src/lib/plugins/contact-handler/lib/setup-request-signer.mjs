@@ -1,6 +1,6 @@
 import { REQUEST_SIGNER_ZIP_NAME } from './constants'
 import { convertDomainToBucketName } from '../../../shared/convert-domain-to-bucket-name'
-import { determineLambdaFunctionName } from './determine-lambda-function-name'
+import { determineLambdaFunctionName } from '../../shared/determine-lambda-function-name'
 import { getSiteTag } from '../../../shared/get-site-tag'
 
 const setupRequestSigner = async ({ credentials, lambdaFunctionsBucketName, pluginData, update, siteTemplate }) => {

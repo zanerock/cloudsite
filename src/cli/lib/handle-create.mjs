@@ -5,6 +5,8 @@ import { awsS3TABucketNameRE, awsS3TABucketNameREString } from 'regex-repo'
 import { Questioner } from 'question-and-answer'
 
 import { ACTION_SETUP_BILLING, cliSpec } from '../constants'
+import { INCLUDE_PLUGIN_DEFAULT_TRUE, INCLUDE_PLUGIN_DEFAULT_FALSE, INCLUDE_PLUGIN_REQUIRED, INCLUDE_PLUGIN_NEVER }
+  from '../../lib/shared/constants'
 import { checkAuthentication } from './check-authentication'
 import { create } from '../../lib/actions/create'
 import { getOptionsSpec } from './get-options-spec'
@@ -67,6 +69,7 @@ const handleCreate = async ({ argv, db }) => {
   // TODO: verify apex domain matches apex domain RE
 
   sourceType = processSourceType({ sourcePath, sourceType })
+  siteInfo.sourceType = sourceType
 
   if (bucketName !== undefined && !awsS3TABucketNameRE.test(bucketName)) {
     // we're not using Transfer Accelerated ATM, but we might want to at some point.
@@ -74,21 +77,48 @@ const handleCreate = async ({ argv, db }) => {
   }
 
   if (options.length === 0 && noInteractive !== true) {
+    let firstQuestion = true
     for (const [plugin, { config }] of Object.entries(plugins)) {
-      const { description, name, options: configOptions } = config
-      const interrogationBundle = {
-        actions : [
-          { statement : `<em>${name}<rst> plugin: ${description}` },
-          { prompt : `Enable '<em>${name}<rst>' plugin?`, options : ['yes', 'no'], default : 'no', parameter : 'enable' }
-        ]
+      const { description, name, options: configOptions, includePlugin } = config
+      let includeDirective = INCLUDE_PLUGIN_DEFAULT_FALSE
+      if (includePlugin !== undefined) {
+        includeDirective = includePlugin({ siteInfo })
+        console.log('includePlugin responds:', includeDirective) // DEBUG
       }
-      const questioner = new Questioner({ interrogationBundle, output : progressLogger })
-      await questioner.question()
-      const enable = questioner.getResult('enable').value === 'yes'
+
+      let enable
+      if (includeDirective === INCLUDE_PLUGIN_REQUIRED) {
+        enable = true
+      } else if (includeDirective === INCLUDE_PLUGIN_NEVER) {
+        enable = false
+      } else {
+        if (firstQuestion === false) {
+          progressLogger.write('\n')
+        }
+
+        const defaultValue = includeDirective === INCLUDE_PLUGIN_DEFAULT_TRUE ? 'yes' : 'no'
+
+        const interrogationBundle = {
+          actions : [
+            { statement : `<em>${name}<rst> plugin: ${description}` },
+            {
+              prompt    : `Enable '<em>${name}<rst>' plugin?`,
+              options   : ['yes', 'no'],
+              default   : defaultValue,
+              parameter : 'enable'
+            }
+          ]
+        }
+        const questioner = new Questioner({ interrogationBundle, output : progressLogger })
+        await questioner.question()
+        enable = questioner.getResult('enable').value === 'yes'
+
+        firstQuestion = false
+      }
 
       if (enable === true) {
         const interrogationBundle = { actions : [] }
-        for (const [parameter, configSpec] of Object.entries(configOptions)) {
+        for (const [parameter, configSpec] of Object.entries(configOptions || {})) {
           const { default: defaultValue, description, invalidMessage, matches, required, type = 'string' } = configSpec
           const questionSpec = {
             default          : defaultValue,
@@ -104,6 +134,9 @@ const handleCreate = async ({ argv, db }) => {
         const questioner = new Questioner({ interrogationBundle, output : progressLogger })
         await questioner.question()
         options.push(...questioner.results.map(({ parameter, value }) => ({ name : `${plugin}.${parameter}`, value })))
+      }
+      if (configOptions === undefined || Object.keys(configOptions).length === 0) {
+        options.push({ name : plugin, value : true })
       }
     }
   }

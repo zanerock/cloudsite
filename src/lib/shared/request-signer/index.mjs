@@ -16,7 +16,6 @@ const credentials = await credentialProvider()
 
 export const handler = async (event) => {
   const request = event.Records[0].cf.request
-  console.info('request=' + JSON.stringify(request))
 
   const headers = request.headers
 

@@ -1,0 +1,8 @@
+{
+    "name": "cloudsite-serverless-index-rewriter",
+    "version": "1.0.0",
+    "description": "Lambda function rewrite bare directory calls to include 'index.html'.",
+    "main": "index.mjs",
+    "module": "index.mjs",
+    "dependencies": {}
+}

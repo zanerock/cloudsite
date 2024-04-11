@@ -13,18 +13,28 @@ const mapRawOptions = (rawOptions = []) =>
   })
 
 const updatePluginSettings = ({ confirmed, doDelete, options, siteInfo }) => {
+  if (siteInfo.plugins === undefined) {
+    siteInfo.plugins = {}
+  }
+
   for (const { name, value } of options) {
     const pathBits = name.split('.')
     const pluginName = pathBits.shift()
+
+    if (pathBits.length === 0) { // then there are no options, the plugin is just enabled
+      if (doDelete === true) {
+        delete siteInfo.plugins[pluginName]
+      } else {
+        siteInfo.plugins[pluginName] = {}
+      }
+      continue
+    }
 
     const plugin = plugins[pluginName]
     if (plugin === undefined) {
       throw new Error(`No such plugin '${pluginName}'; use one of: ${Object.keys(plugins).join(', ')}.\n`)
     }
 
-    if (siteInfo.plugins === undefined) {
-      siteInfo.plugins = {}
-    }
     const pluginData = siteInfo.plugins[pluginName] || {}
     siteInfo.plugins[pluginName] = pluginData // in case we just created it
     const pluginSettings = siteInfo.plugins[pluginName].settings || {}

@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { LambdaClient, GetFunctionCommand } from '@aws-sdk/client-lambda'
 
-import { progressLogger } from '../../../shared/progress-logger'
+import { progressLogger } from '../../shared/progress-logger'
 
 const determineLambdaFunctionName = async ({ baseName, credentials, siteTemplate }) => {
   const { siteInfo } = siteTemplate
