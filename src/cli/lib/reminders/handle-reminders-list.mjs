@@ -1,7 +1,11 @@
 import { todoTranslator } from './todo-translator'
 
 const handleRemindersList = ({ db }) => {
-  const todoList = db.reminders.map(({ command, ...todoEntry }) => ({ todo : todoTranslator(todoEntry), command }))
+  let todoList = db.reminders.map(({ command, ...todoEntry }) => ({ todo : todoTranslator(todoEntry), command }))
+
+  if (todoList.length === 0) {
+    todoList = ''
+  }
 
   return { data : todoList, success : true }
 }
