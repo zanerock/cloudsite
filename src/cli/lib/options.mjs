@@ -24,8 +24,7 @@ const updatePluginSettings = ({ confirmed, doDelete, options, siteInfo }) => {
     if (pathBits.length === 0) { // then there are no options, the plugin is just enabled
       if (doDelete === true) {
         delete siteInfo.plugins[pluginName]
-      }
-      else {
+      } else {
         siteInfo.plugins[pluginName] = {}
       }
       continue

@@ -2,6 +2,7 @@ import { emptyBucket } from 's3-empty-bucket'
 
 import { S3Client } from '@aws-sdk/client-s3'
 
+import { INCLUDE_PLUGIN_DEFAULT_TRUE, INCLUDE_PLUGIN_DEFAULT_FALSE } from '../../shared/constants'
 import { INDEX_REWRITER_ZIP_NAME } from './lib/constants'
 import { convertDomainToBucketName } from '../../shared/convert-domain-to-bucket-name'
 import { findBucketLike } from '../../shared/find-bucket-like'
@@ -11,9 +12,14 @@ import { stageLambdaFunctionZipFiles } from '../shared/stage-lambda-function-zip
 import { updateCloudFrontDistribution } from './lib/update-cloudfront-distribution'
 
 const config = {
-  name        : 'index.html rewriter',
-  description : "Appends 'index.html' to bare directory requests.",
-  options     : {}
+  name          : 'index.html rewriter',
+  description   : "Appends 'index.html' to bare directory requests.",
+  options       : {},
+  includePlugin : ({ siteInfo }) => {
+    const { sourceType } = siteInfo
+
+    return sourceType === 'vanilla' ? INCLUDE_PLUGIN_DEFAULT_TRUE : INCLUDE_PLUGIN_DEFAULT_FALSE
+  }
 }
 
 const importHandler = async ({ credentials, name, pluginsData, siteInfo }) => {
