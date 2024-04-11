@@ -14,7 +14,7 @@ const checkReminders = ({ reminders }) => {
     progressLogger.write(opener + '-'.repeat(columnWidth - opener.length + '<yellow>'.length + '<rst>'.length) + '\n')
 
     currentReminders.forEach((todoEntry, i) => {
-      progressLogger.write((currentReminders.length > 1 ? i + '.' : '') + todoTranslator(todoEntry) + '\n')
+      progressLogger.write((currentReminders.length > 1 ? (i + 1) + '. ' : '') + todoTranslator(todoEntry) + '\n')
     })
 
     progressLogger.write('-'.repeat(columnWidth) + '\n')

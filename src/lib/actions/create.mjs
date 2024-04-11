@@ -132,6 +132,7 @@ const createSiteStack = async ({ credentials, noDeleteOnFailure, siteInfo }) => 
 
   const cloudFormationClient = new CloudFormationClient({ credentials, region })
   const stackName = siteInfo.stackName || convertDomainToBucketName(apexDomain) + '-stack'
+  siteInfo.stackName = stackName // in case it was just created
   const createInput = {
     StackName        : stackName,
     TemplateBody     : cloudFormationTemplate,

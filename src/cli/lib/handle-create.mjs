@@ -83,7 +83,6 @@ const handleCreate = async ({ argv, db }) => {
       let includeDirective = INCLUDE_PLUGIN_DEFAULT_FALSE
       if (includePlugin !== undefined) {
         includeDirective = includePlugin({ siteInfo })
-        console.log('includePlugin responds:', includeDirective) // DEBUG
       }
 
       let enable
