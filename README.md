@@ -93,7 +93,7 @@ SSO authentication uses the new [AWS Identity Center](https://us-east-1.console.
 
 #### Set up the CloudsiteManager policy
 
-1. Log into your AWS root account in the [AWS console](https://aws.amazon.com).
+1. Log into your AWS root account in the [AWS console](https://aws.amazon.com). Refer to [this section](#sign-up-for-your-aws-root-account) if you need to create a root account.
 2. In the 'Services' bar up top, search for 'IAM' and select that service or [click here](https://us-east-1.console.aws.amazon.com/iam/home).
 3. Select 'Policies' from the left hand menu options.
 4. Select 'Create policy'.
@@ -138,19 +138,18 @@ First, we need to create your SSO user. It's considered best practice to assign 
 #### Local SSO configuration and authentication
 
 1. Follow the instructions to [Install or update to the latest version of the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
-2. You can follow [Configure the AWS CLI to use IAM Identity Center token provider credentials with automatic authentication refresh](https://docs.aws.amazon.com/cli/latest/userguide/sso-configure-profile-token.html#sso-configure-profile-token-auto-sso), which is summarized in the following steps.
-3. Have your [IAM Identity Center](https://us-east-1.console.aws.amazon.com/singlesignon/home) page open.[^1]
-4. Run the command `aws configure sso`
+2. Have your [IAM Identity Center](https://us-east-1.console.aws.amazon.com/singlesignon/home) page open.[^1][^2]
+3. Run the command `aws configure sso`
    1. Choose a 'session name', we called ours 'liquid-labs-sso'.
    2. For the 'SSO Start URL', copy your 'AWS access portal URL' from IAM Identity Center 'Settings summary' on the right hand side of the dashboard page.
    3. For the 'SSO region', copy the value from 'Region' ID from the 'Settings summary' section. It'll be something like 'us-east-1'.
    4. For 'SSO registration scopes', accept the default 'sso:account:access'.
    5. At this point, a browser window should open and ask you to log in as the SSO user we created earlier. Log in and start your SSO session.
    6. You should get a message that you will be using the 'CloudsiteManager' role we created earlier.
-   7. Next, you should be asked for the 'CLI default client Region'. We recommend 'us-east-1' (regardless of the region where your IAM Identity Center instance resides).[^2]
+   7. Next, you should be asked for the 'CLI default client Region'. We recommend 'us-east-1' (regardless of the region where your IAM Identity Center instance resides).[^3]
    8. For the 'CLI default output format', you can accept the default of 'None'.
    9. For the 'CLI profile name', enter something memorable. We used 'll-power-user'.
-5. Now you're all set. From now on, just execute the following to create temporary session credentials `cloudsite` can use:
+4. Now you're all set. From now on, just execute the following to create temporary session credentials `cloudsite` can use:
    ```bash
    aws sso login --profile your-profile-name
    ```
@@ -160,7 +159,9 @@ You're now ready to use the `cloudsite` CLI tool. In future, you need only execu
 
 [^1]: If you created your IAM Identity Center instance in a different region (than 'us-east-1'), you'll have to select the proper region. AWS provides an explanation and a link to your instance if you're in the wrong region.
 
-[^2]: This is just because the Certificate Manager service—which issues your site's SSL certificates—only operations out of the 'us-east-1' region. It should be possible to create your site in any region, but having all the infrastructure in one region is helpful and with the use of CDN, it shouldn't matter too much which region the rest of the infrastructure resides.
+[^2]: These instructions are summarized from [Configure the AWS CLI to use IAM Identity Center token provider credentials with automatic authentication refresh](https://docs.aws.amazon.com/cli/latest/userguide/sso-configure-profile-token.html#sso-configure-profile-token-auto-sso), which you can reference for the most up-to-date instructions.
+
+[^3]: This is just because the Certificate Manager service—which issues your site's SSL certificates—only operations out of the 'us-east-1' region. It should be possible to create your site in any region, but having all the infrastructure in one region is helpful and with the use of CDN, it shouldn't matter too much which region the rest of the infrastructure resides.
 
 ### Authenticating with access keys
 
