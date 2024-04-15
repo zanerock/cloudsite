@@ -2,7 +2,7 @@ import commandLineArgs from 'command-line-args'
 
 import { cliSpec } from '../constants'
 import { getOptionsSpec } from './get-options-spec'
-import { handleConfigurationInitialize } from './configuration/handle-configuration-initialize'
+import { handleConfigurationLocalSetup } from './configuration/handle-configuration-local-setup'
 import { handleConfigurationShow } from './configuration/handle-configuration-show'
 
 const handleConfiguration = async ({ argv, db }) => {
@@ -12,8 +12,8 @@ const handleConfiguration = async ({ argv, db }) => {
   argv = configurationOptions._unknown || []
 
   switch (subcommand) {
-    case 'initialize':
-      return await handleConfigurationInitialize({ argv, db })
+    case 'local-setup':
+      return await handleConfigurationLocalSetup({ argv, db })
     case 'show':
       return await handleConfigurationShow({ argv, db })
     default:

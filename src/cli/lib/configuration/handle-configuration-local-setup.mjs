@@ -2,7 +2,7 @@ import { Questioner } from 'question-and-answer'
 
 import { progressLogger } from '../../../lib/shared/progress-logger'
 
-const handleConfigurationInitialize = async ({ db }) => {
+const handleConfigurationLocalSetup = async ({ db }) => {
   const interrogationBundle = {
     actions : [
       {
@@ -33,4 +33,4 @@ const handleConfigurationInitialize = async ({ db }) => {
   return { success : true, userMessage : 'Settings updated.' }
 }
 
-export { handleConfigurationInitialize }
+export { handleConfigurationLocalSetup }

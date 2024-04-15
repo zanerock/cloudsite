@@ -91,8 +91,8 @@ const cliSpec = {
       ],
       commands : [
         {
-          name        : 'initialize',
-          description : 'Runs the initialization wizard and updates all options.'
+          name        : 'local-setup',
+          description : 'Runs the local SSO setup wizard and updates all options.'
         },
         {
           name        : 'show',

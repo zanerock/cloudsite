@@ -13,8 +13,8 @@ const handleConfigurationShow = async ({ /* argv, */ db }) => {
   const showConfigurationOptionsSpec = showConfigurationCLISpec.arguments
   const showConfigurationOptions = commandLineArgs(showConfigurationOptionsSpec, { argv }) */
 
-  const accountSettings = db.account.settings || {}
-  return { success : true, data : accountSettings }
+  const localSettings = db.account.localSettings || {}
+  return { success : true, data : localSettings }
 }
 
 export { handleConfigurationShow }
