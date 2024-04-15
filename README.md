@@ -101,6 +101,8 @@ SSO authentication uses the new [AWS Identity Center](https://us-east-1.console.
    And copy+paste the access key ID and secret as prompted.
 
 
+
+
 #### Set up the CloudsiteManager policy
 
 1. Log into your AWS root account in the [AWS console](https://aws.amazon.com). Refer to [this section](#sign-up-for-your-aws-root-account) if you need to create a root account.
@@ -362,9 +364,16 @@ Runs the local setup wizard and updates all options. This should be used after t
 Displays the current configuration.
 
 <span id="cloudsite-configuration-sso-setup"></span>
-###### `cloudsite configuration sso-setup`
+###### `cloudsite configuration sso-setup <options>`
 
 Runs the SSO wizard and sets up the SSO user authentication in the IAM Identity Center.
+
+___`sso-setup` options___
+
+|Option|Description|
+|------|------|
+|`--instance-name`|The name to assign to the newly created identity center, if needed.|
+|`--instance-region`|The region in which to set up the identity center if no identity center currently set up. Defaults to 'us-east-1'.|
 
 <span id="cloudsite-create"></span>
 #### `cloudsite create <options> <apex-domain>`

@@ -101,6 +101,8 @@ SSO authentication uses the new [AWS Identity Center](https://us-east-1.console.
    And copy+paste the access key ID and secret as prompted.
 
 
+
+
 #### Set up the CloudsiteManager policy
 
 1. Log into your AWS root account in the [AWS console](https://aws.amazon.com). Refer to [this section](#sign-up-for-your-aws-root-account) if you need to create a root account.

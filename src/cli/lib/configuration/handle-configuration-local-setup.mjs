@@ -10,7 +10,7 @@ const handleConfigurationLocalSetup = async ({ db }) => {
       {
         prompt    : "Which local AWS SSO profile should be used for authentication? Enter '-' to use the configured 'default' account.",
         parameter : 'sso-profile',
-        default : defaultSSOProfile
+        default   : defaultSSOProfile
       },
       {
         prompt    : 'Which default format would you prefer?',

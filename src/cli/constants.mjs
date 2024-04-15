@@ -99,8 +99,18 @@ const cliSpec = {
           description : 'Displays the current configuration.'
         },
         {
-          name: 'sso-setup',
-          description: 'Runs the SSO wizard and sets up the SSO user authentication in the IAM Identity Center.'
+          name        : 'sso-setup',
+          description : 'Runs the SSO wizard and sets up the SSO user authentication in the IAM Identity Center.',
+          arguments   : [
+            {
+              name        : 'instance-name',
+              description : 'The name to assign to the newly created identity center, if needed.'
+            },
+            {
+              name        : 'instance-region',
+              description : "The region in which to set up the identity center if no identity center currently set up. Defaults to 'us-east-1'."
+            }
+          ]
         }
       ]
     },

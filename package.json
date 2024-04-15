@@ -41,6 +41,7 @@
   },
   "homepage": "https://github.com/liquid-labs/cloudsite#readme",
   "dependencies": {
+    "@aws-sdk/client-account": "^3.554.0",
     "@aws-sdk/client-acm": "^3.515.0",
     "@aws-sdk/client-cloudformation": "^3.521.0",
     "@aws-sdk/client-cloudfront": "^3.523.0",
@@ -50,6 +51,7 @@
     "@aws-sdk/client-lambda": "^3.533.0",
     "@aws-sdk/client-route-53": "^3.523.0",
     "@aws-sdk/client-s3": "^3.536.0",
+    "@aws-sdk/client-sso-admin": "^3.554.0",
     "@aws-sdk/client-sts": "^3.521.0",
     "@aws-sdk/credential-providers": "^3.515.0",
     "@aws-sdk/signature-v4-crt": "^3.535.0",
