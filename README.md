@@ -91,6 +91,16 @@ Regardless of the method you use, if you don't already have one, the first step 
 
 SSO authentication uses the new [AWS Identity Center](https://us-east-1.console.aws.amazon.com/singlesignon/home). SSO is integrated with the `aws` CLI tool and is the method by which we can create time-limited session credentials.
 
+1. Log into your root account (or super-admin account if you have one).
+2. Click on the account name in the upper right-hand corner and select 'Security credentials'.
+3. Under the 'Access keys' section, select 'Create access key'. You may get a warning; if you do, acknowledge and click next.
+4. Execute:
+   ```
+   aws configure
+   ```
+   And copy+paste the access key ID and secret as prompted.
+
+
 #### Set up the CloudsiteManager policy
 
 1. Log into your AWS root account in the [AWS console](https://aws.amazon.com). Refer to [this section](#sign-up-for-your-aws-root-account) if you need to create a root account.
@@ -337,18 +347,24 @@ Command group for managing the Cloudsite CLI configuration.
 
 ##### Subcommands
 
-- [`initialize`](#cloudsite-configuration-initialize): Runs the initialization wizard and updates all options.
+- [`local-setup`](#cloudsite-configuration-local-setup): Runs the local setup wizard and updates all options. This should be used after the SSO account has been created (see 'cloudsite configuration sso-setup').
 - [`show`](#cloudsite-configuration-show): Displays the current configuration.
+- [`sso-setup`](#cloudsite-configuration-sso-setup): Runs the SSO wizard and sets up the SSO user authentication in the IAM Identity Center.
 
-<span id="cloudsite-configuration-initialize"></span>
-###### `cloudsite configuration initialize`
+<span id="cloudsite-configuration-local-setup"></span>
+###### `cloudsite configuration local-setup`
 
-Runs the initialization wizard and updates all options.
+Runs the local setup wizard and updates all options. This should be used after the SSO account has been created (see 'cloudsite configuration sso-setup').
 
 <span id="cloudsite-configuration-show"></span>
 ###### `cloudsite configuration show`
 
 Displays the current configuration.
+
+<span id="cloudsite-configuration-sso-setup"></span>
+###### `cloudsite configuration sso-setup`
+
+Runs the SSO wizard and sets up the SSO user authentication in the IAM Identity Center.
 
 <span id="cloudsite-create"></span>
 #### `cloudsite create <options> <apex-domain>`

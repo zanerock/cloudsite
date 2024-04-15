@@ -92,11 +92,15 @@ const cliSpec = {
       commands : [
         {
           name        : 'local-setup',
-          description : 'Runs the local SSO setup wizard and updates all options.'
+          description : "Runs the local setup wizard and updates all options. This should be used after the SSO account has been created (see 'cloudsite configuration sso-setup')."
         },
         {
           name        : 'show',
           description : 'Displays the current configuration.'
+        },
+        {
+          name: 'sso-setup',
+          description: 'Runs the SSO wizard and sets up the SSO user authentication in the IAM Identity Center.'
         }
       ]
     },
