@@ -74,13 +74,13 @@ console.log('Final site info:\n' + JSON.stringify(siteInfo))
 
 ## AWS authentication
 
-Cloudsite works by setting up AWS infrastructure within your own AWS account. There are two basic methods to authenticate: access keys and SSO login. Of the two, SSO login is recommended by AWS and is generally the safer alternative; access keys are a less secure method in that the access keys persist on your hard drive so if your computer is compromised, your AWS account would be vulnerable. Access keys, however, are a little easier/quicker to set up.
+Cloudsite works by setting up AWS infrastructure within your own AWS account. There are two basic methods to authenticate: SSO login and access keys. Of the two, SSO login is recommended by AWS and is generally the safer alternative as they use temporary credentials. Access keys, on the other hand, are a less secure method in that the keys persist on your hard drive so if your computer is compromised, your AWS account would be vulnerable. Access keys, however, are a little easier/quicker to set up.
 
-If you aren't in a hurry, you might want to set up SSO authentication to start with. Otherwise, you can [setup access key authentication](#authenticating-with-api-keys) to get started quickly and then set up [SSO authentication](#sso-authentication) later (and then delete + disable your access keys).
+If you aren't in a hurry, you might want to set up [SSO authentication](#sso-authentiaction) to start with. Otherwise, you can [setup access key authentication](#authenticating-with-api-keys) to get started quickly and then set up [SSO authentication](#sso-authentication) later (and then delete + disable your access keys).
 
 ### Sign up for your AWS root account
 
-If you don't already have one, the first step is to create your AWS root account.
+Regardless of the method you use, if you don't already have one, the first step is to create your AWS root account.
 
 1. If you are working on behalf of an organization and have the ability to create email aliases, we suggest you first create 'awsroot@your-domain.com' and use that to sign up.
 2. Navigate to [aws.amazon.com](https://aws.amazon.com/).
@@ -89,7 +89,7 @@ If you don't already have one, the first step is to create your AWS root account
 
 ### SSO authentication
 
-SSO authentication uses the new [AWS Identity Center](https://us-east-1.console.aws.amazon.com/singlesignon/home) to enable single-sign on across multiple AWS accounts. SSO is also integrated with the `aws` CLI tool and is the method by which we can create time-limited session credentials.
+SSO authentication uses the new [AWS Identity Center](https://us-east-1.console.aws.amazon.com/singlesignon/home). SSO is integrated with the `aws` CLI tool and is the method by which we can create time-limited session credentials.
 
 #### Set up the CloudsiteManager policy
 
@@ -132,7 +132,7 @@ First, we need to create your SSO user. It's considered best practice to assign 
 20. On the 'Assign permission sets' page, select 'CloudsiteManager' and click 'Next'.
 21. Review and click 'Submit'.
 22. Just to make things a little nicer, let's rename your SSO access portal page. On the right hand side, in the 'Settings summary' box, click 'Edit' next to 'Instance name'.
-23. Choose a (free) instance name; this could be based on your own name or your organization's. We used 'liquid-labs'.
+23. Choose an available instance name; this could be based on your own name or your organization's. We used 'liquid-labs'.
 24. You should receive an email titled something like 'Invitation to join AWS IAM Identity Center'. Open that email and click the 'Accept invitation'. This will take you to AWS Identity Center and ask you to create a password for the account.
 
 #### Local SSO configuration and authentication
