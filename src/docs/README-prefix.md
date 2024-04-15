@@ -74,13 +74,13 @@ console.log('Final site info:\n' + JSON.stringify(siteInfo))
 
 ## AWS authentication
 
-Cloudsite works by setting up AWS infrastructure within your own AWS account. There are two basic methods to authenticate: access keys and SSO login. Of the two, SSO login is recommended by AWS and is generally the safer alternative; access keys are a less secure method in that the access keys persist on your hard drive so if your computer is compromised, your AWS account would be vulnerable. Access keys, however, are a little easier/quicker to set up.
+Cloudsite works by setting up AWS infrastructure within your own AWS account. There are two basic methods to authenticate: SSO login and access keys. Of the two, SSO login is recommended by AWS and is generally the safer alternative as they use temporary credentials. Access keys, on the other hand, are a less secure method in that the keys persist on your hard drive so if your computer is compromised, your AWS account would be vulnerable. Access keys, however, are a little easier/quicker to set up.
 
-If you aren't in a hurry, you might want to set up SSO authentication to start with. Otherwise, you can [setup access key authentication](#authenticating-with-api-keys) to get started quickly and then set up [SSO authentication](#sso-authentication) later (and then delete + disable your access keys).
+If you aren't in a hurry, you might want to set up [SSO authentication](#sso-authentiaction) to start with. Otherwise, you can [setup access key authentication](#authenticating-with-api-keys) to get started quickly and then set up [SSO authentication](#sso-authentication) later (and then delete + disable your access keys).
 
-### Sign up for your AWS account
+### Sign up for your AWS root account
 
-If you don't already have one, the first step is to create your AWS root account.
+Regardless of the method you use, if you don't already have one, the first step is to create your AWS root account.
 
 1. If you are working on behalf of an organization and have the ability to create email aliases, we suggest you first create 'awsroot@your-domain.com' and use that to sign up.
 2. Navigate to [aws.amazon.com](https://aws.amazon.com/).
@@ -89,11 +89,11 @@ If you don't already have one, the first step is to create your AWS root account
 
 ### SSO authentication
 
-SSO authentication uses the new [AWS Identity Center](https://us-east-1.console.aws.amazon.com/singlesignon/home) to enable single-sign on across multiple AWS accounts. SSO is also integrated with the `aws` CLI tool and is the method by which we can create time-limited session credentials.
+SSO authentication uses the new [AWS Identity Center](https://us-east-1.console.aws.amazon.com/singlesignon/home). SSO is integrated with the `aws` CLI tool and is the method by which we can create time-limited session credentials.
 
-#### Set up the CloudSiteManager policy
+#### Set up the CloudsiteManager policy
 
-1. Log into your AWS root account in the [AWS console](https://aws.amazon.com).
+1. Log into your AWS root account in the [AWS console](https://aws.amazon.com). Refer to [this section](#sign-up-for-your-aws-root-account) if you need to create a root account.
 2. In the 'Services' bar up top, search for 'IAM' and select that service or [click here](https://us-east-1.console.aws.amazon.com/iam/home).
 3. Select 'Policies' from the left hand menu options.
 4. Select 'Create policy'.
@@ -104,7 +104,7 @@ SSO authentication uses the new [AWS Identity Center](https://us-east-1.console.
    ```
 7. Copy the output from the terminal and replace the JSON text in the Policy editor with the text from the terminal.
 8. Click 'Next'.
-9. Under 'Policy name' enter 'CloudSiteManager' and click 'Create policy'.
+9. Under 'Policy name' enter 'CloudsiteManager' and click 'Create policy'.
 
 #### Create SSO user, group, and set permissions
 
@@ -123,34 +123,33 @@ First, we need to create your SSO user. It's considered best practice to assign 
 11. From the left-hand menu, select 'Permission sets'.
 12. Under 'Types', select 'Custom permission set' and then hit 'Next'.
 13. Expand the 'Customer Managed Policies' section and click 'Attach policies'.
-14. Where it says 'Enter policy names', enter 'CloudSiteManager' and hit next.
-15. On the 'Specify permission set details' page, under 'Permission set name', enter 'CloudSiteManager'. When done, hit 'Next'.
+14. Where it says 'Enter policy names', enter 'CloudsiteManager' and hit next.
+15. On the 'Specify permission set details' page, under 'Permission set name', enter 'CloudsiteManager'. When done, hit 'Next'.
 16. Review and click 'Create'.
 17. From the left-hand menu, select 'AWS accounts'.
 18. You should see your root account listed. Click the checkbox next to the root account and click 'Assign users or groups'.
 19. Select the 'Cloudsite managers' group you just created (or whatever you called it).
-20. On the 'Assign permission sets' page, select 'PowerUserAccess' and click 'Next'.
+20. On the 'Assign permission sets' page, select 'CloudsiteManager' and click 'Next'.
 21. Review and click 'Submit'.
 22. Just to make things a little nicer, let's rename your SSO access portal page. On the right hand side, in the 'Settings summary' box, click 'Edit' next to 'Instance name'.
-23. Choose a (free) instance name; this could be based on your own name or your organization's. We used 'liquid-labs'.
+23. Choose an available instance name; this could be based on your own name or your organization's. We used 'liquid-labs'.
 24. You should receive an email titled something like 'Invitation to join AWS IAM Identity Center'. Open that email and click the 'Accept invitation'. This will take you to AWS Identity Center and ask you to create a password for the account.
 
 #### Local SSO configuration and authentication
 
 1. Follow the instructions to [Install or update to the latest version of the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
-2. You can follow [Configure the AWS CLI to use IAM Identity Center token provider credentials with automatic authentication refresh](https://docs.aws.amazon.com/cli/latest/userguide/sso-configure-profile-token.html#sso-configure-profile-token-auto-sso), which is summarized in the following steps.
-3. Have your [IAM Identity Center](https://us-east-1.console.aws.amazon.com/singlesignon/home) page open.[^1]
-4. Run the command `aws configure sso`
+2. Have your [IAM Identity Center](https://us-east-1.console.aws.amazon.com/singlesignon/home) page open.[^1][^2]
+3. Run the command `aws configure sso`
    1. Choose a 'session name', we called ours 'liquid-labs-sso'.
    2. For the 'SSO Start URL', copy your 'AWS access portal URL' from IAM Identity Center 'Settings summary' on the right hand side of the dashboard page.
    3. For the 'SSO region', copy the value from 'Region' ID from the 'Settings summary' section. It'll be something like 'us-east-1'.
    4. For 'SSO registration scopes', accept the default 'sso:account:access'.
    5. At this point, a browser window should open and ask you to log in as the SSO user we created earlier. Log in and start your SSO session.
-   6. You should get a message that you will be using the 'PowerUserAccess' role we created earlier.
-   7. Next, you should be asked for the 'CLI default client Region'. We recommend 'us-east-1' (regardless of the region where your IAM Identity Center instance resides).[^2]
+   6. You should get a message that you will be using the 'CloudsiteManager' role we created earlier.
+   7. Next, you should be asked for the 'CLI default client Region'. We recommend 'us-east-1' (regardless of the region where your IAM Identity Center instance resides).[^3]
    8. For the 'CLI default output format', you can accept the default of 'None'.
    9. For the 'CLI profile name', enter something memorable. We used 'll-power-user'.
-5. Now you're all set. From now on, just execute the following to create temporary session credentials `cloudsite` can use:
+4. Now you're all set. From now on, just execute the following to create temporary session credentials `cloudsite` can use:
    ```bash
    aws sso login --profile your-profile-name
    ```
@@ -160,7 +159,9 @@ You're now ready to use the `cloudsite` CLI tool. In future, you need only execu
 
 [^1]: If you created your IAM Identity Center instance in a different region (than 'us-east-1'), you'll have to select the proper region. AWS provides an explanation and a link to your instance if you're in the wrong region.
 
-[^2]: This is just because the Certificate Manager service—which issues your site's SSL certificates—only operations out of the 'us-east-1' region. It should be possible to create your site in any region, but having all the infrastructure in one region is helpful and with the use of CDN, it shouldn't matter too much which region the rest of the infrastructure resides.
+[^2]: These instructions are summarized from [Configure the AWS CLI to use IAM Identity Center token provider credentials with automatic authentication refresh](https://docs.aws.amazon.com/cli/latest/userguide/sso-configure-profile-token.html#sso-configure-profile-token-auto-sso), which you can reference for the most up-to-date instructions.
+
+[^3]: This is just because the Certificate Manager service—which issues your site's SSL certificates—only operations out of the 'us-east-1' region. It should be possible to create your site in any region, but having all the infrastructure in one region is helpful and with the use of CDN, it shouldn't matter too much which region the rest of the infrastructure resides.
 
 ### Authenticating with access keys
 
@@ -174,7 +175,7 @@ We're going to start by following best practices and creating a group. We'll the
 2. In the 'Services' search in the upper left-hand side, search for 'IAM' and click the service. (Here, you want plain 'IAM', _NOT_ 'IAM Identity Center'.)
 3. From the left-hand side, select 'User groups' and click 'Create group'.
 4. For the group name, we recommend something like 'website-managers', but feel free to name it whatever you like.
-5. In the 'Attach permission policies' section, search for 'PowerUserAccess'. Find the 'PowerUserAccess' policy in the list and click the checkbox next to it.
+5. In the 'Attach permission policies' section, search for 'CloudsiteManager'. Find the 'CloudsiteManager' policy in the list and click the checkbox next to it.
 6. Click 'Create group'.
 7. From the left-hand side, select 'Users'. Enter the 'User name'; this could be your own username or something like 'website-manager'.
 8. On the 'Set permissions' page, in the 'User groups' section, click the checkbox next to the group we just created. Then click 'Next'.
