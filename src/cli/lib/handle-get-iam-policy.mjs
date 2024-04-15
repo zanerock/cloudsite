@@ -2,7 +2,6 @@ import commandLineArgs from 'command-line-args'
 
 import { cliSpec } from '../constants'
 import { generateIAMPolicy } from '../../lib/shared/generate-iam-policy'
-import { getCredentials } from '../../lib/actions/lib/get-credentials' // TODO: move to shared
 import { getOptionsSpec } from './get-options-spec'
 import { progressLogger } from '../../lib/shared/progress-logger'
 

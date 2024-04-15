@@ -1,4 +1,5 @@
-import { getAccountID } from '../../lib/shared/get-account-id'
+import { getAccountID } from './get-account-id'
+import { getCredentials } from '../actions/lib/get-credentials' // TODO: move to shared
 
 const generateIAMPolicy = async ({ db }) => {
   let { accountID } = db.account

@@ -1,6 +1,6 @@
 import { AccountClient, ListRegionsCommand } from '@aws-sdk/client-account'
 import { CreatePolicyCommand, IAMClient, ListPoliciesCommand } from '@aws-sdk/client-iam'
-import { IdentitystoreClient, ListGroupsCommand } from '@aws-sdk/client-identitystore'
+import { CreateGroupCommand, IdentitystoreClient, ListGroupsCommand } from '@aws-sdk/client-identitystore'
 import {
   CreateInstanceCommand,
   DescribeInstanceCommand,
@@ -18,7 +18,7 @@ const setupSSO = async ({ db, groupName, instanceName, instanceRegion, policyNam
   const policyARN = await setupPolicy({ credentials, db, policyName })
   const { identityStoreID, identityStoreRegion } =
     await setupIdentityStore({ credentials, instanceName, instanceRegion })
-  const groupID = await setupSSOGroup({ credentials, identityStoreID, identityStoreRegion, groupName, policyARN })
+  const groupID = await setupSSOGroup({ credentials, identityStoreID, identityStoreRegion, groupName })
 }
 
 const setupPolicy = async ({ credentials, db, policyName }) => {
@@ -106,8 +106,7 @@ const setupIdentityStore = async ({ credentials, instanceName, instanceRegion })
       }
     })
 
-    for (const { RegionName: region, RegionOptStatus: optStatus } of regions) {
-      DEBUG
+    for (const { RegionName: region } of regions) {
       const ssoAdminClient = new SSOAdminClient({ credentials, region })
       const listInstancesCommand = new ListInstancesCommand({})
       const listInstancesResult = await ssoAdminClient.send(listInstancesCommand)
@@ -136,7 +135,7 @@ const setupIdentityStore = async ({ credentials, instanceName, instanceRegion })
       const describeInstanceResults = await ssoAdminClient.send(describeInstanceCommand)
 
       identityStoreID = describeInstanceResults.IdentityStoreId
-      identityStoreRegion = region
+      identityStoreRegion = instanceRegion
 
       progressLogger.write(' CREATED.\n')
     } catch (e) {
@@ -148,7 +147,7 @@ const setupIdentityStore = async ({ credentials, instanceName, instanceRegion })
   return { identityStoreID, identityStoreRegion }
 }
 
-const setupSSOGroup = async ({ credentials, identityStoreID, identityStoreRegion, groupName, policyARN }) => {
+const setupSSOGroup = async ({ credentials, identityStoreID, identityStoreRegion, groupName }) => {
   progressLogger.write(`Checking for SSO group '${groupName}'...`)
 
   let nextToken
@@ -182,7 +181,7 @@ const setupSSOGroup = async ({ credentials, identityStoreID, identityStoreRegion
     })
 
     try {
-      const createGroupResult = await iamClient.send(createGroupCommand)
+      const createGroupResult = await identityStoreClient.send(createGroupCommand)
       groupID = createGroupResult.GroupId
       progressLogger.write(' CREATED.\n')
     } catch (e) {

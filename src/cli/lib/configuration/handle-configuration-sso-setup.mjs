@@ -21,7 +21,7 @@ const handleConfigurationSSOSetup = async ({ argv, db }) => {
     if (e.name === 'CredentialsProviderError') {
       progressLogger.write('<error>No credentials were found.<rst> Refer to cloudsite home instructions on how to configure API credentials for the SSO setup process.\n')
       exitCode = 2
-      process.exit(exitCode)
+      process.exit(exitCode) // eslint-disable-line  no-process-exit
     } else {
       throw (e)
     }
@@ -58,8 +58,6 @@ const handleConfigurationSSOSetup = async ({ argv, db }) => {
   const {
     'policy-name': policyName,
     'group-name': groupName,
-    'identity-store-id': identityStoreID,
-    'identity-store-region': identityStoreRegion,
     'user-name': userName,
     'sso-profile': ssoProfile
   } = questioner.values
