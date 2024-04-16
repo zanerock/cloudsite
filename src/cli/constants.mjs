@@ -91,12 +91,46 @@ const cliSpec = {
       ],
       commands : [
         {
-          name        : 'initialize',
-          description : 'Runs the initialization wizard and updates all options.'
+          name        : 'setup-local',
+          description : "Runs the local setup wizard and updates all options. This should be used after the SSO account has been created (see 'cloudsite configuration setup-sso')."
         },
         {
           name        : 'show',
           description : 'Displays the current configuration.'
+        },
+        {
+          name        : 'setup-sso',
+          description : 'Runs the SSO wizard and sets up the SSO user authentication in the IAM Identity Center.',
+          arguments   : [
+            {
+              name        : 'group-name',
+              description : 'The name of the group to create or reference. This group will be associated with the permission set and user.'
+            },
+            {
+              name        : 'instance-name',
+              description : 'The name to assign to the newly created identity center, if needed.'
+            },
+            {
+              name        : 'instance-region',
+              description : "The region in which to set up the identity center if no identity center currently set up. Defaults to 'us-east-1'."
+            },
+            {
+              name        : 'policy-name',
+              description : 'The name of the policy and permission set to create or reference.'
+            },
+            {
+              name        : 'sso-profile',
+              description : 'The name of the local SSO profile to create.'
+            },
+            {
+              name        : 'user-email',
+              description : 'The primary email to associate with the user.'
+            },
+            {
+              name        : 'user-name',
+              description : 'The name of the user account to create or reference.'
+            }
+          ]
         }
       ]
     },

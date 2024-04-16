@@ -17,7 +17,7 @@ describe('handleConfigurationShow', () => {
   })
 
   test('prints the file contents', async () => {
-    const { data } = await handleConfigurationShow({ argv : [], db : { account : { settings : settingsVal } } })
+    const { data } = await handleConfigurationShow({ argv : [], db : { account : { localSettings : settingsVal } } })
     expect(data).toBe(settingsVal)
   })
 })

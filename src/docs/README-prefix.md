@@ -91,6 +91,18 @@ Regardless of the method you use, if you don't already have one, the first step 
 
 SSO authentication uses the new [AWS Identity Center](https://us-east-1.console.aws.amazon.com/singlesignon/home). SSO is integrated with the `aws` CLI tool and is the method by which we can create time-limited session credentials.
 
+1. Log into your root account (or super-admin account if you have one).
+2. Click on the account name in the upper right-hand corner and select 'Security credentials'.
+3. Under the 'Access keys' section, select 'Create access key'. You may get a warning; if you do, acknowledge and click next.
+4. Execute:
+   ```
+   aws configure
+   ```
+   And copy+paste the access key ID and secret as prompted.
+
+
+
+
 #### Set up the CloudsiteManager policy
 
 1. Log into your AWS root account in the [AWS console](https://aws.amazon.com). Refer to [this section](#sign-up-for-your-aws-root-account) if you need to create a root account.

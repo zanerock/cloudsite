@@ -2,12 +2,15 @@ import { Questioner } from 'question-and-answer'
 
 import { progressLogger } from '../../../lib/shared/progress-logger'
 
-const handleConfigurationInitialize = async ({ db }) => {
+const handleConfigurationSetupLocal = async ({ db }) => {
+  const defaultSSOProfile = db.account.localSettings['sso-profile']
+
   const interrogationBundle = {
     actions : [
       {
-        prompt    : "Which local AWS SSO profile should be used for authentication? Hit '<enter>' to use the default profile.",
-        parameter : 'sso-profile'
+        prompt    : "Which local AWS SSO profile should be used for authentication? Enter '-' to use the configured 'default' account.",
+        parameter : 'sso-profile',
+        default   : defaultSSOProfile
       },
       {
         prompt    : 'Which default format would you prefer?',
@@ -28,9 +31,9 @@ const handleConfigurationInitialize = async ({ db }) => {
   const questioner = new Questioner({ interrogationBundle, output : progressLogger })
   await questioner.question()
 
-  db.account.settings = questioner.values
+  db.account.localSettings = questioner.values
 
   return { success : true, userMessage : 'Settings updated.' }
 }
 
-export { handleConfigurationInitialize }
+export { handleConfigurationSetupLocal }
