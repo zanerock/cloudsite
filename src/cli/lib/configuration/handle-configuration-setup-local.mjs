@@ -2,7 +2,7 @@ import { Questioner } from 'question-and-answer'
 
 import { progressLogger } from '../../../lib/shared/progress-logger'
 
-const handleConfigurationLocalSetup = async ({ db }) => {
+const handleConfigurationSetupLocal = async ({ db }) => {
   const defaultSSOProfile = db.account.localSettings['sso-profile']
 
   const interrogationBundle = {
@@ -31,9 +31,9 @@ const handleConfigurationLocalSetup = async ({ db }) => {
   const questioner = new Questioner({ interrogationBundle, output : progressLogger })
   await questioner.question()
 
-  db.account.settings = questioner.values
+  db.account.localSettings = questioner.values
 
   return { success : true, userMessage : 'Settings updated.' }
 }
 
-export { handleConfigurationLocalSetup }
+export { handleConfigurationSetupLocal }
