@@ -42,14 +42,14 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
   // TODO: process argv for options
   const interrogationBundle = {
     actions : [
-      { 
-        prompt: 'Enter the preferred name for the identity store instance:',
-        parameter: 'instance-name'
+      {
+        prompt    : 'Enter the preferred name for the identity store instance:',
+        parameter : 'instance-name'
       },
       {
-        prompt: 'Enter the preferred AWS region for the identity store instance:',
-        default: 'us-east-1',
-        parameter: 'instance-region'
+        prompt    : 'Enter the preferred AWS region for the identity store instance:',
+        default   : 'us-east-1',
+        parameter : 'instance-region'
       },
       {
         prompt    : 'Enter the name of the custom policy to create or reference:',
@@ -79,7 +79,7 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
     ]
   }
 
-  const questioner = new Questioner({ initialParameters: ssoSetupOptions, interrogationBundle, output : progressLogger })
+  const questioner = new Questioner({ initialParameters : ssoSetupOptions, interrogationBundle, output : progressLogger })
   await questioner.question();
 
   ({
@@ -90,14 +90,14 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
     'sso-profile': ssoProfile,
     'user-email': userEmail,
     'user-name': userName
-  } = questioner.values);
+  } = questioner.values)
 
   const { ssoStartURL, ssoRegion } =
-    await setupSSO({ db, groupName, instanceName, instanceRegion, policyName, ssoProfile, userEmail, userName })
+    await setupSSO({ db, groupName, instanceName, instanceRegion, policyName, userEmail, userName })
 
   progressLogger.write('Configuring local SSO profile...')
   const configPath = fsPath.join(process.env.HOME, '.aws', 'config')
-  const configContents = await fs.readFile(configPath, { encoding: 'utf8' })
+  const configContents = await fs.readFile(configPath, { encoding : 'utf8' })
   const config = new ConfigIniParser()
   config.parse(configContents)
   if (!config.isHaveSection('profile ' + ssoProfile)) {
@@ -113,7 +113,7 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
   config.set('sso-session ' + ssoProfile, 'sso-start-url', ssoStartURL)
   config.set('sso-session ' + ssoProfile, 'sso-region', ssoRegion)
   config.set('sso-session ' + ssoProfile, 'sso-registration-scopes', 'sso:account:access')
-  
+
   await fs.writeFile(configPath, config.stringify())
 
   return { success : true, userMessage : 'Settings updated.' }

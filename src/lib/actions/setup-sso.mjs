@@ -1,11 +1,11 @@
 import { AccountClient, ListRegionsCommand } from '@aws-sdk/client-account'
 import { CreatePolicyCommand, IAMClient, ListPoliciesCommand } from '@aws-sdk/client-iam'
 import {
-  CreateGroupCommand, 
+  CreateGroupCommand,
   CreateGroupMembershipCommand,
   CreateUserCommand,
-  IdentitystoreClient, 
-  ListGroupsCommand, 
+  IdentitystoreClient,
+  ListGroupsCommand,
   ListUsersCommand
 } from '@aws-sdk/client-identitystore'
 import {
@@ -26,15 +26,14 @@ import { generateIAMPolicy } from '../shared/generate-iam-policy'
 import { getCredentials } from './lib/get-credentials'
 import { progressLogger } from '../shared/progress-logger'
 
-const setupSSO = async ({ 
-  db, 
-  groupName, 
-  instanceName, 
-  instanceRegion, 
-  policyName, 
-  ssoProfile, 
-  userEmail, 
-  userName 
+const setupSSO = async ({
+  db,
+  groupName,
+  instanceName,
+  instanceRegion,
+  policyName,
+  userEmail,
+  userName
 }) => {
   const credentials = getCredentials()
 
@@ -43,13 +42,13 @@ const setupSSO = async ({
   const policyARN = await setupPolicy({ credentials, db, policyName })
   const { identityStoreID, identityStoreRegion, instanceARN, ssoAdminClient, ssoStartURL } =
     await setupIdentityStore({ credentials, instanceName, instanceRegion })
-  const { groupID, identityStoreClient } = 
+  const { groupID, identityStoreClient } =
     await setupSSOGroup({ credentials, identityStoreID, identityStoreRegion, groupName })
-  const permissionSetARN = await setupPermissionSet({ credentials, instanceARN, policyARN, policyName, ssoAdminClient })
+  const permissionSetARN = await setupPermissionSet({ instanceARN, policyARN, policyName, ssoAdminClient })
   await setupAccountAssignment({ accountID, groupID, instanceARN, permissionSetARN, ssoAdminClient })
   await setupUser({ groupID, groupName, identityStoreClient, identityStoreID, userEmail, userName })
 
-  return { ssoStartURL, ssoRegion: identityStoreRegion}
+  return { ssoStartURL, ssoRegion : identityStoreRegion }
 }
 
 const setupAccountAssignment = async ({ accountID, groupID, instanceARN, permissionSetARN, ssoAdminClient }) => {
@@ -71,6 +70,7 @@ const setupAccountAssignment = async ({ accountID, groupID, instanceARN, permiss
         found = true
       }
     }
+    nextToken = listAccountAssignmentsResults.NextToken
   } while (found === false && nextToken !== undefined)
 
   if (found === true) {
@@ -213,7 +213,7 @@ const setupIdentityStore = async ({ credentials, instanceName, instanceRegion })
 
       identityStoreID = describeInstanceResults.IdentityStoreId
       identityStoreRegion = instanceRegion
-      ssoStartURL = 'https://' + instance.Name + '.awsapps.com/start'
+      ssoStartURL = 'https://' + describeInstanceResults.Name + '.awsapps.com/start'
 
       progressLogger.write(' CREATED.\n')
     } catch (e) {
@@ -225,7 +225,7 @@ const setupIdentityStore = async ({ credentials, instanceName, instanceRegion })
   return { identityStoreID, identityStoreRegion, instanceARN, ssoAdminClient, ssoStartURL }
 }
 
-const setupPermissionSet = async ({ credentials, instanceARN, policyARN, policyName, ssoAdminClient }) => {
+const setupPermissionSet = async ({ instanceARN, policyARN, policyName, ssoAdminClient }) => {
   progressLogger.write(`Looking for permission set '${policyName}'...`)
   let nextToken, permissionSetARN
   do {
@@ -251,7 +251,6 @@ const setupPermissionSet = async ({ credentials, instanceARN, policyARN, policyN
     await setupPermissionSetPolicy({
       instanceARN,
       permissionSetARN,
-      policyARN,
       policyName,
       searchExisting : true,
       ssoAdminClient
@@ -286,7 +285,6 @@ const setupPermissionSet = async ({ credentials, instanceARN, policyARN, policyN
 const setupPermissionSetPolicy = async ({
   instanceARN,
   permissionSetARN,
-  policyARN,
   policyName,
   searchExisting,
   ssoAdminClient
@@ -388,8 +386,8 @@ const setupUser = async ({ groupID, groupName, identityStoreClient, identityStor
   let nextToken, userID
   do {
     const listUsersCommand = new ListUsersCommand({
-      IdentityStoreId: identityStoreID,
-      NextToken: nextToken
+      IdentityStoreId : identityStoreID,
+      NextToken       : nextToken
     })
     const listUsersResults = await identityStoreClient.send(listUsersCommand)
 
@@ -404,20 +402,18 @@ const setupUser = async ({ groupID, groupName, identityStoreClient, identityStor
 
   if (userID !== undefined) {
     progressLogger.write(' FOUND.\n')
-  }
-  else {
+  } else {
     progressLogger.write(' CREATING...')
 
     const createUserCommand = new CreateUserCommand({
-      IdentityStoreId: identityStoreID,
-      UserName: userName,
-      Emails: [{ Value: userEmail, Primary: true }]
+      IdentityStoreId : identityStoreID,
+      UserName        : userName,
+      Emails          : [{ Value : userEmail, Primary : true }]
     })
     try {
       userID = (await identityStoreClient.send(createUserCommand)).UserId
       progressLogger.write(' DONE.\n')
-    }
-    catch (e) {
+    } catch (e) {
       progressLogger.write(' ERROR.\n')
       throw e
     }
@@ -425,19 +421,17 @@ const setupUser = async ({ groupID, groupName, identityStoreClient, identityStor
 
   progressLogger.write(`Associating user '${userName}' with group '${groupName}'...`)
   const createGroupMembershipCommand = new CreateGroupMembershipCommand({
-    IdentityStoreId: identityStoreID,
-    GroupId: groupID,
-    MemberId: { UserId: userID }
+    IdentityStoreId : identityStoreID,
+    GroupId         : groupID,
+    MemberId        : { UserId : userID }
   })
   try {
     await identityStoreClient.send(createGroupMembershipCommand)
     progressLogger.write(' DONE.\n')
-  }
-  catch (e) {
+  } catch (e) {
     if (e.Reason === 'UNIQUENESS_CONSTRAINT_VIOLATION') { // already a member
       progressLogger.write(' DONE.\n')
-    }
-    else {
+    } else {
       progressLogger.write(' ERROR.\n')
       throw e
     }

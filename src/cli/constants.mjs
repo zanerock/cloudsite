@@ -103,8 +103,8 @@ const cliSpec = {
           description : 'Runs the SSO wizard and sets up the SSO user authentication in the IAM Identity Center.',
           arguments   : [
             {
-              name: 'group-name',
-              description: 'The name of the group to create or reference. This group will be associated with the permission set and user.'
+              name        : 'group-name',
+              description : 'The name of the group to create or reference. This group will be associated with the permission set and user.'
             },
             {
               name        : 'instance-name',
@@ -115,20 +115,20 @@ const cliSpec = {
               description : "The region in which to set up the identity center if no identity center currently set up. Defaults to 'us-east-1'."
             },
             {
-              name: 'policy-name',
-              description: 'The name of the policy and permission set to create or reference.'
+              name        : 'policy-name',
+              description : 'The name of the policy and permission set to create or reference.'
             },
             {
-              name: 'sso-profile',
-              description: 'The name of the local SSO profile to create.'
+              name        : 'sso-profile',
+              description : 'The name of the local SSO profile to create.'
             },
             {
-              name: 'user-email',
-              description: 'The primary email to associate with the user.'
+              name        : 'user-email',
+              description : 'The primary email to associate with the user.'
             },
             {
-              name: 'user-name',
-              description: 'The name of the user account to create or reference.'
+              name        : 'user-name',
+              description : 'The name of the user account to create or reference.'
             }
           ]
         }
