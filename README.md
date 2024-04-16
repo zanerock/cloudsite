@@ -349,31 +349,36 @@ Command group for managing the Cloudsite CLI configuration.
 
 ##### Subcommands
 
-- [`local-setup`](#cloudsite-configuration-local-setup): Runs the local setup wizard and updates all options. This should be used after the SSO account has been created (see 'cloudsite configuration sso-setup').
+- [`setup-local`](#cloudsite-configuration-setup-local): Runs the local setup wizard and updates all options. This should be used after the SSO account has been created (see 'cloudsite configuration setup-sso').
+- [`setup-sso`](#cloudsite-configuration-setup-sso): Runs the SSO wizard and sets up the SSO user authentication in the IAM Identity Center.
 - [`show`](#cloudsite-configuration-show): Displays the current configuration.
-- [`sso-setup`](#cloudsite-configuration-sso-setup): Runs the SSO wizard and sets up the SSO user authentication in the IAM Identity Center.
 
-<span id="cloudsite-configuration-local-setup"></span>
-###### `cloudsite configuration local-setup`
+<span id="cloudsite-configuration-setup-local"></span>
+###### `cloudsite configuration setup-local`
 
-Runs the local setup wizard and updates all options. This should be used after the SSO account has been created (see 'cloudsite configuration sso-setup').
+Runs the local setup wizard and updates all options. This should be used after the SSO account has been created (see 'cloudsite configuration setup-sso').
+
+<span id="cloudsite-configuration-setup-sso"></span>
+###### `cloudsite configuration setup-sso <options>`
+
+Runs the SSO wizard and sets up the SSO user authentication in the IAM Identity Center.
+
+___`setup-sso` options___
+
+|Option|Description|
+|------|------|
+|`--group-name`|The name of the group to create or reference. This group will be associated with the permission set and user.|
+|`--instance-name`|The name to assign to the newly created identity center, if needed.|
+|`--instance-region`|The region in which to set up the identity center if no identity center currently set up. Defaults to 'us-east-1'.|
+|`--policy-name`|The name of the policy and permission set to create or reference.|
+|`--sso-profile`|The name of the local SSO profile to create.|
+|`--user-email`|The primary email to associate with the user.|
+|`--user-name`|The name of the user account to create or reference.|
 
 <span id="cloudsite-configuration-show"></span>
 ###### `cloudsite configuration show`
 
 Displays the current configuration.
-
-<span id="cloudsite-configuration-sso-setup"></span>
-###### `cloudsite configuration sso-setup <options>`
-
-Runs the SSO wizard and sets up the SSO user authentication in the IAM Identity Center.
-
-___`sso-setup` options___
-
-|Option|Description|
-|------|------|
-|`--instance-name`|The name to assign to the newly created identity center, if needed.|
-|`--instance-region`|The region in which to set up the identity center if no identity center currently set up. Defaults to 'us-east-1'.|
 
 <span id="cloudsite-create"></span>
 #### `cloudsite create <options> <apex-domain>`

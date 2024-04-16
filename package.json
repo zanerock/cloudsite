@@ -78,6 +78,7 @@
     "command-line-args": "^5.2.1",
     "command-line-documentation": "^1.0.0-alpha.3",
     "command-line-usage": "^7.0.1",
+    "config-ini-parser": "^1.6.1",
     "json-to-plain-text": "^1.1.4",
     "lodash": "^4.17.21",
     "magic-print": "^1.0.0-alpha.4"
