@@ -17,9 +17,11 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
     .arguments || []
   const ssoSetupOptions = commandLineArgs(ssoSetupOptionsSpec, { argv })
   let {
+    delete: doDelete,
     'group-name': groupName,
     'instance-name': instanceName,
     'instance-region': instanceRegion,
+    'no-delete': noDelete,
     'policy-name': policyName,
     'sso-profile': ssoProfile,
     'user-email': userEmail,
@@ -43,7 +45,7 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
   const interrogationBundle = {
     actions : [
       {
-        prompt    : 'Enter the preferred name for the identity store instance:',
+        prompt    : 'Enter the preferred name for the identity store instance; note, this is only used when creating a new instance and is ignored if you already have an identity store instance created on the account):',
         parameter : 'instance-name'
       },
       {
@@ -79,6 +81,15 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
     ]
   }
 
+  if (noDelete === undefined && doDelete === undefined) {
+    const { actions } = interrogationBundle
+    actions.splice(actions.length - 1, 0, {
+      prompt    : 'Delete Access keys after SSO setup:',
+      paramType : 'boolean',
+      parameter : 'do-delete'
+    })
+  }
+
   const questioner = new Questioner({ initialParameters : ssoSetupOptions, interrogationBundle, output : progressLogger })
   await questioner.question();
 
@@ -92,8 +103,16 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
     'user-name': userName
   } = questioner.values)
 
+  if (doDelete === undefined && noDelete === undefined) {
+    doDelete = questioner.get('do-delete')
+  } else if (noDelete === true) {
+    doDelete = false
+  } else if (doDelete === undefined) {
+    doDelete = false
+  }
+
   const { ssoStartURL, ssoRegion } =
-    await setupSSO({ db, groupName, instanceName, instanceRegion, policyName, userEmail, userName })
+    await setupSSO({ db, doDelete, groupName, instanceName, instanceRegion, policyName, userEmail, userName })
 
   progressLogger.write('Configuring local SSO profile...')
   const configPath = fsPath.join(process.env.HOME, '.aws', 'config')

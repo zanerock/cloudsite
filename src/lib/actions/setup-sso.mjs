@@ -1,5 +1,11 @@
 import { AccountClient, ListRegionsCommand } from '@aws-sdk/client-account'
-import { CreatePolicyCommand, IAMClient, ListPoliciesCommand } from '@aws-sdk/client-iam'
+import {
+  CreatePolicyCommand,
+  DeleteAccessKeyCommand,
+  IAMClient,
+  ListAccessKeysCommand,
+  ListPoliciesCommand
+} from '@aws-sdk/client-iam'
 import {
   CreateGroupCommand,
   CreateGroupMembershipCommand,
@@ -28,6 +34,7 @@ import { progressLogger } from '../shared/progress-logger'
 
 const setupSSO = async ({
   db,
+  doDelete,
   groupName,
   instanceName,
   instanceRegion,
@@ -39,7 +46,7 @@ const setupSSO = async ({
 
   const { accountID } = db.account
 
-  const policyARN = await setupPolicy({ credentials, db, policyName })
+  const { iamClient, policyARN } = await setupPolicy({ credentials, db, policyName })
   const { identityStoreID, identityStoreRegion, instanceARN, ssoAdminClient, ssoStartURL } =
     await setupIdentityStore({ credentials, instanceName, instanceRegion })
   const { groupID, identityStoreClient } =
@@ -47,6 +54,47 @@ const setupSSO = async ({
   const permissionSetARN = await setupPermissionSet({ instanceARN, policyARN, policyName, ssoAdminClient })
   await setupAccountAssignment({ accountID, groupID, instanceARN, permissionSetARN, ssoAdminClient })
   await setupUser({ groupID, groupName, identityStoreClient, identityStoreID, userEmail, userName })
+
+  if (doDelete === true) {
+    progressLogger.write('Checking Access Keys...')
+
+    let marker
+    let accessKeyID = false
+    let activeCount = 0
+    do {
+      const listAccessKeysCommand = new ListAccessKeysCommand({
+        Marker : marker
+      })
+      const listAccessKeysResult = await iamClient.send(listAccessKeysCommand)
+      for (const { AccessKeyId: testKeyID, Status: status } of listAccessKeysResult.AccessKeyMetadata) {
+        if (status === 'Active') {
+          accessKeyID = activeCount === 0 && testKeyID
+          activeCount += 1
+        }
+      }
+
+      marker = listAccessKeysResult.Marker
+    } while (accessKeyID === undefined && marker !== undefined)
+
+    if (accessKeyID === false && activeCount > 1) {
+      progressLogger.write(' MULTIPLE keys found.\nSkipping Access Key deletion.')
+    } else if (accessKeyID === false) {
+      progressLogger.write(' NO KEYS FOUND.\n')
+    } else {
+      progressLogger.write(' DELETING...')
+      const deleteAccessKeyCommand = new DeleteAccessKeyCommand({ AccessKeyId : accessKeyID })
+
+      try {
+        await iamClient.send(deleteAccessKeyCommand)
+        progressLogger.write('  DONE.\n')
+      } catch (e) {
+        progressLogger.write('  ERROR.\n')
+        throw e
+      }
+    }
+  } else {
+    progressLogger.write('Leaving Access Keys in place.\n')
+  }
 
   return { ssoStartURL, ssoRegion : identityStoreRegion }
 }
@@ -144,7 +192,7 @@ const setupPolicy = async ({ credentials, db, policyName }) => {
     }
   }
 
-  return policyARN
+  return { iamClient, policyARN }
 }
 
 const setupIdentityStore = async ({ credentials, instanceName, instanceRegion }) => {
