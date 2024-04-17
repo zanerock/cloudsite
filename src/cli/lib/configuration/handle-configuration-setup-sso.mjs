@@ -45,7 +45,7 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
   const interrogationBundle = {
     actions : [
       {
-        prompt    : 'Enter the preferred name for the identity store instance:',
+        prompt    : 'Enter the preferred name for the identity store instance; note, this is only used when creating a new instance and is ignored if you already have an identity store instance created on the account):',
         parameter : 'instance-name'
       },
       {
