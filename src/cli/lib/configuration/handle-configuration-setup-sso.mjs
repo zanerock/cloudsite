@@ -84,9 +84,9 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
   if (noDelete === undefined && doDelete === undefined) {
     const { actions } = interrogationBundle
     actions.splice(actions.length - 1, 0, {
-      prompt: 'Delete Access keys after SSO setup:',
-      paramType: 'boolean',
-      parameter: 'do-delete'
+      prompt    : 'Delete Access keys after SSO setup:',
+      paramType : 'boolean',
+      parameter : 'do-delete'
     })
   }
 
@@ -101,16 +101,14 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
     'sso-profile': ssoProfile,
     'user-email': userEmail,
     'user-name': userName
-  } = questioner.values);
+  } = questioner.values)
 
   if (doDelete === undefined && noDelete === undefined) {
     doDelete = questioner.get('do-delete')
-  }
-  else if (noDelete === true) {
+  } else if (noDelete === true) {
     doDelete = false
-  }
-  else if (doDelete === undefined) {
-    doDelete === false
+  } else if (doDelete === undefined) {
+    doDelete = false
   }
 
   const { ssoStartURL, ssoRegion } =

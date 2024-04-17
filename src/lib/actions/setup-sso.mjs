@@ -1,10 +1,10 @@
 import { AccountClient, ListRegionsCommand } from '@aws-sdk/client-account'
-import { 
-  CreatePolicyCommand, 
-  DeleteAccessKeyCommand, 
-  IAMClient, 
-  ListAccessKeysCommand, 
-  ListPoliciesCommand 
+import {
+  CreatePolicyCommand,
+  DeleteAccessKeyCommand,
+  IAMClient,
+  ListAccessKeysCommand,
+  ListPoliciesCommand
 } from '@aws-sdk/client-iam'
 import {
   CreateGroupCommand,
@@ -63,7 +63,7 @@ const setupSSO = async ({
     let activeCount = 0
     do {
       const listAccessKeysCommand = new ListAccessKeysCommand({
-        Marker: marker
+        Marker : marker
       })
       const listAccessKeysResult = await iamClient.send(listAccessKeysCommand)
       for (const { AccessKeyId: testKeyID, Status: status } of listAccessKeysResult.AccessKeyMetadata) {
@@ -78,25 +78,21 @@ const setupSSO = async ({
 
     if (accessKeyID === false && activeCount > 1) {
       progressLogger.write(' MULTIPLE keys found.\nSkipping Access Key deletion.')
-    }
-    else if (accessKeyID === false) {
+    } else if (accessKeyID === false) {
       progressLogger.write(' NO KEYS FOUND.\n')
-    }
-    else {
+    } else {
       progressLogger.write(' DELETING...')
-      const deleteAccessKeyCommand = new DeleteAccessKeyCommand({ AccessKeyId: accessKeyID })
+      const deleteAccessKeyCommand = new DeleteAccessKeyCommand({ AccessKeyId : accessKeyID })
 
       try {
         await iamClient.send(deleteAccessKeyCommand)
         progressLogger.write('  DONE.\n')
-      }
-      catch (e) {
+      } catch (e) {
         progressLogger.write('  ERROR.\n')
         throw e
       }
     }
-  }
-  else {
+  } else {
     progressLogger.write('Leaving Access Keys in place.\n')
   }
 

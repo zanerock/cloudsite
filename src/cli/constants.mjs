@@ -102,10 +102,10 @@ const cliSpec = {
           name        : 'setup-sso',
           description : 'Runs the SSO wizard and sets up the SSO user authentication in the IAM Identity Center.',
           arguments   : [
-            { 
-              name: 'delete',
-              type: Boolean,
-              description: "Confirms deletion of the Access keys after setting up the SSO access. If neither '--delete' nor '--no-delete' are set, then deletion will be interactively confirmed."
+            {
+              name        : 'delete',
+              type        : Boolean,
+              description : "Confirms deletion of the Access keys after setting up the SSO access. If neither '--delete' nor '--no-delete' are set, then deletion will be interactively confirmed."
             },
             {
               name        : 'group-name',
@@ -120,9 +120,9 @@ const cliSpec = {
               description : "The region in which to set up the identity center if no identity center currently set up. Defaults to 'us-east-1'."
             },
             {
-              name: 'no-delete',
-              type: Boolean,
-              description: 'Retains the Access keys after setting up SSO access.'
+              name        : 'no-delete',
+              type        : Boolean,
+              description : 'Retains the Access keys after setting up SSO access.'
             },
             {
               name        : 'policy-name',
