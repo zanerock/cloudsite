@@ -367,9 +367,11 @@ ___`setup-sso` options___
 
 |Option|Description|
 |------|------|
+|`--delete`|Confirms deletion of the Access keys after setting up the SSO access. If neither '--delete' nor '--no-delete' are set, then deletion will be interactively confirmed.|
 |`--group-name`|The name of the group to create or reference. This group will be associated with the permission set and user.|
 |`--instance-name`|The name to assign to the newly created identity center, if needed.|
 |`--instance-region`|The region in which to set up the identity center if no identity center currently set up. Defaults to 'us-east-1'.|
+|`--no-delete`|Retains the Access keys after setting up SSO access.|
 |`--policy-name`|The name of the policy and permission set to create or reference.|
 |`--sso-profile`|The name of the local SSO profile to create.|
 |`--user-email`|The primary email to associate with the user.|
