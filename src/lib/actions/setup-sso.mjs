@@ -456,11 +456,14 @@ const setupUser = async ({ groupID, groupName, identityStoreClient, identityStor
     const createUserCommand = new CreateUserCommand({
       IdentityStoreId : identityStoreID,
       UserName        : userName,
+      DisplayName     : userName,
+      Name            : { GivenName: 'foo', FamilyName: 'bar' },
       Emails          : [{ Value : userEmail, Primary : true }]
     })
     try {
       userID = (await identityStoreClient.send(createUserCommand)).UserId
       progressLogger.write(' DONE.\n')
+      progressLogger.write(`<warn>You must request AWS email '${userName}' an email verification link from the Identity Center Console.\nhttps://${instanceRegion}.console.aws.amazon.com/singlesignon/home</warn>\n`)
     } catch (e) {
       progressLogger.write(' ERROR.\n')
       throw e

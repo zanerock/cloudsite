@@ -17,15 +17,16 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
     .arguments || []
   const ssoSetupOptions = commandLineArgs(ssoSetupOptionsSpec, { argv })
   let {
+    defaults,
     delete: doDelete,
-    'group-name': groupName,
+    'group-name': groupName = 'Cloudsite managers',
     'instance-name': instanceName,
-    'instance-region': instanceRegion,
+    'instance-region': instanceRegion = 'us-east-1',
     'no-delete': noDelete,
-    'policy-name': policyName,
-    'sso-profile': ssoProfile,
+    'policy-name': policyName = 'CloudsiteManager',
+    'sso-profile': ssoProfile = 'cloudsite-manager',
     'user-email': userEmail,
-    'user-name': userName
+    'user-name': userName = 'cloudsite-manager'
   } = ssoSetupOptions
 
   try {
@@ -33,7 +34,7 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
   } catch (e) {
     let exitCode
     if (e.name === 'CredentialsProviderError') {
-      progressLogger.write('<error>No credentials were found.<rst> Refer to cloudsite home instructions on how to configure API credentials for the SSO setup process.\n')
+      progressLogger.write('<error>No credentials were found.<rst> Refer to cloudsite instructions on how to configure API credentials for the SSO setup process.\n')
       exitCode = 2
       process.exit(exitCode) // eslint-disable-line  no-process-exit
     } else {
@@ -41,67 +42,110 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
     }
   }
 
-  // TODO: process argv for options
-  const interrogationBundle = {
-    actions : [
+  const ibActions = []
+  if (instanceName === undefined) {
+    ibActions.push(...[
       {
-        prompt    : 'Enter the preferred name for the identity store instance; note, this is only used when creating a new instance and is ignored if you already have an identity store instance created on the account):',
+        prompt : "Do you have an existing Identity Center instance? (Answer 'no' if you don't know what that is.)",
+        paramType: 'boolean',
+        parameter: 'HAS_INSTANCE'
+      },
+      {
+        condition: '!HAS_INSTANCE',
+        prompt    : 'Enter the preferred name for the Identity Center instance:',
         parameter : 'instance-name'
       },
       {
+        condition: '!HAS_INSTANCE',
         prompt    : 'Enter the preferred AWS region for the identity store instance:',
-        default   : 'us-east-1',
+        default   : instanceRegion,
         parameter : 'instance-region'
-      },
+      }
+    ])
+  }
+
+  const userEmailQuestion = {
+    prompt    : 'Enter the email of the Cloudsite manager user:',
+    parameter : 'user-email'
+  }
+
+  if (defaults !== true) {
+    ibActions.push(...[
       {
         prompt    : 'Enter the name of the custom policy to create or reference:',
-        default   : 'CloudsiteManager',
+        default   : policyName,
         parameter : 'policy-name'
       },
       {
         prompt    : 'Enter the name of the Cloudsite managers group to create or reference:',
-        default   : 'Cloudsite managers',
+        default   : groupName,
         parameter : 'group-name'
       },
       {
         prompt    : 'Enter the name of the Cloudsite manager user account to create or reference:',
-        default   : 'cloudsite-manager',
+        default   : userName,
         parameter : 'user-name'
       },
-      {
-        prompt    : 'Enter the email of the Cloudsite manager user:',
-        parameter : 'user-email'
-      },
+      userEmailQuestion,
       {
         prompt    : "Enter the name of the SSO profile to create or reference (enter '-' to set the default profile):",
-        default   : 'cloudsite-manager',
+        default   : ssoProfile,
         parameter : 'sso-profile'
-      },
-      { review : 'questions' }
-    ]
+      }
+    ])
+  }
+  else if (userEmail === undefined) {
+    ibActions.push(userEmailQuestion)
   }
 
   if (noDelete === undefined && doDelete === undefined) {
     const { actions } = interrogationBundle
-    actions.splice(actions.length - 1, 0, {
+    ibActions.push({
       prompt    : 'Delete Access keys after SSO setup:',
       paramType : 'boolean',
+      default: 'y',
       parameter : 'do-delete'
     })
   }
 
-  const questioner = new Questioner({ initialParameters : ssoSetupOptions, interrogationBundle, output : progressLogger })
-  await questioner.question();
+  if (ibActions.length > 0) {
+    ibActions.push({ review : 'questions' })
 
-  ({
-    'group-name': groupName,
-    'instance-name': instanceName,
-    'instance-region': instanceRegion,
-    'policy-name': policyName,
-    'sso-profile': ssoProfile,
-    'user-email': userEmail,
-    'user-name': userName
-  } = questioner.values)
+    const interrogationBundle = { actions: ibActions }
+
+    const questioner = new Questioner({ 
+      initialParameters : ssoSetupOptions, 
+      interrogationBundle, 
+      output : progressLogger
+    })
+    await questioner.question();
+
+    const { values } = questioner;
+
+    ({
+      'group-name': groupName = groupName,
+      'instance-name': instanceName = instanceName,
+      'instance-region': instanceRegion = instanceRegion,
+      'policy-name': policyName = policyName,
+      'sso-profile': ssoProfile = ssoProfile,
+      'user-email': userEmail = userEmail,
+      'user-name': userName = userName
+    } = values)
+  }
+
+  for (const [label, value] of [
+    ['group-name', groupName], 
+    ['policy-name', policyName], 
+    ['sso-profile', ssoProfile], 
+    ['user-email', userEmail], 
+    ['user-name', userName]
+  ]) {
+    // between the CLI options and interactive setup, the only way thees aren't set is if the user explicitly set to 
+    // '-' (undefined)
+    if (value === undefined) {
+      throw new Error(`Required parameter '${label}' is undefined.`)
+    }
+  }
 
   if (doDelete === undefined && noDelete === undefined) {
     doDelete = questioner.get('do-delete')

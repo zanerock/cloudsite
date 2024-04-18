@@ -292,6 +292,7 @@ ___`setup-sso` options___
 
 |Option|Description|
 |------|------|
+|`--defaults`|Use the defaults were possible and skip unnecessary interactive setup.|
 |`--delete`|Confirms deletion of the Access keys after setting up the SSO access. If neither '--delete' nor '--no-delete' are set, then deletion will be interactively confirmed.|
 |`--group-name`|The name of the group to create or reference. This group will be associated with the permission set and user.|
 |`--instance-name`|The name to assign to the newly created identity center, if needed.|

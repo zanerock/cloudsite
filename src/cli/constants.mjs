@@ -102,6 +102,11 @@ const cliSpec = {
           name        : 'setup-sso',
           description : 'Runs the SSO wizard and sets up the SSO user authentication in the IAM Identity Center.',
           arguments   : [
+            { 
+              name : 'defaults',
+              type : Boolean,
+              description: 'Use the defaults were possible and skip unnecessary interactive setup.'
+            },
             {
               name        : 'delete',
               type        : Boolean,
