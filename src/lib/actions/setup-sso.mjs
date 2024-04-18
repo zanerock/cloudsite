@@ -1,4 +1,3 @@
-import { AccountClient, ListRegionsCommand } from '@aws-sdk/client-account'
 import {
   CreatePolicyCommand,
   DeleteAccessKeyCommand,
@@ -23,37 +22,46 @@ import {
   DescribePermissionSetCommand,
   ListAccountAssignmentsCommand,
   ListCustomerManagedPolicyReferencesInPermissionSetCommand,
-  ListInstancesCommand,
-  ListPermissionSetsCommand,
-  SSOAdminClient
+  ListPermissionSetsCommand
 } from '@aws-sdk/client-sso-admin'
 
 import { generateIAMPolicy } from '../shared/generate-iam-policy'
-import { getCredentials } from './lib/get-credentials'
 import { progressLogger } from '../shared/progress-logger'
 
 const setupSSO = async ({
+  credentials,
   db,
   doDelete,
   groupName,
+  identityStoreInfo,
   instanceName,
   instanceRegion,
   policyName,
   userEmail,
+  userFamilyName,
+  userGivenName,
   userName
 }) => {
-  const credentials = getCredentials()
-
   const { accountID } = db.account
 
   const { iamClient, policyARN } = await setupPolicy({ credentials, db, policyName })
   const { identityStoreID, identityStoreRegion, instanceARN, ssoAdminClient, ssoStartURL } =
-    await setupIdentityStore({ credentials, instanceName, instanceRegion })
+    await setupIdentityStore({ identityStoreInfo, instanceName, instanceRegion })
   const { groupID, identityStoreClient } =
     await setupSSOGroup({ credentials, identityStoreID, identityStoreRegion, groupName })
   const permissionSetARN = await setupPermissionSet({ instanceARN, policyARN, policyName, ssoAdminClient })
   await setupAccountAssignment({ accountID, groupID, instanceARN, permissionSetARN, ssoAdminClient })
-  await setupUser({ groupID, groupName, identityStoreClient, identityStoreID, userEmail, userName })
+  await setupUser({
+    groupID,
+    groupName,
+    identityStoreClient,
+    identityStoreID,
+    identityStoreRegion,
+    userEmail,
+    userFamilyName,
+    userGivenName,
+    userName
+  })
 
   if (doDelete === true) {
     progressLogger.write('Checking Access Keys...')
@@ -195,61 +203,17 @@ const setupPolicy = async ({ credentials, db, policyName }) => {
   return { iamClient, policyARN }
 }
 
-const setupIdentityStore = async ({ credentials, instanceName, instanceRegion }) => {
-  progressLogger.write('Checking for SSO identity store...')
+const setupIdentityStore = async ({ identityStoreInfo, instanceName, instanceRegion }) => {
+  let {
+    id: identityStoreID,
+    region: identityStoreRegion,
+    instanceARN,
+    ssoAdminClient,
+    ssoStartURL
+  } = identityStoreInfo
 
-  let nextToken, identityStoreID, identityStoreRegion, instanceARN, ssoStartURL
-  const accountClient = new AccountClient({ credentials })
-  let ssoAdminClient
-
-  do {
-    const listRegionsCommand = new ListRegionsCommand({
-      MaxResults              : 50, // max allowed as of 2024-04-15
-      NextToken               : nextToken,
-      RegionOptStatusContains : ['ENABLED', 'ENABLED_BY_DEFAULT']
-    })
-    const listRegionsResult = await accountClient.send(listRegionsCommand)
-
-    const regions = listRegionsResult.Regions.sort((a, b) => {
-      const aName = a.RegionName
-      const bName = b.RegionName
-
-      const aUS = aName.startsWith('us-')
-      const bUS = bName.startsWith('us-')
-
-      if (aName === instanceRegion) {
-        return -1
-      } else if (bName === instanceRegion) {
-        return 1
-      } else if (aUS === true && bUS === false) {
-        return -1
-      } else if (aUS === false && bUS === true) {
-        return 1
-      } else {
-        return aName.localeCompare(bName)
-      }
-    })
-
-    for (const { RegionName: region } of regions) {
-      ssoAdminClient = new SSOAdminClient({ credentials, region })
-      const listInstancesCommand = new ListInstancesCommand({})
-      const listInstancesResult = await ssoAdminClient.send(listInstancesCommand)
-      if (listInstancesResult.Instances.length > 0) {
-        const instance = listInstancesResult.Instances[0]
-        identityStoreID = instance.IdentityStoreId
-        instanceARN = instance.InstanceArn
-        identityStoreRegion = region
-        ssoStartURL = 'https://' + instance.Name + '.awsapps.com/start'
-        break
-      }
-    }
-    nextToken = listRegionsResult.NextToken
-  } while (identityStoreID === undefined && nextToken !== undefined)
-
-  if (identityStoreID !== undefined) {
-    progressLogger.write(' FOUND.\n')
-  } else {
-    progressLogger.write(' CREATING...')
+  if (identityStoreID === undefined) {
+    progressLogger.write(`Creating identity store '${instanceName}'...`)
 
     const createInstanceCommand = new CreateInstanceCommand({ Name : instanceName })
     try {
@@ -428,7 +392,17 @@ const setupSSOGroup = async ({ credentials, identityStoreID, identityStoreRegion
   return { groupID, identityStoreClient }
 }
 
-const setupUser = async ({ groupID, groupName, identityStoreClient, identityStoreID, userEmail, userName }) => {
+const setupUser = async ({
+  groupID,
+  groupName,
+  identityStoreClient,
+  identityStoreID,
+  identityStoreRegion,
+  userEmail,
+  userFamilyName,
+  userGivenName,
+  userName
+}) => {
   progressLogger.write(`Checking for user '${userName}'...`)
 
   let nextToken, userID
@@ -457,13 +431,13 @@ const setupUser = async ({ groupID, groupName, identityStoreClient, identityStor
       IdentityStoreId : identityStoreID,
       UserName        : userName,
       DisplayName     : userName,
-      Name            : { GivenName: 'foo', FamilyName: 'bar' },
+      Name            : { GivenName : userGivenName, FamilyName : userFamilyName },
       Emails          : [{ Value : userEmail, Primary : true }]
     })
     try {
       userID = (await identityStoreClient.send(createUserCommand)).UserId
       progressLogger.write(' DONE.\n')
-      progressLogger.write(`<warn>You must request AWS email '${userName}' an email verification link from the Identity Center Console.\nhttps://${instanceRegion}.console.aws.amazon.com/singlesignon/home</warn>\n`)
+      progressLogger.write(`<warn>You must request AWS email '${userName}' an email verification link from the Identity Center Console.\nhttps://${identityStoreRegion}.console.aws.amazon.com/singlesignon/home</warn>\n`)
     } catch (e) {
       progressLogger.write(' ERROR.\n')
       throw e

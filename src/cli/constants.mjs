@@ -102,10 +102,10 @@ const cliSpec = {
           name        : 'setup-sso',
           description : 'Runs the SSO wizard and sets up the SSO user authentication in the IAM Identity Center.',
           arguments   : [
-            { 
-              name : 'defaults',
-              type : Boolean,
-              description: 'Use the defaults were possible and skip unnecessary interactive setup.'
+            {
+              name        : 'defaults',
+              type        : Boolean,
+              description : 'Use the defaults were possible and skip unnecessary interactive setup.'
             },
             {
               name        : 'delete',
@@ -140,6 +140,14 @@ const cliSpec = {
             {
               name        : 'user-email',
               description : 'The primary email to associate with the user.'
+            },
+            {
+              name        : 'user-family-name',
+              description : 'The family name of the cloudsite management user.'
+            },
+            {
+              name        : 'user-given-name',
+              description : 'The given name of the cloudsite management user.'
             },
             {
               name        : 'user-name',

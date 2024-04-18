@@ -301,6 +301,8 @@ ___`setup-sso` options___
 |`--policy-name`|The name of the policy and permission set to create or reference.|
 |`--sso-profile`|The name of the local SSO profile to create.|
 |`--user-email`|The primary email to associate with the user.|
+|`--user-family-name`|The family name of the cloudsite management user.|
+|`--user-given-name`|The given name of the cloudsite management user.|
 |`--user-name`|The name of the user account to create or reference.|
 
 <span id="cloudsite-configuration-show"></span>
