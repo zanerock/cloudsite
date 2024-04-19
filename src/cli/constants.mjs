@@ -103,6 +103,11 @@ const cliSpec = {
           description : 'Runs the SSO wizard and sets up the SSO user authentication in the IAM Identity Center.',
           arguments   : [
             {
+              name        : 'defaults',
+              type        : Boolean,
+              description : 'Use the defaults were possible and skip unnecessary interactive setup.'
+            },
+            {
               name        : 'delete',
               type        : Boolean,
               description : "Confirms deletion of the Access keys after setting up the SSO access. If neither '--delete' nor '--no-delete' are set, then deletion will be interactively confirmed."
@@ -135,6 +140,14 @@ const cliSpec = {
             {
               name        : 'user-email',
               description : 'The primary email to associate with the user.'
+            },
+            {
+              name        : 'user-family-name',
+              description : 'The family name of the cloudsite management user.'
+            },
+            {
+              name        : 'user-given-name',
+              description : 'The given name of the cloudsite management user.'
             },
             {
               name        : 'user-name',

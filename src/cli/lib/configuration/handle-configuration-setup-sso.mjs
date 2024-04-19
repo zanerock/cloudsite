@@ -5,8 +5,13 @@ import commandLineArgs from 'command-line-args'
 import { ConfigIniParser } from 'config-ini-parser'
 import { Questioner } from 'question-and-answer'
 
+import { IdentitystoreClient, GetUserIdCommand } from '@aws-sdk/client-identitystore'
+import { SSOAdminClient } from '@aws-sdk/client-sso-admin'
+
 import { checkAuthentication } from '../check-authentication'
 import { cliSpec } from '../../constants'
+import { findIdentityStore } from './lib/find-identity-store'
+import { getCredentials } from '../../../lib/actions/lib/get-credentials'
 import { progressLogger } from '../../../lib/shared/progress-logger'
 import { setupSSO } from '../../../lib/actions/setup-sso'
 
@@ -17,15 +22,18 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
     .arguments || []
   const ssoSetupOptions = commandLineArgs(ssoSetupOptionsSpec, { argv })
   let {
+    defaults,
     delete: doDelete,
-    'group-name': groupName,
+    'group-name': groupName = 'Cloudsite managers',
     'instance-name': instanceName,
-    'instance-region': instanceRegion,
+    'instance-region': instanceRegion = 'us-east-1',
     'no-delete': noDelete,
-    'policy-name': policyName,
-    'sso-profile': ssoProfile,
+    'policy-name': policyName = 'CloudsiteManager',
+    'sso-profile': ssoProfile = 'cloudsite-manager',
     'user-email': userEmail,
-    'user-name': userName
+    'user-family-name': userFamilyName,
+    'user-given-name': userGivenName,
+    'user-name': userName = 'cloudsite-manager'
   } = ssoSetupOptions
 
   try {
@@ -33,7 +41,7 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
   } catch (e) {
     let exitCode
     if (e.name === 'CredentialsProviderError') {
-      progressLogger.write('<error>No credentials were found.<rst> Refer to cloudsite home instructions on how to configure API credentials for the SSO setup process.\n')
+      progressLogger.write('<error>No credentials were found.<rst> Refer to cloudsite instructions on how to configure API credentials for the SSO setup process.\n')
       exitCode = 2
       process.exit(exitCode) // eslint-disable-line  no-process-exit
     } else {
@@ -41,78 +49,216 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
     }
   }
 
-  // TODO: process argv for options
-  const interrogationBundle = {
-    actions : [
-      {
-        prompt    : 'Enter the preferred name for the identity store instance; note, this is only used when creating a new instance and is ignored if you already have an identity store instance created on the account):',
-        parameter : 'instance-name'
-      },
-      {
-        prompt    : 'Enter the preferred AWS region for the identity store instance:',
-        default   : 'us-east-1',
-        parameter : 'instance-region'
-      },
-      {
-        prompt    : 'Enter the name of the custom policy to create or reference:',
-        default   : 'CloudsiteManager',
-        parameter : 'policy-name'
-      },
-      {
-        prompt    : 'Enter the name of the Cloudsite managers group to create or reference:',
-        default   : 'Cloudsite managers',
-        parameter : 'group-name'
-      },
-      {
-        prompt    : 'Enter the name of the Cloudsite manager user account to create or reference:',
-        default   : 'cloudsite-manager',
-        parameter : 'user-name'
-      },
+  const credentials = getCredentials()
+
+  const identityStoreInfo = {
+    name   : instanceName,
+    region : instanceRegion
+  }
+  if (instanceName === undefined || instanceRegion === undefined) {
+    const interrogationBundle = {
+      actions : [
+        {
+          prompt    : "Do you have an existing Identity Center instance? (Answer 'no' if you don't know what that is.)",
+          paramType : 'boolean',
+          parameter : 'HAS_INSTANCE'
+        },
+        {
+          condition : '!HAS_INSTANCE',
+          prompt    : "Enter the preferred name for the Identity Center instance (typically based on your primary domain name with '-' instead of '.'; e.g.: foo-com):",
+          parameter : 'instance-name'
+        },
+        {
+          condition : '!HAS_INSTANCE',
+          prompt    : 'Enter the preferred AWS region for the identity store instance:',
+          default   : instanceRegion,
+          parameter : 'instance-region'
+        }
+      ]
+    }
+
+    const questioner = new Questioner({
+      initialParameters : ssoSetupOptions,
+      interrogationBundle,
+      output            : progressLogger
+    })
+    await questioner.question()
+
+    if (questioner.get('HAS_INSTANCE') === true) {
+      Object.assign(identityStoreInfo, await findIdentityStore({ credentials, instanceRegion }))
+
+      if (identityStoreInfo.id === undefined) {
+        throw new Error('Could not locate existing identity store.')
+      }
+    }
+  } else {
+    identityStoreInfo.ssoAdminClient = new SSOAdminClient({ credentials, region : instanceRegion })
+  }
+
+  if (identityStoreInfo.id !== undefined) {
+    if (ssoSetupOptions['user-name'] === undefined && defaults !== true) {
+      const questioner = new Questioner({
+        interrogationBundle : {
+          actions : [
+            {
+              prompt    : 'Enter the name of the Cloudsite manager user account to create or reference:',
+              default   : userName,
+              parameter : 'user-name'
+            }
+          ]
+        },
+        output : progressLogger
+      })
+
+      await questioner.question()
+      userName = questioner.get('user-name')
+    }
+  }
+
+  // are they saying create this or referencing an existing user?
+  let userFound = false
+  if (identityStoreInfo !== null) {
+    progressLogger.write(`Checking identity store for user '${userName}'...`)
+    const identitystoreClient = new IdentitystoreClient({ credentials, region : identityStoreInfo.region })
+    const getUserIdCommad = new GetUserIdCommand({
+      IdentityStoreId     : identityStoreInfo.id,
+      AlternateIdentifier : {
+        UniqueAttribute : { AttributePath : 'userName', AttributeValue : userName }
+      }
+    })
+    try {
+      await identitystoreClient.send(getUserIdCommad)
+      progressLogger.write(' FOUND.\n')
+      userFound = true // if no exception
+    } catch (e) {
+      if (e.name !== 'ResourceNotFoundException') {
+        progressLogger.write(' ERROR.\n')
+        throw e // otherwise, it's just not found and we leave 'userFound' false
+      }
+      progressLogger.write(' NOT FOUND.\n')
+    }
+  }
+
+  const ibActions = []
+
+  if (userFound === false) {
+    ibActions.push(...[
       {
         prompt    : 'Enter the email of the Cloudsite manager user:',
         parameter : 'user-email'
       },
       {
+        prompt    : 'Enter the given name of the Cloudsite manager:',
+        parameter : 'user-given-name'
+      },
+      {
+        prompt    : 'Enter the family name of the Cloudsite manager:',
+        parameter : 'user-family-name'
+      }
+    ])
+  }
+
+  if (defaults !== true) {
+    ibActions.push(...[ // note, any questions with values already set by CLI options will be skipped
+      {
         prompt    : "Enter the name of the SSO profile to create or reference (enter '-' to set the default profile):",
-        default   : 'cloudsite-manager',
+        default   : ssoProfile,
         parameter : 'sso-profile'
       },
-      { review : 'questions' }
-    ]
+      {
+        prompt    : 'Enter the name of the custom policy to create or reference:',
+        default   : policyName,
+        parameter : 'policy-name'
+      },
+      {
+        prompt    : 'Enter the name of the Cloudsite managers group to create or reference:',
+        default   : groupName,
+        parameter : 'group-name'
+      }
+    ])
   }
 
   if (noDelete === undefined && doDelete === undefined) {
-    const { actions } = interrogationBundle
-    actions.splice(actions.length - 1, 0, {
+    ibActions.push({
       prompt    : 'Delete Access keys after SSO setup:',
       paramType : 'boolean',
+      default   : 'y',
       parameter : 'do-delete'
     })
   }
 
-  const questioner = new Questioner({ initialParameters : ssoSetupOptions, interrogationBundle, output : progressLogger })
-  await questioner.question();
+  if (ibActions.length > 0) {
+    ibActions.push({ review : 'questions' })
 
-  ({
-    'group-name': groupName,
-    'instance-name': instanceName,
-    'instance-region': instanceRegion,
-    'policy-name': policyName,
-    'sso-profile': ssoProfile,
-    'user-email': userEmail,
-    'user-name': userName
-  } = questioner.values)
+    const interrogationBundle = { actions : ibActions }
 
-  if (doDelete === undefined && noDelete === undefined) {
-    doDelete = questioner.get('do-delete')
-  } else if (noDelete === true) {
+    const questioner = new Questioner({
+      initialParameters : ssoSetupOptions,
+      interrogationBundle,
+      output            : progressLogger
+    })
+    await questioner.question()
+
+    const { values } = questioner;
+
+    ({
+      'group-name': groupName = groupName,
+      'policy-name': policyName = policyName,
+      'sso-profile': ssoProfile = ssoProfile,
+      'user-email': userEmail = userEmail,
+      'user-family-name': userFamilyName = userFamilyName,
+      'user-given-name' : userGivenName = userGivenName,
+      'user-name': userName = userName
+    } = values)
+
+    if (doDelete === undefined && noDelete === undefined) {
+      doDelete = questioner.get('do-delete')
+    }
+  }
+
+  if (noDelete === true) {
     doDelete = false
   } else if (doDelete === undefined) {
     doDelete = false
   }
 
-  const { ssoStartURL, ssoRegion } =
-    await setupSSO({ db, doDelete, groupName, instanceName, instanceRegion, policyName, userEmail, userName })
+  const requiredFields = [
+    ['group-name', groupName],
+    ['policy-name', policyName],
+    ['sso-profile', ssoProfile],
+    ['user-name', userName]
+  ]
+
+  if (userFound === false) {
+    requiredFields.push(
+      ['user-email', userEmail],
+      ['user-family-name', userFamilyName],
+      ['user-given-name', userGivenName]
+    )
+  }
+
+  for (const [label, value] of requiredFields) {
+    // between the CLI options and interactive setup, the only way thees aren't set is if the user explicitly set to
+    // '-' (undefined)
+    if (value === undefined) {
+      throw new Error(`Required parameter '${label}' is undefined.`)
+    }
+  }
+
+  const { ssoStartURL, ssoRegion } = await setupSSO({
+    credentials,
+    db,
+    doDelete,
+    groupName,
+    identityStoreInfo,
+    instanceName,
+    instanceRegion,
+    policyName,
+    userEmail,
+    userFamilyName,
+    userGivenName,
+    userName
+  })
 
   progressLogger.write('Configuring local SSO profile...')
   const configPath = fsPath.join(process.env.HOME, '.aws', 'config')
