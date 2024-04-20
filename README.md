@@ -12,7 +12,7 @@ Low cost, high performance cloud based website hosting manager. Cloudsite featur
 - [Contributing](#contributing)
 - [Support and feature requests](#support-and-feature-requests)
 
-If you appreciate this project, you can support us on [Patreon @zanecodes](https://patreon.com/zanecodes). We also provide support on [our discord channel](https://discord.gg/QWAav6fZ5C).
+If you appreciate this project, you can support us on [Patreon @liquid-labs](https://patreon.com/liquid-labs). We also provide support on [our discord channel](https://discord.gg/QWAav6fZ5C).
 
 ## Installation
 
@@ -500,4 +500,4 @@ Plase feel free to submit any [bug reports or feature suggestions](https://githu
 
 ## Support and feature requests
 
-The best way to get free support is to [submit a ticket](https://github.com/liquid-labs/cloudsite/issues). You can also become a patron for as little as $1/month and get priority support and request new feature on [all Liquid Labs open source software](https://github.com/liquid-labs). You can get these benefits and [support our work at patreon.com/zanecodes](https://www.patreon.com/zanecodes).
+The best way to get free support is to [submit a ticket](https://github.com/liquid-labs/cloudsite/issues). You can also become a patron for as little as $1/month and get priority support and request new feature on [all Liquid Labs open source software](https://github.com/liquid-labs). You can get these benefits and [support our work at patreon.com/liquid-labs](https://www.patreon.com/liquid-labs).
