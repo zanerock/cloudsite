@@ -5,3 +5,5 @@ node_modules
 /dist
 /test-staging
 /qa
+/site/build
+/site/.docusaurus
