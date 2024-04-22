@@ -94,13 +94,13 @@ The access keys will allow the tool to operate under your root (or super-admin) 
 3. Click on the account name in the upper right-hand corner and select 'Security credentials'.
 4. Under the 'Access keys' section, select 'Create access key'. You may get a warning; if you do, acknowledge and click next.
 5. Execute:
-   ```
+   ```bash
    aws configure
    ```
    And copy+paste the access key ID and secret as prompted.
 
 You can test the access keys by executing:
-```
+```bash
 aws iam get-account-summary
 ```
 
@@ -109,23 +109,29 @@ aws iam get-account-summary
 Now, with keys in place, we can hand the action over to the tool to set up the more secure SSO based authentication.
 
 1. Execute:
-   ```
+   ```bash
    cloudsite configuration setup-sso --user-email your-email@foo.com --defaults
    ```
    If you want to tinker around with what enerything is named, just leave off the `--defaults` and you will enter an interactive QnA.
-2. Once the above command completes, check your email at the address you provided and look for the user invite email. Click on the confirmation and set up your account password.
-3. Finally, to create local credentials the cloudsite tool can use, execute:
+2. Once the above command completes, go back to the AWS console (as the root or a super-admin user) and select the IAM service.
+3. Find the newly created user under 'Users' and select 'Send verification email'.
+4. Finally, to create local credentials the cloudsite tool can use, execute:
    ```
    aws sso login --profile cloudsite-manager
    ```
-   You're now ready to use the tool! (Note: if you changed the name of the SSO profile, use that name. 'cloudsite-manager' is the default profile name.)
+   Note: if you changed the name of the SSO profile, use that name. 'cloudsite-manager' is the default profile name.
+
+You're now ready to use the tool! From the CLI:
+```bash
+cloudsite create your-domain.com --source-path /path/to/website/files
+```
 
 ### Integrating with an existing SSO instance
 
 This section is for users that already have a single sign-on instance. If you're starting fresh, refer to the previous sections. You can still use the tool to set up the specific permission set and then create or tie in with an existing user and group.
 
 1. Execute the base command _without_ the `--defaults` option:
-   ```
+   ```bash
    cloudsite configuration setup-sso --user-email your-email@foo.com
    ```
 2. When asked about the group, you can name an existing group and the tool will tie the cloudsite permissions set to that group.
@@ -240,6 +246,7 @@ cloudsite update your-domain.com
 - [`create`](#cloudsite-create): Creates a new website, setting up infrastructure and copying content.
 - [`destroy`](#cloudsite-destroy): Destroys the named site. I.e., deletes all cloud resources associated with the site.
 - [`detail`](#cloudsite-detail): Prints details for the indicated site.
+- [`document`](#cloudsite-document): Generates self-documentation in Markdown format.
 - [`get-iam-policy`](#cloudsite-get-iam-policy): Prints an IAM policy suitable for operating cloudsite.
 - [`import`](#cloudsite-import): Generates a site database based on currently deployed site stacks.
 - [`list`](#cloudsite-list): Lists the sites registered in the local database.
@@ -324,7 +331,7 @@ Creates a new website, setting up infrastructure and copying content.
 |`--no-build`|Supresses the default behavior of building before uploading the site content.|
 |`--no-delete-on-failure`|When true, does not delete the site stack after setup failure.|
 |`--no-interactive`|Suppresses activation of the interactive setup where it would otherwise be activated.|
-|`--option`|A combined name-value pair: <name>:<value>. Can be used multiple times. With '--delete', the value portion is ignored and can be omitted, e.g.: '--option <name>'.|
+|`--option`|A combined name-value pair: &lt;name&gt;:&lt;value&gt;. Can be used multiple times. With '--delete', the value portion is ignored and can be omitted, e.g.: '--option &lt;name&gt;'.|
 |`--region`|The region where to create the site resources. Defaults to 'us-east-1'.|
 |`--source-path`|Local path to the static site root.|
 |`--source-type`|May be either 'vanilla' or 'docusaurus', otherwise process will attempt to guess.|
@@ -352,6 +359,19 @@ Prints details for the indicated site.
 |Option|Description|
 |------|------|
 |`[apex-domain]`|(_main argument_,_required_) The domain of the site to detail.|
+
+<span id="cloudsite-document"></span>
+#### `cloudsite document <options>`
+
+Generates self-documentation in Markdown format.
+
+##### `document` options
+
+|Option|Description|
+|------|------|
+|`--prefix`|A string to prefix to the standard output.|
+|`--section-depth`|An integer indicating initial header 'depth', where '1' means start with an 'H1/#' section header, '2' means start with an 'H2/##' section header, etc. This is useful when the documentation is embedded in other docs.|
+|`--title`|The title of the top level section header.|
 
 <span id="cloudsite-get-iam-policy"></span>
 #### `cloudsite get-iam-policy <options>`
@@ -421,7 +441,7 @@ ___`set` options___
 |`--confirmed`|When entirely deleting (disabling) a plugin, you must either confirm interactively or provide the '--confirmed' option.|
 |`--delete`|When set, then deletes the setting. Incompatible with the '--value' option. To delete all plugin settings (disable the plugin), set '--name' or '--option' to the bare plugin name; e.g.: --value aPlugin.|
 |`--name`|The option name.|
-|`--option`|A combined name-value pair: <name>:<value>. Can be used multiple times. With '--delete', the value portion is ignored and can be omitted, e.g.: '--option <name>'.|
+|`--option`|A combined name-value pair: &lt;name&gt;:&lt;value&gt;. Can be used multiple times. With '--delete', the value portion is ignored and can be omitted, e.g.: '--option &lt;name&gt;'.|
 |`--value`|The setting value. Incompatible with the '--delete' option.|
 
 <span id="cloudsite-plugin-settings-show"></span>
@@ -489,7 +509,6 @@ Verifies the site is up and running and that the stack and content are up-to-dat
 
 
 
-Documentation generated.
 ## Known limitations
 
 - The permissions used by the 'ContactHandler' Lambda function are overly broad and need to be narrowed. See [issue #34](https://github.com/liquid-labs/cloudsite/issues/34).

@@ -12,7 +12,7 @@ Low cost, high performance cloud based website hosting manager. Cloudsite featur
 - [Contributing](#contributing)
 - [Support and feature requests](#support-and-feature-requests)
 
-If you appreciate this project, you can support us on [Patreon @zanecodes](https://patreon.com/zanecodes). We also provide support on [our discord channel](https://discord.gg/QWAav6fZ5C).
+If you appreciate this project, you can support us on [Patreon @liquidlabs](https://patreon.com/liquidlabs). We also provide support on [our discord channel](https://discord.gg/QWAav6fZ5C).
 
 ## Installation
 
@@ -94,13 +94,13 @@ The access keys will allow the tool to operate under your root (or super-admin) 
 3. Click on the account name in the upper right-hand corner and select 'Security credentials'.
 4. Under the 'Access keys' section, select 'Create access key'. You may get a warning; if you do, acknowledge and click next.
 5. Execute:
-   ```
+   ```bash
    aws configure
    ```
    And copy+paste the access key ID and secret as prompted.
 
 You can test the access keys by executing:
-```
+```bash
 aws iam get-account-summary
 ```
 
@@ -109,23 +109,29 @@ aws iam get-account-summary
 Now, with keys in place, we can hand the action over to the tool to set up the more secure SSO based authentication.
 
 1. Execute:
-   ```
+   ```bash
    cloudsite configuration setup-sso --user-email your-email@foo.com --defaults
    ```
    If you want to tinker around with what enerything is named, just leave off the `--defaults` and you will enter an interactive QnA.
-2. Once the above command completes, check your email at the address you provided and look for the user invite email. Click on the confirmation and set up your account password.
-3. Finally, to create local credentials the cloudsite tool can use, execute:
+2. Once the above command completes, go back to the AWS console (as the root or a super-admin user) and select the IAM service.
+3. Find the newly created user under 'Users' and select 'Send verification email'.
+4. Finally, to create local credentials the cloudsite tool can use, execute:
    ```
    aws sso login --profile cloudsite-manager
    ```
-   You're now ready to use the tool! (Note: if you changed the name of the SSO profile, use that name. 'cloudsite-manager' is the default profile name.)
+   Note: if you changed the name of the SSO profile, use that name. 'cloudsite-manager' is the default profile name.
+
+You're now ready to use the tool! From the CLI:
+```bash
+cloudsite create your-domain.com --source-path /path/to/website/files
+```
 
 ### Integrating with an existing SSO instance
 
 This section is for users that already have a single sign-on instance. If you're starting fresh, refer to the previous sections. You can still use the tool to set up the specific permission set and then create or tie in with an existing user and group.
 
 1. Execute the base command _without_ the `--defaults` option:
-   ```
+   ```bash
    cloudsite configuration setup-sso --user-email your-email@foo.com
    ```
 2. When asked about the group, you can name an existing group and the tool will tie the cloudsite permissions set to that group.

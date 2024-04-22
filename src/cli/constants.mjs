@@ -38,7 +38,7 @@ const globalOptionsSpec = [
 
 const optionSpec = {
   name        : 'option',
-  description : "A combined name-value pair: <name>:<value>. Can be used multiple times. With '--delete', the value portion is ignored and can be omitted, e.g.: '--option <name>'.",
+  description : "A combined name-value pair: &lt;name&gt;:&lt;value&gt;. Can be used multiple times. With '--delete', the value portion is ignored and can be omitted, e.g.: '--option &lt;name&gt;'.",
   multiple    : true
 }
 
@@ -200,6 +200,25 @@ const cliSpec = {
         {
           name        : 'stack-name',
           description : 'Specify the name of the stack to be created and override the default name.'
+        }
+      ]
+    },
+    {
+      name : 'document',
+      description: 'Generates self-documentation in Markdown format.',
+      arguments: [
+        {
+          name: 'prefix',
+          description: 'A string to prefix to the standard output.'
+        },
+        {
+          name: 'section-depth',
+          description: "An integer indicating initial header 'depth', where '1' means start with an 'H1/#' section header, '2' means start with an 'H2/##' section header, etc. This is useful when the documentation is embedded in other docs.",
+          type: (val) => parseInt(val)  
+        },
+        {
+          name: 'title',
+          description: 'The title of the top level section header.'
         }
       ]
     },
