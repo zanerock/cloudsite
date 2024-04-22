@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="512pt"
+   height="512pt"
+   version="1.1"
+   viewBox="0 0 512 512"
+   id="svg3134"
+   sodipodi:docname="no-cost-icon-bi-color.svg"
+   inkscape:version="1.2.2 (b0a84865, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs3138" />
+  <sodipodi:namedview
+     id="namedview3136"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="pt"
+     showgrid="false"
+     inkscape:zoom="0.34570313"
+     inkscape:cx="360.13559"
+     inkscape:cy="357.24294"
+     inkscape:window-width="1055"
+     inkscape:window-height="681"
+     inkscape:window-x="55"
+     inkscape:window-y="70"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="g3132" />
+  <g
+     id="g3132">
+    <path
+       d="m192.05 262.9 30.094-29.465c-15.227-5.6992-26.332-20.422-26.332-37.617 0-22.129 17.996-40.125 40.125-40.125h63.949l36.363-36.363v-3.7617l-60.191-0.003906v-40.125h-40.125v40.125c-44.258 0-80.246 35.992-80.246 80.246 0 28.152 14.398 52.762 36.363 67.09z"
+       id="path3126"
+       style="fill:#d96201;fill-opacity:1" />
+    <path
+       d="m319.95 249.1-30.094 29.465c15.227 5.6992 26.332 20.422 26.332 37.617 0 22.129-17.996 40.125-40.125 40.125h-63.949l-36.363 36.363v3.7617h60.188v40.125h40.125v-40.125c44.258 0 80.246-35.992 80.246-80.246 0.003906-28.148-14.395-52.758-36.359-67.086z"
+       id="path3128"
+       style="fill:#d96201;fill-opacity:1" />
+    <path
+       d="m256 10.238c-135.73 0-245.76 110.03-245.76 245.76s110.03 245.76 245.76 245.76c135.73 0 245.76-110.03 245.76-245.76 0-135.73-110.03-245.76-245.76-245.76zm0 446.38c-48.266 0-92.707-16.887-127.27-45.137l282.75-282.75c28.258 34.559 45.137 79 45.137 127.27 0 111.04-89.582 200.62-200.62 200.62zm0-401.24c48.266 0 92.707 16.887 127.27 45.137l-282.75 282.75c-28.258-34.559-45.137-79.008-45.137-127.27-0.003906-111.04 89.578-200.62 200.62-200.62z"
+       id="path3130"
+       style="fill:#1b3382;fill-opacity:1" />
+  </g>
+</svg>

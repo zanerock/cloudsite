@@ -1,0 +1,76 @@
+:global(.col) :global(.MuiFormControl-root){
+  margin-top: var(--ifm-spacing-vertical);
+}
+
+:global(.col) :global(.MuiFormControl-root) label {
+  color: var(--ifm-color-primary-lighter);
+  font-family: inherit;
+}
+
+:global(.col) :global(.MuiFormControl-root) label:global(.Mui-focused) {
+  color: var(--ifm-color-primary);
+}
+
+:global(.col) :global(.MuiFormControl-root) label:global(.Mui-error) {
+  color: #d32f2f; /* TODO: we should pull this from the theme */
+}
+
+:global(.col) :global(.MuiInputBase-root) {
+  color: var(--ifm-color-primary);
+  font-family: inherit;
+}
+
+:global(.col) :global(.MuiOutlinedInput-root):not(:global(.Mui-disabled), :global(.Mui-error)) :global(.MuiOutlinedInput-notchedOutline) {
+  border: 0.5px solid var(--ifm-color-primary-lighter);
+  transition: border-color 0.25s linear;
+}
+
+:global(.col) :global(.MuiOutlinedInput-root):not(:global(.Mui-disabled), :global(.Mui-error)):hover :global(.MuiOutlinedInput-notchedOutline) {
+  border: 1px solid var(--ifm-color-primary);
+}
+
+:global(.col) :global(.MuiOutlinedInput-root.Mui-focused):not(:global(.Mui-disabled), :global(.Mui-error)) :global(.MuiOutlinedInput-notchedOutline) {
+  border: 2px solid var(--ifm-color-primary);
+}
+
+:global(.col) :global(.MuiTextField-root) {
+  width: 100%;
+}
+
+/* these next two are what grow the multi-line textfield to fill the column vertically */
+:global(.col) :global(.MuiTextField-root):has(:global(.MuiInputBase-multiline)) {
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - var(--ifm-spacing-vertical));
+  /* todo: would really like something like: "max-height: initial;", so typing into the thing doesn't grow the box, but 
+     it doesn't work like that I guess */
+}
+
+:global(.col) .multiline_container {
+  flex: 1 0 auto;
+}
+
+/* these next two move the text to the top (rather than the middle) */
+:global(.col) :global(.MuiInputBase-multiline) {
+  height: 100%;
+  display: block;
+  vertical-align: text-top;
+}
+
+:global(.col) :global(.MuiInputBase-multiline) textarea {
+  display: inline-block;
+}
+
+
+:global(.col) :global(.MuiAutocomplete-inputRoot)::before {
+  border-bottom: 0.5px solid var(--ifm-color-primary);
+  transition: border-color 0.25s linear;
+}
+
+:global(.col) :global(.MuiAutocomplete-inputRoot):hover:not(:global(.Mui-disabled), :global(.Mui-error)):before {
+  border-bottom: 1px solid var(--ifm-color-primary);
+}
+
+:global(.col) :global(.MuiAutocomplete-inputRoot.Mui-focused):before {
+  border-bottom: 2px solid var(--ifm-color-primary);
+}

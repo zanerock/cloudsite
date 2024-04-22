@@ -1,0 +1,19 @@
+.button, .button.button--secondary {
+  color: var(--ifm-color-white);
+  background-color: var(--ifm-color-primary);
+}
+
+.button:hover, .button.button--secondary:hover {
+  color: var(--ifm-color-white);
+  background-color: var(--ifm-color-content-secondary);
+}
+
+.button:active, .button.button--secondary:active {
+  color: var(--ifm-color-content-secondary);
+  background-color: var(--ifm-color-white);
+  border: 1px solid var(--ifm-color-content-secondary);
+}
+
+a.button {
+  text-decoration: none;
+}

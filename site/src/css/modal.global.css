@@ -1,0 +1,22 @@
+
+
+/* TODO: the Popup component seems to be incomptable with CSS modules; when you do "className", it appends '-ovelay' to the name, so when you use clsx(modalStyles['popup-overlay']), you get 'popup-overlay_src-css-modals-module-overlay', which of course doesn't match anything; so we have to make the overlay styling global */
+.popup-overlay {
+  animation: var(--ll-modal-animation-duration) linear forwards blur-in;
+}
+
+@keyframes blur-in {
+  from {
+    backdrop-filter: blur(0px);
+    background-color: rgba(0,0,0,0);
+  }
+  to {
+    backdrop-filter: blur(6px);
+    background-color: rgba(0,0,0,.7);
+  }
+}
+
+/*
+.popup-content {
+  width: 100%;
+}*/

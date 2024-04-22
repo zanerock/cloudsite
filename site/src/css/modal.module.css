@@ -1,0 +1,83 @@
+.popup-overlay {
+  animation: var(--ll-modal-animation-duration) linear forwards blur-in;/* 200ms linear 0s infinite forward both blur-in;*/
+}
+
+.modal {
+  border: solid 1px var(--ifm-color-primary);
+  background-color: hsla(var(--ll-color-primary-hue), var(--ll-color-primary-saturation), calc(var(--ll-color-primary-lightness) / .325), 1);
+  max-width: 1400px;
+  margin: 2rem auto;
+
+  animation: var(--ll-modal-animation-duration) linear forwards scale-in;
+
+  max-height: calc(100vh - 4rem);
+}
+
+.small {
+  max-width: 40rem;
+}
+
+@keyframes scale-in {
+  from {
+    transform: scale(0.01);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@media screen and (max-width: 996px) {
+  .modal {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+.modal > .header {
+  width: 100%;
+  border-bottom: 1px solid gray;
+  font-size: 18px;
+  text-align: center;
+  padding: 5px;
+  font-weight: bold;
+}
+
+.modal > .content {
+  width: 100%;
+  padding: 1rem 2rem;
+  max-height: calc(100vh - 10rem);
+  overflow: auto;
+}
+
+.modal > .actions {
+  width: 100%;
+  padding: 10px 5px;
+  margin: auto;
+  text-align: center;
+  border-top: 1px solid var(--ifm-color-primary);
+}
+
+.modal > .close {
+  cursor: pointer;
+  position: absolute;
+  display: block;
+  padding: 2px 5px;
+  line-height: 20px;
+  right: -10px;
+  top: -10px;
+  font-size: 24px;
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid #cfcece;
+}
+
+.modal div.scroll-gradient {
+  position: fixed;
+  bottom: calc(3rem + 6px);
+  left: 0;
+  height: 2rem;
+  width: 100%;
+  padding: 0 2rem;
+  background: linear-gradient(rgba(255,255,255,0), rgba(255,255,255,1));
+  pointer-events: none;
+}
