@@ -256,7 +256,9 @@ cloudsite update your-domain.com
 - [`verify`](#cloudsite-verify): Verifies the site is up and running and that the stack and content are up-to-date.
 
 <span id="cloudsite-cleanup"></span>
-#### `cloudsite cleanup <options> <apex-domain>`
+#### `cleanup`
+
+`cloudsite cleanup <options> <apex-domain>`
 
 Attempts to fully delete partially deleted sites in the 'needs to be cleaned up' state.
 
@@ -268,7 +270,9 @@ Attempts to fully delete partially deleted sites in the 'needs to be cleaned up'
 |`--list`|Lists the sites in need of cleaning up.|
 
 <span id="cloudsite-configuration"></span>
-#### `cloudsite configuration [subcommand]`
+#### `configuration`
+
+`cloudsite configuration [subcommand]`
 
 Command group for managing the Cloudsite CLI configuration.
 
@@ -286,12 +290,16 @@ Command group for managing the Cloudsite CLI configuration.
 - [`show`](#cloudsite-configuration-show): Displays the current configuration.
 
 <span id="cloudsite-configuration-setup-local"></span>
-###### `cloudsite configuration setup-local`
+###### `setup-local`
+
+`cloudsite configuration setup-local`
 
 Runs the local setup wizard and updates all options. This should be used after the SSO account has been created (see 'cloudsite configuration setup-sso').
 
 <span id="cloudsite-configuration-setup-sso"></span>
-###### `cloudsite configuration setup-sso <options>`
+###### `setup-sso`
+
+`cloudsite configuration setup-sso <options>`
 
 Runs the SSO wizard and sets up the SSO user authentication in the IAM Identity Center.
 
@@ -313,12 +321,16 @@ ___`setup-sso` options___
 |`--user-name`|The name of the user account to create or reference.|
 
 <span id="cloudsite-configuration-show"></span>
-###### `cloudsite configuration show`
+###### `show`
+
+`cloudsite configuration show`
 
 Displays the current configuration.
 
 <span id="cloudsite-create"></span>
-#### `cloudsite create <options> <apex-domain>`
+#### `create`
+
+`cloudsite create <options> <apex-domain>`
 
 Creates a new website, setting up infrastructure and copying content.
 
@@ -338,7 +350,9 @@ Creates a new website, setting up infrastructure and copying content.
 |`--stack-name`|Specify the name of the stack to be created and override the default name.|
 
 <span id="cloudsite-destroy"></span>
-#### `cloudsite destroy <options> [apex-domain]`
+#### `destroy`
+
+`cloudsite destroy <options> [apex-domain]`
 
 Destroys the named site. I.e., deletes all cloud resources associated with the site.
 
@@ -350,7 +364,9 @@ Destroys the named site. I.e., deletes all cloud resources associated with the s
 |`--confirmed`|Skips the interactive confirmation and destroys the resources without further confirmation.|
 
 <span id="cloudsite-detail"></span>
-#### `cloudsite detail [apex-domain]`
+#### `detail`
+
+`cloudsite detail [apex-domain]`
 
 Prints details for the indicated site.
 
@@ -361,7 +377,9 @@ Prints details for the indicated site.
 |`[apex-domain]`|(_main argument_,_required_) The domain of the site to detail.|
 
 <span id="cloudsite-document"></span>
-#### `cloudsite document <options>`
+#### `document`
+
+`cloudsite document <options>`
 
 Generates self-documentation in Markdown format.
 
@@ -374,7 +392,9 @@ Generates self-documentation in Markdown format.
 |`--title`|The title of the top level section header.|
 
 <span id="cloudsite-get-iam-policy"></span>
-#### `cloudsite get-iam-policy <options>`
+#### `get-iam-policy`
+
+`cloudsite get-iam-policy <options>`
 
 Prints an IAM policy suitable for operating cloudsite.
 
@@ -385,7 +405,9 @@ Prints an IAM policy suitable for operating cloudsite.
 |`--with-instructions`|When set, will print instructions for creating the policy along with the policy.|
 
 <span id="cloudsite-import"></span>
-#### `cloudsite import <options> [domain-and-stack]`
+#### `import`
+
+`cloudsite import <options> [domain-and-stack]`
 
 Generates a site database based on currently deployed site stacks.
 
@@ -401,7 +423,9 @@ Generates a site database based on currently deployed site stacks.
 |`--source-type`|May be either 'vanilla' or 'docusaurus', otherwise process will attempt to guess.|
 
 <span id="cloudsite-list"></span>
-#### `cloudsite list <options>`
+#### `list`
+
+`cloudsite list <options>`
 
 Lists the sites registered in the local database.
 
@@ -412,7 +436,9 @@ Lists the sites registered in the local database.
 |`--all-fields`|Includes all fields in the output.|
 
 <span id="cloudsite-plugin-settings"></span>
-#### `cloudsite plugin-settings [subcommand]`
+#### `plugin-settings`
+
+`cloudsite plugin-settings [subcommand]`
 
 Command group for managing plugin settings.
 
@@ -429,7 +455,9 @@ Command group for managing plugin settings.
 - [`show`](#cloudsite-plugin-settings-show): Displays the plugin settings for the specified site.
 
 <span id="cloudsite-plugin-settings-set"></span>
-###### `cloudsite plugin-settings set <options> [apex-domain]`
+###### `set`
+
+`cloudsite plugin-settings set <options> [apex-domain]`
 
 Sets and deletes the specified options.
 
@@ -445,7 +473,9 @@ ___`set` options___
 |`--value`|The setting value. Incompatible with the '--delete' option.|
 
 <span id="cloudsite-plugin-settings-show"></span>
-###### `cloudsite plugin-settings show [apex-domain]`
+###### `show`
+
+`cloudsite plugin-settings show [apex-domain]`
 
 Displays the plugin settings for the specified site.
 
@@ -456,7 +486,9 @@ ___`show` options___
 |`[apex-domain]`|(_main argument_,_required_) The apex domain of the site whose settings are to be displayed.|
 
 <span id="cloudsite-reminders"></span>
-#### `cloudsite reminders [subcommand]`
+#### `reminders`
+
+`cloudsite reminders [subcommand]`
 
 Command group for managing reminders.
 
@@ -472,12 +504,16 @@ Command group for managing reminders.
 - [`list`](#cloudsite-reminders-list): List currently active reminders.
 
 <span id="cloudsite-reminders-list"></span>
-###### `cloudsite reminders list`
+###### `list`
+
+`cloudsite reminders list`
 
 List currently active reminders.
 
 <span id="cloudsite-update"></span>
-#### `cloudsite update <options> [apex-domain]`
+#### `update`
+
+`cloudsite update <options> [apex-domain]`
 
 Updates a website content and/or infrastructure.
 
@@ -494,7 +530,9 @@ Updates a website content and/or infrastructure.
 |`--no-cache-invalidation`|Suppresses the default behavior of invalidating the CloudFront cache after the files are updated. Note that invalidation events are chargeable thought at the time of this writing, each account gets 1,000 free requests per year.|
 
 <span id="cloudsite-verify"></span>
-#### `cloudsite verify <options> [apex-domain]`
+#### `verify`
+
+`cloudsite verify <options> [apex-domain]`
 
 Verifies the site is up and running and that the stack and content are up-to-date.
 
