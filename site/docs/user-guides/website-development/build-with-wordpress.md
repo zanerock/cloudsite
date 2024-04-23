@@ -99,15 +99,13 @@ You may need to refresh the WP admin page, but you should now see the 'Simply St
 
 Now, to generate the site, create a directory for the site content. Then:
 
-1. Click 'Simply Static' → 'Settings'.
-2. Ensure the 'Replacing URLs' is set to 'Relative Path' and check 'Force URL Replacement'.
-3. Click 'Deploy' under 'Settings' in the left-hand Simply Static menu.
-4. Change 'Deployment Method' to 'Local Directory'.[^1]
+1. Click 'Simply Static' → 'Settings'.<br /><img style={{maxHeight: '240px'}} src="/img/docs/user-guides/website-development/build-with-wordpress/simply-static-generation-01.png" />
+2. Ensure the 'Replacing URLs' is set to 'Relative Path' and check 'Force URL Replacement'.<br /><img style={{maxHeight: '240px'}} src="/img/docs/user-guides/website-development/build-with-wordpress/simply-static-generation-02.png" />
+3. Click 'Deploy' under 'Settings' in the left-hand Simply Static menu.<br /><img style={{maxHeight: '240px'}} src="/img/docs/user-guides/website-development/build-with-wordpress/simply-static-generation-03.png" />
+4. Change 'Deployment Method' to 'Local Directory'.<br /><img style={{maxHeight: '240px'}} src="/img/docs/user-guides/website-development/build-with-wordpress/simply-static-generation-04.png" />
 5. Under 'Path' enter the directory you just created where you want the static files to go and enable 'Clear Local Directory'.
 6. Click 'Save Settings'.
 7. Now (and in the future) you just have to click 'Generate Static Files' and the static site will be generated in the indicated folder.
-
-[^1]: Depending on your target host, you may want to leave the 'Deployment Method' as 'ZIP Archive', if using CloudFlare Pages for instance.
 
 ## Deploying your site
 
