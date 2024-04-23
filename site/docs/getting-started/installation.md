@@ -19,7 +19,7 @@ Use the shortcut '⊞ Windows key + X', and then select Windows Terminal (Admin)
 
 ## Node and NPM
 
-Cloudsite relies on NPM for installation and runs on Node. You will need Node and NPM installed in order to install cloudsite.
+Cloudsite runs on Node and requires a package manager, like NPM, for installation. You will need Node and a Node package manager installed in order to install cloudsite. The default Node package manager is NPM (which stands for 'Node package manager'). Since NPM comes bundled with Node, we show you how to install Node and NPM here, but if you have another package manager (like yarn or pnpm), feel free to use those as well.
 
 ### Checking for Node and NPM
 
@@ -68,7 +68,12 @@ __Option 2__: Install using NVM
 
 NVM or the 'Node version manager' is like a mini-package manager specifically to allow you to install, manage, and select different versions of Node. To install using the latest NVM, refer to the [Node package manager installation page](https://nodejs.org/en/download/package-manager) and select 'Linux' as the OS and 'NVM' as the package manager.
 
-## Install options
+## Installing cloudsite
 
+Once NPM is installed, simply type:
+```bash
+npm install --global cloudsite
+```
 
+You're now ready to [set up authentication](/docs/getting-started/authentication).
 
