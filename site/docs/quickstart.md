@@ -30,6 +30,7 @@ npm i -g cloudsite # or yarn i -g cloudsite
     ```bash
     cloudsite create your-domain.com --source-path /path/to/website/files
     ```
+    Refer to [your first site](/docs/getting-started/your-first-site) for details on deploying your first website.
 
 ## Secure your account
 
