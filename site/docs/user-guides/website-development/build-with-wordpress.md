@@ -109,35 +109,13 @@ Now, to generate the site, create a directory for the site content. Then:
 
 ## Deploying your site
 
-Now that you have your static files, you have a ton of options of where and how to deploy your site. We go over deploying your site on AWS with the CloudFront CDN (including support for contact forms) using the CloudSite tool in Managing Your Website with Cloudsite. Because of the AWS free tier, this option would be free for many users, unless your site gets significant traffic, in which case it would probably be one of the more cost effective options.
-WordPress vs Docusaurus
-If the above setup seems daunting, we have a companion article in this series: Manage a Static Website with Docusaurus. Docusaurus is purpose built for static sites and so is a lot simpler to setup. Docusaurus comes out of the box with full support for blogs and a "knowledge base", with articles arbitrarily nested in topics and subtopics and would be perfect for a wiki style or topic based sites.
-Docusaurus lacks the rich ecosystem of themes, however, so you'd need to either have some understanding of web design or hire a designer. Docusaurus works with plain HTML/CSS/Javascript (plus support for React components), whereas WP styling adds it's own concepts and peculiarities. So depending on one's experience, designing for Docusaurus may be more straightforward and flexible.
-If you're coming in fresh-without much experience in web pages-it's hard to say which of the two has a steeper learning curve overall. WP has a clickety-click portal interface, but is overal more complex, IMO. Docusaurus is well suited for many use cases, but doesn't have the plethora of themes and plugins and requires someone with design experience. On the other hand, Docusaurus is ultimately more flexible and if you do have experience with HTML/CSS, may be the better option.
-WP pros and cons:
+To deploy your site using cloudsite, simply execute:
+```bash
+aws sso login --profile cloudsite-manager # if necessary
+cloudsite create your-domain.com --source-path ./path/were/static/files/went # if creating a new site
+cloudsite update your-domain.com --do-content # if updating an existing site
+```
 
-+------------------------------------+---------------------------------------------+
-|              WP pros               |                    Cons                     |
-+------------------------------------+---------------------------------------------+
-| Ready made themes                  | Custom design requires WP experience        |
-| Tons of plugins                    | Plugin interactions potentially complicated |
-| Web based interface                | Complicated setup                           |
-| Good for blogs                     | Full backup can get complicated             |
-| Good for wikis (w/plugins)         |                                             |
-| Good for knowledgebase (w/plugins) |                                             |
-| Good for galleries (w/plugins)     |                                             |
-+------------------------------------+---------------------------------------------+
-Docusaurus pros and cons:
-+-------------------------------+----------------------------------------+
-|        Docusaurus pros        |                  Cons                  |
-+-------------------------------+----------------------------------------+
-| Customizable w/basic HTML/CSS | Lacks theme ecosystem                  |
-| Supports React components     | Lacks plugin ecosystem                 |
-| Simple setup                  | File based interface (Markdown)        |
-| Backups are simple            | Galleries require thought/organization |
-| Good for blogs                |                                        |
-| Good for wikis                |                                        |
-| Good for knowledgebase        |                                        |
-+-------------------------------+----------------------------------------+
-In closing
+## In closing
+
 The WordPress ecosystem includes a ton of free and premium themes, support for blogs, galleries, and tons of other features. It can get a little complex but overall, it's a great option to create a professional looking website for free on your own (or with minimal help).
