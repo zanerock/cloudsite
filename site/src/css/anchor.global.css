@@ -10,7 +10,7 @@ a:hover, a:hover code:hover {
   color: var(--ifm-color-content-secondary);
 }
 
-a.card {
+a.card:not(:hover) {
   color: var(--ifm-color-primary) /* the card style does some weird stuff with redefining the --lifm-link-color */
 }
 
