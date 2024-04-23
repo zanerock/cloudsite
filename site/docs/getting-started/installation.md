@@ -3,27 +3,25 @@ sidebar_position: 1
 ---
 # Installation
 
-## Prerequisites
-
-### Terminal commands
+## Terminal commands
 
 Cloudsite is a 'terminal program' meaning you interface with the tool by typing commands in a "command terminal". If you're not familiar with terminals but you'd like to use the tool with a graphical user interface, you can show interest by [commenting on this issue](https://github.com/liquid-labs/cloudsite/issues/160) or supporting development for as little as $5/month [@liquidlabs on Patreon](https://www.patreon.com/liquidlabs).
 
 Otherwise, even if you're not familiar with terminals and the command line, the documents lay out what you need for almost all use cases and you can probably follow along. Refer below to see how to open a terminal on your specific platform.
 
-#### Opening a terminal on Mac
+### Opening a terminal on Mac
 
 Select 'Applications' => 'Utilities' => 'Terminal'
 
-#### Opening a terminal on Windows
+### Opening a terminal on Windows
 
 Use the shortcut '⊞ Windows key + X', and then select Windows Terminal (Admin)
 
-### Checking and installing Node and NPM
-
-#### Checking for Node and NPM
+## Node and NPM
 
 Cloudsite relies on NPM for installation and runs on Node. You will need Node and NPM installed in order to install cloudsite.
+
+### Checking for Node and NPM
 
 To see if Node and NPM are installed, open a terminal and execute:
 ```bash
@@ -37,13 +35,13 @@ Node and NPM usually come together, but to check for NPM specifically, execute:
 npm -v
 ```
 
-#### Installing Node and NPM
+### Installing Node and NPM
 
 NPM is a package manager installed with Node; hence 'Node Package Manager' or 'NPM'. It can be used to install user tools as well as libraries used in developing software for Node. Cloudsite is distributed as an NPM package and runs on Node.
 
 There are many different ways to install Node/NPM and advanced users who might want to develop with node should refer to the [Node download and install page](https://nodejs.org/en/download/package-manager). For users who just want to install cloudsite and perhaps other end-user tools, we recommend what we believe to be the simplest methods below:
 
-##### Installing for the Mac
+#### Installing Node/NPM on Mac
 
 __Option 1__: Homebrew
 
@@ -56,11 +54,11 @@ __Option 2__: PKG installer
 
 If you don't have or don't know what Homebrew is, don't worry. Just use the pre-built PKG installer. Goto the [Node download page](https://nodejs.org/en/download) and it should detect your platform type. Double check the OS and architecture are correct (if you know them) and simply download and install the Node package.
 
-##### Installing for Windows
+#### Installing Node/NPM on Windows
 
 Goto the [Node download page](https://nodejs.org/en/download) and it should detect your platform type. Double check Windows is selected and download and install the Node package.
 
-##### Linux
+#### Installing Node/NPM on Linux
 
 __Option 1__: Install using the system package manager
 
