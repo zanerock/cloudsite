@@ -3,9 +3,9 @@ sidebar_position: 2
 ---
 # Authentication
 
-Cloudsite works by setting up and managing infrastructure on the AWS cloud. In order to do this, cloudsite uses local "credentials" which allow it to act on your behalf.
+Cloudsite works by setting up and managing infrastructure on the AWS cloud. In order to do this, cloudsite uses local _credentials_ which allow it to act on your behalf.
 
-We work with two kinds of credentials. Initially, we create "access keys" because it's easy. Cloudsite then uses those access keys to set up "single sign-on (SSO) authentication" which creates much more secure time limited credentials. The original access keys are then deleted.
+We work with two kinds of credentials. Initially, we create _access keys_ because it's easy. Cloudsite then uses those access keys to set up _single sign-on (SSO) authentication_ which creates much more secure time limited credentials. The original access keys are then deleted.
 
 The time limited SSO credentials are only valid for a set period of time (4 hours by default). This means that even if your computer is compromised, your AWS account is still safe so long as the credentials have expired. And even if an attacker manages to get ahold of valid SSO credentials, their access will still end when the SSO session times out.
 

@@ -5,7 +5,7 @@ sidebar_position: 1
 
 ## Terminal commands
 
-Cloudsite is a 'terminal program' meaning you interface with the tool by typing commands in a "command terminal". If you're not familiar with terminals but you'd like to use the tool with a graphical user interface, you can show interest by [commenting on this issue](https://github.com/liquid-labs/cloudsite/issues/160) or supporting development for as little as $5/month [@liquidlabs on Patreon](https://www.patreon.com/liquidlabs).
+Cloudsite is a _terminal program_ meaning you interface with the tool by typing commands in a _command terminal_. If you're not familiar with terminals but you'd like to use the tool with a graphical user interface, you can show interest by [commenting on this issue](https://github.com/liquid-labs/cloudsite/issues/160) or supporting development for as little as $5/month [@liquidlabs on Patreon](https://www.patreon.com/liquidlabs).
 
 Otherwise, even if you're not familiar with terminals and the command line, the documents lay out what you need for almost all use cases and you can probably follow along. Refer below to see how to open a terminal on your specific platform.
 

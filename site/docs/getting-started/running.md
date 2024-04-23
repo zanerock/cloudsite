@@ -21,7 +21,7 @@ cloudsite --format json --quiet some-domain.com create
 
 ## Creating local credentials
 
-As mentioned before, cloudsite works by interacting with Amazon Web Services (AWS) and managing your website infrastructure on your behalf. In order to do this, cloudsite must have access to valid "credentials". If you try and use cloudsite without valid credentials present, it will helpfully tell you what you need to do to create the credentials. Namely, execute:
+As mentioned before, cloudsite works by interacting with Amazon Web Services (AWS) and managing your website infrastructure on your behalf. In order to do this, cloudsite must have access to valid credentials. If you try and use cloudsite without valid credentials present, it will helpfully tell you what you need to do to create the credentials. Namely, execute:
 ```bash
 aws sso login --profile cloudsite-manager
 ```
