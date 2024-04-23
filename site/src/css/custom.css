@@ -84,7 +84,11 @@
 
   --ifm-footer-background-color: var(--ifm-color-primary);
   --ifm-footer-color: var(--ifm-color-primary-contrast-background);
+
+  /* strink the padding arround code blocks a little bit */
+  --ifm-pre-padding: 4px;
 }
+
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
 [data-theme='dark'] {
@@ -144,6 +148,14 @@ p.cardDescription_node_modules-\@docusaurus-theme-classic-lib-theme-DocCard-styl
 .markdown li > p { /* limit list spacing to --ifm-list-item-margin */
   margin-top: 0px;
   margin-bottom: 0px;
+}
+
+li .theme-code-block {
+  margin-bottom: 0; /* kill the big code block margin (default is pp spacing) */
+}
+
+pre + div button { /* make the copy buttons visible */
+  opacity: 25% !important;
 }
 
 
