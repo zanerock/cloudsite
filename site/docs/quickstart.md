@@ -6,12 +6,12 @@ sidebar_position: 2
 
 ## Installation
 
-Install using:
+Cloudsite is a [terminal program](/docs/getting-started/installation#terminal-commands) which requires [Node and NPM  to be installed](/docs/getting-started/installation#checking-and-installing-node-and-npm). (Click on the links for help.)
+
+Open a terminal and install using:
 ```bash
 npm i -g cloudsite # or yarn i -g cloudsite
 ```
-
-For [instructions on installing NPM, refer here](/docs/user-guides/installing-npm).
 
 ## Setup & deploy
 
@@ -35,10 +35,10 @@ For [instructions on installing NPM, refer here](/docs/user-guides/installing-np
 We used API access keys above to get our site up and running quickly. The problem with API access keys is that if anyone ever got access to them, they would gain control of your AWS account. To prevent this, we setup time limited credentials using AWS single sign on (SSO). Don't worry, the tool does most of the work for you.
 
 1. Execute:
-  ```
-  cloudsite configuration setup-sso --user-email your-email@foo.com --defaults
-  ```
-  Once complete, this will by default delete the API access keys from AWS to prevent further usage.
+   ```
+   cloudsite configuration setup-sso --user-email your-email@foo.com --defaults
+   ```
+   Once complete, this will by default delete the API access keys from AWS to prevent further usage.
 2. Once the above command completes, go back to the AWS console (as the root or a super-admin user) and select the IAM service.
 3. Find the newly created user under 'Users' and select 'Send verification email'.
 4. Finally, to create local credentials the cloudsite tool can use, execute:

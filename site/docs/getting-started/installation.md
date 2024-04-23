@@ -3,7 +3,74 @@ sidebar_position: 1
 ---
 # Installation
 
-Most users can use the [quickstart installation instructions](/docs/quickstart#installation). If you already have an AWS account with an existing Identity Center, or you want or need more control over the install process, then refer below.
+## Prerequisites
+
+### Terminal commands
+
+Cloudsite is a 'terminal program' meaning you interface with the tool by typing commands in a "command terminal". If you're not familiar with terminals but you'd like to use the tool with a graphical user interface, you can show interest by [commenting on this issue](https://github.com/liquid-labs/cloudsite/issues/160) or supporting development for as little as $5/month [@liquidlabs on Patreon](https://www.patreon.com/liquidlabs).
+
+Otherwise, even if you're not familiar with terminals and the command line, the documents lay out what you need for almost all use cases and you can probably follow along. Refer below to see how to open a terminal on your specific platform.
+
+#### Opening a terminal on Mac
+
+Select 'Applications' => 'Utilities' => 'Terminal'
+
+#### Opening a terminal on Windows
+
+Use the shortcut '⊞ Windows key + X', and then select Windows Terminal (Admin)
+
+### Checking and installing Node and NPM
+
+#### Checking for Node and NPM
+
+Cloudsite relies on NPM for installation and runs on Node. You will need Node and NPM installed in order to install cloudsite.
+
+To see if Node and NPM are installed, open a terminal and execute:
+```bash
+node -v
+```
+
+If you get something like 'v21.5.0', then Node is installed. If you get a 'command not found' error, then node is not installed.
+
+Node and NPM usually come together, but to check for NPM specifically, execute:
+```bash
+npm -v
+```
+
+#### Installing Node and NPM
+
+NPM is a package manager installed with Node; hence 'Node Package Manager' or 'NPM'. It can be used to install user tools as well as libraries used in developing software for Node. Cloudsite is distributed as an NPM package and runs on Node.
+
+There are many different ways to install Node/NPM and advanced users who might want to develop with node should refer to the [Node download and install page](https://nodejs.org/en/download/package-manager). For users who just want to install cloudsite and perhaps other end-user tools, we recommend what we believe to be the simplest methods below:
+
+##### Installing for the Mac
+
+__Option 1__: Homebrew
+
+If you have Homebrew installed, that's probably the easiest way to install and keep node up to date. Open a terminal (Applications => Utilities => Terminal) and type the following:
+```bash
+brew install node@latest
+```
+
+__Option 2__: PKG installer
+
+If you don't have or don't know what Homebrew is, don't worry. Just use the pre-built PKG installer. Goto the [Node download page](https://nodejs.org/en/download) and it should detect your platform type. Double check the OS and architecture are correct (if you know them) and simply download and install the Node package.
+
+##### Installing for Windows
+
+Goto the [Node download page](https://nodejs.org/en/download) and it should detect your platform type. Double check Windows is selected and download and install the Node package.
+
+##### Linux
+
+__Option 1__: Install using the system package manager
+
+If you're using Linux and you know what a package manager is, Node is almost certainly offered.
+
+__Option 2__: Install using NVM
+
+NVM or the 'Node version manager' is like a mini-package manager specifically to allow you to install, manage, and select different versions of Node. To install using the latest NVM, refer to the [Node package manager installation page](https://nodejs.org/en/download/package-manager) and select 'Linux' as the OS and 'NVM' as the package manager.
 
 ## Install options
+
+
 
