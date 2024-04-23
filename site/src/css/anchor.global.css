@@ -10,6 +10,14 @@ a:hover, a:hover code:hover {
   color: var(--ifm-color-content-secondary);
 }
 
+a.card {
+  color: var(--ifm-color-primary) /* the card style does some weird stuff with redefining the --lifm-link-color */
+}
+
+a.card h2 {
+  color: inherit; /** this goes with the a.card rule */
+}
+
 a.table-of-contents__link {
   font-weight: bold;
 }
