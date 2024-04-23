@@ -73,4 +73,4 @@ Once SSO authentication is set up, you actually authenticate by executing:
 aws sso login --profile cloudsite-manager
 ```
 
-(Replace 'cloudsite-manager' with the name of the SSO profile if you used a different name.)
+(Replace 'cloudsite-manager' with the name of the SSO profile if you used a non-default name.)
