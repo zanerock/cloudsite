@@ -1,8 +1,25 @@
+import clsx from 'clsx'
+
+import Link from '@docusaurus/Link'
+
+import buttonsStyles from '@site/src/css/buttons.module.css';
+
 # Comprehensive support
+
+<div className="row">
+  <Link
+    className={clsx(buttonsStyles.button, 'button', 'button--secondary button--lg col col--4 col--offset-4')}
+    style={{margin: '1rem auto' }}
+    to="https://patreon.com/liquidlabs">
+    Sign up now
+  </Link>
+</div>
 
 Trying to get a certain effect? Need to monetize your site? Add in a calendar service? With decades of experience in web development, we're ready to help for just $7.50/month for basic support for individuals. We also offer general tech support at $25/month for individuals and $100/month for businesses.
 
 ## What's covered
+
+We offer three levels of individual support plus a business support option.
 
 ### Liquid Labs OSS support
 
