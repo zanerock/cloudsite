@@ -23,7 +23,7 @@
   --ifm-heading-font-weight: bold;
 
   /* content link behavior */
-  --ll-content-link-color: var(--ifm-color-primary)
+  --ll-content-link-color: var(--ifm-color-primary);
   --ll-content-link-decoration: underline;
   --ll-content-link-color-hover: var(--ifm-color-content-secondary);
   --ll-content-link-decoration-hover: underline;
