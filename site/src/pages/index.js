@@ -7,13 +7,17 @@ import HomepageFeatures from '@site/src/components/HomepageFeatures'
 import Heading from '@theme/Heading'
 import styles from '@site/src/css/index.module.css'
 import modalStyles from '@site/src/css/modal.module.css'
+import ThemedImage from '@theme/ThemedImage';
 
 function HomepageHeader() {
   const {siteConfig} = useDocusaurusContext();
   return (
     <header className={clsx('hero', styles.heroBanner)}>
       <div className="container">
-        <img src="/img/cloudsite-logo.svg" style={{paddingBottom: '1.5rem', maxWidth: '420px' }} />
+        <ThemedImage alt="Cloudsite logo of stylized browser window within a cloud"
+          style={{paddingBottom: '1.5rem', maxWidth: '420px' }}
+          sources={{ light: '/img/cloudsite-logo.svg', dark: '/img/cloudsite-logo-dark.svg' }}
+        />
         <div className={clsx('row')}>
           <h1 className="col col--8 col--offset-2" style={{borderBottom: 'none' }}>Easily and securely <span style={{color:'var(--ifm-color-content-secondary)'}}>host your own website</span> for <span style={{color:'var(--ifm-color-content-secondary)'}}>free</span>*</h1>
         </div>

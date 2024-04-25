@@ -1,12 +1,15 @@
 import clsx from 'clsx';
 import Heading from '@theme/Heading';
+import { useColorMode } from '@docusaurus/theme-common';
+
 import styles from './styles.module.css';
 
 const FeatureList = [
   {
     id: "free-for-most",
     title: "Free (for most)",
-    Svg: require('@site/static/img/no-cost-icon-bi-color.svg').default,
+    lightSvg: require('@site/static/img/no-cost-icon-bi-color.svg').default,
+    darkSvg: require('@site/static/img/no-cost-icon-bi-color-dark.svg').default,
     description: (
       <>
         Cloudsite enables services on AWS. which offers a generous free tier. Beyond that, costs are very low compared to other options.
@@ -15,7 +18,8 @@ const FeatureList = [
   },
   {
     title: "It's simple",
-    Svg: require('@site/static/img/simple-icon-bi-color.svg').default,
+    lightSvg: require('@site/static/img/simple-icon-bi-color.svg').default,
+    darkSvg: require('@site/static/img/simple-icon-bi-color-dark.svg').default,
     description: (
       <>
         Get up and running in just 4 simple steps.
@@ -24,7 +28,8 @@ const FeatureList = [
   },
   {
     title: 'Secure',
-    Svg: require('@site/static/img/secure-hosting-icon-bi-color.svg').default,
+    lightSvg: require('@site/static/img/secure-hosting-icon-bi-color.svg').default,
+    darkSvg: require('@site/static/img/secure-hosting-icon-bi-color-dark.svg').default,
     description: (
       <>
         Leveraging AWS tools, your site is setup with protections against many of the most common attacks.
@@ -33,7 +38,8 @@ const FeatureList = [
   },
   {
     title: 'Keep control',
-    Svg: require('@site/static/img/ownership-icon-bi-color.svg').default,
+    lightSvg: require('@site/static/img/ownership-icon-bi-color.svg').default,
+    darkSvg: require('@site/static/img/ownership-icon-bi-color-dark.svg').default,
     description: (
       <>
         Keep control of your site, your content, and let Cloudsite handle the details.
@@ -42,7 +48,12 @@ const FeatureList = [
   }, 
 ]
 
-function Feature({id, Svg, title, description, offset}) {
+function Feature({ darkSvg, lightSvg, id, title, description, offset }) {
+  const { colorMode } = useColorMode();
+  const Svg = colorMode === 'dark'
+    ? darkSvg || lightSvg
+    : lightSvg || darkSvg
+
   return (
     <div id={id} className={clsx('col col--4', offset >  0 ? 'col--offset-' + offset : '')}>
       <div className="text--center">

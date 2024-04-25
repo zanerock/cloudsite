@@ -85,6 +85,7 @@ const config = {
         logo: {
           alt: 'Cloudsite',
           src: 'img/cloudsite-name-only.svg',
+          srcDark: 'img/cloudsite-name-only-dark.svg'
         },
         items: [
           {
