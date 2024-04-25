@@ -3,10 +3,12 @@
   --ifm-transition-timing-default: linear;
 }
 
-a, p, button {
-  transition: color var(--ifm-transition-fast) var(--ifm-transition-timing-default) !important;
-}
-
 * { 
   transition: background-color var(--ifm-transition-fast) var(--ifm-transition-timing-default);
+}
+
+a, p, button {
+  transition: color var(--ifm-transition-fast) var(--ifm-transition-timing-default),
+    background-color var(--ifm-transition-fast) var(--ifm-transition-timing-default),
+    !important;
 }
