@@ -65,7 +65,6 @@ export default function HomepageFeatures() {
             const remainder = arr.length - idx
             let offset = 0
             if (remainder <= 3) {
-              console.log('remainder:', remainder) // DEBUG
               offset = (12 - (remainder * 4)) / 2
             }
             props.offset = offset
