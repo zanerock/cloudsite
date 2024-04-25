@@ -13,10 +13,6 @@ Docusaurus look and feel is highly customizable, but it's best if one has some k
 
 It's built to support and plugins, but [resources are very limited](https://github.com/webbertakken/awesome-docusaurus).
 
-### Bootstraposaurus
-
-Bootstraposaurus is built off Docusaurus, but makes it a bit easier to theme. You can select your colors, logo, and typefaces and Bootstraposaurus will manage the necessary styling information for you. Otherwise, it's the same as Docusaurus.
-
 ### WordPress
 
 WordPress can be a pain to set up, but if you want or need a graphical interface that's [supported by cloudsite](/support), then this is the solution for you. WordPress has a wealth of look and feel themes and feature plugins and can be customized with no HTML+CSS knowledge.
@@ -39,18 +35,18 @@ There are many HTML+CSS style frameworks available and some themes, but usually 
 
 ### General website
 
-It all comes down to what you know. Bootstraposaurus/Docusaurus are easy to set up and get going, but rely on text files. WordPress takes some setting up, but provides a graphical interface.
+It all comes down to what you know. Docusaurus is easy to set up and get going and you create content via text files. WordPress takes some setting up, but provides a graphical interface.
 
 ### Blogging
 
-Any of the non-manual options are good choices for a blogging platform. Bootstraposaurus/Docusaurus are probably the easiest to set up and use if you're comfortable working with text files. If a graphical interface is important to you, then WordPress or another CMS is the way to go.
+Any of the non-manual options are good choices for a blogging platform. Docusaurus is probably the easiest to set up and use if you're comfortable working with text files. If a graphical interface is important to you, then WordPress or another CMS is the way to go.
 
 ### Knowledgebase
 
-This is where Bootstraposaurus/Docusaurus really shine. Though, again, if you want/need a graphical interface then WordPress or another (perhaps purpose built) CMS will be the way to go.
+This is where Docusaurus really shines. Though, again, if you want/need a graphical interface then WordPress or another (perhaps purpose built) CMS will be the way to go.
 
-### Wikis
+### Wiki
 
-Bootstraposaurus/Docusaurus have built in support for wikis, but they're not focused on that feature set and it takes a little fiddling. WordPress does have a number of wiki plugins available as well.
+Docusaurus has built in support for wikis, but it's not focused on that feature set and it takes a little fiddling. WordPress does have a number of wiki plugins available as well.
 
 There are a number of special purpose wiki CMSs. [MediaWiki](https://www.mediawiki.org/wiki/MediaWiki) (which powers [Wikipedia](https://wikipedia.org) is the granddaddy of them all and could be combined with static site generation to be compatible with cloudsite. Some, simpler options such as [DocuWiki](https://www.dokuwiki.org/dokuwiki) (which doesn't require a database) might relatively easily setup and converted to a static site.
