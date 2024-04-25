@@ -6,7 +6,6 @@ import HomepageFeatures from '@site/src/components/HomepageFeatures'
 
 import Heading from '@theme/Heading'
 import styles from '@site/src/css/index.module.css'
-import buttonsStyles from '@site/src/css/buttons.module.css'
 import modalStyles from '@site/src/css/modal.module.css'
 
 function HomepageHeader() {
@@ -21,16 +20,16 @@ function HomepageHeader() {
         <div className={clsx('row')} style={{marginBottom: 'var(--ifm-spacing-vertical)'}}>
           <div className="hero__subtitle col col--8 col--offset-2"><span style={{color:'var(--ifm-color-content-secondary)'}}>*</span>: <Link to="#free-for-most">free for most</Link>; vastly reduced cost for the rest</div>
         </div>
-        <div className={clsx(buttonsStyles.buttons_spaced)}>
+        <div className={clsx('buttons_spaced')}>
           <Link
             key="/docs/quickstart"
-            className={clsx(buttonsStyles.button, 'button', 'button--secondary button--lg')}
+            className={clsx('button', 'button--secondary button--lg')}
             to="/docs/quickstart">
             Quickstart
           </Link>
           <Link
             key="/docs/user-guides/command-line-reference"
-            className={clsx(buttonsStyles.button, 'button', 'button--secondary button--lg')}
+            className={clsx('button', 'button--secondary button--lg')}
             to="/docs/user-guides/command-line-reference">
             Command Line Reference
           </Link>

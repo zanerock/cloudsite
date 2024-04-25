@@ -2,13 +2,11 @@ import clsx from 'clsx'
 
 import Link from '@docusaurus/Link'
 
-import buttonsStyles from '@site/src/css/buttons.module.css';
-
 # Comprehensive support
 
 <div className="row">
   <Link
-    className={clsx(buttonsStyles.button, 'button', 'button--secondary button--lg col col--4 col--offset-4')}
+    className={clsx('button', 'button--secondary button--lg col col--4 col--offset-4')}
     style={{margin: '1rem auto' }}
     to="https://patreon.com/liquidlabs">
     Sign up now

@@ -78,8 +78,7 @@ const config = {
       image: 'img/liquid-labs-social-media-card-1200x675.png',
       colorMode: {
         defaultMode: 'light',
-        disableSwitch: true,
-        respectPrefersColorScheme: false,
+        respectPrefersColorScheme: true,
       },
       navbar: {
         title: '',
@@ -97,7 +96,7 @@ const config = {
           {to: '/blog', label: 'Blog', position: 'left'},
           {
             type: 'html',
-            value: '<a href="/support" class="button buttom--sm" style="margin-top: -8px; padding: 4px 12px">Comprehensive Support</a>',
+            value: '<a href="/support" class="button buttom--sm">Comprehensive Support</a>',
             position: 'right',
           },
         ],

@@ -1,0 +1,36 @@
+:root {
+  /* we rely on --ifm-navbar-padding-vertical for spacing instead; this extra padding just complicates things */
+  --ifm-navbar-item-padding-vertical: 0;
+}
+
+.navbar__logo {
+  height: var(--ll-navbar-logo-height);
+}
+
+.navbar {
+  height: unset; /* let the tallest thing in the navbar set the height */
+  box-shadow: unset;
+  border-bottom: 1px var(--ifm-color-primary) solid;
+}
+
+.navbar__item, .dropdown__link {
+  line-height: 1.25rem;
+}
+
+.navbar__item:hover, 
+.navbar__item:hover a.navbar__link, 
+.dropdown__menu .dropdown__link:hover {
+  text-decoration: underline;
+}
+
+@media screen and (max-width: 996px) {
+  .navbar {
+    padding: var(--ifm-navbar-padding-vertical) var(--ifm-spacing-horizontal);
+  }
+
+  .navbar__brand {
+    display: block;
+    width: 100%;
+    text-align: right;
+  }
+}

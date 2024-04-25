@@ -1,0 +1,76 @@
+:root {
+  /* brand colors */
+  /* #ffffff */
+  --ll-background-color-hue: 0;
+  --ll-background-color-saturation: 0%;
+  --ll-background-color-lightness: 100%;
+
+  --ll-background-color-transparent: #ffffff00;
+  --ll-background-color-opaque: #ffffffff;
+
+  /* #21327d; Liquid Labs Blue */
+  --ll-color-primary-hue: 229;
+  --ll-color-primary-saturation: 58%;
+  --ll-color-primary-lightness: 31%;
+
+  --ifm-color-content-secondary: #ca6928;
+
+  /* brand fonts */
+  --ifm-font-color-base: var(--ifm-color-primary);
+
+  --ifm-font-family-base: Avenir Next, Avenir, Muli, Nunito, Ariel;
+  --ifm-heading-font-family: Roboto Bold, Roboto;
+  --ifm-heading-font-weight: bold;
+
+  /* content link behavior */
+  --ll-content-link-color: var(--ifm-color-primary)
+  --ll-content-link-decoration: underline;
+  --ll-content-link-color-hover: var(--ifm-color-content-secondary);
+  --ll-content-link-decoration-hover: underline;
+
+  --ll-content-reverse-colors-link-color: var(--ifm-color-primary-contrast-background);
+  --ll-content-reverse-colors-link-decoration: underline;
+  --ll-content-reverse-colors-link-color-hover: var(--ifm-color-content-secondary);
+  --ll-content-reverse-colors-link-decoration-hover: underline;
+
+  /* navbar stuff */
+  --ll-navbar-logo-height: 1.75rem;
+  --ifm-navbar-padding-vertical: 4px;
+  --ifm-navbar-padding-horizontal: var(--ifm-spacing-horizontal);
+
+  --ll-nav-color: var(--ifm-color-primary);
+  --ll-nav-text-decoration: none;
+  --ll-nav-color-hover: var(--ifm-color-content-secondary);
+  --ll-nav-text-decoration-hover: underline;
+  --ll-nav-color-active: var(--ifm-color-content-secondary);
+  --ll-nav-text-decoration-active: none;
+
+  /* kill background highlighting of menu items */
+  --ifm-menu-color-background-hover: inherit; 
+  --ifm-menu-color-background-active: inherit;
+  --ifm-dropdown-hover-background-color: inherit;
+  --ifm-breadcrumb-item-background-hover: inherit;
+  --ifm-breadcrumb-item-background-active: inherit;
+
+  --ll-modal-animation-duration: 250ms;
+}
+
+html[data-theme='dark'] {
+  /* #1b1b1d */
+  --ll-background-color-hue: 240;
+  --ll-background-color-saturation: 4%;
+  --ll-background-color-lightness: 11%;
+
+  --ll-background-color-transparent: #1b1b1d00;
+  --ll-background-color-opaque: #1b1b1dff;
+
+  /* #33ff33 Apple II green */
+  --ll-color-primary-hue: 120;
+  --ll-color-primary-saturation: 80%;
+  --ll-color-primary-lightness: 60%;
+
+  /* old school terminal amber */
+  --ifm-color-content-secondary: #ffb000;
+
+  --ifm-font-color-base: var(--ifm-color-primary);
+}

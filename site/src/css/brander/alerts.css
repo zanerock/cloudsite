@@ -1,0 +1,23 @@
+.alert {
+  --ifm-code-background: var(--ifm-alert-background-color-highlight);
+  --ifm-link-color: var(--ifm-color-primary);
+  --ifm-link-hover-color: var(--ifm-color-content-secondary);
+  --ifm-link-decoration: underline;
+  --ifm-tabs-color: var(--ifm-color-primary);
+  --ifm-tabs-color-active: var(--ifm-color-content-secondary);
+  --ifm-tabs-color-active-border: var(--ifm-color-content-secondary);
+}
+
+.alert--info {
+  --ifm-alert-background-color: var(--ifm-color-primary-lightest);
+  --ifm-alert-background-color-highlight: rgba(84, 199, 236, 0.15);
+  --ifm-alert-foreground-color: var(--ifm-color-primary);
+  --ifm-alert-border-color: var(--ifm-color-primary-lighter);
+}
+
+html[data-theme='dark'] .alert--info {
+  --ifm-alert-background-color: hsl(var(--ll-background-color-hue), var(--ll-background-color-saturation), calc(var(--ll-background-color-lightness) + 10%));
+  --ifm-alert-background-color-highlight: rgba(84, 199, 236, 0.15);
+  --ifm-alert-foreground-color: var(--ifm-color-primary);
+  --ifm-alert-border-color: var(--ifm-color-primary-lighter);
+}

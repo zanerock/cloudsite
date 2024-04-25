@@ -1,0 +1,35 @@
+a[href] {
+  color: var(--ll-content-link-color);
+  text-decoration: var(--ll-content-link-decoration);
+}
+
+.reverse-colors a[href] {
+  color: var(--ll-content-reverse-colors-link-color);
+  text-decoration: var(--ll-content-reverse-colors-link-decoration);
+}
+
+a[href] code {
+  vertical-align: unset; /* fix base style setting 'middle' which messes up the underline when code is also a link */
+}
+
+a[href]:hover, a[href] code:hover {
+  color: var(--ll-content-link-color-hover);
+  text-decoration: var(--ll-content-link-decoration-hover);
+}
+
+.reverse-colors a[href]:hover, .reverse-colors a[href] code:hover {
+  color: var(--ll-content-reverse-colors-link-color-hover);
+  text-decoration: var(--ll-content-reverse-colors-link-decoration-hover);
+}
+
+a[href].card:not(:hover) {
+  color: var(--ifm-color-primary) /* the card style does some weird stuff with redefining the --lifm-link-color */
+}
+
+.reverse-colors a[href].card:not(:hover) {
+  color: var(--ifm-color-primary-contrast-background)
+}
+
+a[href].card h2 {
+  color: inherit; /** this goes with the a.card rule */
+}
