@@ -4,7 +4,7 @@ sidebar_position: 4
 # Build with WordPress
 
 WordPress is one of, if not the most popular and accessible website building and content management tools available. The availability of free themes, plugins, a community support make it a great choice for developing your website.
-Setting up your own instance isn't hard, but there are a fair number of steps. If you're interested in something a little easier, we also provide instructions on setting up a Docusaurus based site and you can scroll to the end of this article to see a comparison of the pros and cons of each.
+Setting up your own instance isn't hard, but there are a fair number of steps.
 
 ## Setting up WordPress locally
 
