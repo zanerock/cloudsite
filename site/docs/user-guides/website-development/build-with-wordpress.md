@@ -89,7 +89,13 @@ On Mac and Linux, we now need to setup the 'wp' user group and update folder per
 
 ## Manage look and feel
 
-This is where WordPress shines. Start the XAMPP servers (if not running) and navigate to '/localhost/mysite/wp-admin' (or replace 'mysite' with whatever folder you installed WordPress in). Enter the username and passwerd, then goto 'Appearance' -> 'Themes' to browse and install whichever theme(s) you like. You can generally switch between themes without much issue[^1] and try them out to see what works best.
+This is where WordPress shines. Start the XAMPP servers (if not running) and navigate to '/localhost/mysite/wp-admin' (or replace 'mysite' with whatever folder you installed WordPress in). Enter the username and password, then goto 'Appearance' -> 'Themes' to browse and install whichever theme(s) you like. You can generally switch between themes without much issue[^1] and try them out to see what works best.
+
+Remember that for WordPress or other CMS based sites, you'll need to rebuild the site and then redeploy the contents using:
+```bash
+aws sso login --profile cloudsite-manager
+cloudsite update your-site.com --do-content
+```
 
 [^1]: Certain plugins or other customization may be incompatible with some themes.
 
