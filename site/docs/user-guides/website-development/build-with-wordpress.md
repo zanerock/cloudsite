@@ -89,13 +89,33 @@ On Mac and Linux, we now need to setup the 'wp' user group and update folder per
 
 ## Theming your site
 
-This is where WordPress shines. Just goto 'Appearance' -> 'Themes' to browse and install whichever theme(s) you like. You can generally switch between themes without much issue[^1] and try them out to see what works best.
+This is where WordPress shines. Start the XAMPP servers (if not running) and navigate to '/localhost/mysite/wp-admin' (or replace 'mysite' with whatever folder you installed WordPress in). Enter the username and passwerd, then goto 'Appearance' -> 'Themes' to browse and install whichever theme(s) you like. You can generally switch between themes without much issue[^1] and try them out to see what works best.
 
 [^1]: Certain plugins or other customization may be incompatible with some themes.
 
 ## Managing content
 
+To manage content, start the XAMPP servers if needed and then from a browser, navigate to '/localhost/mysite/wp-admin', replacing 'mysite' with whatever folder you installed WordPress in.
 
+### Create a post
+
+Simply go to 'Posts' -> 'Add New Post' and write the post.
+
+### Update or delete a post
+
+Go to 'Posts' -> 'All Posts'. Find the post you want and hover over the title. You should options to 'Edit' and 'Trash' the post appear.
+
+### Manage categories
+
+You can manage post categories under 'Posts' -> 'Categories'. Here you can add, edit, and delete categories.
+
+### Add media
+
+You can upload images, video, and audio files to reference from or embed in posts and pages in the 'Media' section.
+
+### Manage pages
+
+You can add, edit, and delete pages from your site in the 'Pages' section.
 
 ## Making your site static
 
