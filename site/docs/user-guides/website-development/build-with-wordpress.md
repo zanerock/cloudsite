@@ -7,7 +7,7 @@ description: A rundown on building static sites with WordPress.
 WordPress is one of, if not the most popular and accessible website building and content management tools available. The availability of free themes, plugins, a community support make it a great choice for developing your website.
 Setting up your own instance isn't hard, but there are a fair number of steps.
 
-## Setting up WordPress locally
+## Set up WordPress locally
 
 In this article, we'll show you how to set up WordPress on your own laptop. This allows you to develop your site without causing instability or downtime in the public site. You make and test your changes locally, and then upload those changes to the public site.
 
@@ -87,7 +87,7 @@ On Mac and Linux, we now need to setup the 'wp' user group and update folder per
    ```
    <img style={{maxHeight: '240px'}} src="/img/docs/user-guides/website-development/build-with-wordpress/enable-asset-upload-03.png" />
 
-## Theming your site
+## Manage look and feel
 
 This is where WordPress shines. Start the XAMPP servers (if not running) and navigate to '/localhost/mysite/wp-admin' (or replace 'mysite' with whatever folder you installed WordPress in). Enter the username and passwerd, then goto 'Appearance' -> 'Themes' to browse and install whichever theme(s) you like. You can generally switch between themes without much issue[^1] and try them out to see what works best.
 

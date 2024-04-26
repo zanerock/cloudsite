@@ -29,7 +29,7 @@ npm start
 
 This should automatically open the initial site in your web browser. If it doesn't, simply point your browser to `http://localhost:3000`. The initial site is itself a quick tutorial on Docusaurus.
 
-## Theming your site
+## Manage look and feel
 
 Docusaurus does not currently have any themes beyond the 'classic' theme,[^1] In general you have to mess with the CSS (by modifying `~/src/css/custom.css`[^2]) in order to fully style Docusaurus. However, we've created a tool that helps you create a clean, minimalist site with your branding.
 

@@ -10,7 +10,9 @@ description: An overview of the site building options.
 
 Docusaurus is relatively simple to get started with and great for creating blogs, wikis, and knowledge-bases. The interface is essentially file based; you add content by writing Markdown files. The Markdown syntax itself is simple and easy to learn.
 
-Docusaurus look and feel is highly customizable, but it's best if one has some knowledge of HTML+CSS. While it has support for 'themes' these more like plugins rather than "look and feel" themes and styling Docusaurus is similar to styling a manually built site except that you're starting out with a well thought out and relatively adaptable styling framework.
+Docusaurus look and feel is highly customizable, but it's best if one has some knowledge of HTML+CSS if you need to go beyond basic logo + brand colors and font (see the [manage look and feel section](/docs/user-guides/website-development/build-with-docusaurus#manage-look-and-feel) in the [Build with Docusaurus](/docs/user-guides/website-development/build-with-docusaurus) document for details). 
+
+While it has support for 'themes' these more like plugins rather than "look and feel" themes and styling Docusaurus is similar to styling a manually built site except that you're starting out with a well thought out and relatively adaptable styling framework.
 
 It's built to support and plugins, but [resources are very limited](https://github.com/webbertakken/awesome-docusaurus).
 
