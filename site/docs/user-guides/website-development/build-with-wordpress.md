@@ -89,7 +89,9 @@ On Mac and Linux, we now need to setup the 'wp' user group and update folder per
 
 ## Theming your site
 
+This is where WordPress shines. Just goto 'Appearance' -> 'Themes' to browse and install whichever theme(s) you like. You can generally switch between themes without much issue[^1] and try them out to see what works best.
 
+[^1]: Certain plugins or other customization may be incompatible with some themes.
 
 ## Managing content
 
