@@ -7,7 +7,7 @@ description: Shows commands for common use cases.
 ## Create/deploy a new site
 
 ```bash
-cloudisite create your-domain.com --source-path ./path/to/source/directory
+cloudisite create your-domain.com --source-path ./path/to/source/folder
 ```
 
 ## Update site content
@@ -53,7 +53,7 @@ cloudisite detail your-domain.com
 This can be useful if you've changed computers or the local Cloudsite database has been lost for whatever reason. It can also be helpful when adding multiple Cloudsite managers.
 
 ```bash
-cloudsite import your-domain.com site-stack-name --region us-east-1 --source-path ./path/to/site/source/directory
+cloudsite import your-domain.com site-stack-name --region us-east-1 --source-path ./path/to/site/source/folder
 ```
 
 ## Destroy a site
