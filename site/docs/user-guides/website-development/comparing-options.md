@@ -6,7 +6,7 @@ description: An overview of the site building options.
 
 ## Overview
 
-### Docusaurus
+### [Docusaurus](/docs/user-guides/website-development/build-with-docusaurus)
 
 Docusaurus is relatively simple to get started with and great for creating blogs, wikis, and knowledge-bases. The interface is essentially file based; you add content by writing Markdown files. The Markdown syntax itself is simple and easy to learn.
 
@@ -16,7 +16,7 @@ While it has support for 'themes' these more like plugins rather than "look and 
 
 It's built to support and plugins, but [resources are very limited](https://github.com/webbertakken/awesome-docusaurus).
 
-### WordPress
+### [WordPress](/docs/user-guides/website-development/build-with-wordpress)
 
 WordPress can be a pain to set up, but if you want or need a graphical interface that's [supported by cloudsite](/support), then this is the solution for you. WordPress has a wealth of look and feel themes and feature plugins and can be customized with no HTML+CSS knowledge.
 
@@ -28,11 +28,9 @@ WP also has a wealth of feature plugins. One has to think about what will work w
 
 Like WordPress, other CMSs such as [Joomla](https://www.joomla.org/), [Drupal](https://www.drupal.org/), and [Textpattern](https://textpattern.com/) provide static site generator plugins or methods. All such options provide a graphical interface and generally have a rich theme and plugin ecosystems. They will vary in complexity and features to some extent, but most any could be used with cloudsite.
 
-### Manual creation
+### [Semi-manual creation](/docs/user-guides/website-development/build-semi-manually)
 
-Finally, there's the option to just create HTML+CSS files more or less by hand. While there are many style frameworks and feature libraries that one can use in the construction of such a site, some knowledge of HTML+CSS and probably Javascript as well will be essential.
-
-There are many HTML+CSS style frameworks available and some themes, but usually one would go this route (in part) to maximize customization. I.e., you can get exactly what you want. There are a large number of web designers that can create the basic site, allowing the owner to copy-paste templates to create new content.
+Finally, there's the option to work with HTML+CSS files directly. While this can seem daunting, there are numerous [template resources](/docs/user-guides/website-development/build-semi-manually#use-a-template) which can do 95% of the work for you. If you want something truly custom, you can [hire a designer](/docs/user-guides/website-development/build-semi-manually#hire-a-web-designer) or [learn HTML+CSS](/docs/user-guides/website-development/build-semi-manually#learn-htmlcss).
 
 ## By task/feature
 
@@ -53,3 +51,7 @@ This is where Docusaurus really shines. Though, again, if you want/need a graphi
 Docusaurus has built in support for wikis, but it's not focused on that feature set and it takes a little fiddling. WordPress does have a number of wiki plugins available as well.
 
 There are a number of special purpose wiki CMSs. [MediaWiki](https://www.mediawiki.org/wiki/MediaWiki) (which powers [Wikipedia](https://wikipedia.org) is the granddaddy of them all and could be combined with static site generation to be compatible with cloudsite. Some, simpler options such as [DocuWiki](https://www.dokuwiki.org/dokuwiki) (which doesn't require a database) might relatively easily setup and converted to a static site.
+
+## Getting help
+
+Whichever option you choose, you can always combine it with our [[affordable, comprehensive website support plan](/support/website-support)]. We can answer questions, provide resources, and often simply provide working code.

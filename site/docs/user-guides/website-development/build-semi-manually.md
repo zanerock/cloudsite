@@ -2,9 +2,9 @@
 sidebar_position: 4
 description: A rundown on manually building websites.
 ---
-# Build Manually
+# Build Semi-Manually
 
-Building a website manually means creating the HTML+CSS+Javascript files that make up the site yourself, or having a web designer do it for you. Describing exactly how HTML+CSS+Javascript works is a big task and well beyond the scope of this document. Instead, we will here describe some basic approaches, what can be accomplished, and what to expect.
+Building a website manually means creating the HTML+CSS+Javascript files that make up the site yourself, or having a web designer do it for you. Describing exactly how HTML+CSS+Javascript works is a big task and well beyond the scope of this document. Instead, we will here describe some basic approaches suitable for a layman.
 
 ## Use a template
 
