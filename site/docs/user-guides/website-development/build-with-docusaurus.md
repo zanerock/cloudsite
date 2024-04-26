@@ -8,7 +8,9 @@ Docusaurus is an easy to use website building framework with built-in support fo
 
 Check out the [Docusaurus website](https://docusaurus.io) for more info.
 
-## Setting up Docusaurus
+Note in this article, `~` is shorthand for "the local folder where you installed the Docusaurus site".
+
+## Set up Docusaurus
 
 First, you must have Node+NPM on your system. If you need help checking for and/or installing Node+NPM, refer to the [Node and NPM section of the getting started installation guide](/docs/getting-started/installation#node-and-npm).
 
@@ -20,7 +22,7 @@ npx create-docusaurus@latest ./my-site classic
 
 Where `./my-site` is the folder where Docusaurus will be set up.
 
-That's it, docusaurus is now installed. To view the site, simply cd into the Docusaurus site folder and start the program like:
+That's it, Docusaurus is now installed. To view the site, simply cd into the Docusaurus site folder and start the local server:
 
 ```bash
 cd ./my-site
@@ -31,9 +33,7 @@ This should automatically open the initial site in your web browser. If it doesn
 
 ## Manage look and feel
 
-Docusaurus does not currently have any themes beyond the 'classic' theme,[^1] In general you have to mess with the CSS (by modifying `~/src/css/custom.css`) in order to fully style Docusaurus. However, we've created a tool that helps you create a clean, minimalist site with your branding.
-
-Note in this article, `~` is shorthand for "the local folder where you installed the Docusaurus site".
+Docusaurus does not currently have any themes beyond the 'classic' theme,[^1] and in general you have to mess with the CSS (by modifying `~/src/css/custom.css`) in order to fully style Docusaurus. However, we've created a tool that helps you create a clean, minimalist site with your branding.
 
 [^1]: There are some additional packages which are called 'themes' that you may see referred to in the documentation. These are really just plugins, however, and not "look and feel" themes. The Docusaurus team notes that adding full fledged themes is a goal.
 
@@ -62,15 +62,13 @@ The [docusourus-bi-color-themer](https://github.com/liquid-labs/docusaurus-bi-co
 
 Here we provide instructions on how to perform some common activities. For further instructions and details, refer to the [Docusaurus documentation](https://docusaurus.io/docs).
 
-Remember that for WordPress or other CMS based sites, you'll need to rebuild the site and then redeploy the contents using [`cloudsite update your-site.com --do-content`](/docs/user-guides/command-line-reference#cloudsite-update) in order to publish your changes on the live site. In the case of Docusaurus, content is automatically rebuilt on update.
-
 ### Blog posts
 
 #### Defining your authors
 
 Before you make your first entry, it's useful to define `~/blog/authors.yml`. This sets up the biographical data of post authors that is used to generate the post entry. This only needs to be done once and updated only when new authors are added or biographical data needs to be changed.
 
-Create a `authors.yml` file in the `~/blog` folder like:
+Create an `authors.yml` file in the `~/blog` folder like:
  ```yaml
  author-user-name:
    name: Author Name # required
@@ -184,8 +182,8 @@ Simply delete documents and categories. To remove the a documentation tree/knowl
 1. Delete the `~/docs` directory.
 2. Open `~/docusaurus.config.js`.
 3. Search for 'presets' and delete the `docs` entry.
-4. Search for 'themeConfig' and edelete the `docs` entry.
-5. In the `themeConfig.navbar.items` section, find the entry for the docs menue item (by default, the `label` entry is 'Docs'), and delete it.
+4. Search for 'themeConfig' and delete the `docs` entry.
+5. In the `themeConfig.navbar.items` section, find the entry for the docs menu item (by default, the `label` entry is 'Docs'), and delete it.
 
 #### Additional docs details and options
 
@@ -193,7 +191,7 @@ For additional details and options, refer to the [Docusaurus docs documentation]
 
 ## Test your site
 
-To view your site locally and test it, [open a terminal](/docs/getting-started/installation#terminal-commands) and change your working directory to your docusaurus installation (e.g.: `cd ./my-site`). Then execute:
+To view your site locally and test it, [open a terminal](/docs/getting-started/installation#terminal-commands) and change your working directory to your Docusaurus installation (e.g.: `cd ./my-site`). Then execute:
 ```bash
 npm start # or npx docusaurus start
 ```
