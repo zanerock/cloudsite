@@ -34,9 +34,9 @@ Finally, there's the option to work with HTML+CSS files directly. While this can
 
 ## By task/feature
 
-### General website
+### General/marketing website
 
-It all comes down to what you know. Docusaurus is easy to set up and get going and you create content via text files. WordPress takes some setting up, but provides a graphical interface.
+It all comes down to what you know. Docusaurus is easy to set up and get going and you create content via text files. WordPress takes some setting up, but provides a graphical interface. There are even tons of HTML+CSS templates out there that can serve as the basis of a semi-custom site.
 
 ### Blogging
 
