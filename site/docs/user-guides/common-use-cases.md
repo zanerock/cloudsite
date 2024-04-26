@@ -1,5 +1,6 @@
 ---
 sidebar_position: 2
+description: Shows commands for common use cases.
 ---
 # Common Use Cases
 
@@ -17,13 +18,13 @@ cloudisite update your-domain.com --do-content
 
 ## Upgrade site infrastructure
 
-Such as after the release of a new version of cloudsite:
+Such as after the release of a new version of Cloudsite:
 ```bash
 cloudsite update your-domain.com --do-stack
 ```
 Note, some updates will require the site be [destroyed](#destroy-a-site) and re-[created](#create-deploy-a-new-site)
 
-## List sites managed by cloudsite
+## List sites managed by Cloudsite
 
 ```bash
 cloudisite list
@@ -49,7 +50,7 @@ cloudisite detail your-domain.com
 
 ## Rebuild the local site database
 
-This can be useful if you've changed computers or the local cloudsite database has been lost for whatever reason. It can also be helpful when adding multiple cloudsite managers.
+This can be useful if you've changed computers or the local Cloudsite database has been lost for whatever reason. It can also be helpful when adding multiple Cloudsite managers.
 
 ```bash
 cloudsite import your-domain.com site-stack-name --region us-east-1 --source-path ./path/to/site/source/directory

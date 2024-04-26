@@ -80,7 +80,7 @@ const cliSpec = {
     },
     {
       name        : 'configuration',
-      description : 'Command group for managing the Cloudsite CLI configuration.',
+      description : 'Command group for managing the cloudsite CLI configuration.',
       arguments   : [
         {
           name          : 'subcommand',

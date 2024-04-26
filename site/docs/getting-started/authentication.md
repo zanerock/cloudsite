@@ -1,9 +1,10 @@
 ---
 sidebar_position: 2
+description: Instructions on authenticating Cloudsite with AWS.
 ---
 # Authentication
 
-Cloudsite works by setting up and managing infrastructure on the AWS cloud. In order to do this, cloudsite uses local _credentials_ which allow it to act on your behalf.
+Cloudsite works by setting up and managing infrastructure on the AWS cloud. In order to do this, Cloudsite uses local _credentials_ which allow it to act on your behalf.
 
 We work with two kinds of credentials. Initially, we create _access keys_ because it's easy. Cloudsite then uses those access keys to set up _single sign-on (SSO) authentication_ which creates much more secure time limited credentials. The original access keys are then deleted.
 
@@ -15,7 +16,7 @@ Amazon Web Services (AWS) is a multi-user environment, so when you sign up you'r
 
 ### Create a dedicated email address (optional)
 
-If you are using cloudsite for your own websites, it's fine to use your personal email address for the root account. If you're setting things up for a company, you'll want to create an email alias or that can be assigned (and potentially re-assigned later) to the root account manager. E.g.: 'awsroot@your-domain.com'.
+If you are using Cloudsite for your own websites, it's fine to use your personal email address for the root account. If you're setting things up for a company, you'll want to create an email alias or that can be assigned (and potentially re-assigned later) to the root account manager. E.g.: 'awsroot@your-domain.com'.
 
 - [Create an email alias in Google Workspace.](https://apps.google.com/supportwidget/articlehome?hl=en&article_url=https%3A%2F%2Fsupport.google.com%2Fa%2Fanswer%2F33327%3Fhl%3Den&assistant_event=welcome&assistant_id=usermasterbot&product_context=33327&product_name=UnuFlow&trigger_context=a)
 - [Create an email alias in Microsoft Outlook.](https://support.microsoft.com/en-us/office/add-or-remove-an-email-alias-in-outlook-com-459b1989-356d-40fa-a689-8f285b13f1f2)
@@ -31,7 +32,7 @@ If you are using cloudsite for your own websites, it's fine to use your personal
 
 ## Initial authentication
 
-As [discussed up top](#top), we start by creating access keys. Access keys are easier to setup than SSO authentication, but because they grant permanent access to your account, they are less secure. So we use them for the initial setup, and then cloudsite will delete them once [single sign-on authentication](#setup-single-sign-on-authentication) is set up.
+As [discussed up top](#top), we start by creating access keys. Access keys are easier to setup than SSO authentication, but because they grant permanent access to your account, they are less secure. So we use them for the initial setup, and then Cloudsite will delete them once [single sign-on authentication](#setup-single-sign-on-authentication) is set up.
 
 1. Follow the instructions to [Install or update to the latest version of the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
 2. Log into AWS as the root user or, if you have one, a super-admin account.
@@ -64,7 +65,7 @@ If you want a little more control over things, you can set the setup options two
 1. Leave off the `--defaults` option and the tool will ask you to provide values for all the setup options.
 2. Refer to the [`cloudsite configuration setup-sso` command line reference](/docs/user-guides/command-line-reference#cloudsite-configuration-setup-sso) and set the options on the command line.
 
-You can combine these two approaches; cloudsite will query you for any options not set on the command line.
+You can combine these two approaches; Cloudsite will query you for any options not set on the command line.
 
 ### Authenticate with SSO
 

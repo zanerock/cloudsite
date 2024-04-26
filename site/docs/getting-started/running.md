@@ -1,5 +1,6 @@
 ---
 sidebar_position: 3
+description: A brief rundown on using Cloudsite.
 ---
 # Running
 
@@ -14,14 +15,14 @@ cloudsite configuration setup-local
 - Cloudsite supports four output formats. The 'json' and 'yaml' are data formats and most useful for programmatic use of the CLI. The 'termnial' and 'text' are intended for humans, with the 'terminal' format just being colored text.
 - Select whether you want quite mode or not by default. As the tool explains, quite mode only outputs the results of a command whereas non-quiet mode will output updates along the way. Again, non-quite mode is aimed at humans and quite mode is more useful for programmatic usage.
 
-You can override these defaults for any single cloudsite invocation with the `--format` and `--quiet` options. E.g.:
+You can override these defaults for any single Cloudsite invocation with the `--format` and `--quiet` options. E.g.:
 ```bash
 cloudsite --format json --quiet some-domain.com create
 ```
 
 ## Creating local credentials
 
-As mentioned before, cloudsite works by interacting with Amazon Web Services (AWS) and managing your website infrastructure on your behalf. In order to do this, cloudsite must have access to valid credentials. If you try and use cloudsite without valid credentials present, it will helpfully tell you what you need to do to create the credentials. Namely, execute:
+As mentioned before, Cloudsite works by interacting with Amazon Web Services (AWS) and managing your website infrastructure on your behalf. In order to do this, Cloudsite must have access to valid credentials. If you try and use Cloudsite without valid credentials present, it will helpfully tell you what you need to do to create the credentials. Namely, execute:
 ```bash
 aws sso login --profile cloudsite-manager
 ```
@@ -31,7 +32,7 @@ By default, these credentials last for 4 hours at a time. You will need to refre
 
 ## Running commands
 
-Once credentials are in place, you can execute commands using the cloudsite tool:
+Once credentials are in place, you can execute commands using the Cloudsite tool:
 ```bash
 cloudsite <command> [options]
 ```

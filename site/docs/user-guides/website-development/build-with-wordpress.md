@@ -1,5 +1,6 @@
 ---
-sidebar_position: 4
+sidebar_position: 3
+description: A rundown on building static sites with WordPress.
 ---
 # Build with WordPress
 
@@ -55,7 +56,7 @@ To fix the Mac "installer cannot be opened" issue:
 2. Enter 'mysite' for the database name and select 'Collation' (top option) in the drop down next to the name. Click 'Create'.
 3. Open a new tab in the browser and enter 'localhost/mysite' in the URL bar.<br /><img style={{maxHeight: '240px'}} src="/img/docs/user-guides/website-development/build-with-wordpress/setup-wordpress-02.png" />
 4. Click 'Let's go!' and on the following page, enter 'mysite' for the database name and 'root' for the user. Hit 'Submit'.<br /><img style={{maxHeight: '240px'}} src="/img/docs/user-guides/website-development/build-with-wordpress/setup-wordpress-03.png" />
-5. The WP admin panel will display the generated config file. On Windows and Linux, it will also write this file to disk for you. On Mac, you must copy the file contents and then create the file `wp-config.php` in the 'mysite' directory we created for the WP install; i.e:`/Applications/XAMPP/xampfiles/htdocs/mysite/wp-config.php` Then paste the contents you just copied into that file.<br /><img style={{maxHeight: '240px'}} src="/img/docs/user-guides/website-development/build-with-wordpress/setup-wordpress-04.png" />
+5. The WP admin panel will display the generated config file. On Windows and Linux, it will also write this file to disk for you. On Mac, you must copy the file contents and then create the file `wp-config.php` in the 'mysite' folder we created for the WP install; i.e:`/Applications/XAMPP/xampfiles/htdocs/mysite/wp-config.php` Then paste the contents you just copied into that file.<br /><img style={{maxHeight: '240px'}} src="/img/docs/user-guides/website-development/build-with-wordpress/setup-wordpress-04.png" />
 6. For all users, open the `wp-config.php` that was just created and add the following line to the end:
    ```php
    define( 'FS_METHOD', 'direct' );
@@ -68,13 +69,13 @@ You should now see a 'Success' message and you can log in using the username and
 
 ### Configure permissions to enable asset uploads
 
-On Mac and Linux, we now need to setup the 'wp' user group and update directory permissions so the WP admin portal can add themes, plugins, and site assets. I believe Windows users can skip this step (but definitely reach out to me if that's wrong and I'll update this section). The following instructions are specific to Mac, but Linux users would do the equivalent.
+On Mac and Linux, we now need to setup the 'wp' user group and update folder permissions so the WP admin portal can add themes, plugins, and site assets. I believe Windows users can skip this step (but definitely reach out to me if that's wrong and I'll update this section). The following instructions are specific to Mac, but Linux users would do the equivalent.
 
 1. Click  → 'System Settings'
 2. Search for 'groups' and select 'Users & Groups'.
 3. In the groups section click 'Add Group…' and enter 'wp' as the group name and click 'Create Group'.<br /><img style={{maxHeight: '240px'}} src="/img/docs/user-guides/website-development/build-with-wordpress/enable-asset-upload-01.png" />
 4. Click the 'i' next to the newly created 'wp' group and check the toggle next to your user account. Click 'OK'.<br /><img style={{maxHeight: '240px'}} src="/img/docs/user-guides/website-development/build-with-wordpress/enable-asset-upload-02.png" />
-5. Update the group ownership and directory permissions:
+5. Update the group ownership and folder permissions:
    ```bash
    cd /Applications/XAMPP/xamppfiles/htdocs
    # change all WP files/dirs group ownership to wp
@@ -85,6 +86,14 @@ On Mac and Linux, we now need to setup the 'wp' user group and update directory 
    sudo dscl . -append /groups/wp GroupMembership daemon
    ```
    <img style={{maxHeight: '240px'}} src="/img/docs/user-guides/website-development/build-with-wordpress/enable-asset-upload-03.png" />
+
+## Theming your site
+
+
+
+## Managing content
+
+
 
 ## Making your site static
 
@@ -97,13 +106,13 @@ Because Cloudsite works with primarily [static sites](/docs/user-guides/static-w
 
 You may need to refresh the WP admin page, but you should now see the 'Simply Static' control in the left hand menu.
 
-Now, to generate the site, create a directory for the site content. Then:
+Now, to generate the site, create a folder for the site content. Then:
 
 1. Click 'Simply Static' → 'Settings'.<br /><img style={{maxHeight: '240px'}} src="/img/docs/user-guides/website-development/build-with-wordpress/simply-static-generation-01.png" />
 2. Ensure the 'Replacing URLs' is set to 'Relative Path' and check 'Force URL Replacement'.<br /><img style={{maxHeight: '240px'}} src="/img/docs/user-guides/website-development/build-with-wordpress/simply-static-generation-02.png" />
 3. Click 'Deploy' under 'Settings' in the left-hand Simply Static menu.<br /><img style={{maxHeight: '240px'}} src="/img/docs/user-guides/website-development/build-with-wordpress/simply-static-generation-03.png" />
 4. Change 'Deployment Method' to 'Local Directory'.<br /><img style={{maxHeight: '240px'}} src="/img/docs/user-guides/website-development/build-with-wordpress/simply-static-generation-04.png" />
-5. Under 'Path' enter the directory you just created where you want the static files to go and enable 'Clear Local Directory'.
+5. Under 'Path' enter the folder you just created where you want the static files to go and enable 'Clear Local Directory'.
 6. Click 'Save Settings'.
 7. Now (and in the future) you just have to click 'Generate Static Files' and the static site will be generated in the indicated folder.
 

@@ -24,7 +24,7 @@ sidebar_position: 1
 ## Commands
 
 - [`cleanup`](#cloudsite-cleanup): Attempts to fully delete partially deleted sites in the 'needs to be cleaned up' state.
-- [`configuration`](#cloudsite-configuration): Command group for managing the Cloudsite CLI configuration.
+- [`configuration`](#cloudsite-configuration): Command group for managing the cloudsite CLI configuration.
 - [`create`](#cloudsite-create): Creates a new website, setting up infrastructure and copying content.
 - [`destroy`](#cloudsite-destroy): Destroys the named site. I.e., deletes all cloud resources associated with the site.
 - [`detail`](#cloudsite-detail): Prints details for the indicated site.
@@ -56,7 +56,7 @@ Attempts to fully delete partially deleted sites in the 'needs to be cleaned up'
 
 `cloudsite configuration [subcommand]`
 
-Command group for managing the Cloudsite CLI configuration.
+Command group for managing the cloudsite CLI configuration.
 
 #### `configuration` options
 

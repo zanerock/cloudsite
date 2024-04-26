@@ -1,11 +1,12 @@
 ---
 sidebar_position: 4
+description: A quick example of launching a site.
 ---
 # Your First Site
 
 ## Register your domain name
 
-While there are ways to host a website without a domain name, cloudsite currently does require a domain name. If you don't have a domain name already, you'll first need to register a domain name. You can find details on [choosing]/docs/user-guides/domain-names#choosing-a-domain-name) and [registering]/docs/user-guides/domain-names#register-your-domain-name) a domain name in the [domain names guide](/docs/user-guides/domain-names).
+While there are ways to host a website without a domain name, Cloudsite currently does require a domain name. If you don't have a domain name already, you'll first need to register a domain name. You can find details on [choosing]/docs/user-guides/domain-names#choosing-a-domain-name) and [registering]/docs/user-guides/domain-names#register-your-domain-name) a domain name in the [domain names guide](/docs/user-guides/domain-names).
 
 ## Prepare your site files
 
@@ -25,7 +26,7 @@ Regardless of the method used to generate the static files, at the end of the da
 </html>
 ```
 
-We'll save this file in a file called `index.html` in a directory `website` just under the home directory. So, that looks like:
+We'll save this file in a file called `index.html` in a folder `website` just under the home folder. So, that looks like:
 ```
 - $HOME
   | 
@@ -34,7 +35,7 @@ We'll save this file in a file called `index.html` in a directory `website` just
     - index.html
 ```
 
-Obviously your real website will have a lot more files, but the procedure is the same whether we're dealing with one or one thousand files. The important thing is that all the source files be placed in a source directory.
+Obviously your real website will have a lot more files, but the procedure is the same whether we're dealing with one or one thousand files. The important thing is that all the source files be placed in a source folder.
 
 ## Deploy your site
 
@@ -46,7 +47,7 @@ aws sso login --profile cloudsite-manager
 cloudsite create your-domain.com --source-path ~/website
 ```
 
-Where `--source-path` takes the path to your source directory. The path may be relative or absolute.
+Where `--source-path` takes the path to your source folder. The path may be relative or absolute.
 
 ## Updating your site
 
@@ -58,7 +59,7 @@ cloudsite update your-domain.com --do-content
 
 ## Retrieving website information
 
-We can see what websites cloudsite is managing with:
+We can see what websites Cloudsite is managing with:
 ```bash
 cloudsite list
 ```
