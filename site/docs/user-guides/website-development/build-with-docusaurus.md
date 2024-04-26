@@ -31,13 +31,38 @@ This should automatically open the initial site in your web browser. If it doesn
 
 ## Theming your site
 
-Docusaurus does not currently have any themes beyond the 'classic' theme,[^1] In general you have to mess with the CSS (by modifying `~/src/css/custom.css`[^2]) in order to style Docusaurus. However, the [docusourus-bi-color-themer](https://github.com/liquid-labs/docusaurus-bi-color-themer) tool does provide support for building a clean, minimalist look and feel based on your custom brand colors and fonts. Check out the [docusourus-bi-color-themer](https://github.com/liquid-labs/docusaurus-bi-color-themer) home page for examples and additional details.
+Docusaurus does not currently have any themes beyond the 'classic' theme,[^1] In general you have to mess with the CSS (by modifying `~/src/css/custom.css`[^2]) in order to fully style Docusaurus. However, we've created a tool that helps you create a clean, minimalist site with your branding.
 
 [^1]: There are some additional packages which are called 'themes' that you may see referred to in the documentation. These are really just plugins, however, and not "look and feel" themes. The Docusaurus team notes that adding full fledged themes is a goal.
 
 [^2]: `~` is shorthand for 'the folder where you installed the Docusaurus site.
 
+### Set your logo
+
+1. Place your logo in the `~/static/img` folder.
+2. Open `~/docusaurus.config.js` and search for 'themeConfig'.
+3. Find the `themeConfig.navbar.logo` entry.
+4. Set the `src` field to `/img/your-logo-source.svg`.
+
+SVG files are best though any image file (SVG, PNG, JPG) should work.
+
+You can set a 'dark theme' version of the logo (if different), by following the same steps, except you set the `srcDark` field.
+
+### Disabling the 'light/dark' toggle
+
+1. Open `~/docusaurus.config.js`.
+2. Search for 'themeConfig'.
+3. Under `themeConfig.colorMode`, update or add the field: `disableSwitch: true`.
+
+### Setting colors and fonts
+
+The [docusourus-bi-color-themer](https://github.com/liquid-labs/docusaurus-bi-color-themer) tool provides support for building a clean, minimalist look and feel based on your custom brand colors and fonts. Check out the [docusourus-bi-color-themer](https://github.com/liquid-labs/docusaurus-bi-color-themer) home page for examples and additional details.
+
 ## Managing content
+
+Here we provide instructions on how to perform some common activities. For further instructions and details, refer to the [Docusaurus documentation](https://docusaurus.io/docs).
+
+Remember that for WordPress or other CMS based sites, you'll need to rebuild the site and then redeploy the contents using [`cloudsite update your-site.com --do-content`](/docs/user-guides/command-line-reference#cloudsite-update) in order to publish your changes on the live site. In the case of Docusaurus, content is automatically rebuilt on update.
 
 ### Blog posts
 
@@ -91,21 +116,21 @@ You can reference images (or other content) like:
 
 Just open the entry file (like `~/blog/2024-01-01-blog-entry.md` or `~/blog/2024-01-01-blog-entry/index.md`) and make your changes.
 
-#### Additional details and options
-
-For additional details and options, refer to the [Docusaurus blog documentation](https://docusaurus.io/docs/blog).
-
 #### Remove the blog
 
 If you don't want a blog as part of your site, just:
 
 1. Delete the `~/blog` folder.
 2. Open `~/docusaurus.config.js`.
-3. Delete the 'Blog' entry in the navigation bar configuration by searching for 'Blog' and deleting the entry. It should look something like:
+3. Search for 'presets' and delete the `blog` entry.
+4. In the `themeConfig.navbar.items` section, delete the 'Blog' entry in the navigation bar configuration by searching for 'Blog' and deleting the entry. It should look something like:
 ```
 {to: '/blog', label: 'Blog', position: 'left'},
 ```
-Delete everything between the `{}` curly braces.
+
+#### Additional blog details and options
+
+For additional details and options, refer to the [Docusaurus blog documentation](https://docusaurus.io/docs/blog).
 
 ### Adding documentation entries
 
@@ -144,3 +169,42 @@ For documents, you have to place your images or other assets in the `~/static` f
 
 You can create other sub-folders under `~/static` like `~/static/videos`, `~/static/audio`, etc. Note that Docusaurus doesn't care what these directories are called and you can organize them by document as well, so if you have lots of documents with lots of images, you might want to do something like `~/static/docs/my-doc-1`, `~/static/docs/some-category/another-doc`, etc.
 
+#### Update documents
+
+- To update a document, simply update the document text file contents.
+- You can also move and rearrange files and folders.
+- To change a document or category name, or to re-order the displayed listing, update the metadata in the `_category_.yml` file for folder/categories and the front matter at the top of a text file for documents.
+
+#### Removing documents
+
+Simply delete documents and categories. To remove the a documentation tree/knowledgebase entirely:
+
+1. Delete the `~/docs` directory.
+2. Open `~/docusaurus.config.js`.
+3. Search for 'presets' and delete the `docs` entry.
+4. Search for 'themeConfig' and edelete the `docs` entry.
+5. In the `themeConfig.navbar.items` section, find the entry for the docs menue item (by default, the `label` entry is 'Docs'), and delete it.
+
+#### Additional docs details and options
+
+For additional details and options, refer to the [Docusaurus docs documentation](https://docusaurus.io/docs/docs-introduction).
+
+## Deploying your site
+
+To deploy your site using cloudsite for the first time, [open a terminal](/docs/getting-started/installation#terminal-commands) and execute:
+```bash
+aws sso login --profile cloudsite-manager # if necessary
+cloudsite create your-domain.com --source-path ./path/were/static/files/went
+```
+
+To update an existing site, [open a terminal](/docs/getting-started/installation#terminal-commands) and execute:
+```bash
+aws sso login --profile cloudsite-manager # if necessary
+cloudsite update your-domain.com --do-content
+```
+
+Cloudsite automatically generates the static site files for you.
+
+## In closing
+
+Docusaurus is simple to setup and you can easily add create documentation, blogs, marketing site, etc. The [docusaurus-bi-color-themer](https://github.com/liquid-labs/docusaurus-bi-color-themer) tool can help you do some basic branding and you can easily [set your logo](#set-your-logo). It does require knowledge of HTML+CSS to fully style, though with [website support](/support), we can provide instructions, examples, or even code to accomplish most styling goals.
