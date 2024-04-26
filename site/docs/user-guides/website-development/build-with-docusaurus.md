@@ -31,18 +31,18 @@ This should automatically open the initial site in your web browser. If it doesn
 
 ## Manage look and feel
 
-Docusaurus does not currently have any themes beyond the 'classic' theme,[^1] In general you have to mess with the CSS (by modifying `~/src/css/custom.css`[^2]) in order to fully style Docusaurus. However, we've created a tool that helps you create a clean, minimalist site with your branding.
+Docusaurus does not currently have any themes beyond the 'classic' theme,[^1] In general you have to mess with the CSS (by modifying `~/src/css/custom.css`) in order to fully style Docusaurus. However, we've created a tool that helps you create a clean, minimalist site with your branding.
+
+Note in this article, `~` is shorthand for "the local folder where you installed the Docusaurus site".
 
 [^1]: There are some additional packages which are called 'themes' that you may see referred to in the documentation. These are really just plugins, however, and not "look and feel" themes. The Docusaurus team notes that adding full fledged themes is a goal.
-
-[^2]: `~` is shorthand for 'the folder where you installed the Docusaurus site.
 
 ### Set your logo
 
 1. Place your logo in the `~/static/img` folder.
 2. Open `~/docusaurus.config.js` and search for 'themeConfig'.
 3. Find the `themeConfig.navbar.logo` entry.
-4. Set the `src` field to `/img/your-logo-source.svg`.
+4. Set the `src` field to `/img/your-logo-source.svg` (_without_ the 'static' prefix).
 
 SVG files are best though any image file (SVG, PNG, JPG) should work.
 
@@ -109,8 +109,10 @@ To  add a new file under the `~/blog` folder.
 To include images or other content in your blog post, create a folder like `~/blog/YYYY-MM-DD-the-blog-entry-title` instead of a file. Create an `index.md` file in that folder where you enter the metadata and author the post as above. You can then add any images or other content in that folder.
 
 You can reference images (or other content) like: 
-- `![alt text](/img/foo.png)` (Markdown image format) or 
-- `<img src="/img/foo.png" alt="alt text" />` (HTML format).
+- `![alt text](./foo.png)` (Markdown image format) or 
+- `<img src="./foo.png" alt="alt text" />` (HTML format).
+
+The two methods are essentially equivalent, except the latter allows you to add additional properties and styling if you're familiar with HTML. Notice the '.' in the file path. In this context, '.' means 'the current folder', so we're saying, "look for the image in the `img` folder within the folder where this file resides."
 
 #### Update a post
 
@@ -132,7 +134,7 @@ If you don't want a blog as part of your site, just:
 
 For additional details and options, refer to the [Docusaurus blog documentation](https://docusaurus.io/docs/blog).
 
-### Adding documentation entries
+### Add knowledgebase documents
 
 When you set up your Docusaurus site, you'll see a `~/docs` folder. The initial site is configured to generate a document tree based on the contents of this folder. This is perfect for creating a knowledge base, product documentation, or categorized content in general.
 
@@ -189,7 +191,14 @@ Simply delete documents and categories. To remove the a documentation tree/knowl
 
 For additional details and options, refer to the [Docusaurus docs documentation](https://docusaurus.io/docs/docs-introduction).
 
-## Deploying your site
+## Test your site
+
+To view your site locally and test it, [open a terminal](/docs/getting-started/installation#terminal-commands) and change your working directory to your docusaurus installation (e.g.: `cd ./my-site`). Then execute:
+```bash
+npm start # or npx docusaurus start
+```
+
+## Deploy your site
 
 To deploy your site using cloudsite for the first time, [open a terminal](/docs/getting-started/installation#terminal-commands) and execute:
 ```bash
@@ -203,8 +212,8 @@ aws sso login --profile cloudsite-manager # if necessary
 cloudsite update your-domain.com --do-content
 ```
 
-Cloudsite automatically generates the static site files for you.
+With Docusaurus based sites, Cloudsite automatically generates the static site files for you.
 
 ## In closing
 
-Docusaurus is simple to setup and you can easily add create documentation, blogs, marketing site, etc. The [docusaurus-bi-color-themer](https://github.com/liquid-labs/docusaurus-bi-color-themer) tool can help you do some basic branding and you can easily [set your logo](#set-your-logo). It does require knowledge of HTML+CSS to fully style, though with [website support](/support), we can provide instructions, examples, or even code to accomplish most styling goals.
+Docusaurus is simple to setup and you can easily create documentation, blogs, marketing sites, etc. The [docusaurus-bi-color-themer](https://github.com/liquid-labs/docusaurus-bi-color-themer) tool can help you do some basic branding and you can easily [set your logo](#set-your-logo). It does require knowledge of HTML+CSS to fully style, though with [website support](/support), we can provide instructions, examples, or even code to accomplish most styling goals.
