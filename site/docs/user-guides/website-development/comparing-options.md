@@ -52,6 +52,6 @@ Docusaurus has built in support for wikis, but it's not focused on that feature 
 
 There are a number of special purpose wiki CMSs. [MediaWiki](https://www.mediawiki.org/wiki/MediaWiki) (which powers [Wikipedia](https://wikipedia.org) is the granddaddy of them all and could be combined with static site generation to be compatible with cloudsite. Some, simpler options such as [DocuWiki](https://www.dokuwiki.org/dokuwiki) (which doesn't require a database) might relatively easily setup and converted to a static site.
 
-## Getting help
+## Get help
 
 Whichever option you choose, you can always combine it with our [[affordable, comprehensive website support plan](/support/website-support)]. We can answer questions, provide resources, and often simply provide working code.
