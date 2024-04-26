@@ -79,6 +79,7 @@ const config = {
       colorMode: {
         defaultMode: 'light',
         respectPrefersColorScheme: true,
+        disableSwitch: false
       },
       navbar: {
         title: '',
