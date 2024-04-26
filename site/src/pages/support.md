@@ -28,12 +28,25 @@ We offer three levels of individual support plus a business support option.
 ### Website support
 
 - All the features of [Liquid Labs OSS support](#liquid-labs-oss-support).
-- Get support for general website questions; "How do I do X?"; e.g. sell products, integrate a calendar service, or implement an effect like you saw on another site, etc. This is offered to anyone, regardless where your website is hosted.
+- Get answers to any questions involving your website design/implementation such as:
+  - How do I add content such as images, pages, blog posts, videos, etc?
+  - How do I get my landing page to look like X?
+  - How do I integrate a scheduling service?
+  - Plus anything else you can think of!
+- We also provide operational support and can advise you on updating, running, and troubleshooting issues.
+- Website support is offered to anyone, regardless where your website is hosted.
 
 ### Technology consulting for individuals and businesses
 
 - All the features of [website support](#website-support).
-- Benefit from our decades of experience in technology and cybersecurity; get advice and support on anything tech related. Ask us anything related to technology, software design/development, technical operations, cybersecurity, etc..
+- Benefit from our decades of experience in technology and cybersecurity; get advice and support on anything tech related. Ask us anything related to:
+  - software design and development,
+  - data design,
+  - operations,
+  - CI/CD,
+  - vendor/tool evaluation,
+  - cybersecurity, and
+  - pretty much any technical question you can think of.
 
 ## How it works
 
