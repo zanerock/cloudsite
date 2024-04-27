@@ -28,9 +28,9 @@ WP also has a wealth of feature plugins. One has to think about what will work w
 
 Like WordPress, other CMSs such as [Joomla](https://www.joomla.org/), [Drupal](https://www.drupal.org/), and [Textpattern](https://textpattern.com/) provide static site generator plugins or methods. All such options provide a graphical interface and generally have a rich theme and plugin ecosystems. They will vary in complexity and features to some extent, but most any could be used with cloudsite.
 
-### [Build a (semi-)custom site](/docs/user-guides/website-development/build-a-semi-custome-site)
+### [Build a (semi-)custom site](/docs/user-guides/website-development/build-a-custome-site)
 
-Finally, there's the option to work with HTML+CSS files directly. While this can seem daunting, there are numerous [template resources](/docs/user-guides/website-development/build-a-semi-custome-site#use-a-template) which can do 95% of the work for you. If you want something truly custom, you can [hire a designer](/docs/user-guides/website-development/build-a-semi-custome-site#hire-a-web-designer) or [learn HTML+CSS](/docs/user-guides/website-development/build-a-semi-custome-site#learn-htmlcss).
+Finally, there's the option to work with HTML+CSS files directly. While this can seem daunting, there are numerous [template resources](/docs/user-guides/website-development/build-a-custome-site#start-with-a-template) which can do 95% of the work for you. If you want something truly custom, you can [hire a designer](/docs/user-guides/website-development/build-a-custome-site#hire-a-web-designer) or [learn HTML+CSS](/docs/user-guides/website-development/build-a-custome-site#learn-a-little-htmlcss).
 
 ## By task/feature
 
