@@ -15,7 +15,7 @@ npm i -g cloudsite # or yarn i -g cloudsite
 
 ## Setup & deploy
 
-1. Sign up for a free [AWS account](https://aws.amazon.com/). ([Click here for more details.](/docs/getting-started/authentication#sign-up-for-an-aws-root-account))
+1. Sign up for a free [AWS account](https://aws.amazon.com/). ([Click here for more details.](/docs/getting-started/authentication#sign-up-for-an-aws-root-account)) This creates your _root account_.
 2. Create API access keys:
    1. Follow the instructions to [Install or update to the latest version of the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
    2. Log into AWS as the root user or, if you have one, a super-admin account.
