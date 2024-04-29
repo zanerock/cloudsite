@@ -1,5 +1,5 @@
 ---
-sidebar_position: 5
+sidebar_position: 6
 description: A guide to registering domain names.
 ---
 # Domain Name Selection
