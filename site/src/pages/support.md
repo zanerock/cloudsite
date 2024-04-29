@@ -19,7 +19,7 @@ Trying to get something done with your website? Want a say in the next new featu
 
 ### Voter
 <div class="sub-title">
-$1.50
+$1.50/month
 </div>
 
 Support our work and vote on new features! Voter members participate in voting on and suggesting new features and tools.
