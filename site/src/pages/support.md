@@ -17,24 +17,31 @@ Trying to get something done with your website? Want a say in the next new featu
 
 ## What's covered
 
-### OSS support
+### Voter
+<div class="sub-title">
+$1.50
+</div>
+
+Support our work and vote on new features! Voter members participate in voting on and suggesting new features and tools.
+
+### OSS Support
 <div class="sub-title">
 $5/month
 </div>
 
-Get a say in what features are implemented next as well as comprehensive tool support.
+Get a say in what features are implemented next as well as comprehensive support for Cloudsite and all other Liquid Labs open source tools and libraries.
 <div class="flow-list">
-- Covers issues relating directly to the Cloudsite tool or any other Liquid Labs OSS software.
+- Get help on any issues, questions, or concerns relating directly to the Cloudsite tool or any other Liquid Labs OSS software.
 - Vote on next features to be implemented.
 - Suggest new features.
 </div>
 
-### Unlimited Website support
+### Unlimited Website Consultation
 <div class="sub-title">
 $7.50/month
 </div>
 
-All the benefits of [OSS support](#oss-support), plus get answers to any questions regarding your website design and operations on supported platforms. Let us:
+All the benefits of [OSS Support](#oss-support), plus get answers to any questions regarding your website design and operations on supported platforms. Let us:
 <div class="flow-list">
 - Help you figure out why stuff ain't working.
 - Provide solutions for styling and design issues/goals.
@@ -47,7 +54,7 @@ Refer to the Liquid Labs support page for full terms of service.
 <!--
 ### Technology partner for individuals and businesses
 
-All the benefits of [website support](#website-support), plus:
+All the benefits of [Unlimited Website Consultation](#unlimited-website-consultation), plus:
 
 - Benefit from our decades of experience in technology and cybersecurity; get advice and support on anything tech related. Ask us anything related to:
   - software design and development,
