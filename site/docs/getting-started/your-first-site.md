@@ -6,11 +6,13 @@ description: A quick example of launching a site.
 
 ## Register your domain name
 
-While there are ways to host a website without a domain name, Cloudsite currently does require a domain name. If you don't have a domain name already, you'll first need to register a domain name. You can find details on [choosing]/docs/user-guides/domain-names#choosing-a-domain-name) and [registering]/docs/user-guides/domain-names#register-your-domain-name) a domain name in the [domain names guide](/docs/user-guides/domain-names).
+While there are ways to host a website without a domain name, Cloudsite currently does require a domain name. If you don't have a domain name already, you'll first need to register a domain name. Refer to our [domain name selection guide](/docs/user-guides/domain-name-selection) for ideas on finding a good name. If you register the domain with AWS Route 53, then that should be all you need to do as far as the domain name goes.
+
+If you already have a domain name, then refer to our [domain name configuration guide](/docs/user-guides/domain-name-configuration) on how to either [transfer a domain to Route 53](/docs/user-guides/domain-name-configuration#transfer-a-domain-to-route-53) or how to [configure 3rd party registered domains](/docs/user-guides/domain-name-configuration#configure-3rd-party-registered-domains).
 
 ## Prepare your site files
 
-Cloudsite hosts primarily _static websites_, with some support for specific dynamic content and actions via plugins. Basically a static site is one defined entirely by a set of files. There are methods to turn dynamic websites, like a WordPress site, into static sites and we cover a number of specific options in the [website development guides](/docs/category/website-development).
+Cloudsite hosts primarily [_static websites_](/docs/user-guides/static-websites), with some support for specific dynamic content and actions via plugins. Basically a static site is one defined entirely by a set of files. There are methods to turn dynamic websites, like a WordPress site, into static sites and we cover a number of specific options in the [website development guides](/docs/category/website-development).
 
 Regardless of the method used to generate the static files, at the end of the day, you end up with a collection of files in a director. We call those files the _source files_. For our example, we'll have a single source file:
 ```html
@@ -57,43 +59,6 @@ At some point, your site will probably need to be updated. In our example, let's
 cloudsite update your-domain.com --do-content
 ```
 
-## Retrieving website information
-
-We can see what websites Cloudsite is managing with:
-```bash
-cloudsite list
-```
-
-In our example, we'd get something like:
-```yaml
-- 
-  apexDomain: your-domain.com
-  region:     us-east-1
-  sourcePath: /Users/johndoe/website
-```
-
-Notice that the `sourcePath` is now absolute regardless of the original format. To get even more technical details on our site, we can dd:
-
-```bash
-cloudiset detail your-domain.com
-```
-
-Which results in something like:
-```yaml
-apexDomain:               your-domain.com
-bucketName:               your-domain-com
-sourcePath:               /Users/johndoe/website
-sourceType:               vanilla
-region:                   us-east-1
-certificateArn:           arn:aws:acm:us-east-1:123456789:certificate/0000000-0000-0000-0000-0000000000
-accountID:                123456789
-oacName:                  yoru-domain-com-OAC
-stackName:                your-domain-com-stack
-stackArn:                 arn:aws:cloudformation:us-east-1:123456789:stack/your-domain-com-stack/1111111-1111-1111-1111-111111111
-cloudFrontDistributionID: ABCDEFGH12345
-```
-
-You typically won't need this information, but it can be useful if you're requesting support or trying to debug something yourself.
 
 ## Summary
 
