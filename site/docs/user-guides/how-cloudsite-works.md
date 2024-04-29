@@ -1,5 +1,6 @@
 ---
 sidebar_position: 2
+description: An overview of how Cloudsite websites work.
 ---
 import ThemedImage from '@theme/ThemedImage';
 
