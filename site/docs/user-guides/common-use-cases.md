@@ -33,9 +33,25 @@ When you have changes to your website content/files:
 cloudisite update your-domain.com --do-content
 ```
 
+### Install a plugin
+
+To install a plugin, you just add configuration for the plugin and then update the stack. Of course, the options you need to set vary by plugin.
+```bash
+cloudsite plugin-settings set your-domain.com --option cloudFrontLogs.includeCookies:false
+cloudsite update your-domain.com --do-stack
+```
+
+### Remove a plugin
+
+To remove a plugin, we delete the configuration and then update the stack. Note, the entire configuration must be removed.
+```bash
+cloudsite plugin-settings set your-domain.com --delete --option cloudFrontLogs
+cloudsite update your-domain.com --do-stack
+```
+
 ### Upgrade site infrastructure
 
-Such as after the release of a new version of Cloudsite:
+Such as after the release of a new version of Cloudsite or after changing configuration values:
 ```bash
 cloudsite update your-domain.com --do-stack
 ```
