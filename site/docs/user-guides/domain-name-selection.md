@@ -1,8 +1,8 @@
 ---
 sidebar_position: 5
-description: A quick guide to registering domain names.
+description: A guide to registering domain names.
 ---
-# Domain Names
+# Domain Name Selection
 
 Your website needs someplace to _be_, and that's where domain names come in. A domain name is a (hopefully) user friendly name that acts as the address for your website. In this document, we will go over how to select and register a good domain name.
 
@@ -10,17 +10,20 @@ A good domain name should match your brand, be memorable, and easy to spell. Thi
 
 ## Terminology
 
-- A _top level domain_ or _TLD_ is the last bit in a domain name. E.g., '.com', '.org', '.us', etc.
-- A _domain name_ generally refers to the bit before the last dot + the TLD. E.g., 'google.com', 'amazon.com', 'liquid-labs.com', etc.
-- A _registrar_ refers to a company where you can register a domain name.
-- The _resale market_ refers to domain names which are bought to be resold rather than used.
 - _Domain hacking_ is where you use the domain name to spell or suggest a brand name, word, or phrase. E.g., 'bit.ly', 'simpli.city', 'ac.es', 'main.st', etc.
+- _Domain name_ generally refers to the bit before the last dot + the TLD. E.g., 'google.com', 'amazon.com', 'liquid-labs.com', etc. This is also known as the 'apex domain'.
+- _Domain name system_ or _DNS_ translates domain names into the IP addresses that browsers actually use to retrieve content.
+- _Registrar_ refers to a company where you can register a domain name.
+- _Resale market_ refers to domain names which are bought to be resold rather than used.
+- _Top level domain_ or _TLD_ is the last bit in a domain name. E.g., '.com', '.org', '.us', etc.
 
-## Checking a domain name's status
+## Select a domain name
+
+### Checking a domain name's status
 
 To start with, you'll need to be able to tell whether a domain name is already taken. We recommend [NameCheap.com](https://namecheap.com) for searching. You can use other registrars and tools, but NameCheap.com does one of the better jobs of showing you names available through the resale market and they offer a wide range of TLD options.
 
-## Selection process
+### Selection process
 
 1. Brainstorm base names.
 2. Determine applicable TLDs. Can the you use domain hacking?
@@ -28,9 +31,9 @@ To start with, you'll need to be able to tell whether a domain name is already t
 4. Brainstorm again and repeat.
 5. As a last resort, _maybe_ try hyphens or clever spellings.
 
-## Brainstorming base names
+### Brainstorming base names
 
-The process starts with brainstorming base names. If you alread have a brand name that you want or must use, then you're kinda stuck on this one. But domain names are so central to a business that domain names and brand names are generally co-determined at the same time.
+The process starts with brainstorming base names. If you already have a brand name that you want or must use, then you're kinda stuck on this one. But domain names are so central to a business that domain names and brand names are generally co-determined at the same time.
 
 You'll probably start with a few names in mind. These are themselves almost certainly taken, but that's just the way it is. Some good ways to generate possible names are:
 - Asking other people for ideas.
@@ -40,7 +43,7 @@ You'll probably start with a few names in mind. These are themselves almost cert
 
 Regarding the last option, just be aware that some of these tools are fronts for domain name resellers and they may push you towards names they already own. In the worst case scenario, a name might be free when you search it, but the reseller buys it when you indicate interest and tries to resell it back to you.
 
-## Determine applicable TLDs
+### Determine applicable TLDs
 
 Generally, a '.com' domain (or '.org' for a non-profit) is considered "the best" if you can get it, but a better name with another TLD is usually better than a poor name on .com (or .org). The three next most popular general purpose TLDs are '.net', '.co', and '.io'.[^1]
 
@@ -50,7 +53,7 @@ Check if any of your possible base names can be used in domain hacking. Recall, 
 
 Also, there are many business type and profession specific domain TLDs such as '.ai', '.law', '.doctors', '.dog', '.wedding', etc. Search or read through the list of TLDs to find ones that might work and try them out in combination with possible names.
 
-## Try variations
+### Try variations
 
 Try adding suffixes and/or prefixes to your base names to generate even more possibilities. For instance, some generic options are:
 - \_lab, \_labs
@@ -82,13 +85,13 @@ Some more product and service specific options include:
 
 Also, when searching for domain names, NameCheap (and most other registrars) will suggest alternates as you search. Scan the list of alternates to see if any of them work for you.
 
-## Rinse and repeat
+### Rinse and repeat
 
 You may have to repeat this process a few times before you find something you like and is free. Each time through should generate new variations and ideas. Since it's relatively cheap to purchase a domain name, a lot of names are taken up by domain resellers which, if you have the money, may be an option. But if you're trying to find something more affordable, don't despair, there are still options available.
 
-## Hyphens, clever spellings, and numbers
+### Hyphens, clever spellings, and numbers
 
-Hyphens and especially misspellings should be avoided where possible. This is because no one will know there's a hyphen or exactly how you're mispelling the domain if you just say the name, so you always end up having to spell it out. Which can be clunky and may not be remembered anyway.
+Hyphens and especially misspellings should be avoided where possible. This is because no one will know there's a hyphen or exactly how you're misspelling the domain if you just say the name, so you always end up having to spell it out. Which can be clunky and may not be remembered anyway.
 
 This isn't a hard "never", though, since most of the times people click on domains. My own domain name, 'liquid-labs.com' is hyphenated. In retrospect, I wish I'd spent more time and found an un-hyphenated alternative, and also, it's been OK.
 
