@@ -30,7 +30,7 @@ If you are using Cloudsite for your own websites, it's fine to use your personal
 3. Click 'Create a new AWS account'.
 4. Enter the email address to use for the root account and fill out the required information.
 
-## Initial authentication
+## Initial authentication with access keys
 
 As [discussed up top](#top), we start by creating access keys. Access keys are easier to setup than SSO authentication, but because they grant permanent access to your account, they are less secure. So we use them for the initial setup, and then Cloudsite will delete them once [single sign-on authentication](#setup-single-sign-on-authentication) is set up.
 
@@ -71,7 +71,7 @@ You can combine these two approaches; Cloudsite will query you for any options n
 
 Once SSO authentication is set up, you actually authenticate by executing:
 ```bash
-aws sso login --profile cloudsite-manager
+aws sso login --profile cloudsite-manager # replace with the name of the SSO profile if non-default
 ```
 
-(Replace 'cloudsite-manager' with the name of the SSO profile if you used a non-default name.)
+This will create a set of time-limited SSO session credentials that Cloudsite can use.
