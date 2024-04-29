@@ -1,22 +1,39 @@
 ---
-sidebar_position: 3
+sidebar_position: 4
 description: Shows commands for common use cases.
 ---
 # Common Use Cases
 
-## Create/deploy a new site
+## Prerequisites
+
+The use cases enumerated here assume:
+- There are valid local credentials Cloudsite can use. Meaning either:
+  - you have [API access keys set up](/docs/getting-started/authentication#initial-authentication-with-access-keys), or
+  - (recommended) you have [setup single sign-on (SSO) authentication](/docs/getting-started/authentication#single-sign-on-authentication) and [authenticated with SSO](/docs/getting-started/authentication#single-sign-on-authentication); e.g.:
+    ```bash
+    aws sso login --profile cloudsite-manager
+    ```
+- You have the static website source files in some directory. We use `./site/source/folder/path` in our examples, but you would of course change this to the actual path.
+- You have a domain name registered and are using Route 53 for domain name resolution. We use 'your-domain.com' in the examples, but you would of course change this to your actual domain name. Refer to [managing DNS with Route 53](./domain-names#managing-dns-with-route-53) for additional information.
+
+## Use Cases
+
+### Create/deploy a new site
+
+Creating a new site sets up the AWS infrastructure, configures the DNS, and uploads the site contents.
 
 ```bash
-cloudisite create your-domain.com --source-path ./path/to/source/folder
+cloudisite create your-domain.com --source-path ./site/source/folder/path
 ```
 
-## Update site content
+### Update site content
 
+When you have changes to your website content/files:
 ```bash
 cloudisite update your-domain.com --do-content
 ```
 
-## Upgrade site infrastructure
+### Upgrade site infrastructure
 
 Such as after the release of a new version of Cloudsite:
 ```bash
@@ -24,40 +41,45 @@ cloudsite update your-domain.com --do-stack
 ```
 Note, some updates will require the site be [destroyed](#destroy-a-site) and re-[created](#create-deploy-a-new-site)
 
-## List sites managed by Cloudsite
+### List sites managed by Cloudsite
 
+Need a reminder of what sites you've created?
 ```bash
 cloudisite list
 ```
 
-## List todo reminders
+### List todo reminders
 
+Cloudsite creates reminders for operations that could not fully complete at the time they were first executed. To review outstanding reminders:
 ```bash
 cloudsite reminders list
 ```
 
-## Verify site infrastructure and content are up-to-date
+### Verify site infrastructure and content are up-to-date
 
+For when you want to make sure everything is up-to-date:
 ```bash
 cloudisite verify your-domain.com
 ```
 
-## Retrieve technical details
+### Retrieve technical details
 
+Useful primarily for debugging or making manual changes to the site infrastructure:
 ```bash
 cloudisite detail your-domain.com
 ```
 
-## Rebuild the local site database
+### Rebuild the local site database
 
 This can be useful if you've changed computers or the local Cloudsite database has been lost for whatever reason. It can also be helpful when adding multiple Cloudsite managers.
 
 ```bash
-cloudsite import your-domain.com site-stack-name --region us-east-1 --source-path ./path/to/site/source/folder
+cloudsite import your-domain.com site-stack-name --region us-east-1 --source-path ./site/source/folder/path
 ```
 
-## Destroy a site
+### Destroy a site
 
+When 
 ```bash
 cloudisite destroy your-domain.com
 ```
