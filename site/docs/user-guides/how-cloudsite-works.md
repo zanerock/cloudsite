@@ -74,7 +74,7 @@ Now, let's take a look at how things go when someone fills out and submits a con
   sources={{ 
     light: '/img/docs/user-guides/how-cloudsite-works/how-the-website-works-form-submit-03.svg', 
     dark: '/img/docs/user-guides/how-cloudsite-works/how-the-website-works-form-submit-dark-03.svg'}} />
-3\. This DB Lambda creates a record of the contact information and message in the form.
+3\. This DB Lambda creates a record of the contact information and message in the database.
 </div>
 
 <div style={{ paddingLeft: '1em', textIndent: '-1em', clear: 'both' }}>
