@@ -1,0 +1,3 @@
+*[id] { /* fix content being covered by fixed menu */
+  scroll-margin-top: calc(var(--ll-navbar-logo-height) + 2 * var(--ifm-navbar-padding-vertical) + 10px);
+}
