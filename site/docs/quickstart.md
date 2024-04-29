@@ -6,7 +6,7 @@ sidebar_position: 2
 
 ## Installation
 
-Cloudsite is a [terminal program](/docs/getting-started/installation#terminal-commands) which requires [Node and NPM  to be installed](/docs/getting-started/installation#checking-and-installing-node-and-npm). (Click on the links for help.)
+Cloudsite is a [terminal program](/docs/getting-started/installation#terminal-commands) which requires [Node and NPM  to be installed](/docs/getting-started/installation#node-and-npm). (Click on the links for help.)
 
 Open a terminal and install using:
 ```bash

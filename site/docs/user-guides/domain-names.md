@@ -114,4 +114,4 @@ Finally, just know that you'll see some difference in pricing for domains from d
 - A domain name should be memorable and ideally, easy to spell.
 - Avoid hyphens, clever spellings, and digit numbers if at all possible.
 
-Once you have a domain name and you've [built your site](/docs/user-guides/website-development), you're ready to [deploy your first website](/docs/getting-started/your-first-site).
+Once you have a domain name and you've [built your site](/docs/category/website-development), you're ready to [deploy your first website](/docs/getting-started/your-first-site).

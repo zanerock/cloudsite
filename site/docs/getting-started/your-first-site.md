@@ -10,7 +10,7 @@ While there are ways to host a website without a domain name, Cloudsite currentl
 
 ## Prepare your site files
 
-Cloudsite hosts primarily _static websites_, with some support for specific dynamic content and actions via plugins. Basically a static site is one defined entirely by a set of files. There are methods to turn dynamic websites, like a WordPress site, into static sites and we cover a number of specific options in the [website development guides](/docs/user-guides/website-development).
+Cloudsite hosts primarily _static websites_, with some support for specific dynamic content and actions via plugins. Basically a static site is one defined entirely by a set of files. There are methods to turn dynamic websites, like a WordPress site, into static sites and we cover a number of specific options in the [website development guides](/docs/category/website-development).
 
 Regardless of the method used to generate the static files, at the end of the day, you end up with a collection of files in a director. We call those files the _source files_. For our example, we'll have a single source file:
 ```html
@@ -97,4 +97,4 @@ You typically won't need this information, but it can be useful if you're reques
 
 ## Summary
 
-That's about it. If you don't have a static website already, we suggest you look at the [website development guides](/docs/user-guides/website-development) and go from there. You can also refer to the [common use cases guide](/docs/user-guides/common-use-cases) for an idea of what kinds of things you can do with the tool.
+That's about it. If you don't have a static website already, we suggest you look at the [website development guides](/docs/category/website-development) and go from there. You can also refer to the [common use cases guide](/docs/user-guides/common-use-cases) for an idea of what kinds of things you can do with the tool.

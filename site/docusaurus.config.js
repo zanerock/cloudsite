@@ -24,7 +24,8 @@ const config = {
   projectName: 'liquid-labs.com', // Usually your repo name.
 
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
+  onBrokenMarkdownLinks: 'throw',
+  onBrokenAnchors: 'warn', // can't use throw because the checker doesn't recognize our '<span id="...">' anchor
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you

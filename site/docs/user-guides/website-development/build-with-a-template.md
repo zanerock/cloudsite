@@ -34,7 +34,7 @@ Because of the large number of (sometimes unorganized) templates, you might also
 
 There are numerous web designers out there. You can search for design professionals/companies through google, or go through a gig site, which generally provide reviews, ratings, and a portfolio for you to consider. Here are some gig work sites to help you get started:
 <div class="flow-list">
-- [99Designs](99designs.com): An Australian site specializing in design services.
+- [99Designs](https://99designs.com): An Australian site specializing in design services.
 - [Guru.com](https://guru.com): A very user friendly site with tons of information available on any prospective freelancer/agency.
 - [Fiverr](https://fiverr.com): One of the most popular gig work sites, this may be the "value" option.
 - [Upwork](https://upwork.com): Another popular gig work site, Upwork lets you search job packages or post your own job and solicit bids.
@@ -48,4 +48,4 @@ While becoming adept at HTML and CSS in general is a tall order, learning some b
 
 ## Get help
 
-If you have questions, need advice, or just looking for solutions regarding your website, we offer [Unlimited Website Consultation](/support#unlimited-website-support) for WordPress, Docusaurus, and custom websites. Leverage our decades of experience, avoid headaches, and skip the hassle of figuring things out on your own. We'll even provide advice and explain concepts; any website design question, feature implementation, or operational issue, we've got your back.
+If you have questions, need advice, or just looking for solutions regarding your website, we offer [Unlimited Website Consultation](/support#unlimited-website-consultation) for WordPress, Docusaurus, and custom websites. Leverage our decades of experience, avoid headaches, and skip the hassle of figuring things out on your own. We'll even provide advice and explain concepts; any website design question, feature implementation, or operational issue, we've got your back.

@@ -95,4 +95,4 @@ Now, let's take a look at how things go when someone fills out and submits a con
 
 ## In closing
 
-Cloudsite is a powerful website management tool. By leveraging AWS infrastructure, Cloudsite is able to offer many benefits including free or greatly reduced hosting costs, security, and speed. Cloudsite can host any static website, and we support [WordPress based](./website-development/build-with-wordpress), [Docusaurus based](./website-development/build-with-docusaurus), and [template based](./website-development/build-with-templates) websites.
+Cloudsite is a powerful website management tool. By leveraging AWS infrastructure, Cloudsite is able to offer many benefits including free or greatly reduced hosting costs, security, and speed. Cloudsite can host any static website, and we support [WordPress based](./website-development/build-with-wordpress), [Docusaurus based](./website-development/build-with-docusaurus), and [template based](./website-development/build-with-a-template) websites.

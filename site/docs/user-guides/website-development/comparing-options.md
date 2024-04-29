@@ -54,4 +54,4 @@ There are a number of special purpose wiki CMSs. [MediaWiki](https://www.mediawi
 
 ## Get help
 
-Whichever option you choose, you can always combine it with our [[affordable, comprehensive website support plan](/support/website-support)]. We can answer questions, provide resources, and often simply provide working code.
+Whichever option you choose, you can always combine it with our [[affordable, comprehensive website support plan](/support#unlimited-website-consultation)]. We can answer questions, provide resources, and often simply provide working code.
