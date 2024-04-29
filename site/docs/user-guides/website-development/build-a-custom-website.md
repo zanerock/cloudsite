@@ -48,4 +48,4 @@ While becoming adept at HTML and CSS in general is a tall order, learning some b
 
 ## Get help
 
-If you have questions, need advice, or just looking for solutions regarding your website, we offer [Unlimited Website Support](/support#unlimited-website-support) for WordPress, Docusaurus, and custom websites. Leverage our decades of experience, avoid headaches, and skip the hassle of figuring things out on your own. We'll even provide advice and explain concepts; any website design question, feature implementation, or operational issue, we've got your back.
+If you have questions, need advice, or just looking for solutions regarding your website, we offer [Unlimited Website Consultation](/support#unlimited-website-support) for WordPress, Docusaurus, and custom websites. Leverage our decades of experience, avoid headaches, and skip the hassle of figuring things out on your own. We'll even provide advice and explain concepts; any website design question, feature implementation, or operational issue, we've got your back.

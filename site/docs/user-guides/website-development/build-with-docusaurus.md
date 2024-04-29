@@ -218,4 +218,4 @@ Docusaurus is simple to setup and you can easily create documentation, blogs, ma
 
 ## Get help
 
-And if you need help with anything, our consider subscribing to [Unlimited Website Support]. Leverage our decades of experience, avoid headaches, and skip the hassle of figuring things out on your own. We'll even provide advice and explain concepts; any website design question, feature implementation, or operational issue you might have, we've got your back.
+And if you need help with anything, our consider subscribing to [Unlimited Website Consultation]. Leverage our decades of experience, avoid headaches, and skip the hassle of figuring things out on your own. We'll even provide advice and explain concepts; any website design question, feature implementation, or operational issue you might have, we've got your back.
