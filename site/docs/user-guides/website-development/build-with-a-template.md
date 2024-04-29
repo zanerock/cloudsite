@@ -1,8 +1,8 @@
 ---
 sidebar_position: 4
-description: A rundown on manually building websites.
+description: A rundown on building a template based website.
 ---
-# Build a Custom Site
+# Build with a Template
 
 With the availability of templates and tomes of reference material, building a custom or semi-custom website is actually within reach and may be the best option for putting together a small marketing or other simple website. In this article, we'll over some methods you can use to get exactly what you want without too much cost or effort.
 

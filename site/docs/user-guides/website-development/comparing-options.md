@@ -6,17 +6,17 @@ description: An overview of the site building options.
 
 ## Overview
 
-### [Docusaurus](/docs/user-guides/website-development/build-with-docusaurus)
+### [Docusaurus](./build-with-docusaurus)
 
 Docusaurus is relatively simple to get started with and great for creating blogs, wikis, and knowledge-bases. The interface is essentially file based; you add content by writing Markdown files. The Markdown syntax itself is simple and easy to learn.
 
-Docusaurus look and feel is highly customizable, but it's best if one has some knowledge of HTML+CSS if you need to go beyond basic logo + brand colors and font (see the [manage look and feel section](/docs/user-guides/website-development/build-with-docusaurus#manage-look-and-feel) in the [Build with Docusaurus](/docs/user-guides/website-development/build-with-docusaurus) document for details). 
+Docusaurus look and feel is highly customizable, but it's best if one has some knowledge of HTML+CSS if you need to go beyond basic logo + brand colors and font (see the [manage look and feel section](./build-with-docusaurus#manage-look-and-feel) in the [Build with Docusaurus](./build-with-docusaurus) document for details). 
 
 While it has support for 'themes' these more like plugins rather than "look and feel" themes and styling Docusaurus is similar to styling a manually built site except that you're starting out with a well thought out and relatively adaptable styling framework.
 
 It's built to support and plugins, but [resources are very limited](https://github.com/webbertakken/awesome-docusaurus).
 
-### [WordPress](/docs/user-guides/website-development/build-with-wordpress)
+### [WordPress](./build-with-wordpress)
 
 WordPress can be a pain to set up, but if you want or need a graphical interface that's [supported by cloudsite](/support), then this is the solution for you. WordPress has a wealth of look and feel themes and feature plugins and can be customized with no HTML+CSS knowledge.
 
@@ -28,9 +28,9 @@ WP also has a wealth of feature plugins. One has to think about what will work w
 
 Like WordPress, other CMSs such as [Joomla](https://www.joomla.org/), [Drupal](https://www.drupal.org/), and [Textpattern](https://textpattern.com/) provide static site generator plugins or methods. All such options provide a graphical interface and generally have a rich theme and plugin ecosystems. They will vary in complexity and features to some extent, but most any could be used with cloudsite.
 
-### [Build a (semi-)custom site](/docs/user-guides/website-development/build-a-custome-site)
+### [Build with a template](./build-with-a-template)
 
-Finally, there's the option to work with HTML+CSS files directly. While this can seem daunting, there are numerous [template resources](/docs/user-guides/website-development/build-a-custome-site#start-with-a-template) which can do 95% of the work for you. If you want something truly custom, you can [hire a designer](/docs/user-guides/website-development/build-a-custome-site#hire-a-web-designer) or [learn HTML+CSS](/docs/user-guides/website-development/build-a-custome-site#learn-a-little-htmlcss).
+Finally, there's the option to work with HTML+CSS files directly. While this can seem daunting, there are numerous [template resources](./build-with-a-template#start-with-a-template) which can do 95% of the work for you. If you want something truly custom, you can [hire a designer](./build-with-a-template#hire-a-web-designer) or [learn HTML+CSS](./build-with-a-template#learn-a-little-htmlcss).
 
 ## By task/feature
 
