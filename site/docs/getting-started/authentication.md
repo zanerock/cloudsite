@@ -12,7 +12,7 @@ The time limited SSO credentials are only valid for a set period of time (4 hour
 
 ## Sign up for an AWS root account
 
-Amazon Web Services (AWS) is a multi-user environment, so when you sign up you're not just signing up for yourself, but your creating the "root" account. From this root account you could add multiple users, each with different permissions and roles within your organization.
+Amazon Web Services (AWS) is a multi-user environment, so when you sign up you're creating the "root" account. If you ever need to, you could add additional users, each with different permissions and roles.
 
 ### Create a dedicated email address (optional)
 
@@ -32,13 +32,13 @@ If you are using Cloudsite for your own websites, it's fine to use your personal
 
 ## Initial authentication with access keys
 
-As [discussed up top](#top), we start by creating access keys. Access keys are easier to setup than SSO authentication, but because they grant permanent access to your account, they are less secure. So we use them for the initial setup, and then Cloudsite will delete them once [single sign-on authentication](#single-sign-on-authentication) is set up.
+As [discussed up top](#top), we start by creating access keys. Access keys are easier to setup than SSO authentication, but because they grant permanent access to your account, they are less secure. So we use access keys for the initial setup, and then Cloudsite will delete them once [single sign-on authentication](#single-sign-on-authentication) is set up.
 
 1. Follow the instructions to [Install or update to the latest version of the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
 2. Log into AWS as the root user or, if you have one, a super-admin account.
 3. Click on the account name in the upper right-hand corner and select 'Security credentials'.
 4. Under the 'Access keys' section, select 'Create access key'. Acknowledge and click 'Next' if you get a warning.
-5. Execute:
+5. [From a terminal](./installation#terminal-commands), execute:
    ```
    aws configure
    ```
@@ -46,7 +46,7 @@ As [discussed up top](#top), we start by creating access keys. Access keys are e
 
 ## Single sign-on authentication
 
-The single sign-on (SSO) authentication creates a sub-account (of sorts) which is associated with the root account, but doesn't use it directly. Cloudsite sets up the permissions on the SSO account to limit access to strictly necessary functions. Unlike with access keys, SSO authentication is also time limited. This limited access and time limited authentication make the SSO account far more secure.
+The single sign-on (SSO) setup process creates a new account with limited permissions specifically for Cloudsite to use. Unlike with access keys, SSO authentication is time limited. The limited access and time limited authentication make the SSO account far more secure.
 
 ### Basic setup
 

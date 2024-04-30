@@ -6,7 +6,9 @@ description: A quick example of launching a site.
 
 ## Register your domain name
 
-While there are ways to host a website without a domain name, Cloudsite currently does require a domain name. If you don't have a domain name already, you'll first need to register a domain name. Refer to our [domain name selection guide](/docs/user-guides/domain-name-selection) for ideas on finding a good name. If you register the domain with AWS Route 53, then that should be all you need to do as far as the domain name goes.
+While there are ways to host a website without a domain name, Cloudsite currently does require a domain name. The site will hosted under the apex domain and the 'www' sub-domain.
+
+If you don't have a domain name already, you'll first need to register a domain name. Refer to our [domain name selection guide](/docs/user-guides/domain-name-selection) for ideas on finding a good name. If you register the domain with AWS Route 53, then that should be all you need to do as far as the domain name goes.
 
 If you already have a domain name, then refer to our [domain name configuration guide](/docs/user-guides/domain-name-management) on how to either [transfer a domain to Route 53](/docs/user-guides/domain-name-management#transfer-a-domain-to-route-53) or how to [configure 3rd party registered domains](/docs/user-guides/domain-name-management#configure-3rd-party-registered-domains).
 
@@ -14,7 +16,7 @@ If you already have a domain name, then refer to our [domain name configuration 
 
 Cloudsite hosts primarily [_static websites_](/docs/user-guides/static-websites), with some support for specific dynamic content and actions via plugins. Basically a static site is one defined entirely by a set of files. There are methods to turn dynamic websites, like a WordPress site, into static sites and we cover a number of specific options in the [website development guides](/docs/category/website-development).
 
-Regardless of the method used to generate the static files, at the end of the day, you end up with a collection of files in a director. We call those files the _source files_. For our example, we'll have a single source file:
+Regardless of the method used to generate the static files, at the end of the day, you end up with a collection of files in a director. We call those files the _source files_ which are all collected and stored in a single _source folder_. For our example, we'll have a single source file:
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -28,7 +30,7 @@ Regardless of the method used to generate the static files, at the end of the da
 </html>
 ```
 
-We'll save this file in a file called `index.html` in a folder `website` just under the home folder. So, that looks like:
+We'll save this file in a file called `index.html` in a folder `website` just under the home folder. This is our source folder and it looks like:
 ```
 - $HOME
   | 
@@ -50,6 +52,8 @@ cloudsite create your-domain.com --source-path ~/website
 ```
 
 Where `--source-path` takes the path to your source folder. The path may be relative or absolute.
+
+The first time you launch a particular domain, you might get an error about validating the SSL certificate. If you read through the error information, you'll see a web address where you can verify the SSL certificate. Navigate to this address, then find and click the 'Create records in Route 53' button. After giving it a little time, just re-run the `cloudsite create` command.
 
 ## Updating your site
 
