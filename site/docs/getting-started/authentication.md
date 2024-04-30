@@ -32,7 +32,7 @@ If you are using Cloudsite for your own websites, it's fine to use your personal
 
 ## Initial authentication with access keys
 
-As [discussed up top](#top), we start by creating access keys. Access keys are easier to setup than SSO authentication, but because they grant permanent access to your account, they are less secure. So we use them for the initial setup, and then Cloudsite will delete them once [single sign-on authentication](#setup-single-sign-on-authentication) is set up.
+As [discussed up top](#authentication), we start by creating access keys. Access keys are easier to setup than SSO authentication, but because they grant permanent access to your account, they are less secure. So we use them for the initial setup, and then Cloudsite will delete them once [single sign-on authentication](#setup-single-sign-on-authentication) is set up.
 
 1. Follow the instructions to [Install or update to the latest version of the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
 2. Log into AWS as the root user or, if you have one, a super-admin account.
