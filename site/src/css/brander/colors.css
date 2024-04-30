@@ -56,6 +56,7 @@
   --ifm-heading-color: var(--ifm-color-primary);
 
   --ifm-color-primary-contrast-foreground: var(--ifm-color-primary);
+  --ifm-color-primary-contrast-background: var(--ifm-background-color);
 
   --ifm-hero-background-color: var(--ifm-background-color);
 
