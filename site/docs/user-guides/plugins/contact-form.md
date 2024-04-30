@@ -64,7 +64,7 @@ List each field name as the key in the object with a value of either 'S', for si
 
 If you're [building a site with Docusaurus](/docs/user-guides/website-development/build-with-docusaurus) provide a template for a rich contact form with validation and slick effects. You can see an example of the form in use at [the Liquid Labs contact page](https://liquid-labs.com/contact). To use the template, you would simply add a contact page and include the `ContactForm` component as a React component.
 
-- [`ContactForm` definition](/code/contact-form-template/index.js)
+- [`ContactForm` definition](/code/contact-form-template/index.js.txt) (save as '.js' or '.jsx')
 - [style module](/code/contact-form-template/styles.module.css)
 
 ### Template/custom site configuration

@@ -14,7 +14,9 @@ The use cases enumerated here assume:
     aws sso login --profile cloudsite-manager
     ```
 - You have the static website source files in some directory. We use `./site/source/folder/path` in our examples, but you would of course change this to the actual path.
-- You have a domain name registered and are using Route 53 for domain name resolution. We use 'your-domain.com' in the examples, but you would of course change this to your actual domain name. Refer to [managing DNS with Route 53](./domain-names#managing-dns-with-route-53) for additional information.
+- You have a domain name registered and are using Route 53 for domain name resolution. We use 'your-domain.com' in the examples, but you would of course change this to your actual domain name.[^1]
+
+[^1]: If you've registered your domain with Route 53, and/or you've [set up DNS on Route 53](/docs/user-guides/domain-name-management) you should be good to go.
 
 ## Use Cases
 

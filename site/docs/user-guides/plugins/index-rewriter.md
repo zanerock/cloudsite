@@ -6,7 +6,7 @@ description: Generates detailed CloudFront access logs.
 
 This plugin is used where the site structure/links expect directory URLs to resolve to `index.html` files. I.e., the default infrastructure does not implement the 'service index files for directory requests' convention. This plugin rewrites bare directory requests to point the request at the `index.html` file. E.g., a request for `/dir` becomes `/dir/index.html`.
 
-This plugin is included by default for vanilla (non-Docusaurus) sites. In particular, a [statically generated WordPress based site](/docs/user-guides/web-development/build-with-wordpress) would require this plugin for proper operation.
+This plugin is included by default for vanilla (non-Docusaurus) sites. In particular, a [statically generated WordPress based site](/docs/user-guides/website-development/build-with-wordpress) would require this plugin for proper operation.
 
 ## Known limitations
 
@@ -14,9 +14,9 @@ The plugin does not currently support any sort of mapping and does not support n
 
 ## Compatibility
 
-This plugin is generally compatible with [WordPress](/docs/user-guides/web-development/build-with-wordpress) and [template based]((/docs/user-guides/web-development/build-with-a-template) sites which are usually constructed expecting that `/dir` will resolve to `/dir/index.html`.
+This plugin is generally compatible with [WordPress](/docs/user-guides/website-development/build-with-wordpress) and [template based]((/docs/user-guides/website-development/build-with-a-template) sites which are usually constructed expecting that `/dir` will resolve to `/dir/index.html`.
 
-This plugin is incompatible with [Docusaurus based]((/docs/user-guides/web-development/build-with-docusaurus) sites.
+This plugin is incompatible with [Docusaurus based]((/docs/user-guides/website-development/build-with-docusaurus) sites.
 
 ## Configuration
 

@@ -8,7 +8,7 @@ description: A quick example of launching a site.
 
 While there are ways to host a website without a domain name, Cloudsite currently does require a domain name. If you don't have a domain name already, you'll first need to register a domain name. Refer to our [domain name selection guide](/docs/user-guides/domain-name-selection) for ideas on finding a good name. If you register the domain with AWS Route 53, then that should be all you need to do as far as the domain name goes.
 
-If you already have a domain name, then refer to our [domain name configuration guide](/docs/user-guides/domain-name-configuration) on how to either [transfer a domain to Route 53](/docs/user-guides/domain-name-configuration#transfer-a-domain-to-route-53) or how to [configure 3rd party registered domains](/docs/user-guides/domain-name-configuration#configure-3rd-party-registered-domains).
+If you already have a domain name, then refer to our [domain name configuration guide](/docs/user-guides/domain-name-management) on how to either [transfer a domain to Route 53](/docs/user-guides/domain-name-management#transfer-a-domain-to-route-53) or how to [configure 3rd party registered domains](/docs/user-guides/domain-name-management#configure-3rd-party-registered-domains).
 
 ## Prepare your site files
 

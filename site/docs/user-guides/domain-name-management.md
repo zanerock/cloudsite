@@ -96,7 +96,7 @@ Instructions for popular providers are below:
 
 To create the record, go to the [Route 53 console](https://console.aws.amazon.com/route53/) and select 'Hosted zones' -> &lt;domain name&gt; and select and edit the existing MX record or create a new record.
 
-## Transfer a domain to Route 
+## Transfer a domain to Route 53
 
 While we don't have specific instructions for different registrars, the transfer process is always more or less the same. 
 
