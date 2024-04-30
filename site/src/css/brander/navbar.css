@@ -23,6 +23,22 @@
   text-decoration: underline;
 }
 
+.navbar__items--right .navbar__item {
+  padding-left: 0;
+}
+
+.header-github-link {
+  display: flex;
+  height: 40px;
+  width: 40px;
+  background-image: url(/img/github-mark.svg);
+  transition: background-image var(--ifm-transition-fast) var(--ifm-transition-timing-default);
+}
+
+.header-github-link:hover {
+  background-image: url(/img/github-mark-hover.svg);
+}
+
 @media screen and (max-width: 996px) {
   .navbar {
     padding: var(--ifm-navbar-padding-vertical) var(--ifm-spacing-horizontal);

@@ -102,6 +102,12 @@ const config = {
             value: '<a href="/support" class="button buttom--sm">Comprehensive Support</a>',
             position: 'right',
           },
+          {
+            href: 'https://github.com/liquid-labs/cloudsite',
+            position: 'right',
+            className: 'header-github-link',
+            'aria-label': 'GitHub repository',
+          },
         ],
       },
       footer: {
