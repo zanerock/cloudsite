@@ -57,7 +57,7 @@ Such as after the release of a new version of Cloudsite or after changing config
 ```bash
 cloudsite update your-domain.com --do-stack
 ```
-Note, some updates will require the site be [destroyed](#destroy-a-site) and re-[created](#create-deploy-a-new-site)
+Note, some updates will require the site be [destroyed](#destroy-a-site) and re-[created](#createdeploy-a-new-site)
 
 ### List sites managed by Cloudsite
 

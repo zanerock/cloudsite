@@ -8,7 +8,7 @@ The contact form plugin adds support for dynamically form submission. This is pr
 
 ## Compatibility
 
-This plugin is generally compatible with any website and all plugins. We provide a template for a contact form embedded in a [Docusaurus](#docusaurus-site-configuration) based website and instructions for use with a [WordPress](#wordpress-site-configuration) and [template based](#template-site-configuration). 
+This plugin is generally compatible with any website and all plugins. We provide a template for a contact form embedded in a [Docusaurus](#docusaurus-site-configuration) based website and instructions for use with a [WordPress](#wordpress-site-configuration) and [template based](#templatecustom-site-configuration). 
 
 ## Configuration
 
