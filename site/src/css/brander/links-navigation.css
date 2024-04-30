@@ -1,0 +1,50 @@
+a.table-of-contents__link,
+a.menu__link,
+a.pagination-nav__link,
+a.table-of-contents__link:not(.table-of-contents__link--active),
+.navbar__item:not(.navbar__link--active),
+.navbar__item > .navbar__link:not(.navbar__link--active),
+.dropdown__menu .dropdown__link:not(.dropdown__link--active),
+a.breadcrumbs__link,
+[class*="sidebarItem"] [class*="sidebarItemLink"] { /* for the blog list */
+  color: var(--ll-nav-color);
+  text-decoration: var(--ll-nav-text-decoration);
+}
+
+a.table-of-contents__link:hover,
+a.menu__link:hover,
+a.pagination-nav__link:hover,
+.menu__list-item-collapsible:hover,
+.menu__link:hover,
+.navbar__item:hover, 
+.navbar__item:hover a.navbar__link, 
+.dropdown__menu .dropdown__link:hover,
+a.breadcrumbs__link:any-link:hover, /* a and 'any-link' necessary for precedence */
+[class*="sidebarItem"] [class*="sidebarItemLink"]:hover {
+  color: var(--ll-nav-color-hover);
+  text-decoration: var(--ll-nav-text-decoration-hover);
+}
+
+
+a.table-of-contents__link--active,
+a.table-of-contents__link--active code,
+a.menu__link--active,
+.menu__list-item-collapsible--active,
+.navbar__link--active[href], 
+.dropdown__menu .dropdown__link--active, 
+.navbar__item:has(.dropdown__link--active) .navbar__link,
+a.breadcrumbs__link--active,
+[class*="sidebarItem"] [class*="sidebarItemLinkActive"] {
+  /* there's an !important in the blog style module we have to overcome */
+  color: var(--ll-nav-color-active) !important;
+  text-decoration: var(--ll-nav-text-decoration-active);
+}
+
+button[class*=toggleButton] {
+  color: var(--ll-nav-color);
+}
+
+button[class*=toggleButton]:hover {
+  color: var(--ll-nav-color-hover);
+  background: inherit;
+}

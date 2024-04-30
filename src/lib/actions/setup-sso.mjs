@@ -271,8 +271,9 @@ const setupPermissionSet = async ({ instanceARN, policyARN, policyName, ssoAdmin
     progressLogger.write(' CREATING...')
 
     const createPermissionSetCommand = new CreatePermissionSetCommand({
-      Name        : policyName,
-      InstanceArn : instanceARN
+      Name            : policyName,
+      InstanceArn     : instanceARN,
+      SessionDuration : 'PT4H'
     })
     try {
       permissionSetARN = (await ssoAdminClient.send(createPermissionSetCommand)).PermissionSet.PermissionSetArn

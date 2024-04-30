@@ -1,0 +1,80 @@
+:root {
+  --ifm-color-primary: hsl(
+    var(--ll-color-primary-hue), 
+    var(--ll-color-primary-saturation), 
+    var(--ll-color-primary-lightness)
+  ); 
+
+  --ll-color-primary-darkest-lightness: calc(var(--ll-color-primary-lightness) * .55);
+  --ifm-color-primary-darkest: hsl(
+    var(--ll-color-primary-hue), 
+    var(--ll-color-primary-saturation), 
+    var(--ll-color-primary-darkest-lightness)
+  );
+  --ll-color-primary-darker-lightness: calc(var(--ll-color-primary-lightness) * .7);
+  --ifm-color-primary-darker: hsl(
+    var(--ll-color-primary-hue), 
+    var(--ll-color-primary-saturation), 
+    var(--ll-color-primary-darker-lightness)
+  ); 
+  --ll-color-primary-dark-lightness: calc(var(--ll-color-primary-lightness) * .85);
+  --ifm-color-primary-dark: hsl(
+    var(--ll-color-primary-hue), 
+    var(--ll-color-primary-saturation), 
+    var(--ll-color-primary-dark-lightness)
+  ); 
+  --ll-color-primary-light-lightness: calc(var(--ll-color-primary-lightness) / .775);
+  --ifm-color-primary-light: hsl(
+    var(--ll-color-primary-hue), 
+    var(--ll-color-primary-saturation), 
+    var(--ll-color-primary-light-lightness)
+  );
+  --ll-color-primary-lighter-lightness: calc(var(--ll-color-primary-lightness) / .55);
+  --ifm-color-primary-lighter: hsl(
+    var(--ll-color-primary-hue), 
+    var(--ll-color-primary-saturation), 
+    var(--ll-color-primary-lighter-lightness)
+  );
+  --ll-color-primary-lightest-lightness: calc(var(--ll-color-primary-lightness) / .325);
+  --ifm-color-primary-lightest: hsl(
+    var(--ll-color-primary-hue), 
+    var(--ll-color-primary-saturation), 
+    var(--ll-color-primary-lightest-lightness)
+  );
+  
+  --ifm-background-color: hsl(
+    var(--ll-background-color-hue),
+    var(--ll-background-color-saturation),
+    var(--ll-background-color-lightness)
+  );
+
+  /* based on 'CONTENT_COLOR' can be 'primary', 'primary dark/er/est', 'black', or a custom color */
+  --ifm-color-content: var(--ifm-color-primary);
+  /* based on 'HERO_COLOR' can be 'primary', any of 'primary' or 'secondary' lightest-darkest, or a custom color */
+  --ifm-hero-text-color: var(--ifm-color-primary);
+  /* based on 'HEADING_COLOR' can be 'primary', any of 'primary' or 'secondary' lightest-darkest, or a custom color */
+  --ifm-heading-color: var(--ifm-color-primary);
+
+  --ifm-color-primary-contrast-foreground: var(--ifm-color-primary);
+  --ifm-color-primary-contrast-background: var(--ifm-background-color);
+
+  --ifm-hero-background-color: var(--ifm-background-color);
+
+  --ifm-footer-background-color: var(--ifm-color-primary);
+  --ifm-footer-color: var(--ifm-color-primary-contrast-background);
+
+  --ifm-blockquote-color: var(--ifm-color-primary);
+  --ifm-blockquote-border-color: var(--ifm-color-primary);
+}
+
+/* not sure why this is broken, but let's fix invisible headers */
+.reverse-colors h1, .reverse-colors h2, .reverse-colors h3, .reverse-colors h4, .reverse-colors h5, .reverse-colors h6 {
+  color: inherit;
+}
+
+.reverse-colors {
+  --ifm-color-primary-contrast-background: var(--ifm-background-color);
+
+  --ifm-blockquote-color: var(--ifm-background-color);
+  --ifm-blockquote-border-color: var(--ifm-background-color);
+}

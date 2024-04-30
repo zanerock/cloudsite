@@ -19,7 +19,7 @@ const config = {
   description : 'Enables contact form processing. Specifically, enters form data and optionally sends an email notification.',
   options     : {
     emailFrom : {
-      description    : "The 'from' email.",
+      description    : 'This is the email which will appear as the sender. This address must be configured with SES.',
       required       : true,
       matches        : emailRE,
       invalidMessage : 'Must be a valid email.'
@@ -30,7 +30,7 @@ const config = {
       invalidMessage : 'Must be a valid email.'
     },
     formFields : {
-      description : "Specification of fields to process in from the contact form. For new forms, or where it works, we recommend setting the value to 'standard' and selecting the the desired fields from the standard set.",
+      description : "May be either a JSON specification of fields to process in from the contact form or the string 'standard'. Unless you are adapting an existing form, setting the value to 'standard' should be sufficient in most cases.",
       default     : 'standard',
       validation  : (value) => {
         if (value.match(/\s*standard\s*/i)) {

@@ -1,0 +1,15 @@
+:root {
+  --ifm-transition-fast: 0.25s;
+  --ifm-transition-timing-default: linear;
+}
+
+* { 
+  transition: background-color var(--ifm-transition-fast) var(--ifm-transition-timing-default);
+}
+
+a, p, button {
+  transition: color var(--ifm-transition-fast) var(--ifm-transition-timing-default),
+    background-color var(--ifm-transition-fast) var(--ifm-transition-timing-default),
+    border-color var(--ifm-transition-fast) var(--ifm-transition-timing-default)
+    !important;
+}

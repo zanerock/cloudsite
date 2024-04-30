@@ -1,0 +1,5 @@
+.reverse-colors {
+  color: var(--ifm-color-primary-contrast-background);
+  background-color: var(--ifm-color-primary);
+}
+

@@ -1,7 +1,6 @@
 import * as fs from 'node:fs/promises'
 
 import commandLineArgs from 'command-line-args'
-import { commandLineDocumentation } from 'command-line-documentation'
 import { commandLineHelp } from 'command-line-help'
 import isEqual from 'lodash/isEqual'
 
@@ -14,6 +13,7 @@ import { handleConfiguration } from './lib/handle-configuration'
 import { handleCreate } from './lib/handle-create'
 import { handleDestroy } from './lib/handle-destroy'
 import { handleDetail } from './lib/handle-detail'
+import { handleDocument } from './lib/handle-document'
 import { handleGetIAMPolicy } from './lib/handle-get-iam-policy'
 import { handleList } from './lib/handle-list'
 import { handleImport } from './lib/handle-import'
@@ -71,10 +71,9 @@ const cloudsite = async () => {
 
   const origDB = structuredClone(db)
 
-  let data
   let exitCode = 0
-  let userMessage
-  let success
+  let data, userMessage, success
+  let noWrap = false // i.e., wrap by default
   try {
     switch (command) {
       case 'cleanup':
@@ -88,15 +87,14 @@ const cloudsite = async () => {
       case 'detail':
         ({ data, success } = await handleDetail({ argv, db })); break
       case 'document':
-        console.log(commandLineDocumentation(cliSpec, { sectionDepth : 2, title : 'Command reference' }))
-        success = true
-        userMessage = 'Documentation generated.'
+        ({ data, success } = handleDocument({ argv, db }))
+        noWrap = true
         break
       case 'get-iam-policy':
         await handleGetIAMPolicy({ argv, db })
         return // get-iam-policy is handles it's own output as the IAM policy is always in JSON format
       case 'list':
-        ({ data, success } = await handleList({ argv, db })); break
+        ({ data, noWrap, success } = await handleList({ argv, db })); break
       case 'import':
         ({ success, userMessage } = await handleImport({ argv, db })); break
       case 'plugin-settings':
@@ -147,7 +145,7 @@ const cloudsite = async () => {
     progressLogger.write(actionStatus, '')
   } else { // then it's a 'human' format
     if (data !== undefined) {
-      progressLogger.write(data, '')
+      progressLogger.write(data, '', { width : noWrap === true ? -1 : undefined })
     }
 
     if (userMessage !== undefined) {

@@ -37,6 +37,6 @@ const stackConfig = async ({ siteTemplate, pluginData }) => {
   }
 }
 
-const cloudfrontLogs = { config, importHandler, preStackDestroyHandler, stackConfig }
+const cloudFrontLogs = { config, importHandler, preStackDestroyHandler, stackConfig }
 
-export { cloudfrontLogs }
+export { cloudFrontLogs }

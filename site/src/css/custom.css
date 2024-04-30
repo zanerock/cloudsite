@@ -1,0 +1,113 @@
+/**
+ * Any CSS included here will be global.
+ */
+
+@import url("./brander/settings.css");
+@import url("./brander/colors.css");
+@import url("./brander/reverse-colors.css");
+@import url("./brander/links-content.css");
+@import url("./brander/links-navigation.css"); /* must come after links-content for proper precedence */
+@import url("./brander/navbar.css");
+@import url("./brander/buttons.css");
+@import url("./brander/alerts.css");
+@import url('./brander/cards.css');
+@import url("./brander/transitions.css");
+@import url("./brander/scroll-fix.css");
+
+@import url("./modal.global.css");
+
+/* You can override the default Infima variables here. */
+:root {
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+
+  /* strink the padding arround code blocks a little bit */
+  --ifm-pre-padding: 4px;
+}
+
+main {
+  margin-bottom: var(--ifm-spacing-vertical);
+}
+
+.navbar__logo img:hover {
+  /* can't really animate because the hue rotates through green, which is weird */
+  filter: hue-rotate(-205deg) saturate(67%) brightness(2);
+}
+
+[data-theme='dark'] .navbar__logo img:hover {
+  filter: hue-rotate(-71deg) saturate(100%) brightness(1);
+}
+
+.footer__link-item {
+  color: inherit;
+}
+
+.footer__link-item:hover {
+  color: var(--ifm-color-content-secondary);
+}
+
+dt {
+  font-weight: bold;
+}
+
+h1 {
+  width: 100%;
+  border-bottom: 2px solid var(--ifm-color-content-secondary);
+}
+
+p[class*="cardDescription"] {
+  font-size: inherit;
+}
+
+.markdown li > p { /* limit list spacing to --ifm-list-item-margin */
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+li .theme-code-block {
+  margin-bottom: 0; /* kill the big code block margin (default is pp spacing) */
+}
+
+pre + div button { /* make the copy buttons visible */
+  opacity: 25% !important;
+}
+
+a.table-of-contents__link {
+  font-weight: bold;
+}
+
+div.sub-title {  
+  font-weight: bold;
+}
+
+div.sub-title > p {
+  margin-bottom: var(--ifm-heading-margin-bottom);
+}
+
+p + div.flow-list, div:has(> p) + div.flow-list {
+  margin-top: calc(-1 * var(--ifm-paragraph-margin-bottom) + 0.25rem);
+}
+
+/* not sure why, but the bottom margin of lists and bottom margin of paragraphs is different (at least in Desktop mode); let's correct that */
+:root {
+  --ifm-list-margin: var(--ifm-paragraph-margin-bottom);
+  --ifm-heading-margin-bottom: 0.35rem;
+  --ifm-font-size-base: 115%;
+}
+
+.markdown :is(h2, h3, h4, h5, h6) {
+  margin-bottom: 0.25rem;
+}
+
+a.table-of-contents__link {
+  line-height: 1.15rem;
+}
+
+.light-shadow-box {
+  margin: 0 20px 10px 0;
+  box-shadow: 3px 3px 5px #000000;
+}
+
+html[data-theme='dark'] .light-shadow-box {
+  box-shadow: unset;
+}

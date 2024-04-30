@@ -1,0 +1,8 @@
+a.card[class*="cardContainer"] {
+  box-shadow: unset; /* we have a flat style */
+  border-color: var(--ifm-color-emphasis-300); /* match the 'next'/'previous' controls */
+}
+
+a.card[class*="cardContainer"]:hover {
+  border-color: var(--ifm-color-primary); /* match the 'next'/'previous' controls */
+}

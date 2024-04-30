@@ -1,0 +1,60 @@
+.buttons_spaced {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  padding-top: 1rem;
+}
+
+.buttons_spaced .button {
+  min-width: 20%;
+  width: max-content;
+}
+
+.button, .button.button--secondary, a.button, a.button.button--secondary {
+  color: var(--ifm-color-primary-contrast-background);
+  background-color: var(--ifm-color-primary);
+  /* we set the border so that when we do the 'active', the UI doesn't 'jump' because the button changes dimensions */
+  border: 1px solid var(--ifm-color-primary);
+}
+
+.button:hover, a.button:hover, a.button.button--secondary:hover {
+  color: var(--ifm-color-primary-contrast-background);
+  background-color: var(--ifm-color-content-secondary);
+  border: 1px solid var(--ifm-color-content-secondary);
+}
+
+.button:active, a.button:active, a.button.button--secondary:active {
+  color: var(--ifm-color-content-secondary);
+  background-color: var(--ifm-color-primary-contrast-background);
+  border: 1px solid var(--ifm-color-content-secondary);
+}
+
+.button, a.button, a.button:hover, a.button:active {
+  text-decoration: none;
+}
+
+.button p, a.button p {
+  margin: 0;
+}
+
+.reverse-colors .button,
+.reverse-colors .button.button--secondary,
+.reverse-colors a.button,
+.reverse-colors a.button.button--secondary {
+  color: var(--ifm-color-primary);
+  background-color: var(--ifm-color-primary-contrast-background);
+  /* we set the border so that when we do the 'active', the UI doesn't 'jump' because the button changes dimensions */
+  border: 1px solid var(--ifm-color-primary-contrast-background);
+}
+
+.reverse-colors .button:hover, .reverse-colors a.button:hover, .reverse-colors a.button.button--secondary:hover {
+  color: var(--ifm-color-primary-contrast-background);
+  background-color: var(--ifm-color-content-secondary);
+  border: 1px solid var(--ifm-color-content-secondary);
+}
+
+.button:active, a.button:active, a.button.button--secondary:active {
+  color: var(--ifm-color-content-secondary);
+  background-color: var(--ifm-color-primary-contrast-background);
+  border: 1px solid var(--ifm-color-content-secondary);
+}

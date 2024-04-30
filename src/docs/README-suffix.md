@@ -8,4 +8,4 @@ Plase feel free to submit any [bug reports or feature suggestions](https://githu
 
 ## Support and feature requests
 
-The best way to get free support is to [submit a ticket](https://github.com/liquid-labs/cloudsite/issues). You can also become a patron for as little as $1/month and get priority support and request new feature on [all Liquid Labs open source software](https://github.com/liquid-labs). You can get these benefits and [support our work at patreon.com/zanecodes](https://www.patreon.com/zanecodes).
+The best way to get free support is to [submit a ticket](https://github.com/liquid-labs/cloudsite/issues). You can also become a patron for as little as $1/month and get priority support and request new feature on [all Liquid Labs open source software](https://github.com/liquid-labs). You can get these benefits and [support our work at patreon.com/liquidlabs](https://www.patreon.com/liquidlabs).

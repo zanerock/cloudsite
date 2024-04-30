@@ -10,7 +10,7 @@
   - Command procesing is handled by a series of hierarchial handlers.
   - At the top level, [`cloudsite.mjs`](./src/cli/cloudsite.mjs) processes top level options (like '--quiet') and then passes control to a "handler" function for further processing.
   - Each handler function then processes command/command group specific options.
-  - Control is then passed either to one of the cloudsite action handlers (defined in _lib_), or when the command group 'configurations' is specified, passes control to a third layer _cli_ handler for processing of the subcommand.
+  - Control is then passed either to one of the Cloudsite action handlers (defined in _lib_), or when the command group 'configurations' is specified, passes control to a third layer _cli_ handler for processing of the subcommand.
   - The 'configuration' subcommand handlers process the final subcommand options and then directly implement the commands. The thinking here being that 'configuration' is a concept in the _cli_ itself whereas the _lib_ actions deal exclusively with managing the site infrastructure and content.
 - For non-configuration commands, the _cli_ command handler passes control to the _lib_ component.
 - The _lib_ components manage site infrastructure and content through seven commands:

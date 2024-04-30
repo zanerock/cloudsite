@@ -1,0 +1,87 @@
+:root {
+  --popup-fade-height: 3rem;
+}
+
+.popup-overlay {
+  animation: var(--ll-modal-animation-duration) linear forwards blur-in;/* 200ms linear 0s infinite forward both blur-in;*/
+}
+
+.modal {
+  border: solid 1px var(--ifm-color-primary);
+  background-color: var(--ifm-background-color);
+  max-width: 1400px;
+  margin: 2rem var(--popup-fade-height) auto;
+
+  animation: var(--ll-modal-animation-duration) linear forwards scale-in;
+
+  max-height: calc(100vh - 4rem);
+}
+
+.small {
+  max-width: 40rem;
+}
+
+@keyframes scale-in {
+  from {
+    transform: scale(0.01);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@media screen and (max-width: 996px) {
+  .modal {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+.modal > .header {
+  width: 100%;
+  border-bottom: 1px solid gray;
+  font-size: 18px;
+  text-align: center;
+  padding: 5px;
+  font-weight: bold;
+}
+
+.modal > .content {
+  width: 100%;
+  padding: 1rem 2rem;
+  max-height: calc(100vh - 10rem);
+  overflow: auto;
+}
+
+.modal > .actions {
+  width: 100%;
+  padding: 10px 5px;
+  margin: auto;
+  text-align: center;
+  border-top: 1px solid var(--ifm-color-primary);
+}
+
+.modal > .close {
+  color: var(--ifm-color-primary);
+  background-color: var(--ifm-background-color);
+  cursor: pointer;
+  position: absolute;
+  display: block;
+  padding: 2px 5px;
+  line-height: 20px;
+  right: -10px;
+  top: -10px;
+  font-size: 24px;
+  border-radius: 18px;
+  border: 1px solid var(--ifm-color-primary);
+}
+
+.modal div.scroll-gradient {
+  position: fixed;
+  bottom: calc(3rem + 6px);
+  left: 0;
+  height: var(--popup-fade-height);
+  width: 100%;
+  background: linear-gradient(var(--ll-background-color-transparent), var(--ll-background-color-opaque));
+  pointer-events: none;
+}
