@@ -10,6 +10,7 @@
 @import url("./brander/navbar.css");
 @import url("./brander/buttons.css");
 @import url("./brander/alerts.css");
+@import url('./brander/cards.css');
 @import url("./brander/transitions.css");
 @import url("./brander/scroll-fix.css");
 
