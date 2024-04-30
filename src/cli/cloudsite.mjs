@@ -90,7 +90,6 @@ const cloudsite = async () => {
         ({ data, success } = handleDocument({ argv, db }))
         noWrap = true
         break
-        break
       case 'get-iam-policy':
         await handleGetIAMPolicy({ argv, db })
         return // get-iam-policy is handles it's own output as the IAM policy is always in JSON format

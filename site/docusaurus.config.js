@@ -4,130 +4,130 @@
 // There are various equivalent ways to declare your Docusaurus config.
 // See: https://docusaurus.io/docs/api/docusaurus-config
 
-import {themes as prismThemes} from 'prism-react-renderer';
+import { themes as prismThemes } from 'prism-react-renderer'
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'Liquid Labs',
-  tagline: 'Business first solutions',
-  favicon: 'img/cloudsite-favicon.png',
+  title   : 'Liquid Labs',
+  tagline : 'Business first solutions',
+  favicon : 'img/cloudsite-favicon.png',
 
   // Set the production url of your site here
-  url: 'https://liquid-labs.com',
+  url     : 'https://liquid-labs.com',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/',
+  baseUrl : '/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'liquid-labs', // Usually your GitHub org/user name.
-  projectName: 'liquid-labs.com', // Usually your repo name.
+  organizationName : 'liquid-labs', // Usually your GitHub org/user name.
+  projectName      : 'liquid-labs.com', // Usually your repo name.
 
-  onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'throw',
-  onBrokenAnchors: 'warn', // can't use throw because the checker doesn't recognize our '<span id="...">' anchor
+  onBrokenLinks         : 'throw',
+  onBrokenMarkdownLinks : 'throw',
+  onBrokenAnchors       : 'warn', // can't use throw because the checker doesn't recognize our '<span id="...">' anchor
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
   // may want to replace "en" with "zh-Hans".
-  i18n: {
-    defaultLocale: 'en',
-    locales: ['en'],
+  i18n : {
+    defaultLocale : 'en',
+    locales       : ['en']
   },
 
-  plugins: [ 'docusaurus-plugin-image-zoom' ],
+  plugins : ['docusaurus-plugin-image-zoom'],
 
-  presets: [
+  presets : [
     [
       'classic',
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
-        docs: {
-          sidebarPath: './sidebars.js',
-          editUrl:
-            'https://github.com/liquid-labs/liquid-labs.com/',
+        docs : {
+          sidebarPath : './sidebars.js',
+          editUrl :
+            'https://github.com/liquid-labs/liquid-labs.com/'
         },
-        blog: {
-          showReadingTime: true,
-          editUrl:
+        blog : {
+          showReadingTime : true,
+          editUrl :
             'https://github.com/liquid-labs/liquid-labs.com/',
-          feedOptions: {
-            type: 'all',
-            copyright: `Copyright © ${new Date().getFullYear()} Liquid Labs, LLC`,
-            createFeedItems: async (params) => {
-              const {blogPosts, defaultCreateFeedItems, ...rest} = params;
+          feedOptions : {
+            type            : 'all',
+            copyright       : `Copyright © ${new Date().getFullYear()} Liquid Labs, LLC`,
+            createFeedItems : async (params) => {
+              const { blogPosts, defaultCreateFeedItems, ...rest } = params
               return defaultCreateFeedItems({
                 // keep only the 10 most recent blog posts in the feed
-                blogPosts: blogPosts.filter((item, index) => index < 10),
-                ...rest,
+                blogPosts : blogPosts.filter((item, index) => index < 10),
+                ...rest
               })
-            },
-          },
+            }
+          }
         },
-        theme: {
-          customCss: './src/css/custom.css',
-        },
-      }),
-    ],
+        theme : {
+          customCss : './src/css/custom.css'
+        }
+      })
+    ]
   ],
 
-  themeConfig:
+  themeConfig :
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       // Replace with your project's social card
-      docs: { sidebar: { autoCollapseCategories: true }},
-      image: 'img/liquid-labs-social-media-card-1200x675.png',
-      colorMode: {
-        defaultMode: 'light',
-        respectPrefersColorScheme: true,
-        disableSwitch: false
+      docs      : { sidebar : { autoCollapseCategories : true } },
+      image     : 'img/liquid-labs-social-media-card-1200x675.png',
+      colorMode : {
+        defaultMode               : 'light',
+        respectPrefersColorScheme : true,
+        disableSwitch             : false
       },
-      navbar: {
-        title: '',
-        logo: {
-          alt: 'Cloudsite',
-          src: 'img/cloudsite-name-only.svg',
-          srcDark: 'img/cloudsite-name-only-dark.svg'
+      navbar : {
+        title : '',
+        logo  : {
+          alt     : 'Cloudsite',
+          src     : 'img/cloudsite-name-only.svg',
+          srcDark : 'img/cloudsite-name-only-dark.svg'
         },
-        items: [
+        items : [
           {
-            type: 'docSidebar',
-            sidebarId: 'docsSidebar',
-            position: 'left',
-            label: 'Docs',
+            type      : 'docSidebar',
+            sidebarId : 'docsSidebar',
+            position  : 'left',
+            label     : 'Docs'
           },
-          {to: '/blog', label: 'Blog', position: 'left'},
+          { to : '/blog', label : 'Blog', position : 'left' },
           {
-            type: 'html',
-            value: '<a href="/support" class="button buttom--sm">Comprehensive Support</a>',
-            position: 'right',
+            type     : 'html',
+            value    : '<a href="/support" class="button buttom--sm">Comprehensive Support</a>',
+            position : 'right'
           },
           {
-            href: 'https://github.com/liquid-labs/cloudsite',
-            position: 'right',
-            className: 'header-github-link',
-            'aria-label': 'GitHub repository',
-          },
-        ],
+            href         : 'https://github.com/liquid-labs/cloudsite',
+            position     : 'right',
+            className    : 'header-github-link',
+            'aria-label' : 'GitHub repository'
+          }
+        ]
       },
-      footer: {
-        copyright: `Copyright © ${new Date().getFullYear()} <a class="footer__link-item" href="https://liquid-labs.com">Liquid Labs, LLC</a>`,
+      footer : {
+        copyright : `Copyright © ${new Date().getFullYear()} <a class="footer__link-item" href="https://liquid-labs.com">Liquid Labs, LLC</a>`
       },
-      prism: {
-        theme: prismThemes.github,
-        darkTheme: prismThemes.dracula,
+      prism : {
+        theme     : prismThemes.github,
+        darkTheme : prismThemes.dracula
       },
-      zoom: {
-        selector: '.markdown img',
-        background: {
-          light: 'rgb(255, 255, 255)',
-          dark: 'rgb(50, 50, 50)'
+      zoom : {
+        selector   : '.markdown img',
+        background : {
+          light : 'rgb(255, 255, 255)',
+          dark  : 'rgb(50, 50, 50)'
         },
-        config: {
+        config : {
           // options you can specify via https://github.com/francoischalifour/medium-zoom#usage
         }
       }
-    }),
-};
+    })
+}
 
-export default config;
+export default config

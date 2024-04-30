@@ -19,7 +19,7 @@ const config = {
   description : 'Enables contact form processing. Specifically, enters form data and optionally sends an email notification.',
   options     : {
     emailFrom : {
-      description    : "This is the email which will appear as the sender. This address must be configured with SES.",
+      description    : 'This is the email which will appear as the sender. This address must be configured with SES.',
       required       : true,
       matches        : emailRE,
       invalidMessage : 'Must be a valid email.'
