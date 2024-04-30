@@ -31,6 +31,7 @@
   display: flex;
   height: 40px;
   width: 40px;
+  /* docusaurus.io does this with data-urls, but even though I confirmed the SVG was correct and everything, I could not get it to work. Chrome kept saying there was an error in the attribute, but I couldn't find it */
   background-image: url(/img/github-mark.svg);
   transition: background-image var(--ifm-transition-fast) var(--ifm-transition-timing-default);
 }
