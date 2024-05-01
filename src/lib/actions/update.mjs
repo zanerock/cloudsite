@@ -25,7 +25,7 @@ const update = async ({
 }) => {
   const doAll = doBilling === undefined && doContent === undefined && doDNS === undefined && doStack === undefined
 
-  const credentials = getCredentials(db.account.settings)
+  const credentials = getCredentials(db.account.localSettings)
 
   const firstRoundUpdates = []
   if (doAll === true || doContent === true) {

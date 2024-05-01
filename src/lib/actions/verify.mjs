@@ -15,7 +15,7 @@ const verify = async ({ checkContent, checkSiteUp, checkStack, db, siteInfo }) =
   const checkAll = checkContent === undefined && checkSiteUp === undefined && checkStack === undefined
   let credentials
   if (checkAll || checkContent || checkStack) {
-    credentials = getCredentials(db.account.settings)
+    credentials = getCredentials(db.account.localSettings)
   }
 
   const checks = []

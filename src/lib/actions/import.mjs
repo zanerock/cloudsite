@@ -12,7 +12,7 @@ import { progressLogger } from '../shared/progress-logger'
 
 const doImport = async ({ commonLogsBucket, db, domain, region, sourcePath, sourceType, stack }) => {
   const siteInfo = { apexDomain : domain, stackName : stack, region, sourcePath, sourceType }
-  const credentials = getCredentials(db.account.settings)
+  const credentials = getCredentials(db.account.localSettings)
 
   const acmClient = new ACMClient({ credentials, region : 'us-east-1' }) // certificates are always in us-east-1
   const { certificateArn } = await findCertificate({ apexDomain : domain, acmClient })
