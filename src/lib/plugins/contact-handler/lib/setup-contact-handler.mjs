@@ -13,7 +13,7 @@ const setupContactHandler = async ({
   siteTemplate,
   update
 }) => {
-  const { accountID, apexDomain, bucketName, region } = siteInfo
+  const { accountID, apexDomain, siteBucketName, region } = siteInfo
   const { finalTemplate, resourceTypes } = siteTemplate
 
   const contactHandlerFunctionBaseName = convertDomainToBucketName(apexDomain) + '-contact-handler'
@@ -118,7 +118,7 @@ const setupContactHandler = async ({
       Timeout     : 5,
       Environment : {
         Variables : {
-          TABLE_PREFIX : bucketName,
+          TABLE_PREFIX : siteBucketName,
           FORM_FIELDS  : formFieldsSpec
         }
       },
