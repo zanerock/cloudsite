@@ -12,9 +12,9 @@ Note in this article, `~` is shorthand for "the local folder where you installed
 
 ## Set up Docusaurus
 
-First, you must have Node+NPM on your system. If you need help checking for and/or installing Node+NPM, refer to the [Node and NPM section of the getting started installation guide](/docs/getting-started/installation#node-and-npm).
+First, you must have Node+NPM on your system. If you need help checking for and/or installing Node+NPM, refer to the [Node and NPM section of the getting started installation guide](/docs/get-started/installation#node-and-npm).
 
-Once Node+NPM is installed, open a [terminal](/docs/getting-started/installation#terminal-commands) and type:
+Once Node+NPM is installed, open a [terminal](/docs/get-started/installation#terminal-commands) and type:
 
 ```bash
 npx create-docusaurus@latest ./my-site classic
@@ -191,20 +191,20 @@ For additional details and options, refer to the [Docusaurus docs documentation]
 
 ## Test your site
 
-To view your site locally and test it, [open a terminal](/docs/getting-started/installation#terminal-commands) and change your working directory to your Docusaurus installation (e.g.: `cd ./my-site`). Then execute:
+To view your site locally and test it, [open a terminal](/docs/get-started/installation#terminal-commands) and change your working directory to your Docusaurus installation (e.g.: `cd ./my-site`). Then execute:
 ```bash
 npm start # or npx docusaurus start
 ```
 
 ## Deploy your site
 
-To deploy your site using cloudsite for the first time, [open a terminal](/docs/getting-started/installation#terminal-commands) and execute:
+To deploy your site using cloudsite for the first time, [open a terminal](/docs/get-started/installation#terminal-commands) and execute:
 ```bash
 aws sso login --profile cloudsite-manager # if necessary
 cloudsite create your-domain.com --source-path ./path/were/static/files/went
 ```
 
-To update an existing site, [open a terminal](/docs/getting-started/installation#terminal-commands) and execute:
+To update an existing site, [open a terminal](/docs/get-started/installation#terminal-commands) and execute:
 ```bash
 aws sso login --profile cloudsite-manager # if necessary
 cloudsite update your-domain.com --do-content

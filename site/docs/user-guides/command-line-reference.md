@@ -26,7 +26,7 @@ description: Documents available Cloudsite commands.
 
 - [`cleanup`](#cloudsite-cleanup): Attempts to fully delete partially deleted sites in the 'needs to be cleaned up' state.
 - [`configuration`](#cloudsite-configuration): Command group for managing the cloudsite CLI configuration.
-- [`create`](#cloudsite-create): Creates a new website, setting up infrastructure and copying content.
+- [`create`](#cloudsite-create): Creates a new website, setting up infrastructure and copying content. The first time you launch a new domain, Cloudsite will create an SSL certificate for the domain as necessary. If a new SSL certificate is created, the creation process will exit and you'll be given instructions on how to verify the SSL certificate. Once verification is complete, re-run the create command.
 - [`destroy`](#cloudsite-destroy): Destroys the named site. I.e., deletes all cloud resources associated with the site.
 - [`detail`](#cloudsite-detail): Prints details for the indicated site.
 - [`document`](#cloudsite-document): Generates self-documentation in Markdown format.
@@ -115,7 +115,7 @@ Displays the current configuration.
 
 `cloudsite create <options> <apex-domain>`
 
-Creates a new website, setting up infrastructure and copying content.
+Creates a new website, setting up infrastructure and copying content. The first time you launch a new domain, Cloudsite will create an SSL certificate for the domain as necessary. If a new SSL certificate is created, the creation process will exit and you'll be given instructions on how to verify the SSL certificate. Once verification is complete, re-run the create command.
 
 #### `create` options
 
@@ -170,7 +170,6 @@ Generates self-documentation in Markdown format.
 
 |Option|Description|
 |------|------|
-|`--prefix`|A string to prefix to the standard output.|
 |`--section-depth`|An integer indicating initial header 'depth', where '1' means start with an 'H1/#' section header, '2' means start with an 'H2/##' section header, etc. This is useful when the documentation is embedded in other docs.|
 |`--title`|The title of the top level section header.|
 
