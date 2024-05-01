@@ -42,6 +42,7 @@ a.breadcrumbs__link--active,
 
 button[class*=toggleButton] {
   color: var(--ll-nav-color);
+  width: unset;
 }
 
 button[class*=toggleButton]:hover {
