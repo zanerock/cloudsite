@@ -33,10 +33,10 @@ function HomepageHeader () {
         </div>
         <div className={clsx('buttons_spaced')}>
           <Link
-            key="/docs/quickstart"
+            key="/docs/get-started/overview"
             className={clsx('button', 'button--secondary button--lg')}
-            to="/docs/quickstart">
-            Quickstart
+            to="/docs/get-started/overview">
+            Get started
           </Link>
           <Link
             key="/docs/user-guides/command-line-reference"
