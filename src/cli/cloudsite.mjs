@@ -112,7 +112,7 @@ const cloudsite = async () => {
     }
   } catch (e) {
     if (e.cause === 'setup required') {
-      process.exit(1)
+      process.exit(1) // eslint-disable-line no-process-exit
     }
 
     if (throwError === true) {
