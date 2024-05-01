@@ -6,17 +6,15 @@ import { getSiteTag } from '../../shared/get-site-tag'
 import { progressLogger } from '../../shared/progress-logger'
 
 const ensureLambdaFunctionBucket = async ({ credentials, pluginData, s3Client, siteInfo }) => {
-  progressLogger.write('Checking for lambda function bucket bucket... ')
+  progressLogger.write('Checking for lambda function bucket... ')
 
   const { apexDomain } = siteInfo
   let { lambdaFunctionsBucket } = pluginData
 
   if (lambdaFunctionsBucket === undefined) {
-    lambdaFunctionsBucket = convertDomainToBucketName(apexDomain) + '-lambda-functions'
     progressLogger.write('CREATING\n')
     lambdaFunctionsBucket =
       await determineBucketName({
-        bucketName : lambdaFunctionsBucket,
         credentials,
         findName   : true,
         s3Client,
