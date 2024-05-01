@@ -9,6 +9,7 @@ import { INCLUDE_PLUGIN_DEFAULT_TRUE, INCLUDE_PLUGIN_DEFAULT_FALSE, INCLUDE_PLUG
   from '../../lib/shared/constants'
 import { checkAuthentication } from './check-authentication'
 import { create } from '../../lib/actions/create'
+import { ensureSSLCertificate } from '../../lib/actions/ensure-ssl-certificate'
 import { getOptionsSpec } from './get-options-spec'
 import * as optionsLib from './options'
 import * as plugins from '../../lib/plugins'
@@ -75,6 +76,8 @@ const handleCreate = async ({ argv, db }) => {
     // we're not using Transfer Accelerated ATM, but we might want to at some point.
     throw new Error(`Invalid bucket name. Must be valid AWS S3 Transfer Accelerated bucket name matching: ${awsS3TABucketNameREString}`, { exitCode : 2 })
   }
+
+  await ensureSSLCertificate({ apexDomain, db, siteInfo })
 
   if (options.length === 0 && noInteractive !== true) {
     let firstQuestion = true

@@ -111,13 +111,18 @@ const cloudsite = async () => {
         throw new Error('Unknown command: ' + command, { exitCode : 10 })
     }
   } catch (e) {
+    if (e.cause === 'setup required') {
+      process.exit(1)
+    }
+
     if (throwError === true) {
       throw e
     } else if (e.name === 'CredentialsProviderError') {
-      userMessage = 'Your AWS login credentials may have expired. Update your credentials or try refreshing with:\n\naws sso login'
+      userMessage = 'Your AWS login credentials may have expired. Update your credentials or try refreshing with:\n\n<em>aws sso login'
       if (ssoProfile !== undefined) {
         userMessage += ' --profile ' + ssoProfile
       }
+      userMessage += '<rst>'
       exitCode = 2
     } else {
       userMessage = e.message +

@@ -1,4 +1,3 @@
-import { ACMClient, RequestCertificateCommand } from '@aws-sdk/client-acm'
 import { CloudFormationClient, CreateStackCommand } from '@aws-sdk/client-cloudformation'
 
 import {
@@ -8,7 +7,6 @@ import {
 import { convertDomainToBucketName } from '../shared/convert-domain-to-bucket-name'
 import { createOrUpdateDNSRecords } from './lib/create-or-update-dns-records'
 import { determineBucketName } from '../shared/determine-bucket-name'
-import { findCertificate } from './lib/find-certificate'
 import { getCredentials } from './lib/get-credentials'
 import { getSiteTag } from '../shared/get-site-tag'
 import * as plugins from '../plugins'
@@ -29,27 +27,7 @@ const create = async ({
   const { apexDomain } = siteInfo
   let { bucketName } = siteInfo
 
-  const credentials = getCredentials(db.account.settings)
-
-  const acmClient = new ACMClient({
-    credentials,
-    region : 'us-east-1' // N. Virginia; required for certificate request
-  })
-
-  let { certificateArn, status } = await findCertificate({ acmClient, apexDomain })
-  if (certificateArn === null) {
-    progressLogger.write(`Creating wildcard certificate for '${apexDomain}'...`)
-    certificateArn = await createCertificate({ acmClient, apexDomain })
-    status = 'PENDING_VALIDATION'
-  }
-  siteInfo.certificateArn = certificateArn
-
-  if (status === 'PENDING_VALIDATION') {
-    const accountLocalCertID = certificateArn.replace(/[^/]+\/(.+)/, '$1')
-    const certificateConsoleURL =
-      `https://us-east-1.console.aws.amazon.com/acm/home?region=us-east-1#/certificates/${accountLocalCertID}`
-    throw new Error(`Wildcard certificate for '${apexDomain}' found, but requires validation. Please validate the certificate. To validate on S3 when using Route 53 for DNS service, try navigating to the following URL and select 'Create records in Route 53'::\n\n${certificateConsoleURL}\n\nSubsequent validation may take up to 30 minutes. For further documentation:\n\nhttps://docs.aws.amazon.com/acm/latest/userguide/dns-validation.html`)
-  }
+  const credentials = getCredentials(db.account.localSettings)
 
   bucketName = await determineBucketName({ apexDomain, bucketName, credentials, findName : true, siteInfo })
   siteInfo.bucketName = bucketName
