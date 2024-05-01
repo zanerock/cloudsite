@@ -89,7 +89,7 @@ If you don't already have one, the first step is to create your AWS root account
 
 The access keys will allow the tool to operate under your root (or super-admin) account in order to set up SSO operation. At the end of it all, the tool can delete the access keys for you.
 
-1. Follow the instructions to [Install or update to the latest version of the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
+1. Follow the instructions to [Install or update to the latest version of the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/get-started-install.html).
 2. Log into your root account (or super-admin account if you have one).
 3. Click on the account name in the upper right-hand corner and select 'Security credentials'.
 4. Under the 'Access keys' section, select 'Create access key'. You may get a warning; if you do, acknowledge and click next.
