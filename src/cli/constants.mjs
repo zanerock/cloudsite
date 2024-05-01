@@ -159,7 +159,7 @@ const cliSpec = {
     },
     {
       name        : 'create',
-      description : 'Creates a new website, setting up infrastructure and copying content.',
+      description : "Creates a new website, setting up infrastructure and copying content. The first time you launch a new domain, Cloudsite will create an SSL certificate for the domain as necessary. If a new SSL certificate is created, the creation process will exit and you'll be given instructions on how to verify the SSL certificate. Once verification is complete, re-run the create command.",
       arguments   : [
         {
           name          : 'apex-domain',
