@@ -9,7 +9,7 @@ import { S3SyncClient } from 's3-sync-client'
 import { progressLogger } from '../../shared/progress-logger'
 
 const syncSiteContent = async ({ credentials, noBuild, siteInfo }) => {
-  const { bucketName, sourcePath, sourceType } = siteInfo
+  const { siteBucketName, sourcePath, sourceType } = siteInfo
 
   if (noBuild !== true && sourceType === 'docusaurus') {
     const packageRoot = fsPath.resolve(sourcePath, '..')
@@ -26,7 +26,7 @@ const syncSiteContent = async ({ credentials, noBuild, siteInfo }) => {
   const s3Client = new S3Client({ credentials })
   const { sync } = new S3SyncClient({ client : s3Client })
 
-  await sync(sourcePath, 's3://' + bucketName, {
+  await sync(sourcePath, 's3://' + siteBucketName, {
     commandInput           : (input) => ({ ContentType : mime.lookup(input.Key) || 'application/octet-stream' }),
     del                    : true,
     maxConcurrentTransfers : 10

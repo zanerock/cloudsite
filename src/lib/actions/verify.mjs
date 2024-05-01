@@ -38,14 +38,14 @@ const doCheckContent = async ({ credentials, progressLogger, siteInfo }) => {
   if (progressLogger !== undefined) {
     progressLogger.write('Checking site content in sync...\n')
   }
-  const { bucketName, sourcePath } = siteInfo
+  const { siteBucketName, sourcePath } = siteInfo
 
   const s3Client = new S3Client({ credentials })
   const { sync } = new S3SyncClient({ client : s3Client })
 
   const checkResult = { check : 'S3 bucket and local source in sync' }
   try {
-    const objectData = await sync(sourcePath, 's3://' + bucketName, { dryRun : true })
+    const objectData = await sync(sourcePath, 's3://' + siteBucketName, { dryRun : true })
 
     const createdCount = objectData.created.length
     const updatedCount = objectData.updated.length

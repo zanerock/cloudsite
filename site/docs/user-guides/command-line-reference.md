@@ -122,12 +122,12 @@ Creates a new website, setting up infrastructure and copying content. The first 
 |Option|Description|
 |------|------|
 |`<apex-domain>`|(_main argument_,_optional_) The site apex domain.|
-|`--bucket-name`|The name of the bucket to be used. If no option is given, cloudsite will generate a bucket name based on the apex domain.|
 |`--no-build`|Supresses the default behavior of building before uploading the site content.|
 |`--no-delete-on-failure`|When true, does not delete the site stack after setup failure.|
 |`--no-interactive`|Suppresses activation of the interactive setup where it would otherwise be activated.|
 |`--option`|A combined name-value pair: &lt;name&gt;:&lt;value&gt;. Can be used multiple times. With '--delete', the value portion is ignored and can be omitted, e.g.: '--option &lt;name&gt;'.|
 |`--region`|The region where to create the site resources. Defaults to 'us-east-1'.|
+|`--site-bucket-name`|The name of the bucket where website content is stored. If no option is given, Cloudsite will generate a random bucket name.|
 |`--source-path`|Local path to the static site root.|
 |`--source-type`|May be either 'vanilla' or 'docusaurus', otherwise process will attempt to guess.|
 |`--stack-name`|Specify the name of the stack to be created and override the default name.|

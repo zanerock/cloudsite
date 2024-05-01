@@ -25,9 +25,9 @@ const handleCreate = async ({ argv, db }) => {
   const noDeleteOnFailure = createOptions['no-delete-on-failure']
   // siteInfo options
   let apexDomain = createOptions['apex-domain']
-  const bucketName = createOptions['bucket-name']
   const noBuild = createOptions['no-build']
   const noInteractive = createOptions['no-interactive']
+  const siteBucketName = createOptions['site-bucket-name']
   // switch any relative sourcePath to absolute
   let sourcePath = createOptions['source-path']
   let sourceType = createOptions['source-type']
@@ -52,7 +52,7 @@ const handleCreate = async ({ argv, db }) => {
   sourcePath = fsPath.resolve(sourcePath)
 
   // don't use 'getSiteInfo', it errors out on blanks
-  const siteInfo = db.sites[apexDomain] || { apexDomain, bucketName, sourcePath, sourceType }
+  const siteInfo = db.sites[apexDomain] || { apexDomain, siteBucketName, sourcePath, sourceType }
   siteInfo.region = createOptions.region || siteInfo.region || 'us-east-1'
   if (stackName !== undefined) {
     siteInfo.stackName = stackName
@@ -72,7 +72,7 @@ const handleCreate = async ({ argv, db }) => {
   sourceType = processSourceType({ sourcePath, sourceType })
   siteInfo.sourceType = sourceType
 
-  if (bucketName !== undefined && !awsS3TABucketNameRE.test(bucketName)) {
+  if (siteBucketName !== undefined && !awsS3TABucketNameRE.test(siteBucketName)) {
     // we're not using Transfer Accelerated ATM, but we might want to at some point.
     throw new Error(`Invalid bucket name. Must be valid AWS S3 Transfer Accelerated bucket name matching: ${awsS3TABucketNameREString}`, { exitCode : 2 })
   }
@@ -146,7 +146,8 @@ const handleCreate = async ({ argv, db }) => {
   optionsLib.updatePluginSettings({ options, siteInfo })
 
   // update siteInfo in case these were manually specified
-  for (const [value, field] of [[bucketName, 'bucketName'], [sourcePath, 'sourcePath'], [sourceType, 'sourceType']]) {
+  for (const [value, field] of 
+      [[siteBucketName, 'siteBucketName'], [sourcePath, 'sourcePath'], [sourceType, 'sourceType']]) {
     if (value !== undefined) {
       siteInfo[field] = value
     }

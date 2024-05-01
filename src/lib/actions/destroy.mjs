@@ -9,7 +9,7 @@ import { SiteTemplate } from '../shared/site-template'
 import { trackStackStatus } from './lib/track-stack-status'
 
 const destroy = async ({ db, siteInfo, verbose }) => {
-  const { apexDomain, bucketName, stackName } = siteInfo
+  const { apexDomain, siteBucketName, stackName } = siteInfo
 
   const credentials = getCredentials(db.account.localSettings)
   const s3Client = new S3Client({ credentials })
@@ -17,7 +17,7 @@ const destroy = async ({ db, siteInfo, verbose }) => {
   // this method provides user udptaes
   try {
     if (verbose === true) { progressLogger?.write('Deleting site bucket...\n') }
-    await emptyBucket({ bucketName, doDelete : true, s3Client, verbose })
+    await emptyBucket({ bucketName : siteBucketName, doDelete : true, s3Client, verbose })
   } catch (e) {
     if (e.name === 'NoSuchBucket') {
       if (verbose === true) { progressLogger?.write('Bucket already deleted.\n') }

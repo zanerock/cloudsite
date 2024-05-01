@@ -35,7 +35,7 @@ const doImport = async ({ commonLogsBucket, db, domain, region, sourcePath, sour
   const stackOutputs = stacksInfo.Stacks[0].Outputs || []
   for (const { OutputKey: key, OutputValue: value } of stackOutputs) {
     if (key === 'SiteS3Bucket') {
-      siteInfo.bucketName = value
+      siteInfo.siteBucketName = value
 
       if (commonLogsBucket === undefined) {
         commonLogsBucket = await findBucketLike({

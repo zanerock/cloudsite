@@ -167,10 +167,6 @@ const cliSpec = {
           defaultOption : true
         },
         {
-          name        : 'bucket-name',
-          description : 'The name of the bucket to be used. If no option is given, cloudsite will generate a bucket name based on the apex domain.'
-        },
-        {
           name        : 'no-build',
           description : 'Supresses the default behavior of building before uploading the site content.',
           type        : Boolean
@@ -190,6 +186,10 @@ const cliSpec = {
           name        : 'region',
           description : "The region where to create the site resources. Defaults to 'us-east-1'.",
           default     : 'us-east-1'
+        },
+        {
+          name        : 'site-bucket-name',
+          description : 'The name of the bucket where website content is stored. If no option is given, Cloudsite will generate a random bucket name.'
         },
         {
           name        : 'source-path',

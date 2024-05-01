@@ -24,12 +24,12 @@ const create = async ({
   siteInfo
 }) => {
   const { apexDomain } = siteInfo
-  let { bucketName } = siteInfo
+  let { siteBucketName } = siteInfo
 
   const credentials = getCredentials(db.account.localSettings)
 
-  bucketName = await determineBucketName({ apexDomain, bucketName, credentials, findName : true, siteInfo })
-  siteInfo.bucketName = bucketName
+  siteBucketName = await determineBucketName({ bucketName : siteBucketName, credentials, findName : true, siteInfo })
+  siteInfo.siteBucketName = siteBucketName
   const { success, stackName } = await createSiteStack({ credentials, noDeleteOnFailure, siteInfo })
 
   if (success === true) {
