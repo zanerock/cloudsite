@@ -105,7 +105,7 @@ const handleCreate = async ({ argv, db }) => {
             { statement : `<em>${name}<rst> plugin: ${description}` },
             {
               prompt    : `Enable '<em>${name}<rst>' plugin?`,
-              options   : ['yes', 'no'],
+              paramType : 'boolean',
               default   : defaultValue,
               parameter : 'enable'
             }
@@ -113,10 +113,11 @@ const handleCreate = async ({ argv, db }) => {
         }
         const questioner = new Questioner({ interrogationBundle, output : progressLogger })
         await questioner.question()
-        enable = questioner.getResult('enable').value === 'yes'
+        enable = questioner.get('enable')
+        console.log('enable:', enable, 'q.enabel:', questioner.get('enable')) // DEBUG
 
         firstQuestion = false
-      }
+      } // end plugin enable determination
 
       if (enable === true) {
         const interrogationBundle = { actions : [] }
@@ -137,10 +138,10 @@ const handleCreate = async ({ argv, db }) => {
         await questioner.question()
         options.push(...questioner.results.map(({ parameter, value }) => ({ name : `${plugin}.${parameter}`, value })))
       }
-      if (configOptions === undefined || Object.keys(configOptions).length === 0) {
+      if (enable === true && (configOptions === undefined || Object.keys(configOptions).length === 0)) {
         options.push({ name : plugin, value : true })
       }
-    }
+    } // end plugin processing loop
   }
 
   optionsLib.updatePluginSettings({ options, siteInfo })
