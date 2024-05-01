@@ -8,8 +8,8 @@ description: Shows commands for common use cases.
 
 The use cases enumerated here assume:
 - There are valid local credentials Cloudsite can use. Meaning either:
-  - you have [API access keys set up](/docs/getting-started/authentication#initial-authentication-with-access-keys), or
-  - (recommended) you have [setup single sign-on (SSO) authentication](/docs/getting-started/authentication#single-sign-on-authentication) and [authenticated with SSO](/docs/getting-started/authentication#single-sign-on-authentication); e.g.:
+  - you have [API access keys set up](/docs/get-started/authentication#initial-authentication-with-access-keys), or
+  - (recommended) you have [setup single sign-on (SSO) authentication](/docs/get-started/authentication#single-sign-on-authentication) and [authenticated with SSO](/docs/get-started/authentication#single-sign-on-authentication); e.g.:
     ```bash
     aws sso login --profile cloudsite-manager
     ```

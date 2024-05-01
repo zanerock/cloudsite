@@ -11,7 +11,7 @@ import { trackStackStatus } from './lib/track-stack-status'
 const destroy = async ({ db, siteInfo, verbose }) => {
   const { apexDomain, bucketName, stackName } = siteInfo
 
-  const credentials = getCredentials(db.account.settings)
+  const credentials = getCredentials(db.account.localSettings)
   const s3Client = new S3Client({ credentials })
 
   // this method provides user udptaes

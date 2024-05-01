@@ -146,13 +146,13 @@ Now, to generate the site, create a folder for the site content. Then:
 
 ## Deploying your site
 
-First, (re-)generate the static files. Then, to deploy your site using cloudsite for the first time, [open a terminal](/docs/getting-started/installation#terminal-commands) and execute:
+First, (re-)generate the static files. Then, to deploy your site using cloudsite for the first time, [open a terminal](/docs/get-started/installation#terminal-commands) and execute:
 ```bash
 aws sso login --profile cloudsite-manager # if necessary
 cloudsite create your-domain.com --source-path ./path/were/static/files/went
 ```
 
-To update an existing site, [open a terminal](/docs/getting-started/installation#terminal-commands) and execute:
+To update an existing site, [open a terminal](/docs/get-started/installation#terminal-commands) and execute:
 ```bash
 aws sso login --profile cloudsite-manager # if necessary
 cloudsite update your-domain.com --do-content

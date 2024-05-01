@@ -89,7 +89,7 @@ If you don't already have one, the first step is to create your AWS root account
 
 The access keys will allow the tool to operate under your root (or super-admin) account in order to set up SSO operation. At the end of it all, the tool can delete the access keys for you.
 
-1. Follow the instructions to [Install or update to the latest version of the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
+1. Follow the instructions to [Install or update to the latest version of the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/get-started-install.html).
 2. Log into your root account (or super-admin account if you have one).
 3. Click on the account name in the upper right-hand corner and select 'Security credentials'.
 4. Under the 'Access keys' section, select 'Create access key'. You may get a warning; if you do, acknowledge and click next.
@@ -243,7 +243,7 @@ cloudsite update your-domain.com
 
 - [`cleanup`](#cloudsite-cleanup): Attempts to fully delete partially deleted sites in the 'needs to be cleaned up' state.
 - [`configuration`](#cloudsite-configuration): Command group for managing the cloudsite CLI configuration.
-- [`create`](#cloudsite-create): Creates a new website, setting up infrastructure and copying content.
+- [`create`](#cloudsite-create): Creates a new website, setting up infrastructure and copying content. The first time you launch a new domain, Cloudsite will create an SSL certificate for the domain as necessary. If a new SSL certificate is created, the creation process will exit and you'll be given instructions on how to verify the SSL certificate. Once verification is complete, re-run the create command.
 - [`destroy`](#cloudsite-destroy): Destroys the named site. I.e., deletes all cloud resources associated with the site.
 - [`detail`](#cloudsite-detail): Prints details for the indicated site.
 - [`document`](#cloudsite-document): Generates self-documentation in Markdown format.
@@ -332,7 +332,7 @@ Displays the current configuration.
 
 `cloudsite create <options> <apex-domain>`
 
-Creates a new website, setting up infrastructure and copying content.
+Creates a new website, setting up infrastructure and copying content. The first time you launch a new domain, Cloudsite will create an SSL certificate for the domain as necessary. If a new SSL certificate is created, the creation process will exit and you'll be given instructions on how to verify the SSL certificate. Once verification is complete, re-run the create command.
 
 ##### `create` options
 
@@ -387,7 +387,6 @@ Generates self-documentation in Markdown format.
 
 |Option|Description|
 |------|------|
-|`--prefix`|A string to prefix to the standard output.|
 |`--section-depth`|An integer indicating initial header 'depth', where '1' means start with an 'H1/#' section header, '2' means start with an 'H2/##' section header, etc. This is useful when the documentation is embedded in other docs.|
 |`--title`|The title of the top level section header.|
 

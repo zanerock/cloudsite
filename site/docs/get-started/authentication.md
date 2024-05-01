@@ -1,12 +1,12 @@
 ---
-sidebar_position: 2
+sidebar_position: 3
 description: Instructions on authenticating Cloudsite with AWS.
 ---
 # Authentication
 
-Cloudsite works by setting up and managing infrastructure on the AWS cloud. In order to do this, Cloudsite uses local _credentials_ which allow it to act on your behalf.
+Cloudsite works by setting up and managing infrastructure on the AWS cloud. Cloudsite needs an account and account credentials to do this. We set up the credentials in a two step process.
 
-We work with two kinds of credentials. Initially, we create _access keys_ because it's easy. Cloudsite then uses those access keys to set up _single sign-on (SSO) authentication_ which creates much more secure time limited credentials. The original access keys are then deleted.
+First, we create _access keys_. Cloudsite then uses the access keys and your AWS root account to set up a dedicated account with limited permissions using _single sign-on (SSO) authentication_. This is much more secure, and once set up, Cloudsite will delete the access keys.
 
 The time limited SSO credentials are only valid for a set period of time (4 hours by default). This means that even if your computer is compromised, your AWS account is still safe so long as the credentials have expired. And even if an attacker manages to get ahold of valid SSO credentials, their access will still end when the SSO session times out.
 
@@ -32,9 +32,9 @@ If you are using Cloudsite for your own websites, it's fine to use your personal
 
 ## Initial authentication with access keys
 
-As [discussed up top](#top), we start by creating access keys. Access keys are easier to setup than SSO authentication, but because they grant permanent access to your account, they are less secure. So we use access keys for the initial setup, and then Cloudsite will delete them once [single sign-on authentication](#single-sign-on-authentication) is set up.
+As [discussed up top](#top), we start by creating access keys. Access keys are easier to setup than SSO authentication, but because they grant permanent access to your account, they are less secure. These keys will be deleted once [single sign-on authentication](#single-sign-on-authentication) is set up.
 
-1. Follow the instructions to [Install or update to the latest version of the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
+1. Follow the instructions to [Install or update to the latest version of the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/get-started-install.html).
 2. Log into AWS as the root user or, if you have one, a super-admin account.
 3. Click on the account name in the upper right-hand corner and select 'Security credentials'.
 4. Under the 'Access keys' section, select 'Create access key'. Acknowledge and click 'Next' if you get a warning.

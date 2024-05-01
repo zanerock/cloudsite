@@ -4,7 +4,7 @@ import { getCredentials } from '../actions/lib/get-credentials' // TODO: move to
 const generateIAMPolicy = async ({ db }) => {
   let { accountID } = db.account
   if (accountID === undefined) {
-    const credentials = getCredentials(db.account?.settings)
+    const credentials = getCredentials(db.account?.localSettings)
     accountID = await getAccountID({ credentials })
   }
 

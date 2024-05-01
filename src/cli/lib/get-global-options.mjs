@@ -10,7 +10,7 @@ const getGlobalOptions = ({ db }) => {
     return globalOptionsCache
   } // else
 
-  const defaultOptions = db?.account?.settings || {}
+  const defaultOptions = db?.account?.localSettings || {}
 
   const overrideOptions = commandLineArgs(globalOptionsSpec, { partial : true })
   delete overrideOptions._unknown // don't need or want this
