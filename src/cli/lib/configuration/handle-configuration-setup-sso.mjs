@@ -268,16 +268,16 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
   if (!config.isHaveSection('profile ' + ssoProfile)) {
     config.addSection('profile ' + ssoProfile)
   }
-  config.set('profile ' + ssoProfile, 'sso-session', ssoProfile)
+  config.set('profile ' + ssoProfile, 'sso_session', ssoProfile)
   const { accountID } = db.account
-  config.set('profile ' + ssoProfile, 'sso-account-id', accountID)
-  config.set('profile ' + ssoProfile, 'sso-role-name', policyName)
+  config.set('profile ' + ssoProfile, 'sso_account_id', accountID)
+  config.set('profile ' + ssoProfile, 'sso_role_name', policyName)
   if (!config.isHaveSection('sso-session ' + ssoProfile)) {
     config.addSection('sso-session ' + ssoProfile)
   }
-  config.set('sso-session ' + ssoProfile, 'sso-start-url', ssoStartURL)
-  config.set('sso-session ' + ssoProfile, 'sso-region', ssoRegion)
-  config.set('sso-session ' + ssoProfile, 'sso-registration-scopes', 'sso:account:access')
+  config.set('sso-session ' + ssoProfile, 'sso_start_url', ssoStartURL)
+  config.set('sso-session ' + ssoProfile, 'sso_region', ssoRegion)
+  config.set('sso-session ' + ssoProfile, 'sso_registration_scopes', 'sso:account:access')
 
   await fs.writeFile(configPath, config.stringify())
 
