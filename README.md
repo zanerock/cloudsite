@@ -243,8 +243,8 @@ cloudsite update your-domain.com
 
 - [`cleanup`](#cloudsite-cleanup): Attempts to fully delete partially deleted sites in the 'needs to be cleaned up' state.
 - [`configuration`](#cloudsite-configuration): Command group for managing the cloudsite CLI configuration.
-- [`create`](#cloudsite-create): Creates a new website, setting up infrastructure and copying content. The first time you launch a new domain, Cloudsite will create an SSL certificate for the domain as necessary. If a new SSL certificate is created, the creation process will exit and you'll be given instructions on how to verify the SSL certificate. Once verification is complete, re-run the create command.
-- [`destroy`](#cloudsite-destroy): Destroys the named site. I.e., deletes all cloud resources associated with the site.
+- [`create`](#cloudsite-create): Creates a new website, setting up infrastructure and copying content.
+- [`destroy`](#cloudsite-destroy): Destroys the named site.
 - [`detail`](#cloudsite-detail): Prints details for the indicated site.
 - [`document`](#cloudsite-document): Generates self-documentation in Markdown format.
 - [`get-iam-policy`](#cloudsite-get-iam-policy): Prints an IAM policy suitable for operating cloudsite.
@@ -285,7 +285,7 @@ Command group for managing the cloudsite CLI configuration.
 
 ##### Subcommands
 
-- [`setup-local`](#cloudsite-configuration-setup-local): Runs the local setup wizard and updates all options. This should be used after the SSO account has been created (see 'cloudsite configuration setup-sso').
+- [`setup-local`](#cloudsite-configuration-setup-local): Runs the local setup wizard and updates all options.
 - [`setup-sso`](#cloudsite-configuration-setup-sso): Runs the SSO wizard and sets up the SSO user authentication in the IAM Identity Center.
 - [`show`](#cloudsite-configuration-show): Displays the current configuration.
 
@@ -332,7 +332,11 @@ Displays the current configuration.
 
 `cloudsite create <options> <apex-domain>`
 
-Creates a new website, setting up infrastructure and copying content. The first time you launch a new domain, Cloudsite will create an SSL certificate for the domain as necessary. If a new SSL certificate is created, the creation process will exit and you'll be given instructions on how to verify the SSL certificate. Once verification is complete, re-run the create command.
+Creates a new website, setting up infrastructure and copying content.
+
+The first time you launch a new domain, Cloudsite will create an SSL certificate for the domain as necessary. If a new SSL certificate is created, the creation process will exit and you'll be given instructions on how to verify the SSL certificate. Once verification is complete, re-run the create command.
+
+Also note that when any `--option` is specified, the command all options to be specified. Any unspecified options will take their default value. See [the plugins overview guide](/docs/user-guides/plugins/overview) for further details.
 
 ##### `create` options
 
