@@ -16,18 +16,17 @@ import { progressLogger } from '../../shared/progress-logger'
  * @param {object} input - Destructured input argument.
  * @param {object} input.credentials - Credentials to access the AWS account.
  * @param {string[]} input.lambdaFunctionNames - Array of file names in dist to transfer to the lambda function bucket.
- * @param {object} input.pluginData - Data object for the plugin. May be read and updated by the function.
  * @param {object} input.siteInfo - See {@link SiteTemplate} for details.
  * @returns {string} The Lambda function bucket name.
  */ /* eslint-enable  jsdoc/no-undefined-types */
-const stageLambdaFunctionZipFiles = async ({ credentials, lambdaFileNames, pluginData, siteInfo }) => {
+const stageLambdaFunctionZipFiles = async ({ credentials, lambdaFileNames, siteInfo }) => {
   progressLogger.write('Staging contact handler Lambda function zip files...\n')
 
   const { region } = siteInfo
 
   const s3Client = new S3Client({ credentials, region })
 
-  const lambdaFunctionsBucket = await ensureLambdaFunctionBucket({ credentials, pluginData, s3Client, siteInfo })
+  const lambdaFunctionsBucket = await ensureLambdaFunctionBucket({ credentials, s3Client, siteInfo })
 
   const putCommands = []
   for (const fileName of lambdaFileNames) {

@@ -3,6 +3,10 @@ import { getPrinter } from 'magic-print'
 const progressLogger = {}
 
 const configureLogger = (options) => {
+  if (typeof options === 'function') {
+    progressLogger.write = options
+  }
+  // else
   const print = getPrinter(options)
 
   progressLogger.write = (...chunks) => {

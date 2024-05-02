@@ -4,8 +4,8 @@ import { emptyBucket } from 's3-empty-bucket'
 import { S3Client } from '@aws-sdk/client-s3'
 
 import { CONTACT_EMAILER_ZIP_NAME, CONTACT_HANDLER_ZIP_NAME, REQUEST_SIGNER_ZIP_NAME } from './lib/constants'
-import { convertDomainToBucketName } from '../../shared/convert-domain-to-bucket-name'
-import { findBucketLike } from '../../shared/find-bucket-like'
+import { findBucketByTags } from '../../shared/find-bucket-by-tags'
+import { getSiteTag } from '../../shared/get-site-tag'
 import { progressLogger } from '../../shared/progress-logger'
 import { setupContactFormTable } from './lib/setup-contact-form-table'
 import { setupContactEmailer } from './lib/setup-contact-emailer'
@@ -83,11 +83,13 @@ const importHandler = async ({ credentials, name, pluginsData, siteInfo, templat
     const contactHandlerFunctionName = template.Resources.ContactHandlerLambdaFunction.Properties.FunctionName
     const emailerFunctionName = template.Resources.ContactEmailerFunction.Properties.FunctionName
     const requestSignerFunctionName = template.Resources.SignRequestFunction.Properties.FunctionName
-    const baseBucketName = convertDomainToBucketName(siteInfo.apexDomain)
-    const lambdaFunctionsBucket = await findBucketLike({
+    const lambdaFunctionsBucket = await findBucketByTags({
       credentials,
       description : 'Lambda functions',
-      partialName : baseBucketName + '-lambda-functions'
+      tags        : [
+        { key : getSiteTag(siteInfo), value : '' },
+        { key : 'function', value : 'lambda code storage' }
+      ]
     })
     if (lambdaFunctionsBucket === undefined) {
       throw new Error(`Could not resolve the Lambda function bucket for the '${name}' plugin.`)
@@ -143,7 +145,7 @@ const stackConfig = async ({ pluginData, siteTemplate, update }) => {
   }
 
   const lambdaFunctionsBucketName =
-    await stageLambdaFunctionZipFiles({ credentials, lambdaFileNames, pluginData, siteInfo })
+    await stageLambdaFunctionZipFiles({ credentials, lambdaFileNames, siteInfo })
 
   await setupContactHandler({ credentials, lambdaFunctionsBucketName, pluginData, siteInfo, siteTemplate, update })
   await setupRequestSigner({ credentials, lambdaFunctionsBucketName, pluginData, siteTemplate, update })

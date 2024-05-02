@@ -23,7 +23,6 @@ const create = async ({
   noDeleteOnFailure,
   siteInfo
 }) => {
-  const { apexDomain } = siteInfo
   let { siteBucketName } = siteInfo
 
   const credentials = getCredentials(db.account.localSettings)

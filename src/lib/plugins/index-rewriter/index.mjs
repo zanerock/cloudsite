@@ -4,8 +4,8 @@ import { S3Client } from '@aws-sdk/client-s3'
 
 import { INCLUDE_PLUGIN_DEFAULT_TRUE, INCLUDE_PLUGIN_DEFAULT_FALSE } from '../../shared/constants'
 import { INDEX_REWRITER_ZIP_NAME } from './lib/constants'
-import { convertDomainToBucketName } from '../../shared/convert-domain-to-bucket-name'
-import { findBucketLike } from '../../shared/find-bucket-like'
+import { findBucketByTags } from '../../shared/find-bucket-by-tags'
+import { getSiteTag } from '../../shared/get-site-tag'
 import { progressLogger } from '../../shared/progress-logger'
 import { setupIndexRewriter } from './lib/setup-index-rewriter'
 import { stageLambdaFunctionZipFiles } from '../shared/stage-lambda-function-zip-files'
@@ -14,7 +14,7 @@ import { updateCloudFrontDistribution } from './lib/update-cloudfront-distributi
 const config = {
   name          : 'index.html rewriter',
   description   : "Appends 'index.html' to bare directory requests.",
-  options       : {},
+  options       : undefined,
   includePlugin : ({ siteInfo }) => {
     const { sourceType } = siteInfo
 
@@ -23,11 +23,13 @@ const config = {
 }
 
 const importHandler = async ({ credentials, name, pluginsData, siteInfo }) => {
-  const baseBucketName = convertDomainToBucketName(siteInfo.apexDomain)
-  const lambdaFunctionsBucket = await findBucketLike({
+  const lambdaFunctionsBucket = await findBucketByTags({
     credentials,
     description : 'Lambda functions',
-    partialName : baseBucketName + '-lambda-functions'
+    tags        : [
+      { key : getSiteTag(siteInfo), value : '' },
+      { key : 'function', value : 'lambda code storage' }
+    ]
   })
   if (lambdaFunctionsBucket === undefined) {
     throw new Error(`Could not resolve the Lambda function bucket for the '${name}' plugin.`)
@@ -68,9 +70,10 @@ const stackConfig = async ({ siteTemplate, pluginData, update }) => {
   const lambdaFileNames = [INDEX_REWRITER_ZIP_NAME]
 
   const lambdaFunctionsBucketName =
-    await stageLambdaFunctionZipFiles({ credentials, lambdaFileNames, pluginData, siteInfo })
+    await stageLambdaFunctionZipFiles({ credentials, lambdaFileNames, siteInfo })
+  siteInfo.lambdaFunctionsBucketName = lambdaFunctionsBucketName
 
-  await setupIndexRewriter({ credentials, lambdaFunctionsBucketName, pluginData, siteInfo, siteTemplate, update })
+  await setupIndexRewriter({ credentials, pluginData, siteInfo, siteTemplate, update })
   updateCloudFrontDistribution({ pluginData, siteTemplate })
 }
 

@@ -5,7 +5,8 @@ import { CloudFormationClient, DescribeStacksCommand, GetTemplateCommand } from 
 
 import { getAccountID } from '../shared/get-account-id'
 import { getCredentials } from './lib/get-credentials'
-import { findBucketLike } from '../shared/find-bucket-like'
+import { getSiteTag } from '../shared/get-site-tag'
+import { findBucketByTags } from '../shared/find-bucket-by-tags'
 import { findCertificate } from './lib/find-certificate'
 import * as plugins from '../plugins'
 import { progressLogger } from '../shared/progress-logger'
@@ -38,10 +39,13 @@ const doImport = async ({ commonLogsBucket, db, domain, region, sourcePath, sour
       siteInfo.siteBucketName = value
 
       if (commonLogsBucket === undefined) {
-        commonLogsBucket = await findBucketLike({
+        commonLogsBucket = await findBucketByTags({
           credentials,
           description : 'common logs',
-          partialName : value + '-common-logs'
+          tags        : [
+            { key : getSiteTag(siteInfo), value : '' },
+            { key : 'function', value : 'common logs storage' }
+          ]
         })
       }
       if (commonLogsBucket !== undefined && commonLogsBucket !== 'NONE') {

@@ -205,7 +205,7 @@ const SiteTemplate = class {
         OwnershipControls : { // this enables ACLs, as required by CloudFront standard logging
           Rules : [{ ObjectOwnership : 'BucketOwnerPreferred' }]
         },
-        Tags : [{ Key : siteTag, Value : '' }, { Key : 'function', Value: 'common logs storage' }]
+        Tags : [{ Key : siteTag, Value : '' }, { Key : 'function', Value : 'common logs storage' }]
       }
     }
 

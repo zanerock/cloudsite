@@ -2,7 +2,6 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { S3Client, HeadBucketCommand } from '@aws-sdk/client-s3'
 
-import { convertDomainToBucketName } from './convert-domain-to-bucket-name'
 import { getAccountID } from './get-account-id'
 import { progressLogger } from './progress-logger'
 
