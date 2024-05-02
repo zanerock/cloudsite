@@ -114,20 +114,27 @@ const importHandler = async ({ credentials, name, pluginsData, siteInfo, templat
   // else, not enabled, nothing to do
 }
 
-const preStackDestroyHandler = async ({ pluginData, siteTemplate }) => {
+const preStackDestroyHandler = async ({ siteTemplate }) => {
   const { credentials } = siteTemplate
-  const { lambdaFunctionsBucket } = pluginData
+  const { lambdaFunctionsBucket } = siteTemplate.siteInfo
 
   if (lambdaFunctionsBucket !== undefined) {
-    progressLogger?.write(`Deleting ${lambdaFunctionsBucket} bucket...\n`)
+    progressLogger?.write(`Deleting  shared Lambda function bucket ${lambdaFunctionsBucket} bucket...`)
     const s3Client = new S3Client({ credentials })
-    await emptyBucket({
-      bucketName : lambdaFunctionsBucket,
-      doDelete   : true,
-      s3Client,
-      verbose    : progressLogger !== undefined
-    })
-    delete pluginData.lambdaFunctionsBucket
+    try {
+      await emptyBucket({
+        bucketName : lambdaFunctionsBucket,
+        doDelete   : true,
+        s3Client,
+        verbose    : progressLogger !== undefined
+      })
+      delete siteTemplate.siteInfo.lambdaFunctionsBucket
+      progressLogger?.write('DELETED.\n')
+    }
+    catch (e) {
+      progressLogger?.write('ERROR.\n')
+      throw e
+    }
   } else {
     progressLogger?.write('Looks like the Lambda function bucket has already been deleted; skipping.\n')
   }

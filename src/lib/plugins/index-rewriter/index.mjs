@@ -43,20 +43,27 @@ const importHandler = async ({ credentials, name, pluginsData, siteInfo }) => {
 
 // TODO: this is copied from contact-handler/index.html; again, this is because the nature of lambda functions, but we
 // should have a build step that rolls up the code so we can share
-const preStackDestroyHandler = async ({ pluginData, siteTemplate }) => {
+const preStackDestroyHandler = async ({ siteTemplate }) => {
   const { credentials } = siteTemplate
-  const { lambdaFunctionsBucket } = pluginData
+  const { lambdaFunctionsBucket } = siteTemplate.siteInfo
 
   if (lambdaFunctionsBucket !== undefined) {
-    progressLogger?.write(`Deleting ${lambdaFunctionsBucket} bucket...\n`)
+    progressLogger?.write(`Deleting ${lambdaFunctionsBucket} bucket...`)
     const s3Client = new S3Client({ credentials })
-    await emptyBucket({
-      bucketName : lambdaFunctionsBucket,
-      doDelete   : true,
-      s3Client,
-      verbose    : progressLogger !== undefined
-    })
-    delete pluginData.lambdaFunctionsBucket
+    try {
+      await emptyBucket({
+        bucketName : lambdaFunctionsBucket,
+        doDelete   : true,
+        s3Client,
+        verbose    : progressLogger !== undefined
+      })
+      progressLogger?.write('DELETED.\n')
+      delete siteTemplate.siteInfo.lambdaFunctionsBucket
+    }
+    catch (e) {
+      progressLogger?.write('ERROR.\n')
+      throw e
+    }
   } else {
     progressLogger?.write('Looks like the Lambda function bucket has already been deleted; skipping.\n')
   }
