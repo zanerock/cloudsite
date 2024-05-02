@@ -1,27 +1,40 @@
-import { ListBucketsCommand, S3Client } from '@aws-sdk/client-s3'
+import { ListBucketsCommand, GetBucketTaggingCommand, S3Client } from '@aws-sdk/client-s3'
 
 import { progressLogger } from './progress-logger'
 
-const findBucketLike = async ({ credentials, description, partialName }) => {
+const findBucketByTags = async ({ credentials, description, tags }) => {
   progressLogger?.write(`Attempting to find ${description} bucket... `)
   const s3Client = new S3Client({ credentials })
   const listBucketsCommand = new ListBucketsCommand({})
   const { Buckets : buckets } = await s3Client.send(listBucketsCommand)
 
-  const possibleMatches = buckets.filter(({ Name : name }) => name.startsWith(partialName))
+  for (const { Name: name } of buckets) {
+    const getBucketTaggingCommand = new GetBucketTaggingCommand({ Bucket : name })
+    const bucketTags = await s3Client.send(getBucketTaggingCommand)
 
-  if (possibleMatches.length === 0) {
-    progressLogger?.write('NONE found\n')
-  } else if (possibleMatches.length === 1) {
-    const commonLogsBucket = possibleMatches[0].Name
-    progressLogger?.write('found: ' + commonLogsBucket + '\n')
-    return commonLogsBucket
-  } else { // possible matches greater than one, but commonLogsBucket not set
-    // TODO: tailor the message for CLI or library...
-    progressLogger?.write('found multiple\n')
-    throw new Error("Found multiple possible 'common logs' buckets; specify which to use with '--common-logs-bucket': " +
-        possibleMatches.map(({ Name : name }) => name).join(', '))
+    const foundTags = Array.from(tags, () => false)
+    let i = -1
+    for (const { key, value } of tags) {
+      i += 1
+      for (const { Key : bucketKey, Value : bucketValue } of bucketTags.TagSet) {
+        if (key === bucketKey && value === bucketValue) {
+          foundTags[i] = true
+          break
+        }
+      }
+      if (foundTags[i] === false) {
+        break
+      }
+    }
+
+    if (!foundTags.some((found) => found === false)) {
+      progressLogger?.write('found: ' + name + '\n')
+      return name
+    }
   }
+
+  progressLogger?.write('NONE found\n')
+  return undefined
 }
 
-export { findBucketLike }
+export { findBucketByTags }
