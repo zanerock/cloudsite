@@ -98,7 +98,7 @@ const handleCreate = async ({ argv, db }) => {
           progressLogger.write('\n')
         }
 
-        const defaultValue = includeDirective === INCLUDE_PLUGIN_DEFAULT_TRUE ? 'yes' : 'no'
+        const defaultValue = includeDirective === INCLUDE_PLUGIN_DEFAULT_TRUE
 
         const interrogationBundle = {
           actions : [
@@ -114,7 +114,6 @@ const handleCreate = async ({ argv, db }) => {
         const questioner = new Questioner({ interrogationBundle, output : progressLogger })
         await questioner.question()
         enable = questioner.get('enable')
-        console.log('enable:', enable, 'q.enabel:', questioner.get('enable')) // DEBUG
 
         firstQuestion = false
       } // end plugin enable determination
@@ -122,7 +121,7 @@ const handleCreate = async ({ argv, db }) => {
       if (enable === true) {
         const interrogationBundle = { actions : [] }
         for (const [parameter, configSpec] of Object.entries(configOptions || {})) {
-          const { default: defaultValue, description, invalidMessage, matches, required, type = 'string' } = configSpec
+          const { default: defaultValue, description, invalidMessage, matches, required, paramType = 'string' } = configSpec
           const questionSpec = {
             default          : defaultValue,
             invalidMessage,
@@ -130,7 +129,7 @@ const handleCreate = async ({ argv, db }) => {
             parameter,
             requireSomething : required,
             requireMatch     : matches,
-            type
+            paramType
           }
           interrogationBundle.actions.push(questionSpec)
         }
@@ -147,8 +146,8 @@ const handleCreate = async ({ argv, db }) => {
   optionsLib.updatePluginSettings({ options, siteInfo })
 
   // update siteInfo in case these were manually specified
-  for (const [value, field] of 
-      [[siteBucketName, 'siteBucketName'], [sourcePath, 'sourcePath'], [sourceType, 'sourceType']]) {
+  for (const [value, field] of
+    [[siteBucketName, 'siteBucketName'], [sourcePath, 'sourcePath'], [sourceType, 'sourceType']]) {
     if (value !== undefined) {
       siteInfo[field] = value
     }
