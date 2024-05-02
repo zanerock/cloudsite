@@ -171,7 +171,7 @@ const SiteTemplate = class {
     if (commonLogsBucket !== undefined) {
       progressLogger.write('Deleting common logs bucket...\n')
       const s3Client = new S3Client({ credentials : this.credentials })
-      emptyBucket({
+      await emptyBucket({
         bucketName : commonLogsBucket,
         doDelete   : true,
         s3Client,
