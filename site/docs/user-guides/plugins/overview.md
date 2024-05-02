@@ -10,13 +10,21 @@ The basic Cloudsite setup, with no plugins, serves static files quickly and secu
 
 ### On site creation
 
-When creating a site, the user will, by default, be asked which plugins should be installed. Any selected plugins will be interactively configured as part of the installation process.
+When creating a site, the user will, by default, be asked which plugins should be installed. Any selected plugins will be interactively configured as part of the installation process. That is, if neither `--no-interactive` and `--option` options are specified.
 
-In order to support a headless install, users can use the `--no-interactive` [`create` option](/docs/user-guides/command-line-reference#create-options). In this mode, plugins are skipped by default unless configured using `--option` options. E.g.:
+You can also specify plugin options via the CLI using the `--option` option. Setting any plugin parameter will cause the plugin to be installed and unset parameters will take their default value. Failing to set a required value with no default value results in an error.
+
+In order to support a headless install, users can use the `--no-interactive` [`create` option](/docs/user-guides/command-line-reference#create-options) or just specify any `--option`, which has the effect of turning of interactive mode. In non-interactive mode, plugins are enabled according to the plugin's own default settings which are in turn dependent on the site type and configuration. E.g., the [index rewrite](./index-rewriter) plugin is installed by default for non-Docusaurus sites. E.g., either of the following two commands would trigger a headless install:
 
 ```bash
-cloudsite create my-site.com --source-path ./path/to/source --no-interactine --option cloudFrontLogs.enableCookies:true
+cloudsite create my-site.com --source-path ./path/to/source --no-interactive
 ```
+or
+```bash
+cloudsite create my-site.com --source-path ./path/to/source --option cloudFrontLogs.enableCookies:true
+```
+
+Note, that because the `--option` option turns off interactive configuration, if you specify one `--option`, you must specify all desired options unless you want the default value.
 
 ### After site launch
 
