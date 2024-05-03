@@ -119,7 +119,7 @@ const setupContactHandler = async ({
       Timeout     : 5,
       Environment : {
         Variables : {
-          TABLE_PREFIX : siteBucketName,
+          TABLE_PREFIX : apexDomain,
           FORM_FIELDS  : formFieldsSpec
         }
       },
