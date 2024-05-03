@@ -56,7 +56,31 @@ You can set a 'dark theme' version of the logo (if different), by following the 
 
 ### Setting colors and fonts
 
-The [docusourus-bi-color-themer](https://github.com/liquid-labs/docusaurus-bi-color-themer) tool provides support for building a clean, minimalist look and feel based on your custom brand colors and fonts. Check out the [docusourus-bi-color-themer](https://github.com/liquid-labs/docusaurus-bi-color-themer) home page for examples and additional details.
+The classic Docusaurus theme is based on a single color with three lighter shades and three darker shades of the same color. You can calculate these yourself using [a color picker tool like this one](https://medium.com/r/?url=https%3A%2F%2Fredketchup.io%2Fcolor-picker), and then set the RGB hex codes directly in the src/css/custom.css file by just replacing the existing entries. All the colors are based on the variables `--ifm-color-primary`, `--ifm-color-primary-dark`, etc.
+
+If you want to get a little fancier, you can create variables for the hue, saturation, and lightness of your primary color and then generate the darker and lighter shades by manipulating the lightness directly like this:
+
+```css
+:root { /* this is Liquid Labs blue, #21327d */
+  --ll-color-primary-hue: 229;
+  --ll-color-primary-saturation: 58%;
+  --ll-color-primary-lightness: 31%;
+  /* this is the var used in the theme for the primary color */
+  --ifm-color-primary: hsl(
+    var(--ll-color-primary-hue), 
+    var(--ll-color-primary-saturation), 
+    var(--ll-color-primary-lightness)
+  );
+  --ifm-color-primary-darkest: hsl(
+    var(--ll-color-primary-hue), 
+    var(--ll-color-primary-saturation), 
+    5%
+  );
+  /* etc. */
+}
+```
+
+Similarly, to set the fonts, set the variables `--ifm-font-family-base` and `--ifm-heading-font-family`. Don't forget to list out fallback fonts.
 
 ## Managing content
 

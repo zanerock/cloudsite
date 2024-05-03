@@ -43,7 +43,7 @@ const GroupHeader = styled('div')(({ theme }) => ({
   position: 'sticky',
   top: '-8px',
   padding: '4px 10px',
-  color: 'white',
+  color: 'var(--ifm-color-primary-contrast-background)',
   backgroundColor: 'var(--ifm-color-primary)'
 }));
 
