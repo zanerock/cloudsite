@@ -5,8 +5,7 @@ const config = {
     includeCookies : {
       description : 'Whether to log cookies or not.',
       default     : false,
-      type        : 'boolean',
-      validation  : (v) => typeof v === 'boolean'
+      paramType   : 'boolean'
     }
   }
 }

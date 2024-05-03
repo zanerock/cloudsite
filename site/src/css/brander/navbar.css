@@ -40,6 +40,14 @@
   background-image: url(/img/github-mark-hover.svg);
 }
 
+html[data-theme="dark"] .header-github-link {
+  background-image: url(/img/github-mark-dark.svg);
+}
+
+html[data-theme="dark"] .header-github-link:hover {
+  background-image: url(/img/github-mark-dark-hover.svg);
+}
+
 @media screen and (max-width: 996px) {
   .navbar {
     padding: var(--ifm-navbar-padding-vertical) var(--ifm-spacing-horizontal);

@@ -36,12 +36,6 @@ const globalOptionsSpec = [
   }
 ]
 
-const optionSpec = {
-  name        : 'option',
-  description : "A combined name-value pair: &lt;name&gt;:&lt;value&gt;. Can be used multiple times. With '--delete', the value portion is ignored and can be omitted, e.g.: '--option &lt;name&gt;'.",
-  multiple    : true
-}
-
 const sourceTypeArgSpec = {
   name        : 'source-type',
   description : "May be either 'vanilla' or 'docusaurus', otherwise process will attempt to guess."
@@ -159,16 +153,12 @@ const cliSpec = {
     },
     {
       name        : 'create',
-      description : "Creates a new website, setting up infrastructure and copying content. The first time you launch a new domain, Cloudsite will create an SSL certificate for the domain as necessary. If a new SSL certificate is created, the creation process will exit and you'll be given instructions on how to verify the SSL certificate. Once verification is complete, re-run the create command.",
+      description : "Creates a new website, setting up infrastructure and copying content.\n\nThe first time you launch a new domain, Cloudsite will create an SSL certificate for the domain as necessary. If a new SSL certificate is created, the creation process will exit and you'll be given instructions on how to verify the SSL certificate. Once verification is complete, re-run the create command.\n\nYou can use `--no-interactive` to guarantee headless operation, though you must be sure to specify all primary options. Any un-specified `--option` for an active plugin will take its default value and any required without a default value will raise an error. See `--option` and `--no-interactive` documentation and/or [the plugins overview guide](/docs/user-guides/plugins/overview) for further details.",
       arguments   : [
         {
           name          : 'apex-domain',
           description   : 'The site apex domain.',
           defaultOption : true
-        },
-        {
-          name        : 'bucket-name',
-          description : 'The name of the bucket to be used. If no option is given, cloudsite will generate a bucket name based on the apex domain.'
         },
         {
           name        : 'no-build',
@@ -182,14 +172,22 @@ const cliSpec = {
         },
         {
           name        : 'no-interactive',
-          description : 'Suppresses activation of the interactive setup where it would otherwise be activated.',
+          description : 'Suppresses activation of the interactive setup where it would otherwise be activated. Any options for activated plugins not set on the command line by an `--option` will take their default value.',
           type        : Boolean
         },
-        optionSpec,
+        {
+          name        : 'option',
+          description : 'A combined name-value pair of plugin options in the form of: &lt;name&gt;:&lt;value&gt;. Can be used multiple times. Setting any option activates the associated plugin and any unset options are queried unless `--no-interactive` is also set, in which case the options take their default value.',
+          multiple    : true
+        },
         {
           name        : 'region',
           description : "The region where to create the site resources. Defaults to 'us-east-1'.",
           default     : 'us-east-1'
+        },
+        {
+          name        : 'site-bucket-name',
+          description : 'The name of the bucket where website content is stored. If no option is given, Cloudsite will generate a random bucket name.'
         },
         {
           name        : 'source-path',
@@ -331,7 +329,11 @@ const cliSpec = {
               name        : 'name',
               description : 'The option name.'
             },
-            optionSpec, // the 'options' definition
+            {
+              name        : 'option',
+              description : 'A combined name-value pair of plugin options in the form of: &lt;name&gt;:&lt;value&gt;. Can be used multiple times. When `--delete` is set, then the value is ignored and can be left blank.',
+              multiple    : true
+            },
             {
               name        : 'value',
               description : "The setting value. Incompatible with the '--delete' option."

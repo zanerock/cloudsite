@@ -9,10 +9,11 @@ const getValueContainerAndKey = ({ path, pathPrefix, rootContainer, skipValueChe
     if (i === path.length - 1) {
       currSpec = currSpec?.[bit]
       if (currSpec !== undefined) {
-        const { matches, validation } = currSpec
-        if (validation === undefined && matches === undefined) {
+        const { matches, paramType, validation } = currSpec
+        if ((paramType === undefined || !paramType.match(/bool(ean)?/i)) &&
+           validation === undefined && matches === undefined) {
           throw new Error(
-            `Plugin option '${origPath}' spec must define either 'validation' or 'matches'.`,
+            `Plugin option '${origPath}' spec must define either 'validation' or 'matches' for non-boolean types.`,
             { exitCode : 11 }
           )
         }

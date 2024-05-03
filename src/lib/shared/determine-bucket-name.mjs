@@ -2,16 +2,15 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { S3Client, HeadBucketCommand } from '@aws-sdk/client-s3'
 
-import { convertDomainToBucketName } from './convert-domain-to-bucket-name'
 import { getAccountID } from './get-account-id'
 import { progressLogger } from './progress-logger'
 
 const determineBucketName = async (args) => {
-  const { apexDomain, credentials, findName = false, siteInfo } = args
+  const { credentials, findName = false, siteInfo } = args
   let { bucketName, s3Client } = args
 
   if (bucketName === undefined) {
-    bucketName = siteInfo.bucketName || convertDomainToBucketName(apexDomain)
+    bucketName = siteInfo.bucketName || uuidv4()
   }
 
   const { accountID } = siteInfo
@@ -43,9 +42,7 @@ const determineBucketName = async (args) => {
       }
     }
     progressLogger.write('NOT free\n')
-    const bucketSalt = uuidv4().slice(0, 8)
-    bucketName = bucketName.replace(/-[A-F0-9]{8}$/i, '')
-    bucketName += '-' + bucketSalt
+    bucketName = uuidv4()
   }
 }
 

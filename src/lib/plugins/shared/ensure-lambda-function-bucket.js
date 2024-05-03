@@ -1,24 +1,20 @@
 import { CreateBucketCommand, PutBucketTaggingCommand } from '@aws-sdk/client-s3'
 
-import { convertDomainToBucketName } from '../../shared/convert-domain-to-bucket-name'
 import { determineBucketName } from '../../shared/determine-bucket-name'
 import { getSiteTag } from '../../shared/get-site-tag'
 import { progressLogger } from '../../shared/progress-logger'
 
-const ensureLambdaFunctionBucket = async ({ credentials, pluginData, s3Client, siteInfo }) => {
-  progressLogger.write('Checking for lambda function bucket bucket... ')
+const ensureLambdaFunctionBucket = async ({ credentials, s3Client, siteInfo }) => {
+  progressLogger.write('Checking for lambda function bucket... ')
 
-  const { apexDomain } = siteInfo
-  let { lambdaFunctionsBucket } = pluginData
+  let { lambdaFunctionsBucket } = siteInfo
 
   if (lambdaFunctionsBucket === undefined) {
-    lambdaFunctionsBucket = convertDomainToBucketName(apexDomain) + '-lambda-functions'
     progressLogger.write('CREATING\n')
     lambdaFunctionsBucket =
       await determineBucketName({
-        bucketName : lambdaFunctionsBucket,
         credentials,
-        findName   : true,
+        findName : true,
         s3Client,
         siteInfo
       })
@@ -39,12 +35,12 @@ const ensureLambdaFunctionBucket = async ({ credentials, pluginData, s3Client, s
   const putBucketTaggingCommand = new PutBucketTaggingCommand({
     Bucket  : lambdaFunctionsBucket,
     Tagging : {
-      TagSet : [{ Key : siteTag, Value : '' }]
+      TagSet : [{ Key : siteTag, Value : '' }, { Key : 'function', Value : 'lambda code storage' }]
     }
   })
   await s3Client.send(putBucketTaggingCommand)
 
-  pluginData.lambdaFunctionsBucket = lambdaFunctionsBucket
+  siteInfo.lambdaFunctionsBucket = lambdaFunctionsBucket
 
   return lambdaFunctionsBucket
 }

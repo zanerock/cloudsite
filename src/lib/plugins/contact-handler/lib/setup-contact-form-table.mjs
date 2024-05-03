@@ -2,7 +2,7 @@ import { getSiteTag } from '../../../shared/get-site-tag'
 
 const setupContactFormTable = ({ siteInfo, siteTemplate }) => {
   const { finalTemplate, resourceTypes } = siteTemplate
-  const { bucketName } = siteInfo
+  const { apexDomain } = siteInfo
 
   const siteTag = getSiteTag(siteInfo)
   const tags = [{ Key : siteTag, Value : '' }]
@@ -10,7 +10,7 @@ const setupContactFormTable = ({ siteInfo, siteTemplate }) => {
   finalTemplate.Resources.ContactHandlerDynamoDB = {
     Type       : 'AWS::DynamoDB::Table',
     Properties : {
-      TableName            : bucketName + '-ContactFormEntries',
+      TableName            : apexDomain + '-ContactFormEntries',
       AttributeDefinitions : [
         { AttributeName : 'SubmissionID', AttributeType : 'S' },
         { AttributeName : 'SubmissionTime', AttributeType : 'S' }

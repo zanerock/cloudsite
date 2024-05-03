@@ -27,7 +27,7 @@ const SiteTemplate = class {
    * @param {string} input.siteInfo.region - the region of the site
    * @param {string} input.siteInfo.certificateArn {string} - the AWS ARN for the site's SSL certificate
    * @param {string} input.siteInfo.accountID - the ID of the account under which the stack resides (not ARN)
-   * @param {string} input.siteInfo.bucketName - the name of the bucket where the site's static files are stored
+   * @param {string} input.siteInfo.siteBucketName - the name of the bucket where the site's static files are stored
    * @param {string} input.siteInfo.stackName - the name of the stack
    * @param {string} input.siteInfo.stackArn - the stack's ARN
    * @param {string} input.siteInfo.cloudFrontDistributionID - the stack's CloudfFront ID (not ARN)
@@ -45,13 +45,13 @@ const SiteTemplate = class {
 
   async initializeTemplate ({ update } = {}) {
     const { siteInfo } = this
-    const { accountID, apexDomain, bucketName, certificateArn, region } = siteInfo
+    const { accountID, apexDomain, siteBucketName, certificateArn, region } = siteInfo
     const siteTag = getSiteTag(siteInfo)
 
     const oacName = update === true
       ? siteInfo.oacName
       : await determineOACName({
-        baseName    : `${bucketName}-OAC`,
+        baseName    : `${apexDomain}-OAC`,
         credentials : this.credentials,
         siteInfo    : this.siteInfo
       })
@@ -64,8 +64,8 @@ const SiteTemplate = class {
           Type       : 'AWS::S3::Bucket',
           Properties : {
             AccessControl : 'Private',
-            BucketName    : bucketName,
-            Tags          : [{ Key : siteTag, Value : '' }]
+            BucketName    : siteBucketName,
+            Tags          : [{ Key : siteTag, Value : '' }, { Key : 'function', Value : 'website contents storage' }]
           }
         },
         SiteCloudFrontOriginAccessControl : {
@@ -87,7 +87,7 @@ const SiteTemplate = class {
             DistributionConfig : {
               Origins : [
                 {
-                  DomainName     : `${bucketName}.s3.${region}.amazonaws.com`,
+                  DomainName     : `${siteBucketName}.s3.${region}.amazonaws.com`,
                   Id             : 'static-hosting',
                   S3OriginConfig : {
                     OriginAccessIdentity : ''
@@ -123,7 +123,7 @@ const SiteTemplate = class {
           Type       : 'AWS::S3::BucketPolicy',
           DependsOn  : ['SiteS3Bucket', 'SiteCloudFrontDistribution'],
           Properties : {
-            Bucket         : bucketName,
+            Bucket         : siteBucketName,
             PolicyDocument : {
               Version   : '2012-10-17',
               Statement : [
@@ -133,7 +133,7 @@ const SiteTemplate = class {
                     Service : 'cloudfront.amazonaws.com'
                   },
                   Action    : 's3:GetObject',
-                  Resource  : `arn:aws:s3:::${bucketName}/*`,
+                  Resource  : `arn:aws:s3:::${siteBucketName}/*`,
                   Condition : {
                     StringEquals : {
                       'AWS:SourceArn' : {
@@ -171,7 +171,7 @@ const SiteTemplate = class {
     if (commonLogsBucket !== undefined) {
       progressLogger.write('Deleting common logs bucket...\n')
       const s3Client = new S3Client({ credentials : this.credentials })
-      emptyBucket({
+      await emptyBucket({
         bucketName : commonLogsBucket,
         doDelete   : true,
         s3Client,
@@ -184,8 +184,7 @@ const SiteTemplate = class {
   }
 
   async enableCommonLogsBucket () {
-    const { bucketName } = this.siteInfo // used to create a name for the shared logging bucket
-    let { commonLogsBucket = bucketName + '-common-logs' } = this.siteInfo
+    let { commonLogsBucket } = this.siteInfo
     const siteTag = getSiteTag(this.siteInfo)
 
     if (commonLogsBucket === undefined) {
@@ -206,7 +205,7 @@ const SiteTemplate = class {
         OwnershipControls : { // this enables ACLs, as required by CloudFront standard logging
           Rules : [{ ObjectOwnership : 'BucketOwnerPreferred' }]
         },
-        Tags : [{ Key : siteTag, Value : '' }]
+        Tags : [{ Key : siteTag, Value : '' }, { Key : 'function', Value : 'common logs storage' }]
       }
     }
 

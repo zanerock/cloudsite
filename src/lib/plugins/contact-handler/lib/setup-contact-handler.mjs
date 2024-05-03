@@ -13,7 +13,7 @@ const setupContactHandler = async ({
   siteTemplate,
   update
 }) => {
-  const { accountID, apexDomain, bucketName, region } = siteInfo
+  const { accountID, apexDomain, region } = siteInfo
   const { finalTemplate, resourceTypes } = siteTemplate
 
   const contactHandlerFunctionBaseName = convertDomainToBucketName(apexDomain) + '-contact-handler'
@@ -37,8 +37,19 @@ const setupContactHandler = async ({
   const siteTag = getSiteTag(siteInfo)
   const tags = [{ Key : siteTag, Value : '' }]
 
+  finalTemplate.Resources.ContactHandlerLogGroup = {
+    Type       : 'AWS::Logs::LogGroup',
+    Properties : {
+      LogGroupClass   : 'STANDARD', // TODO: support option for INFREQUENT_ACCESS
+      LogGroupName    : contactHandlerLogGroupName,
+      RetentionInDays : 180, // TODO: support options,
+      Tags            : tags
+    }
+  }
+
   finalTemplate.Resources.ContactHandlerRole = {
     Type       : 'AWS::IAM::Role',
+    DependsOn  : ['ContactHandlerDynamoDB', 'ContactHandlerLogGroup'],
     Properties : {
       AssumeRolePolicyDocument : {
         Version   : '2012-10-17',
@@ -91,16 +102,6 @@ const setupContactHandler = async ({
   finalTemplate.Outputs.ContactHandlerRole = { Value : { Ref : 'ContactHandlerRole' } }
   resourceTypes['IAM::Role'] = true
 
-  finalTemplate.Resources.ContactHandlerLogGroup = {
-    Type       : 'AWS::Logs::LogGroup',
-    Properties : {
-      LogGroupClass   : 'STANDARD', // TODO: support option for INFREQUENT_ACCESS
-      LogGroupName    : contactHandlerLogGroupName,
-      RetentionInDays : 180, // TODO: support options,
-      Tags            : tags
-    }
-  }
-
   finalTemplate.Resources.ContactHandlerLambdaFunction = {
     Type       : 'AWS::Lambda::Function',
     DependsOn  : ['ContactHandlerRole', 'ContactHandlerLogGroup'],
@@ -118,7 +119,7 @@ const setupContactHandler = async ({
       Timeout     : 5,
       Environment : {
         Variables : {
-          TABLE_PREFIX : bucketName,
+          TABLE_PREFIX : apexDomain,
           FORM_FIELDS  : formFieldsSpec
         }
       },

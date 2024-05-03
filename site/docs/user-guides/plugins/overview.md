@@ -10,13 +10,13 @@ The basic Cloudsite setup, with no plugins, serves static files quickly and secu
 
 ### On site creation
 
-When creating a site, the user will, by default, be asked which plugins should be installed. Any selected plugins will be interactively configured as part of the installation process.
+When creating a site, the user will, by default, be asked which plugins should be installed. Any selected plugins will be interactively configured as part of the installation process. That is, if neither `--no-interactive` and `--option` options are specified.
 
-In order to support a headless install, users can use the `--no-interactive` [`create` option](/docs/user-guides/command-line-reference#create-options). In this mode, plugins are skipped by default unless configured using `--option` options. E.g.:
+You can also specify plugin options via the CLI using the `--option` option. Setting any plugin parameter will cause the plugin to be installed and unset will be interactively queried unless `--no-interactive` is also specified.
 
-```bash
-cloudsite create my-site.com --source-path ./path/to/source --no-interactine --option cloudFrontLogs.enableCookies:true
-```
+In order to support a headless install, users can use the `--no-interactive` [`create` option](/docs/user-guides/command-line-reference#create-options). With `--no-interactive` specified, any un-set optiosn will take their default value and any un-set plugin options with no default value will raise an error.
+
+ Also note, in non-interactive mode, plugins are enabled according to the plugin's own default settings which are in turn dependent on the site type and configuration. E.g., the [index rewrite](./index-rewriter) plugin is installed by default for non-Docusaurus sites.
 
 ### After site launch
 

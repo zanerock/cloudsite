@@ -4,8 +4,8 @@ import { emptyBucket } from 's3-empty-bucket'
 import { S3Client } from '@aws-sdk/client-s3'
 
 import { CONTACT_EMAILER_ZIP_NAME, CONTACT_HANDLER_ZIP_NAME, REQUEST_SIGNER_ZIP_NAME } from './lib/constants'
-import { convertDomainToBucketName } from '../../shared/convert-domain-to-bucket-name'
-import { findBucketLike } from '../../shared/find-bucket-like'
+import { findBucketByTags } from '../../shared/find-bucket-by-tags'
+import { getSiteTag } from '../../shared/get-site-tag'
 import { progressLogger } from '../../shared/progress-logger'
 import { setupContactFormTable } from './lib/setup-contact-form-table'
 import { setupContactEmailer } from './lib/setup-contact-emailer'
@@ -83,11 +83,13 @@ const importHandler = async ({ credentials, name, pluginsData, siteInfo, templat
     const contactHandlerFunctionName = template.Resources.ContactHandlerLambdaFunction.Properties.FunctionName
     const emailerFunctionName = template.Resources.ContactEmailerFunction.Properties.FunctionName
     const requestSignerFunctionName = template.Resources.SignRequestFunction.Properties.FunctionName
-    const baseBucketName = convertDomainToBucketName(siteInfo.apexDomain)
-    const lambdaFunctionsBucket = await findBucketLike({
+    const lambdaFunctionsBucket = await findBucketByTags({
       credentials,
       description : 'Lambda functions',
-      partialName : baseBucketName + '-lambda-functions'
+      tags        : [
+        { key : getSiteTag(siteInfo), value : '' },
+        { key : 'function', value : 'lambda code storage' }
+      ]
     })
     if (lambdaFunctionsBucket === undefined) {
       throw new Error(`Could not resolve the Lambda function bucket for the '${name}' plugin.`)
@@ -112,20 +114,31 @@ const importHandler = async ({ credentials, name, pluginsData, siteInfo, templat
   // else, not enabled, nothing to do
 }
 
-const preStackDestroyHandler = async ({ pluginData, siteTemplate }) => {
+const preStackDestroyHandler = async ({ siteTemplate }) => {
   const { credentials } = siteTemplate
-  const { lambdaFunctionsBucket } = pluginData
+  const { lambdaFunctionsBucket } = siteTemplate.siteInfo
 
   if (lambdaFunctionsBucket !== undefined) {
-    progressLogger?.write(`Deleting ${lambdaFunctionsBucket} bucket...\n`)
+    progressLogger?.write(`Deleting shared Lambda function bucket ${lambdaFunctionsBucket} bucket...`)
     const s3Client = new S3Client({ credentials })
-    await emptyBucket({
-      bucketName : lambdaFunctionsBucket,
-      doDelete   : true,
-      s3Client,
-      verbose    : progressLogger !== undefined
-    })
-    delete pluginData.lambdaFunctionsBucket
+    try {
+      await emptyBucket({
+        bucketName : lambdaFunctionsBucket,
+        doDelete   : true,
+        s3Client,
+        verbose    : progressLogger !== undefined
+      })
+      delete siteTemplate.siteInfo.lambdaFunctionsBucket
+      progressLogger?.write('DELETED.\n')
+    } catch (e) {
+      if (e.Code === 'NoSuchBucket') {
+        progressLogger?.write('NO SUCH BUCKET.\n')
+        delete siteTemplate.siteInfo.lambdaFunctionsBucket
+      } else {
+        progressLogger?.write('ERROR.\n')
+        throw e
+      }
+    }
   } else {
     progressLogger?.write('Looks like the Lambda function bucket has already been deleted; skipping.\n')
   }
@@ -143,7 +156,7 @@ const stackConfig = async ({ pluginData, siteTemplate, update }) => {
   }
 
   const lambdaFunctionsBucketName =
-    await stageLambdaFunctionZipFiles({ credentials, lambdaFileNames, pluginData, siteInfo })
+    await stageLambdaFunctionZipFiles({ credentials, lambdaFileNames, siteInfo })
 
   await setupContactHandler({ credentials, lambdaFunctionsBucketName, pluginData, siteInfo, siteTemplate, update })
   await setupRequestSigner({ credentials, lambdaFunctionsBucketName, pluginData, siteTemplate, update })
