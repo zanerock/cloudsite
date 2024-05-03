@@ -238,7 +238,7 @@ With Docusaurus based sites, Cloudsite automatically generates the static site f
 
 ## In closing
 
-Docusaurus is simple to setup and you can easily create documentation, blogs, marketing sites, etc. The [docusaurus-bi-color-themer](https://github.com/liquid-labs/docusaurus-bi-color-themer) tool can help you do some basic branding and you can easily [set your logo](#set-your-logo). It does require knowledge of HTML+CSS to fully style, though with [website support](/support), we can provide instructions, examples, or even code to accomplish most styling goals.
+Docusaurus is simple to setup and you can easily create documentation, blogs, marketing sites, etc. It comes with a simple, single-color theme that's easy to tweak. It does require knowledge of HTML+CSS to fully style, though with [website support](/support), we can provide instructions, examples, or even code to accomplish most styling goals.
 
 ## Get help
 
