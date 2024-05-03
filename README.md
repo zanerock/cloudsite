@@ -336,7 +336,7 @@ Creates a new website, setting up infrastructure and copying content.
 
 The first time you launch a new domain, Cloudsite will create an SSL certificate for the domain as necessary. If a new SSL certificate is created, the creation process will exit and you'll be given instructions on how to verify the SSL certificate. Once verification is complete, re-run the create command.
 
-Also note that when any `--option` is specified, the command all options to be specified. Any unspecified options will take their default value. See [the plugins overview guide](/docs/user-guides/plugins/overview) for further details.
+You can use `--no-interactive` to guarantee headless operation, though you must be sure to specify all primary options. Any un-specified `--option` for an active plugin will take its default value and any required without a default value will raise an error. See `--option` and `--no-interactive` documentation and/or [the plugins overview guide](/docs/user-guides/plugins/overview) for further details.
 
 ##### `create` options
 
@@ -345,8 +345,8 @@ Also note that when any `--option` is specified, the command all options to be s
 |`<apex-domain>`|(_main argument_,_optional_) The site apex domain.|
 |`--no-build`|Supresses the default behavior of building before uploading the site content.|
 |`--no-delete-on-failure`|When true, does not delete the site stack after setup failure.|
-|`--no-interactive`|Suppresses activation of the interactive setup where it would otherwise be activated.|
-|`--option`|A combined name-value pair: &lt;name&gt;:&lt;value&gt;. Can be used multiple times. With '--delete', the value portion is ignored and can be omitted, e.g.: '--option &lt;name&gt;'.|
+|`--no-interactive`|Suppresses activation of the interactive setup where it would otherwise be activated. Any options for activated plugins not set on the command line by an `--option` will take their default value.|
+|`--option`|A combined name-value pair of plugin options in the form of: &lt;name&gt;:&lt;value&gt;. Can be used multiple times. Setting any option activates the associated plugin and any unset options are queried unless `--no-interactive` is also set, in which case the options take their default value.|
 |`--region`|The region where to create the site resources. Defaults to 'us-east-1'.|
 |`--site-bucket-name`|The name of the bucket where website content is stored. If no option is given, Cloudsite will generate a random bucket name.|
 |`--source-path`|Local path to the static site root.|
@@ -472,7 +472,7 @@ ___`set` options___
 |`--confirmed`|When entirely deleting (disabling) a plugin, you must either confirm interactively or provide the '--confirmed' option.|
 |`--delete`|When set, then deletes the setting. Incompatible with the '--value' option. To delete all plugin settings (disable the plugin), set '--name' or '--option' to the bare plugin name; e.g.: --value aPlugin.|
 |`--name`|The option name.|
-|`--option`|A combined name-value pair: &lt;name&gt;:&lt;value&gt;. Can be used multiple times. With '--delete', the value portion is ignored and can be omitted, e.g.: '--option &lt;name&gt;'.|
+|`--option`|A combined name-value pair of plugin options in the form of: &lt;name&gt;:&lt;value&gt;. Can be used multiple times. When `--delete` is set, then the value is ignored and can be left blank.|
 |`--value`|The setting value. Incompatible with the '--delete' option.|
 
 <span id="cloudsite-plugin-settings-show"></span>
