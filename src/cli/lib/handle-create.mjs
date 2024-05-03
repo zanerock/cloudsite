@@ -180,7 +180,7 @@ const handleCreate = async ({ argv, db }) => {
   optionsLib.updatePluginSettings({ options, siteInfo })
 
   // now verify that all required settings are set
-  for (const [plugin, settings] of Object.entries(siteInfo.plugins)) {
+  for (const [plugin, { settings }] of Object.entries(siteInfo.plugins)) {
     const config = plugins[plugin].config
     const { name, options: configOptions } = config
     if (configOptions !== undefined) {
