@@ -159,7 +159,7 @@ const cloudsite = async () => {
       if (status === 'ERROR') {
         message = '<error>!! ERROR !!<rst>: ' + message
       } else if (status === 'FAILURE') {
-        message = '<warn>Command FAILED: <rst>' + message
+        message = '<warn>PARTIAL success: <rst>' + message
       }
       progressLogger.write(message + '\n')
     }
