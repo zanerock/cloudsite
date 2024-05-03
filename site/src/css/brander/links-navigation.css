@@ -40,9 +40,17 @@ a.breadcrumbs__link--active,
   text-decoration: var(--ll-nav-text-decoration-active);
 }
 
+.footer__item a[href] {
+  color: var(--ifm-background-color);
+  font-weight: 500;
+}
+
+.footer__item a[href]:hover {
+  color: var(--ll-nav-color-hover);
+}
+
 button[class*=toggleButton] {
   color: var(--ll-nav-color);
-  width: unset;
 }
 
 button[class*=toggleButton]:hover {
