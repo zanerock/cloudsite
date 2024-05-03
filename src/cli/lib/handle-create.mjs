@@ -105,8 +105,7 @@ const handleCreate = async ({ argv, db }) => {
       progressLogger.write(`Enabling ${name} plugin based on settings.\n`)
       enable = true
       implicitEnabled = true
-    }
-    else if (includeDirective === INCLUDE_PLUGIN_REQUIRED) {
+    } else if (includeDirective === INCLUDE_PLUGIN_REQUIRED) {
       progressLogger.write(`Enabling ${name} plugin based on requirements.\n`)
       enable = true
       implicitEnabled = true
@@ -146,15 +145,13 @@ const handleCreate = async ({ argv, db }) => {
       // do we have an option-less plugin?
       if (configOptions === undefined || Object.keys(configOptions).length === 0) {
         options.push({ name : plugin, value : true })
-      }
-      else if (noInteractive === true) { // then we set everything to it's default
+      } else if (noInteractive === true) { // then we set everything to it's default
         for (const [parameter, { default: defaultValue }] of Object.entries(configOptions || {})) {
           if (siteInfo.plugins?.[plugin]?.settings?.[parameter] === undefined) {
-            options.push({ name: `${plugin}.${parameter}`, value: defaultValue })
+            options.push({ name : `${plugin}.${parameter}`, value : defaultValue })
           }
         }
-      }
-      else { // we ask
+      } else { // we ask
         const interrogationBundle = { actions : [] }
         for (const [parameter, configSpec] of Object.entries(configOptions || {})) {
           const { default: defaultValue, description, invalidMessage, matches, required, paramType = 'string' } = configSpec
@@ -183,7 +180,7 @@ const handleCreate = async ({ argv, db }) => {
   optionsLib.updatePluginSettings({ options, siteInfo })
 
   // now verify that all required settings are set
-  for (const [ plugin, settings] of Object.entries(siteInfo.plugins)) {
+  for (const [plugin, settings] of Object.entries(siteInfo.plugins)) {
     const config = plugins[plugin].config
     const { name, options: configOptions } = config
     if (configOptions !== undefined) {

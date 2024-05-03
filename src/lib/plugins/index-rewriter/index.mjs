@@ -59,8 +59,7 @@ const preStackDestroyHandler = async ({ siteTemplate }) => {
       })
       progressLogger?.write('DELETED.\n')
       delete siteTemplate.siteInfo.lambdaFunctionsBucket
-    }
-    catch (e) {
+    } catch (e) {
       progressLogger?.write('ERROR.\n')
       throw e
     }

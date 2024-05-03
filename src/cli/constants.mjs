@@ -177,7 +177,7 @@ const cliSpec = {
         },
         {
           name        : 'option',
-          description : "A combined name-value pair of plugin options in the form of: &lt;name&gt;:&lt;value&gt;. Can be used multiple times. Setting any option activates the associated plugin and any unset options are queried unless `--no-interactive` is also set, in which case the options take their default value.",
+          description : 'A combined name-value pair of plugin options in the form of: &lt;name&gt;:&lt;value&gt;. Can be used multiple times. Setting any option activates the associated plugin and any unset options are queried unless `--no-interactive` is also set, in which case the options take their default value.',
           multiple    : true
         },
         {
@@ -331,7 +331,7 @@ const cliSpec = {
             },
             {
               name        : 'option',
-              description : "A combined name-value pair of plugin options in the form of: &lt;name&gt;:&lt;value&gt;. Can be used multiple times. When `--delete` is set, then the value is ignored and can be left blank.",
+              description : 'A combined name-value pair of plugin options in the form of: &lt;name&gt;:&lt;value&gt;. Can be used multiple times. When `--delete` is set, then the value is ignored and can be left blank.',
               multiple    : true
             },
             {
