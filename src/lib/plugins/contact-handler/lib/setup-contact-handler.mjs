@@ -13,7 +13,7 @@ const setupContactHandler = async ({
   siteTemplate,
   update
 }) => {
-  const { accountID, apexDomain, siteBucketName, region } = siteInfo
+  const { accountID, apexDomain, region } = siteInfo
   const { finalTemplate, resourceTypes } = siteTemplate
 
   const contactHandlerFunctionBaseName = convertDomainToBucketName(apexDomain) + '-contact-handler'

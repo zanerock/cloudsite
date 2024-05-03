@@ -134,8 +134,7 @@ const preStackDestroyHandler = async ({ siteTemplate }) => {
       if (e.Code === 'NoSuchBucket') {
         progressLogger?.write('NO SUCH BUCKET.\n')
         delete siteTemplate.siteInfo.lambdaFunctionsBucket
-      }
-      else {
+      } else {
         progressLogger?.write('ERROR.\n')
         throw e
       }
