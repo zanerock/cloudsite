@@ -13,9 +13,14 @@ import Link from '@docusaurus/Link'
   </Link>
 </div>
 
-Trying to get something done with your website? Want a say in the next new feature? We offer affordable, comprehensive support plans. Anything question. Any request. We're here for you.
+Trying to get something done with your website? Want a say in the next new feature? We offer affordable, comprehensive support plans. Anything question. Any request. We're here for you. And of course we'll address any bugs for free.
 
-## What's covered
+## What's you get
+
+### Free support
+
+- You're welcome to [post issues on the Cloudsite GitHub page](https://github.com/liquid-labs/cloudsite/issues).
+- We also monitor [StackOverflow](https://stackoverflow.com) for ['cloudsite' tagged posts](https://stackoverflow.com/questions/tagged/cloudsite).
 
 ### Voter
 <div class="sub-title">
