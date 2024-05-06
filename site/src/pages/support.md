@@ -20,7 +20,8 @@ Trying to get something done with your website? Want a say in the next new featu
 ### Free support
 
 - You're welcome to [post issues on the Cloudsite GitHub page](https://github.com/liquid-labs/cloudsite/issues).
-- We also monitor [StackOverflow](https://stackoverflow.com) for ['cloudsite' tagged posts](https://stackoverflow.com/questions/tagged/cloudsite).
+- We monitor [StackOverflow](https://stackoverflow.com) for ['cloudsite' tagged posts](https://stackoverflow.com/questions/tagged/cloudsite).
+- Join the [Liquid Labs Discord server](https://discord.gg/YA8Cw9HDWT).
 
 ### Voter
 <div class="sub-title">
