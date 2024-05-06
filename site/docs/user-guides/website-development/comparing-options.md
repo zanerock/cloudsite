@@ -18,7 +18,7 @@ It's built to support and plugins, but [resources are very limited](https://gith
 
 ### [WordPress](./build-with-wordpress)
 
-WordPress can be a pain to set up, but if you want or need a graphical interface that's [supported by cloudsite](/support), then this is the solution for you. WordPress has a wealth of look and feel themes and feature plugins and can be customized with no HTML+CSS knowledge.
+WordPress can be a pain to set up (for static sites), but if you want or need a graphical interface that's [supported by Cloudsite](/support), then this is the solution for you. WordPress has a wealth of look and feel themes and feature plugins and can be customized with no HTML+CSS knowledge necessary.
 
 WordPress is by far the easiest to theme for look and feel. At the same time, customizing the look and feel (i.e., modifying or creating a theme) is quite involved and requires knowledge of not only HTML+CSS, but also deep knowledge of the inner-workings of WP itself. You can find a theme you like, but then you're more or less stuck with that theme.
 
@@ -36,15 +36,20 @@ Finally, there's the option to work with HTML+CSS files directly. While this can
 
 ### General/marketing website
 
-It all comes down to what you know. Docusaurus is easy to set up and get going and you create content via text files. WordPress takes some setting up, but provides a graphical interface. There are even tons of HTML+CSS templates out there that can serve as the basis of a semi-custom site.
+It all comes down to what you know.
+<div class="flow-list">
+- Docusaurus is easy to set up and get going. You create content via simple Markdown text files and can freely mix HTML or oven React components for extra styling and dynamic UI effects.
+- WordPress takes some setting up, but provides a graphical interface. It has tons of themes which you can freely switch between to find one you like.
+- You can build a basic site using straight HTML+CSS templates, of which there are thousands to choose from. It's a relatively easy way to set up a small, simple site, especially a one-pager.
+</div>
 
-### Blogging
+### Blog
 
-Any of the non-manual options are good choices for a blogging platform. Docusaurus is probably the easiest to set up and use if you're comfortable working with text files. If a graphical interface is important to you, then WordPress or another CMS is the way to go.
+Both Docusaurus and WordPress are good choices for a blogging platform. Docusaurus is probably the easiest to set up and use if you're comfortable working with text files. If a graphical interface is important to you, then WordPress or another CMS is the way to go.
 
 ### Knowledgebase
 
-This is where Docusaurus really shines. Though, again, if you want/need a graphical interface then WordPress or another (perhaps purpose built) CMS will be the way to go.
+This is where Docusaurus really shines. It's easy to add articles and categories via simple text files and folders. If you want a graphical interface then WordPress + an appropriate plugin is the way to go.
 
 ### Wiki
 
@@ -52,6 +57,15 @@ Docusaurus has built in support for wikis, but it's not focused on that feature 
 
 There are a number of special purpose wiki CMSs. [MediaWiki](https://www.mediawiki.org/wiki/MediaWiki) (which powers [Wikipedia](https://wikipedia.org) is the granddaddy of them all and could be combined with static site generation to be compatible with cloudsite. Some, simpler options such as [DocuWiki](https://www.dokuwiki.org/dokuwiki) (which doesn't require a database) might relatively easily setup and converted to a static site.
 
+### Gallery
+
+WordPress has tons of good gallery plugins and is going to be the easiest no-code option of the three. Docusaurus and template sites are good options if you're okay with some cut and paste HTML or using React components.
+
 ## Get help
 
-Whichever option you choose, you can always combine it with our [[affordable, comprehensive website support plan](/support#unlimited-website-consultation)]. We can answer questions, provide resources, and often simply provide working code.
+Whichever option you choose, you can always combine it with our [affordable, comprehensive website support plan](/support#unlimited-website-consultation). We can answer questions, provide resources, and often simply provide working code. There are also a number of completely free resources where you can get question answered:
+<div class="flow-list">
+- [_ux.stackexchange.com_](https://wordpress.stackexchange.com): for general design questions separate from implementation
+- [stackoverflow.com](https://stackoverflow.com): for HTML, CSS, and Javascript questions as well as questions regarding Docusaurus and Cloudsite itself
+- [_wordpress.stackexchange.com_](https://wordpress.stackexchange.com): for WordPress specific questions regarding plugins, development, and set up.
+</div>

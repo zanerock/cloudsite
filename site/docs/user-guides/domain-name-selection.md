@@ -6,7 +6,7 @@ description: A guide to registering domain names.
 
 Your website needs someplace to _be_, and that's where domain names come in. A domain name is a (hopefully) user friendly name that acts as the address for your website. In this document, we will go over how to select and register a good domain name.
 
-A good domain name should match your brand, be memorable, and easy to spell. This can be challenging because the most obvious names are all already taken. But, with a little creativity, there are still plenty of good domain names to be had. In this article, will go through a step by step process to select a good domain name.
+A good domain name should match your brand, be memorable, and easy to spell. This can be challenging because the most obvious names are already taken. But, with a little creativity, there are still plenty of good domain names to be had. In this article, will go through a step by step process to select a good domain name.
 
 ## Terminology
 
@@ -33,7 +33,7 @@ To start with, you'll need to be able to tell whether a domain name is already t
 
 ### Brainstorming base names
 
-The process starts with brainstorming base names. If you already have a brand name that you want or must use, then you're kinda stuck on this one. But domain names are so central to a business that domain names and brand names are generally co-determined at the same time.
+The process starts with brainstorming base names. If you already have a brand name that you want or must use, then you've got a clear starting point. Domain names are, however, so central to a business that domain names and brand names are generally co-determined at the same time.
 
 You'll probably start with a few names in mind. These are themselves almost certainly taken, but that's just the way it is. Some good ways to generate possible names are:
 - Asking other people for ideas.
@@ -45,13 +45,13 @@ Regarding the last option, just be aware that some of these tools are fronts for
 
 ### Determine applicable TLDs
 
-Generally, a '.com' domain (or '.org' for a non-profit) is considered "the best" if you can get it, but a better name with another TLD is usually better than a poor name on .com (or .org). The three next most popular general purpose TLDs are '.net', '.co', and '.io'.[^1]
+Generally, a .com domain (or .org for a non-profit) is considered "the best" if you can get it, but a better name with another TLD is usually better than a poor .com (or .org) name. The three next most popular general purpose TLDs are .net,[^1] .co, and .io.
 
 [^1]: .net domains used to have a more specific implication, but now-a-days are pretty much general purpose.
 
 Check if any of your possible base names can be used in domain hacking. Recall, this is where the domain itself spells out our suggests a word or phrase. Refer to the list of TLDs and check see if any TLDs match the last two to four letters of your possible domain names.
 
-Also, there are many business type and profession specific domain TLDs such as '.ai', '.law', '.doctors', '.dog', '.wedding', etc. Search or read through the list of TLDs to find ones that might work and try them out in combination with possible names.
+Also, there are many business type, profession, and theme specific domain TLDs such as .ai, .law, .doctors, .dog, .wedding, etc. Search or read through the list of TLDs to find ones that might work and try them out in combination with possible names.
 
 ### Try variations
 
@@ -87,34 +87,34 @@ Also, when searching for domain names, NameCheap (and most other registrars) wil
 
 ### Rinse and repeat
 
-You may have to repeat this process a few times before you find something you like and is free. Each time through should generate new variations and ideas. Since it's relatively cheap to purchase a domain name, a lot of names are taken up by domain resellers which, if you have the money, may be an option. But if you're trying to find something more affordable, don't despair, there are still options available.
+You may have to repeat this process a few times before you find something you like and is free. Each time through should generate new variations and ideas. Since it's relatively cheap to purchase a domain name, a lot of names are taken up by domain resellers which, if you have the money, may be an option. But if you're trying to find something more affordable, don't despair. You may end up with something even better than you started with. (Though the prevelance of squatters certainly sucks.)
 
 ### Hyphens, clever spellings, and numbers
 
-Hyphens and especially misspellings should be avoided where possible. This is because no one will know there's a hyphen or exactly how you're misspelling the domain if you just say the name, so you always end up having to spell it out. Which can be clunky and may not be remembered anyway.
+Hyphens and especially misspellings should be avoided where possible. This is because no one will know there's a hyphen or exactly how you're misspelling the domain if you just say the name, so you always have to spell it out, which can be clunky and may not be remembered anyway.
 
-This isn't a hard "never", though, since most of the times people click on domains. My own domain name, 'liquid-labs.com' is hyphenated. In retrospect, I wish I'd spent more time and found an un-hyphenated alternative, and also, it's been OK.
+This isn't a hard "never", though, since most of the times people click on links rather than type in names. My own domain name, 'liquid-labs.com' is hyphenated. In retrospect, I wish I'd spent more time and found an un-hyphenated alternative, and also, it's been OK.
 
-Personally, I would avoid misspellings or "clever" spellings more than hyphens. IMO, a clever spelling has a higher chance for confusion and is easier to misread or just forgotten. And while the position of a hyphen is clear, there are numerous ways as to how exactly you might misspell a domain.
+Personally, I would avoid misspellings or "clever" spellings more than hyphens. IMO, a clever spelling has a higher chance for confusion and is easier to misread or just forget. And while the position of a hyphen is clear, there are numerous ways as to how exactly you might misspell a domain.
 
-Numbers, like clever spellings, can be confusing. If you end up using numbers, spell them out if you can. Digits are allowed in domain names, but also must be explained; e.g. "such-and-such and the digits forty-two".
+Numbers, like clever spellings, can be confusing. If you end up using numbers, you'll have to be explicit whether it's "spelled out" or "the digits".
 
-But, if you have just the perfect name and it's available with a hyphen-or even a clever enough to be memorable spelling-I wouldn't say never. If you love it, and you have the perfect branding idea, then that counts for a lot.
+But, if you have just the perfect name and it's available with a hyphen-or even a clever enough spelling to be memorable spelling-I wouldn't say never. If you love it, and you have the perfect branding idea, then that counts for a lot. 
 
 ## Registering your domain name
 
 The registration process itself is rather straightforward. You just go to your registrar of choice, tell them the name you want, select a term, and then pay some money. We offer just a few notes.
 
-First, in selecting a registrar remember it can be different than the registrar where you did your searching. If you're here specifically for the 'Host Your Own Website Free and Easy' series, then we recommend you register with [AWS Route 53](https://aws.amazon.com/route53/). Otherwise, [Namecheap.com](https://namecheap.com) is a good option, or you can just google 'registrar' and find one you like. I recommend staying away from GoDaddy, but even they're fine if you like.
+First, in selecting a registrar remember it can be different than the registrar where you did your searching. If you're here specifically for the 'Host Your Own Website Free and Easy' series, then we recommend you register with [AWS Route 53](https://aws.amazon.com/route53/). Otherwise, [Namecheap.com](https://namecheap.com) is a good option, or you can just google 'registrar' and find one you like. Personally, I recommend staying away from GoDaddy.
 
 Second, you should sign up for "privacy protection" or "domain privacy". When you register a domain name, you have to provide contact information to establish ownership. By default, this information is publicly available unless you add a privacy protection service. Some registrars (like AWS Route 53) offer this for free, while others may charge a small fee.
 
-Finally, just know that you'll see some difference in pricing for domains from different registrars. Any big difference (like 50% off) is always going to be an initial price only. The prices for domains are more or less set and should pretty much cost the same (in the long run) everywhere.
+Finally, just know that you'll see some difference in pricing for domains from different registrars. Any big difference (like 50% off) is always going to be an initial price only. The prices for domains are more or less set and should pretty much cost the same (in the long run) everywhere. You can save a little by using a registrar that offer privacy protection for free.
 
 ## In closing
 
 - A domain name that works with your branding is probably the most important things
 - A domain name should be memorable and ideally, easy to spell.
-- Avoid hyphens, clever spellings, and digit numbers if at all possible.
+- Generally avoid hyphens, clever spellings, and numbers.
 
 Once you have a domain name and you've [built your site](/docs/category/website-development), you're ready to [deploy your first website](/docs/get-started/your-first-site).
