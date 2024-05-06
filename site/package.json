@@ -28,7 +28,6 @@
     "@mdx-js/react": "^3.0.0",
     "@mui/material": "^5.15.7",
     "clsx": "^2.0.0",
-    "docusaurus": "^1.14.7",
     "docusaurus-plugin-image-zoom": "^2.0.0",
     "formik": "^2.4.5",
     "prism-react-renderer": "^2.3.0",
