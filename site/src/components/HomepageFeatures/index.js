@@ -17,7 +17,7 @@ const FeatureList = [
     darkSvg     : require('@site/static/img/no-cost-icon-bi-color-dark.svg').default,
     description : (
       <>
-        Cloudsite enables services on AWS. which offers a generous free tier. Beyond that, costs are very low compared to other options.
+        Cloudsite uses AWS services. with a free tier sufficient for many sites and low operating costs for the rest.
       </>
     )
   },
