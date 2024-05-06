@@ -158,10 +158,14 @@ aws sso login --profile cloudsite-manager # if necessary
 cloudsite update your-domain.com --do-content
 ```
 
-## In closing
 
-The WordPress ecosystem includes a ton of free and premium themes, support for blogs, galleries, and tons of other features. It can get a little complex but overall, it's a great option to create a professional looking website for free on your own (or with minimal help).
 
 ## Get help
 
-And if you need help with anything, our consider subscribing to [Unlimited Website Consultation]. Leverage our decades of experience, avoid headaches, and skip the hassle of figuring things out on your own. We'll even provide advice and explain concepts; any website design question, feature implementation, or operational issue you might have, we've got your back.
+You can get help with setup or general WordPress development questions at the dedicated WordPress StackExchange: [wordpress.stackexchange.com](https://wordpress.stackexchange.com]. For UX and design questions, post to [ux.stackexchange.com](https://ux.stackexchange.com].
+
+In addition, Cloudsite users can get unlimited, affordable, personalized website consultation offered through Liquid Labs. We'll walk you through setup, explain concepts, provide advice, and answer any question you might have regarding design, feature implementation, and operations.
+
+## In closing
+
+The WordPress ecosystem includes a ton of free and premium themes, support for blogs, galleries, and tons of other features. It can get a little complex but overall, it's a great option to create a professional looking website for free on your own (or with minimal help).

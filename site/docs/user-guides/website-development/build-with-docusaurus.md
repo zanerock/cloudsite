@@ -4,9 +4,7 @@ description: A rundown on building websites with Docusaurus.
 ---
 # Build with Docusaurus
 
-Docusaurus is an easy to use website building framework with built-in support for blogs and document trees/knowledgebases. Because Docusaurus just works with files, it's a breeze to setup and get going. Docusaurus pages can be created using HTML or simple [Markdown](https://www.markdownguide.org/) and support React components out of the box.
-
-Check out the [Docusaurus website](https://docusaurus.io) for more info.
+Docusaurus is an easy to use website building framework with built-in support for blogs and document trees/knowledgebases. Because Docusaurus works with plain HTML and [Markdown](https://www.markdownguide.org/) files, it's a breeze to setup and get going. Docusaurus also supports React components out of the box.
 
 Note in this article, `~` is shorthand for "the local folder where you installed the Docusaurus site".
 
@@ -14,7 +12,7 @@ Note in this article, `~` is shorthand for "the local folder where you installed
 
 First, you must have Node+NPM on your system. If you need help checking for and/or installing Node+NPM, refer to the [Node and NPM section of the getting started installation guide](/docs/get-started/installation#node-and-npm).
 
-Once Node+NPM is installed, open a [terminal](/docs/get-started/installation#terminal-commands) and type:
+Once Node+NPM are installed, open a [terminal](/docs/get-started/installation#terminal-commands) and type:
 
 ```bash
 npx create-docusaurus@latest ./my-site classic
@@ -33,7 +31,7 @@ This should automatically open the initial site in your web browser. If it doesn
 
 ## Manage look and feel
 
-Docusaurus does not currently have any themes beyond the 'classic' theme,[^1] and in general you have to mess with the CSS (by modifying `~/src/css/custom.css`) in order to fully style Docusaurus. However, we've created a tool that helps you create a clean, minimalist site with your branding.
+Docusaurus does not currently have any themes beyond the 'classic' theme,[^1] and in general you have to mess with the CSS (by modifying `~/src/css/custom.css`) and HTML in order to fully style Docusaurus.
 
 [^1]: There are some additional packages which are called 'themes' that you may see referred to in the documentation. These are really just plugins, however, and not "look and feel" themes. The Docusaurus team notes that adding full fledged themes is a goal.
 
@@ -46,7 +44,7 @@ Docusaurus does not currently have any themes beyond the 'classic' theme,[^1] an
 
 SVG files are best though any image file (SVG, PNG, JPG) should work.
 
-You can set a 'dark theme' version of the logo (if different), by following the same steps, except you set the `srcDark` field.
+You can set a 'dark theme' version of the logo (if different), by following the same steps, except you set the `srcDark` field. If you don't set a dark theme logo, the same logo will be used for both dark and light themes.
 
 ### Disabling the 'light/dark' toggle
 
@@ -54,9 +52,11 @@ You can set a 'dark theme' version of the logo (if different), by following the 
 2. Search for 'themeConfig'.
 3. Under `themeConfig.colorMode`, update or add the field: `disableSwitch: true`.
 
+You can also set the default (or single) theme in the same section.
+
 ### Setting colors and fonts
 
-The classic Docusaurus theme is based on a single color with three lighter shades and three darker shades of the same color. You can calculate these yourself using [a color picker tool like this one](https://medium.com/r/?url=https%3A%2F%2Fredketchup.io%2Fcolor-picker), and then set the RGB hex codes directly in the src/css/custom.css file by just replacing the existing entries. All the colors are based on the variables `--ifm-color-primary`, `--ifm-color-primary-dark`, etc.
+The classic Docusaurus theme is based on a single color with three lighter shades and three darker shades of the same color. You can calculate these yourself using [a color picker tool like this one](https://redketchup.io/color-picker), and then set the RGB hex codes directly in the src/css/custom.css file by just replacing the existing entries. All the colors are based on the variables `--ifm-color-primary`, `--ifm-color-primary-dark`, `--ifm-color-primary-light`, etc.
 
 If you want to get a little fancier, you can create variables for the hue, saturation, and lightness of your primary color and then generate the darker and lighter shades by manipulating the lightness directly like this:
 
@@ -80,7 +80,9 @@ If you want to get a little fancier, you can create variables for the hue, satur
 }
 ```
 
-Similarly, to set the fonts, set the variables `--ifm-font-family-base` and `--ifm-heading-font-family`. Don't forget to list out fallback fonts.
+You can use the [a color picker](https://redketchup.io/color-picker) to translate from RGB to HSL color specs as well.
+
+Similar to set the fonts, set the variables `--ifm-font-family-base` and `--ifm-heading-font-family`. Don't forget to list out fallback fonts.
 
 ## Managing content
 
@@ -112,8 +114,6 @@ zane:
 
 #### A simple post
 
-To  add a new file under the `~/blog` folder.
-
 1. Create a new text file named like `YYYY-MM-DD-the-blog-entry-title.md` in the `~/blog` folder.
 2. Add front matter meta-data at the top of the file like:
    ```markdown
@@ -128,21 +128,23 @@ To  add a new file under the `~/blog` folder.
 
 #### A post with images or other content
 
-To include images or other content in your blog post, create a folder like `~/blog/YYYY-MM-DD-the-blog-entry-title` instead of a file. Create an `index.md` file in that folder where you enter the metadata and author the post as above. You can then add any images or other content in that folder.
+To include images or other content in your blog post, create a folder like `~/blog/YYYY-MM-DD-the-blog-entry-title` instead of a file. Create an `index.md` file in that folder where create the blog post as above. You can then add any images or other content in that folder.
 
-You can reference images (or other content) like: 
+You can then reference images (or other content) like:
+<div class="flow-list">
 - `![alt text](./foo.png)` (Markdown image format) or 
 - `<img src="./foo.png" alt="alt text" />` (HTML format).
+</div>
 
-The two methods are essentially equivalent, except the latter allows you to add additional properties and styling if you're familiar with HTML. Notice the '.' in the file path. In this context, '.' means 'the current folder', so we're saying, "look for the image in the `img` folder within the folder where this file resides."
+The two methods are essentially equivalent, except the latter allows you to add additional properties and styling if you're familiar with HTML. Notice the '.' in the file path. In this context, '.' means 'the current folder', so we're saying, "look for the image in the folder where this file resides."
 
 #### Update a post
 
-Just open the entry file (like `~/blog/2024-01-01-blog-entry.md` or `~/blog/2024-01-01-blog-entry/index.md`) and make your changes.
+Just open the blog post file (like `~/blog/2024-01-01-blog-entry.md` or `~/blog/2024-01-01-blog-entry/index.md`) and make your changes.
 
 #### Remove the blog
 
-If you don't want a blog as part of your site, just:
+If you don't want a blog as part of your site:
 
 1. Delete the `~/blog` folder.
 2. Open `~/docusaurus.config.js`.
@@ -187,6 +189,8 @@ You can nest categories as much as you like.
    ```
 3. Write out the document in Markdown format.
 
+Note, the title of the document (e.g.: `# This is a title in Markdown`) will be used as the title in the document tree navigation.
+
 #### Include images or other content
 
 For documents, you have to place your images or other assets in the `~/static` folder. These are then referenced from your documents without the `~/static` prefix. So `~/static/img/foo.png` would be referenced like `![alt text](/img/foo.png)` (Markdown image format) or `<img src="/img/foo.png" alt="alt text" />` (HTML format).
@@ -201,7 +205,10 @@ You can create other sub-folders under `~/static` like `~/static/videos`, `~/sta
 
 #### Removing documents
 
-Simply delete documents and categories. To remove the a documentation tree/knowledgebase entirely:
+Simply delete documents and categories. 
+
+#### Removing docs altogether:
+To remove the a documentation tree/knowledgebase entirely:
 
 1. Delete the `~/docs` directory.
 2. Open `~/docusaurus.config.js`.
@@ -236,10 +243,15 @@ cloudsite update your-domain.com --do-content
 
 With Docusaurus based sites, Cloudsite automatically generates the static site files for you.
 
+## Get help
+
+You can post design questions (separate from implementaiton) on the user experience StackExchange: ux.stackexchange.com. For more technical questions regarding CSS, HTML , Javascript, and Docusaurus itself, you can post to StackOverflow. Finally, for search engine optimization (SEO) and non-development technical questions, there's also the webmaster StackExchange: webmasters.stackexchange.com.
+In addition, Cloudsite users can get unlimited, affordable, personalized website consultation offered through Liquid Labs. We'll walk you through setup, explain concepts, provide advice, and answer any question you might have regarding design, feature implementation, and operations.
+
+You can post design questions (separate from implementaiton) on the user experience StackExchange: [ux.stackexchange.com](https://ux.stackexchange.com). For more technical questions regarding CSS, HTML , Javascript, and Docusaurus itself, you can post to [StackOverflow](https://stackoverflow.com). Finally, for search engine optimization (SEO) and non-development technical questions, there's also the webmaster StackExchange: [webmasters.stackexchange.com](https://webmaster.stackexchange.com).
+
+In addition, Cloudsite users can get [unlimited, affordable, personalized website consultation](/support#unlimited-website-consultation) offered through [Liquid Labs](https://liquid-labs.com). We'll walk you through setup, explain concepts, provide advice, and answer any question you might have regarding design, feature implementation, and operations.
+
 ## In closing
 
 Docusaurus is simple to setup and you can easily create documentation, blogs, marketing sites, etc. It comes with a simple, single-color theme that's easy to tweak. It does require knowledge of HTML+CSS to fully style, though with [website support](/support), we can provide instructions, examples, or even code to accomplish most styling goals.
-
-## Get help
-
-And if you need help with anything, our consider subscribing to [Unlimited Website Consultation]. Leverage our decades of experience, avoid headaches, and skip the hassle of figuring things out on your own. We'll even provide advice and explain concepts; any website design question, feature implementation, or operational issue you might have, we've got your back.
