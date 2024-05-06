@@ -4,7 +4,7 @@ description: A rundown on building websites with Docusaurus.
 ---
 # Build with Docusaurus
 
-Docusaurus is an easy to use website building framework with built-in support for blogs and document trees/knowledgebases. Because Docusaurus works with plain HTML and [Markdown](https://www.markdownguide.org/) files, it's a breeze to setup and get going. Docusaurus also supports React components out of the box.
+Docusaurus is an easy to use website building framework with built-in support for blogs and wikis/document trees/knowledgebases. Because Docusaurus works with plain HTML and [Markdown](https://www.markdownguide.org/) files, it's a breeze to setup and get going. Docusaurus also supports React components out of the box.
 
 Note in this article, `~` is shorthand for "the local folder where you installed the Docusaurus site".
 
@@ -158,9 +158,9 @@ If you don't want a blog as part of your site:
 
 For additional details and options, refer to the [Docusaurus blog documentation](https://docusaurus.io/docs/blog).
 
-### Add knowledgebase documents
+### Add wiki/knowledgebase documents
 
-When you set up your Docusaurus site, you'll see a `~/docs` folder. The initial site is configured to generate a document tree based on the contents of this folder. This is perfect for creating a knowledge base, product documentation, or categorized content in general.
+When you set up your Docusaurus site, you'll see a `~/docs` folder. The initial site is configured to generate a document tree based on the contents of this folder. This is perfect for creating a wiki, knowledge base, product documentation, or categorized content in general.
 
 #### Add a category
 
@@ -208,7 +208,7 @@ You can create other sub-folders under `~/static` like `~/static/videos`, `~/sta
 Simply delete documents and categories. 
 
 #### Removing docs altogether:
-To remove the a documentation tree/knowledgebase entirely:
+To remove the a wiki/documentation tree/knowledgebase entirely:
 
 1. Delete the `~/docs` directory.
 2. Open `~/docusaurus.config.js`.
@@ -245,8 +245,7 @@ With Docusaurus based sites, Cloudsite automatically generates the static site f
 
 ## Get help
 
-You can post design questions (separate from implementaiton) on the user experience StackExchange: ux.stackexchange.com. For more technical questions regarding CSS, HTML , Javascript, and Docusaurus itself, you can post to StackOverflow. Finally, for search engine optimization (SEO) and non-development technical questions, there's also the webmaster StackExchange: webmasters.stackexchange.com.
-In addition, Cloudsite users can get unlimited, affordable, personalized website consultation offered through Liquid Labs. We'll walk you through setup, explain concepts, provide advice, and answer any question you might have regarding design, feature implementation, and operations.
+Check out the full Docusaurus documentaiton and community links at [docusaurus.io](https://docusaurus.io).
 
 You can post design questions (separate from implementaiton) on the user experience StackExchange: [ux.stackexchange.com](https://ux.stackexchange.com). For more technical questions regarding CSS, HTML , Javascript, and Docusaurus itself, you can post to [StackOverflow](https://stackoverflow.com). Finally, for search engine optimization (SEO) and non-development technical questions, there's also the webmaster StackExchange: [webmasters.stackexchange.com](https://webmaster.stackexchange.com).
 
@@ -254,4 +253,4 @@ In addition, Cloudsite users can get [unlimited, affordable, personalized websit
 
 ## In closing
 
-Docusaurus is simple to setup and you can easily create documentation, blogs, marketing sites, etc. It comes with a simple, single-color theme that's easy to tweak. It does require knowledge of HTML+CSS to fully style, though with [website support](/support), we can provide instructions, examples, or even code to accomplish most styling goals.
+Docusaurus is simple to setup and you can easily create documentation, blogs, marketing sites, etc. It comes with a simple, single-color theme that's easy to tweak. It does require knowledge of HTML+CSS to fully style, though with the free resources and [Cloudsite website support](/support), you can get instructions, examples, or even code to accomplish most styling goals.
