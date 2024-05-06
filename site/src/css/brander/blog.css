@@ -6,3 +6,7 @@
 #__docusaurus article.margin-bottom--xl footer {
   margin-top: 1.25rem;
 }
+
+article >header > h2 > a {
+  font-size: 2rem;
+}
