@@ -29,7 +29,7 @@ function HomepageHeader () {
           <h1 className="col col--8 col--offset-2" style={{ borderBottom : 'none' }}>Easily and securely <span style={{ color : 'var(--ifm-color-content-secondary)' }}>host your own website</span> for <span style={{ color : 'var(--ifm-color-content-secondary)' }}>free</span>*</h1>
         </div>
         <div className={clsx('row')} style={{ marginBottom : 'var(--ifm-spacing-vertical)' }}>
-          <div className="hero__subtitle col col--8 col--offset-2"><span style={{ color : 'var(--ifm-color-content-secondary)' }}>*</span>: <Link to="#free-for-most">free for most</Link>; vastly reduced cost for the rest</div>
+          <div className="hero__subtitle col col--8 col--offset-2"><span style={{ color : 'var(--ifm-color-content-secondary)' }}>*</span>: <Link to="#free-for-most">free for most</Link>; reduced cost for the rest</div>
         </div>
         <div className={clsx('buttons_spaced')}>
           <Link
