@@ -51,7 +51,7 @@ const update = async ({
 
   if (doAll === true || doBilling === true) {
     try {
-      await associateCostAllocationTags({ credentials })
+      await associateCostAllocationTags({ credentials, siteInfo })
     } catch (e) {
       handleAssociateCostAllocationTagsError({ e, siteInfo })
     }
