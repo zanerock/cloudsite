@@ -1,7 +1,7 @@
 import { CreateBucketCommand, PutBucketTaggingCommand } from '@aws-sdk/client-s3'
 
 import { determineBucketName } from '../../shared/determine-bucket-name'
-import { getSiteTag } from '../../shared/get-site-tag'
+import { getResourceTags } from '../../shared/get-resource-tags'
 import { progressLogger } from '../../shared/progress-logger'
 
 const ensureLambdaFunctionBucket = async ({ credentials, s3Client, siteInfo }) => {
@@ -31,11 +31,10 @@ const ensureLambdaFunctionBucket = async ({ credentials, s3Client, siteInfo }) =
     progressLogger.write(`FOUND ${lambdaFunctionsBucket}\n`)
   }
 
-  const siteTag = getSiteTag(siteInfo)
   const putBucketTaggingCommand = new PutBucketTaggingCommand({
     Bucket  : lambdaFunctionsBucket,
     Tagging : {
-      TagSet : [{ Key : siteTag, Value : '' }, { Key : 'function', Value : 'lambda code storage' }]
+      TagSet : getResourceTags({ funcDesc: 'lambda code storage', siteInfo })
     }
   })
   await s3Client.send(putBucketTaggingCommand)

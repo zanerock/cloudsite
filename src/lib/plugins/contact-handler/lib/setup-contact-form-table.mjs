@@ -1,11 +1,10 @@
-import { getSiteTag } from '../../../shared/get-site-tag'
+import { getResourceTags } from '../../../shared/get-resource-tags'
 
 const setupContactFormTable = ({ siteInfo, siteTemplate }) => {
   const { finalTemplate, resourceTypes } = siteTemplate
   const { apexDomain } = siteInfo
 
-  const siteTag = getSiteTag(siteInfo)
-  const tags = [{ Key : siteTag, Value : '' }]
+  const tags = getResourceTags({ funcDesc: 'store contact info', siteInfo })
 
   finalTemplate.Resources.ContactHandlerDynamoDB = {
     Type       : 'AWS::DynamoDB::Table',

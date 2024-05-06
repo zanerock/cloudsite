@@ -3,7 +3,7 @@ import { LambdaClient, UpdateFunctionCodeCommand } from '@aws-sdk/client-lambda'
 import { CONTACT_HANDLER_ZIP_NAME, STANDARD_FORM_FIELDS } from './constants'
 import { convertDomainToBucketName } from '../../../shared/convert-domain-to-bucket-name'
 import { determineLambdaFunctionName } from '../../shared/determine-lambda-function-name'
-import { getSiteTag } from '../../../shared/get-site-tag'
+import { getResourceTags } from '../../../shared/get-resource-tags'
 
 const setupContactHandler = async ({
   credentials,
@@ -34,8 +34,7 @@ const setupContactHandler = async ({
     ? JSON.stringify(STANDARD_FORM_FIELDS)
     : formFields
 
-  const siteTag = getSiteTag(siteInfo)
-  const tags = [{ Key : siteTag, Value : '' }]
+  const tags = getResourceTags({ funcDesc: 'enter contact form record in database', siteInfo })
 
   finalTemplate.Resources.ContactHandlerLogGroup = {
     Type       : 'AWS::Logs::LogGroup',

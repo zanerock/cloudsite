@@ -5,7 +5,6 @@ import { CloudFormationClient, DescribeStacksCommand, GetTemplateCommand } from 
 
 import { getAccountID } from '../shared/get-account-id'
 import { getCredentials } from './lib/get-credentials'
-import { getSiteTag } from '../shared/get-site-tag'
 import { findBucketByTags } from '../shared/find-bucket-by-tags'
 import { findCertificate } from './lib/find-certificate'
 import * as plugins from '../plugins'
@@ -43,7 +42,7 @@ const doImport = async ({ commonLogsBucket, db, domain, region, sourcePath, sour
           credentials,
           description : 'common logs',
           tags        : [
-            { key : getSiteTag(siteInfo), value : '' },
+            { key : 'site', value : domain },
             { key : 'function', value : 'common logs storage' }
           ]
         })

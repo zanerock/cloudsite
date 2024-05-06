@@ -6,7 +6,7 @@ import { S3Client } from '@aws-sdk/client-s3'
 
 import { determineBucketName } from './determine-bucket-name'
 import { determineOACName } from './determine-oac-name'
-import { getSiteTag } from './get-site-tag'
+import { getResourceTags } from './get-resource-tags'
 import * as plugins from '../plugins'
 import { progressLogger } from './progress-logger'
 
@@ -46,7 +46,6 @@ const SiteTemplate = class {
   async initializeTemplate ({ update } = {}) {
     const { siteInfo } = this
     const { accountID, apexDomain, siteBucketName, certificateArn, region } = siteInfo
-    const siteTag = getSiteTag(siteInfo)
 
     const oacName = update === true
       ? siteInfo.oacName
@@ -65,7 +64,7 @@ const SiteTemplate = class {
           Properties : {
             AccessControl : 'Private',
             BucketName    : siteBucketName,
-            Tags          : [{ Key : siteTag, Value : '' }, { Key : 'function', Value : 'website contents storage' }]
+            Tags          : getResourceTags({ funcDesc: 'website contents storage', siteInfo })
           }
         },
         SiteCloudFrontOriginAccessControl : {
@@ -116,7 +115,7 @@ const SiteTemplate = class {
                 ViewerProtocolPolicy : 'redirect-to-https'
               }
             }, // DistributionConfig
-            Tags : [{ Key : siteTag, Value : '' }]
+            Tags :  getResourceTags({ funcDesc: 'website content delivery network', siteInfo })
           } // Properties
         }, // SiteCloudFrontDistribution
         SiteBucketPolicy : {
@@ -185,7 +184,6 @@ const SiteTemplate = class {
 
   async enableCommonLogsBucket () {
     let { commonLogsBucket } = this.siteInfo
-    const siteTag = getSiteTag(this.siteInfo)
 
     if (commonLogsBucket === undefined) {
       commonLogsBucket = await determineBucketName({
@@ -205,7 +203,7 @@ const SiteTemplate = class {
         OwnershipControls : { // this enables ACLs, as required by CloudFront standard logging
           Rules : [{ ObjectOwnership : 'BucketOwnerPreferred' }]
         },
-        Tags : [{ Key : siteTag, Value : '' }, { Key : 'function', Value : 'common logs storage' }]
+        Tags : getResourceTags({ funcDesc: 'common logs storage', siteInfo })
       }
     }
 

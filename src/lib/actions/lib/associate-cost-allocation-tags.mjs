@@ -2,10 +2,10 @@ import { CostExplorerClient, UpdateCostAllocationTagsStatusCommand } from '@aws-
 
 import { progressLogger } from '../../shared/progress-logger'
 
-const associateCostAllocationTags = async ({ credentials, tag }) => {
+const associateCostAllocationTags = async ({ credentials, tags }) => {
   const costExplorerClient = new CostExplorerClient({ credentials })
   const updateCostAllocationTagsStatusCommand = new UpdateCostAllocationTagsStatusCommand({
-    CostAllocationTagsStatus : [{ TagKey : tag, Status : 'Active' }]
+    CostAllocationTagsStatus : [{ TagKey: 'function', Status: 'Active' }, { TagKey: 'site', Status: 'Active' }]
   })
   await costExplorerClient.send(updateCostAllocationTagsStatusCommand)
 }

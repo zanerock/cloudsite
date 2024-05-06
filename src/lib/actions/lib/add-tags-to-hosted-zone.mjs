@@ -1,10 +1,9 @@
 import { Route53Client, ChangeTagsForResourceCommand } from '@aws-sdk/client-route-53'
 
 import { getHostedZoneID } from './get-hosted-zone-id'
-import { getSiteTag } from '../../shared/get-site-tag'
+import { getResourceTags } from '../../shared/get-resource-tags'
 
 const addTagsToHostedZone = async ({ credentials, siteInfo }) => {
-  const siteTag = getSiteTag(siteInfo)
   const route53Client = new Route53Client({ credentials })
 
   const hostedZoneID = await getHostedZoneID({ route53Client, siteInfo })
@@ -12,7 +11,7 @@ const addTagsToHostedZone = async ({ credentials, siteInfo }) => {
   const changeTagsForResourceCommand = new ChangeTagsForResourceCommand({
     ResourceType : 'hostedzone',
     ResourceId   : hostedZoneID,
-    AddTags      : [{ Key : siteTag, Value : '' }]
+    AddTags      : getResourceTags({ funcDesc: 'DNS service', siteInfo })
   })
   await route53Client.send(changeTagsForResourceCommand)
 }

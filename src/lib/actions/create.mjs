@@ -8,7 +8,7 @@ import { convertDomainToBucketName } from '../shared/convert-domain-to-bucket-na
 import { createOrUpdateDNSRecords } from './lib/create-or-update-dns-records'
 import { determineBucketName } from '../shared/determine-bucket-name'
 import { getCredentials } from './lib/get-credentials'
-import { getSiteTag } from '../shared/get-site-tag'
+import { getResourceTags } from '../shared/get-resource-tags'
 import * as plugins from '../plugins'
 import { SiteTemplate } from '../shared/site-template'
 import { syncSiteContent } from './lib/sync-site-content'
@@ -39,8 +39,6 @@ const create = async ({
 
     await updateSiteInfo({ credentials, siteInfo }) // needed by createOrUpdateDNSRecords
 
-    const siteTag = getSiteTag(siteInfo)
-
     // TODO: speeds things up, but if one fail, it all fails and is unclear; maybe we should break it up?
     await Promise.all([
       syncSiteContent({ credentials, noBuild, siteInfo }),
@@ -50,7 +48,7 @@ const create = async ({
     ])
 
     try {
-      await associateCostAllocationTags({ credentials, tag : siteTag })
+      await associateCostAllocationTags({ credentials })
     } catch (e) {
       handleAssociateCostAllocationTagsError({ e, siteInfo })
     }
