@@ -87,7 +87,7 @@ Also, when searching for domain names, NameCheap (and most other registrars) wil
 
 ### Rinse and repeat
 
-You may have to repeat this process a few times before you find something you like and is free. Each time through should generate new variations and ideas. Since it's relatively cheap to purchase a domain name, a lot of names are taken up by domain resellers which, if you have the money, may be an option. But if you're trying to find something more affordable, don't despair. You may end up with something even better than you started with. (Though the prevelance of squatters certainly sucks.)
+You may have to repeat this process a few times before you find something you like and is free. Each time through should generate new variations and ideas. Since it's relatively cheap to purchase a domain name, a lot of names are taken up by domain resellers which, if you have the money, may be an option. But if you're trying to find something more affordable, don't despair. You may end up with something even better than you started with. (Though the prevalence of squatters certainly sucks.)
 
 ### Hyphens, clever spellings, and numbers
 
