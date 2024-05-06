@@ -47,15 +47,15 @@ It all comes down to what you know.
 
 Both Docusaurus and WordPress are good choices for a blogging platform. Docusaurus is probably the easiest to set up and use if you're comfortable working with text files. If a graphical interface is important to you, then WordPress or another CMS is the way to go.
 
-### Knowledgebase
-
-This is where Docusaurus really shines. It's easy to add articles and categories via simple text files and folders. If you want a graphical interface then WordPress + an appropriate plugin is the way to go.
-
 ### Wiki
 
-Docusaurus has built in support for wikis, but it's not focused on that feature set and it takes a little fiddling. WordPress does have a number of wiki plugins available as well.
+This is where Docusaurus really shines. It's easy to add articles and categories via simple text files and folders. If you want a graphical interface then WordPress + an appropriate plugin is the way to go. A template based site would be possible, but managing all the cross-links and indexes by hand would get challenging for any large site and you'd probably be better off re-styling a Docusaurus site instead.
 
-There are a number of special purpose wiki CMSs. [MediaWiki](https://www.mediawiki.org/wiki/MediaWiki) (which powers [Wikipedia](https://wikipedia.org) is the granddaddy of them all and could be combined with static site generation to be compatible with cloudsite. Some, simpler options such as [DocuWiki](https://www.dokuwiki.org/dokuwiki) (which doesn't require a database) might relatively easily setup and converted to a static site.
+There are a number of special purpose wiki CMSs. [MediaWiki](https://www.mediawiki.org/wiki/MediaWiki) (which powers [Wikipedia](https://wikipedia.org) is the granddaddy of them all and could be combined with static site generation to be compatible with Cloudsite. Some, simpler options such as [DocuWiki](https://www.dokuwiki.org/dokuwiki) (which doesn't require a database) might relatively easily setup and converted to a static site.
+
+### Product documentation
+
+This is another area where Docusaurus really shows well. The ability to quickly add categorized pages is perfect for a product focused site with documentation. As per normal, WordPress can be augmented for this task as well. A template based site is also a decent option, so long as the documentation pages are manageable in number.
 
 ### Gallery
 
