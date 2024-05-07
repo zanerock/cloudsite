@@ -37,9 +37,9 @@ const associateCostAllocationTags = async ({ credentials, siteInfo }) => {
           }
           msg += `${tagKey}: ${errMsg} (${code})`
           return msg
-        }, '')
+        }, '') + '\n'
 
-        throw new Error(msg, { code : 'PARTIAL_SUCCESS'})
+        throw new Error(message)
       }
       else {
         progressLogger.write('SUCCESS') // we'll do the newline when we do the cost allocation rule belowe
@@ -47,7 +47,7 @@ const associateCostAllocationTags = async ({ credentials, siteInfo }) => {
         siteInfo.costAllocationStatus = COST_ALLOCATION_TAGS_ACTIVATED
       }
     } catch (e) {
-      if (e.code !== 'PARTIAL_SUCCESS') {
+      if (e.message?.endsWith('PARTIAL_SUCCESS\n')) {
         progressLogger.write('ERROR\n')
       }
       throw e
