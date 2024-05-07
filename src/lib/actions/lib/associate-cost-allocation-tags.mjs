@@ -84,6 +84,11 @@ const associateCostAllocationTags = async ({ credentials, siteInfo }) => {
 }
 
 const handleAssociateCostAllocationTagsError = ({ e, siteInfo }) => {
+  if (e.name === 'CredentialsProviderError') {
+    progressLogger.write('\n')
+    throw e
+  }
+
   const { apexDomain } = siteInfo
 
   progressLogger.write('<error>!! ERROR !!<rst>: ' + e.message)
