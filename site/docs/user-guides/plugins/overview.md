@@ -6,6 +6,12 @@ description: Overview of general plugin concepts, installation, and configuratio
 
 The basic Cloudsite setup, with no plugins, serves static files quickly and securely, and that's about it. Plugins add additional features to a website. This includes both end-user visible features, such as the [contact form](./contact-form) and internal, operational features such as [CloudFront access logs](./cloudfront-logs).
 
+## Available plugins
+
+- [CloudFront logs](./cloudfront-logs): Logs all CloudFront access.
+- [Contact form](./contact-form): Adds support for dynamic form submission.
+- [Index rewriter](./index-rewriter): Rewrites bare directory references to add `index.html`.
+
 ## Install plugins
 
 ### On site creation
