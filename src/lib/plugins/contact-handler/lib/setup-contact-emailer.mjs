@@ -38,7 +38,7 @@ const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, upd
     ? JSON.stringify(STANDARD_FORM_FIELDS)
     : formFields
 
-  const tags = getResourceTags({ funcDesc: 'email new contact form entries', siteInfo })
+  const tags = getResourceTags({ funcDesc : 'email new contact form entries', siteInfo })
 
   finalTemplate.Resources.ContactEmailerLogGroup = {
     Type       : 'AWS::Logs::LogGroup',

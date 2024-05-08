@@ -11,7 +11,7 @@ const addTagsToHostedZone = async ({ credentials, siteInfo }) => {
   const changeTagsForResourceCommand = new ChangeTagsForResourceCommand({
     ResourceType : 'hostedzone',
     ResourceId   : hostedZoneID,
-    AddTags      : getResourceTags({ funcDesc: 'DNS service', siteInfo })
+    AddTags      : getResourceTags({ funcDesc : 'DNS service', siteInfo })
   })
   await route53Client.send(changeTagsForResourceCommand)
 }

@@ -64,7 +64,7 @@ const SiteTemplate = class {
           Properties : {
             AccessControl : 'Private',
             BucketName    : siteBucketName,
-            Tags          : getResourceTags({ funcDesc: 'website contents storage', siteInfo })
+            Tags          : getResourceTags({ funcDesc : 'website contents storage', siteInfo })
           }
         },
         SiteCloudFrontOriginAccessControl : {
@@ -115,7 +115,7 @@ const SiteTemplate = class {
                 ViewerProtocolPolicy : 'redirect-to-https'
               }
             }, // DistributionConfig
-            Tags :  getResourceTags({ funcDesc: 'website content delivery network', siteInfo })
+            Tags : getResourceTags({ funcDesc : 'website content delivery network', siteInfo })
           } // Properties
         }, // SiteCloudFrontDistribution
         SiteBucketPolicy : {
@@ -183,7 +183,8 @@ const SiteTemplate = class {
   }
 
   async enableCommonLogsBucket () {
-    let { commonLogsBucket } = this.siteInfo
+    const { siteInfo } = this
+    let { commonLogsBucket } = siteInfo
 
     if (commonLogsBucket === undefined) {
       commonLogsBucket = await determineBucketName({
@@ -203,7 +204,7 @@ const SiteTemplate = class {
         OwnershipControls : { // this enables ACLs, as required by CloudFront standard logging
           Rules : [{ ObjectOwnership : 'BucketOwnerPreferred' }]
         },
-        Tags : getResourceTags({ funcDesc: 'common logs storage', siteInfo })
+        Tags : getResourceTags({ funcDesc : 'common logs storage', siteInfo })
       }
     }
 

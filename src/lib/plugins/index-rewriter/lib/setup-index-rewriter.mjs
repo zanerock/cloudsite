@@ -7,7 +7,7 @@ const setupIndexRewriter = async ({ credentials, pluginData, siteTemplate, updat
   const { finalTemplate, siteInfo } = siteTemplate
   const { apexDomain, lambdaFunctionsBucketName } = siteInfo
 
-  const tags = getResourceTags({ funcDesc: 'rewrite directory URLs', siteInfo })
+  const tags = getResourceTags({ funcDesc : 'rewrite directory URLs', siteInfo })
 
   const indexRewriterFunctionBaseName = convertDomainToBucketName(apexDomain) + '-index-rewriter'
 

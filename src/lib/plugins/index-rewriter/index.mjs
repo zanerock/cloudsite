@@ -26,7 +26,7 @@ const importHandler = async ({ credentials, name, pluginsData, siteInfo }) => {
   const lambdaFunctionsBucket = await findBucketByTags({
     credentials,
     description : 'Lambda functions',
-    tags        : getResourceTags({ funcDesc: 'lambda code storage', siteInfo })
+    tags        : getResourceTags({ funcDesc : 'lambda code storage', siteInfo })
   })
   if (lambdaFunctionsBucket === undefined) {
     throw new Error(`Could not resolve the Lambda function bucket for the '${name}' plugin.`)

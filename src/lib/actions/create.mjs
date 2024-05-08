@@ -8,7 +8,6 @@ import { convertDomainToBucketName } from '../shared/convert-domain-to-bucket-na
 import { createOrUpdateDNSRecords } from './lib/create-or-update-dns-records'
 import { determineBucketName } from '../shared/determine-bucket-name'
 import { getCredentials } from './lib/get-credentials'
-import { getResourceTags } from '../shared/get-resource-tags'
 import * as plugins from '../plugins'
 import { SiteTemplate } from '../shared/site-template'
 import { syncSiteContent } from './lib/sync-site-content'

@@ -5,7 +5,7 @@ import { awsS3TABucketNameRE, awsS3TABucketNameREString } from 'regex-repo'
 import { Questioner } from 'question-and-answer'
 
 import { ACTION_SETUP_BILLING, cliSpec } from '../constants'
-import { 
+import {
   COST_ALLOCATION_NOT_SET,
   INCLUDE_PLUGIN_DEFAULT_TRUE,
   INCLUDE_PLUGIN_DEFAULT_FALSE,
@@ -57,9 +57,9 @@ const handleCreate = async ({ argv, db }) => {
   sourcePath = fsPath.resolve(sourcePath)
 
   // don't use 'getSiteInfo', it errors out on blanks
-  const siteInfo = db.sites[apexDomain] || { 
+  const siteInfo = db.sites[apexDomain] || {
     apexDomain,
-    costAllocationStatus: COST_ALLOCATION_NOT_SET,
+    costAllocationStatus : COST_ALLOCATION_NOT_SET,
     siteBucketName,
     sourcePath,
     sourceType

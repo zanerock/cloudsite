@@ -4,7 +4,7 @@ const setupContactFormTable = ({ siteInfo, siteTemplate }) => {
   const { finalTemplate, resourceTypes } = siteTemplate
   const { apexDomain } = siteInfo
 
-  const tags = getResourceTags({ funcDesc: 'store contact info', siteInfo })
+  const tags = getResourceTags({ funcDesc : 'store contact info', siteInfo })
 
   finalTemplate.Resources.ContactHandlerDynamoDB = {
     Type       : 'AWS::DynamoDB::Table',

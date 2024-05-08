@@ -34,7 +34,7 @@ const ensureLambdaFunctionBucket = async ({ credentials, s3Client, siteInfo }) =
   const putBucketTaggingCommand = new PutBucketTaggingCommand({
     Bucket  : lambdaFunctionsBucket,
     Tagging : {
-      TagSet : getResourceTags({ funcDesc: 'lambda code storage', siteInfo })
+      TagSet : getResourceTags({ funcDesc : 'lambda code storage', siteInfo })
     }
   })
   await s3Client.send(putBucketTaggingCommand)

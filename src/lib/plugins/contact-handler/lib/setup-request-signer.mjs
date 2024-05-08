@@ -7,7 +7,7 @@ const setupRequestSigner = async ({ credentials, lambdaFunctionsBucketName, plug
   const { finalTemplate, siteInfo } = siteTemplate
   const { apexDomain } = siteInfo
 
-  const tags = getResourceTags({ funcDesc: 'sign database entry request', siteInfo })
+  const tags = getResourceTags({ funcDesc : 'sign database entry request', siteInfo })
 
   const requestSignerFunctionBaseName = convertDomainToBucketName(apexDomain) + '-request-signer'
   const requestSignerFunctionName = update === true

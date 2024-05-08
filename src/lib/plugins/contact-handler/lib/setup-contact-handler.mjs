@@ -34,7 +34,7 @@ const setupContactHandler = async ({
     ? JSON.stringify(STANDARD_FORM_FIELDS)
     : formFields
 
-  const tags = getResourceTags({ funcDesc: 'enter contact form record in database', siteInfo })
+  const tags = getResourceTags({ funcDesc : 'enter contact form record in database', siteInfo })
 
   finalTemplate.Resources.ContactHandlerLogGroup = {
     Type       : 'AWS::Logs::LogGroup',

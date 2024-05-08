@@ -21,12 +21,11 @@ const associateCostAllocationTags = async ({ credentials, siteInfo }) => {
 
   if (costAllocationStatus === COST_ALLOCATION_RULE_DEFINED) {
     progressLogger.write(COST_ALLOCATION_RULE_DEFINED + '\n')
-  }
-  else if (costAllocationStatus === COST_ALLOCATION_NOT_SET || costAllocationStatus === undefined) {
+  } else if (costAllocationStatus === COST_ALLOCATION_NOT_SET || costAllocationStatus === undefined) {
     try {
       progressLogger.write('\n  Activating cost allocation tags...')
       const updateCostAllocationTagsStatusCommand = new UpdateCostAllocationTagsStatusCommand({
-        CostAllocationTagsStatus : [{ TagKey: 'function', Status: 'Active' }, { TagKey: 'site', Status: 'Active' }]
+        CostAllocationTagsStatus : [{ TagKey : 'function', Status : 'Active' }, { TagKey : 'site', Status : 'Active' }]
       })
       const { Errors: errors } = await costExplorerClient.send(updateCostAllocationTagsStatusCommand)
       if (errors.length > 0) {
@@ -40,8 +39,7 @@ const associateCostAllocationTags = async ({ credentials, siteInfo }) => {
         }, '') + '\n'
 
         throw new Error(message)
-      }
-      else {
+      } else {
         progressLogger.write('SUCCESS') // we'll do the newline when we do the cost allocation rule belowe
         costAllocationStatus = COST_ALLOCATION_TAGS_ACTIVATED
         siteInfo.costAllocationStatus = COST_ALLOCATION_TAGS_ACTIVATED
@@ -57,15 +55,15 @@ const associateCostAllocationTags = async ({ credentials, siteInfo }) => {
   if (costAllocationStatus === COST_ALLOCATION_TAGS_ACTIVATED) {
     progressLogger.write('\n  Creating site cost allocation rule... ')
     const createCostCategoryDefinitionCommand = new CreateCostCategoryDefinitionCommand({
-      Name: apexDomain + ' cost allocation',
+      Name        : apexDomain + ' cost allocation',
       RuleVersion : 'CostCategoryExpression.v1',
-      Rules: [{
-        Type: 'REGULAR',
-        Rule: {
-          Tags: {
-            Key: 'site',
-            Values: [apexDomain],
-            MatchOptions: 'EQUALS'
+      Rules       : [{
+        Type : 'REGULAR',
+        Rule : {
+          Tags : {
+            Key          : 'site',
+            Values       : [apexDomain],
+            MatchOptions : 'EQUALS'
           }
         }
       }]
@@ -75,8 +73,7 @@ const associateCostAllocationTags = async ({ credentials, siteInfo }) => {
       const { CostCategoryArn: costCategoryArn } = costExplorerClient.send(createCostCategoryDefinitionCommand)
       siteInfo.costCategoryArn = costCategoryArn
       progressLogger.write('SUCCESS\n')
-    }
-    catch (e) {
+    } catch (e) {
       progressLogger.write('ERROR\n')
       throw (e)
     }
