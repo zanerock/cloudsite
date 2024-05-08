@@ -45,7 +45,8 @@ const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, upd
     Properties : {
       LogGroupClass   : 'STANDARD', // TODO: support option for INFREQUENT_ACCESS
       LogGroupName    : emailerFunctionLogGroupName,
-      RetentionInDays : 180 // TODO: support options
+      RetentionInDays : 180, // TODO: support options
+      Tags            : tags
     }
   }
 
