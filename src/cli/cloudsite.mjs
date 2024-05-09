@@ -170,8 +170,10 @@ const cloudsite = async () => {
 
 const checkAndUpdateSitesInfo = async ({ origDB, db }) => {
   if (!isEqual(origDB, db)) {
+    progressLogger.write('Updating Cloudsite DB... ')
     const dbContents = JSON.stringify(db, null, '  ')
     await fs.writeFile(DB_PATH, dbContents, { encoding : 'utf8' })
+    progressLogger.write('SUCCESS\n')
   }
 }
 
