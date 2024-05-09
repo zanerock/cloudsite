@@ -1,9 +1,6 @@
 import { CloudFormationClient, CreateStackCommand } from '@aws-sdk/client-cloudformation'
 
-import {
-  associateCostAllocationTags,
-  handleAssociateCostAllocationTagsError
-} from './lib/associate-cost-allocation-tags'
+import { associateCostAllocationTags } from './lib/associate-cost-allocation-tags'
 import { convertDomainToBucketName } from '../shared/convert-domain-to-bucket-name'
 import { createOrUpdateDNSRecords } from './lib/create-or-update-dns-records'
 import { determineBucketName } from '../shared/determine-bucket-name'
@@ -46,11 +43,7 @@ const create = async ({
         handler({ pluginData : siteInfo.plugins[pluginKey], siteInfo })))
     ])
 
-    try {
-      await associateCostAllocationTags({ credentials, siteInfo })
-    } catch (e) {
-      handleAssociateCostAllocationTagsError({ e, siteInfo })
-    }
+    await associateCostAllocationTags({ credentials, db, siteInfo })
 
     return { success, stackName }
   } else {
