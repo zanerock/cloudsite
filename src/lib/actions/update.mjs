@@ -1,13 +1,9 @@
 import { CloudFrontClient, CreateInvalidationCommand } from '@aws-sdk/client-cloudfront'
 
 import { addTagsToHostedZone } from './lib/add-tags-to-hosted-zone'
-import {
-  associateCostAllocationTags,
-  handleAssociateCostAllocationTagsError
-} from './lib/associate-cost-allocation-tags'
+import { associateCostAllocationTags } from './lib/associate-cost-allocation-tags'
 import { createOrUpdateDNSRecords } from './lib/create-or-update-dns-records'
 import { getCredentials } from './lib/get-credentials'
-import { getSiteTag } from '../shared/get-site-tag'
 import { progressLogger } from '../shared/progress-logger'
 import { syncSiteContent } from './lib/sync-site-content'
 import { updatePlugins } from './lib/update-plugins'
@@ -51,12 +47,7 @@ const update = async ({
   const secondRoundUpdates = []
 
   if (doAll === true || doBilling === true) {
-    const siteTag = getSiteTag(siteInfo)
-    try {
-      await associateCostAllocationTags({ credentials, tag : siteTag })
-    } catch (e) {
-      handleAssociateCostAllocationTagsError({ e, siteInfo })
-    }
+    await associateCostAllocationTags({ credentials, db, siteInfo })
   }
 
   if (doAll === true || doDNS === true) {

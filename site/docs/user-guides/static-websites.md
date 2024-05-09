@@ -1,5 +1,5 @@
 ---
-sidebar_position: 8
+sidebar_position: 9
 description: An explanation of what makes a website 'static'.
 ---
 # Static Websites

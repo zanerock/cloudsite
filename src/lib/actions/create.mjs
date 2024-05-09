@@ -1,14 +1,10 @@
 import { CloudFormationClient, CreateStackCommand } from '@aws-sdk/client-cloudformation'
 
-import {
-  associateCostAllocationTags,
-  handleAssociateCostAllocationTagsError
-} from './lib/associate-cost-allocation-tags'
+import { associateCostAllocationTags } from './lib/associate-cost-allocation-tags'
 import { convertDomainToBucketName } from '../shared/convert-domain-to-bucket-name'
 import { createOrUpdateDNSRecords } from './lib/create-or-update-dns-records'
 import { determineBucketName } from '../shared/determine-bucket-name'
 import { getCredentials } from './lib/get-credentials'
-import { getSiteTag } from '../shared/get-site-tag'
 import * as plugins from '../plugins'
 import { SiteTemplate } from '../shared/site-template'
 import { syncSiteContent } from './lib/sync-site-content'
@@ -39,8 +35,6 @@ const create = async ({
 
     await updateSiteInfo({ credentials, siteInfo }) // needed by createOrUpdateDNSRecords
 
-    const siteTag = getSiteTag(siteInfo)
-
     // TODO: speeds things up, but if one fail, it all fails and is unclear; maybe we should break it up?
     await Promise.all([
       syncSiteContent({ credentials, noBuild, siteInfo }),
@@ -49,11 +43,7 @@ const create = async ({
         handler({ pluginData : siteInfo.plugins[pluginKey], siteInfo })))
     ])
 
-    try {
-      await associateCostAllocationTags({ credentials, tag : siteTag })
-    } catch (e) {
-      handleAssociateCostAllocationTagsError({ e, siteInfo })
-    }
+    await associateCostAllocationTags({ credentials, db, siteInfo })
 
     return { success, stackName }
   } else {

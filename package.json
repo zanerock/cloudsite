@@ -39,7 +39,7 @@
   "bugs": {
     "url": "https://github.com/liquid-labs/cloudsite/issues"
   },
-  "homepage": "https://github.com/liquid-labs/cloudsite#readme",
+  "homepage": "https://cloudsitehosting.org",
   "dependencies": {
     "@aws-sdk/client-account": "^3.554.0",
     "@aws-sdk/client-acm": "^3.515.0",

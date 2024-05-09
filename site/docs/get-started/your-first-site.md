@@ -32,17 +32,21 @@ Regardless of the method used to generate the static files, at the end of the da
 
 ## Deploy your site
 
-Deploying is as simple as:
+Simply open a terminal, authenticate with AWS and run the create command:
 ```bash
-# 1. Authenticate with AWS (if needed)
 aws sso login --profile cloudsite-manager
-# 2. Deploy the site.
 cloudsite create your-domain.com --source-path ~/website
 ```
 
 Where `--source-path` takes the path to your source folder. The path may be relative or absolute.
 
+:::info
 The first time you launch a particular domain, Cloudsite will create an SSL certificate for the domain if there isn't already one. This SSL certificate must be verified before further setup can happen. Follow the instructions as provided by Cloudsite to verify the SSL certificate and then re-run the create command once the certificate is verified.
+:::
+
+:::info
+The first time you set up any site, you'll get a message at the end of the process re setting up "cost allocation tags". It takes time for AWS to "discover" the new tags and Cloudsite provides instructions on how to set these up later. Refer to the [billing management guide](/docs/user-guides/billing-management) for further details.
+:::
 
 ## Updating your site
 

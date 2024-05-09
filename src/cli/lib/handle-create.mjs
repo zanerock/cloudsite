@@ -5,8 +5,13 @@ import { awsS3TABucketNameRE, awsS3TABucketNameREString } from 'regex-repo'
 import { Questioner } from 'question-and-answer'
 
 import { ACTION_SETUP_BILLING, cliSpec } from '../constants'
-import { INCLUDE_PLUGIN_DEFAULT_TRUE, INCLUDE_PLUGIN_DEFAULT_FALSE, INCLUDE_PLUGIN_REQUIRED, INCLUDE_PLUGIN_NEVER }
-  from '../../lib/shared/constants'
+import {
+  COST_ALLOCATION_NOT_SET,
+  INCLUDE_PLUGIN_DEFAULT_TRUE,
+  INCLUDE_PLUGIN_DEFAULT_FALSE,
+  INCLUDE_PLUGIN_REQUIRED,
+  INCLUDE_PLUGIN_NEVER
+} from '../../lib/shared/constants'
 import { checkAuthentication } from './check-authentication'
 import { create } from '../../lib/actions/create'
 import { ensureSSLCertificate } from '../../lib/actions/ensure-ssl-certificate'
@@ -52,7 +57,13 @@ const handleCreate = async ({ argv, db }) => {
   sourcePath = fsPath.resolve(sourcePath)
 
   // don't use 'getSiteInfo', it errors out on blanks
-  const siteInfo = db.sites[apexDomain] || { apexDomain, siteBucketName, sourcePath, sourceType }
+  const siteInfo = db.sites[apexDomain] || {
+    apexDomain,
+    costAllocationStatus : COST_ALLOCATION_NOT_SET,
+    siteBucketName,
+    sourcePath,
+    sourceType
+  }
   siteInfo.region = createOptions.region || siteInfo.region || 'us-east-1'
   if (stackName !== undefined) {
     siteInfo.stackName = stackName

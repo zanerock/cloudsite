@@ -5,7 +5,7 @@ import { S3Client } from '@aws-sdk/client-s3'
 
 import { CONTACT_EMAILER_ZIP_NAME, CONTACT_HANDLER_ZIP_NAME, REQUEST_SIGNER_ZIP_NAME } from './lib/constants'
 import { findBucketByTags } from '../../shared/find-bucket-by-tags'
-import { getSiteTag } from '../../shared/get-site-tag'
+import { getResourceTags } from '../../shared/get-resource-tags'
 import { progressLogger } from '../../shared/progress-logger'
 import { setupContactFormTable } from './lib/setup-contact-form-table'
 import { setupContactEmailer } from './lib/setup-contact-emailer'
@@ -86,10 +86,7 @@ const importHandler = async ({ credentials, name, pluginsData, siteInfo, templat
     const lambdaFunctionsBucket = await findBucketByTags({
       credentials,
       description : 'Lambda functions',
-      tags        : [
-        { key : getSiteTag(siteInfo), value : '' },
-        { key : 'function', value : 'lambda code storage' }
-      ]
+      tags        : getResourceTags({ funcDesc : 'lambda code storage', siteInfo })
     })
     if (lambdaFunctionsBucket === undefined) {
       throw new Error(`Could not resolve the Lambda function bucket for the '${name}' plugin.`)

@@ -3,7 +3,7 @@ import { LambdaClient, UpdateFunctionCodeCommand } from '@aws-sdk/client-lambda'
 import { CONTACT_EMAILER_ZIP_NAME, STANDARD_FORM_FIELDS } from './constants'
 import { convertDomainToBucketName } from '../../../shared/convert-domain-to-bucket-name'
 import { determineLambdaFunctionName } from '../../shared/determine-lambda-function-name'
-import { getSiteTag } from '../../../shared/get-site-tag'
+import { getResourceTags } from '../../../shared/get-resource-tags'
 
 const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, update, pluginData, siteTemplate }) => {
   const { finalTemplate, siteInfo } = siteTemplate
@@ -38,15 +38,15 @@ const setupContactEmailer = async ({ credentials, lambdaFunctionsBucketName, upd
     ? JSON.stringify(STANDARD_FORM_FIELDS)
     : formFields
 
-  const siteTag = getSiteTag(siteInfo)
-  const tags = [{ Key : siteTag, Value : '' }]
+  const tags = getResourceTags({ funcDesc : 'email new contact form entries', siteInfo })
 
   finalTemplate.Resources.ContactEmailerLogGroup = {
     Type       : 'AWS::Logs::LogGroup',
     Properties : {
       LogGroupClass   : 'STANDARD', // TODO: support option for INFREQUENT_ACCESS
       LogGroupName    : emailerFunctionLogGroupName,
-      RetentionInDays : 180 // TODO: support options
+      RetentionInDays : 180, // TODO: support options
+      Tags            : tags
     }
   }
 

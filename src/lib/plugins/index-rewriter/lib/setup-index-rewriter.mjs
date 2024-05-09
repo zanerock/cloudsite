@@ -1,14 +1,13 @@
 import { INDEX_REWRITER_ZIP_NAME } from './constants'
 import { convertDomainToBucketName } from '../../../shared/convert-domain-to-bucket-name'
 import { determineLambdaFunctionName } from '../../shared/determine-lambda-function-name'
-import { getSiteTag } from '../../../shared/get-site-tag'
+import { getResourceTags } from '../../../shared/get-resource-tags'
 
 const setupIndexRewriter = async ({ credentials, pluginData, siteTemplate, update }) => {
   const { finalTemplate, siteInfo } = siteTemplate
   const { apexDomain, lambdaFunctionsBucketName } = siteInfo
 
-  const siteTag = getSiteTag(siteInfo)
-  const tags = [{ Key : siteTag, Value : '' }]
+  const tags = getResourceTags({ funcDesc : 'rewrite directory URLs', siteInfo })
 
   const indexRewriterFunctionBaseName = convertDomainToBucketName(apexDomain) + '-index-rewriter'
 

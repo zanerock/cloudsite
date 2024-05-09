@@ -4,7 +4,7 @@ description: Adds support for a dynamic form submission.
 ---
 # Contact Form
 
-The contact form plugin adds support for dynamically form submission. This is primarily targeted at "contact forms", but could be used for any form where the purpose is simply to gather data and store it in a database where it could be utilized directly or by additional processes.
+The contact form plugin adds support for dynamic form submission. This is primarily targeted at "contact forms", but could be used for any form where the purpose is simply to gather data and store it in a database where it could be utilized directly or by additional processes.
 
 ## Compatibility
 

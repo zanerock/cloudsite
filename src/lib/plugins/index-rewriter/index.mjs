@@ -5,7 +5,7 @@ import { S3Client } from '@aws-sdk/client-s3'
 import { INCLUDE_PLUGIN_DEFAULT_TRUE, INCLUDE_PLUGIN_DEFAULT_FALSE } from '../../shared/constants'
 import { INDEX_REWRITER_ZIP_NAME } from './lib/constants'
 import { findBucketByTags } from '../../shared/find-bucket-by-tags'
-import { getSiteTag } from '../../shared/get-site-tag'
+import { getResourceTags } from '../../shared/get-resource-tags'
 import { progressLogger } from '../../shared/progress-logger'
 import { setupIndexRewriter } from './lib/setup-index-rewriter'
 import { stageLambdaFunctionZipFiles } from '../shared/stage-lambda-function-zip-files'
@@ -26,10 +26,7 @@ const importHandler = async ({ credentials, name, pluginsData, siteInfo }) => {
   const lambdaFunctionsBucket = await findBucketByTags({
     credentials,
     description : 'Lambda functions',
-    tags        : [
-      { key : getSiteTag(siteInfo), value : '' },
-      { key : 'function', value : 'lambda code storage' }
-    ]
+    tags        : getResourceTags({ funcDesc : 'lambda code storage', siteInfo })
   })
   if (lambdaFunctionsBucket === undefined) {
     throw new Error(`Could not resolve the Lambda function bucket for the '${name}' plugin.`)

@@ -26,7 +26,8 @@ const generateIAMPolicy = async ({ db }) => {
         Sid    : 'CloudsiteCostExplorerGrants',
         Effect : 'Allow',
         Action : [
-          'ce:UpdateCostAllocationTagsStatus'
+          'ce:UpdateCostAllocationTagsStatus',
+          'ce:CreateCostCategoryDefinition'
         ],
         Resource : [
           '*'
