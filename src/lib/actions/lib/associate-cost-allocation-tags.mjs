@@ -4,7 +4,6 @@ import {
   UpdateCostAllocationTagsStatusCommand
 } from '@aws-sdk/client-cost-explorer'
 
-import { convertDomainToBucketName } from '../../shared/convert-domain-to-bucket-name'
 import {
   COST_ALLOCATION_NOT_SET,
   COST_ALLOCATION_TAGS_ACTIVATED,
@@ -19,7 +18,6 @@ const associateCostAllocationTags = async ({ credentials, db, siteInfo }) => {
 
   const { billing = {} } = db
   db.billing = billing // set to take care of unset
-  const { apexDomain } = siteInfo
   let { costAllocationStatus } = billing
 
   if (costAllocationStatus === COST_ALLOCATION_RULE_DEFINED) {
@@ -33,8 +31,7 @@ const associateCostAllocationTags = async ({ credentials, db, siteInfo }) => {
       let errors
       try {
         ({ Errors: errors } = await costExplorerClient.send(updateCostAllocationTagsStatusCommand))
-      }
-      catch (e) {
+      } catch (e) {
         handleAssociateCostAllocationTagsError({ e, siteInfo })
       }
       if (errors.length > 0) {
@@ -67,10 +64,10 @@ const associateCostAllocationTags = async ({ credentials, db, siteInfo }) => {
       Name        : 'Site cost allocation',
       RuleVersion : 'CostCategoryExpression.v1',
       Rules       : [{
-        Type : 'INHERITED_VALUE',
+        Type           : 'INHERITED_VALUE',
         InheritedValue : {
-          DimensionName: "TAG",
-          DimensionKey : "site"
+          DimensionName : 'TAG',
+          DimensionKey  : 'site'
         }
       }]
     })
@@ -80,8 +77,7 @@ const associateCostAllocationTags = async ({ credentials, db, siteInfo }) => {
       const cccdResult = await costExplorerClient.send(createCostCategoryDefinitionCommand)
       const { CostCategoryArn: costCategoryArn } = cccdResult
 
-      if (costCategoryArn )
-      billing.costCategoryArn = costCategoryArn
+      if (costCategoryArn) { billing.costCategoryArn = costCategoryArn }
       billing.costAllocationStatus = COST_ALLOCATION_RULE_DEFINED
       costAllocationStatus = COST_ALLOCATION_RULE_DEFINED // not used, but just in case future logic does
       progressLogger.write('SUCCESS\n')
