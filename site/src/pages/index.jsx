@@ -31,16 +31,16 @@ function HomepageHeader () {
         <div className={clsx('row')} style={{ marginBottom : 'var(--ifm-spacing-vertical)' }}>
           <div className="hero__subtitle col col--8 col--offset-2"><span style={{ color : 'var(--ifm-color-content-secondary)' }}>*</span>: <Link to="#free-for-most">free for most</Link>; reduced cost for the rest</div>
         </div>
-        <div className={clsx('buttons_spaced')}>
+        <div className={clsx('buttons_spaced row')}>
           <Link
             key="/docs/get-started/overview"
-            className={clsx('button', 'button--secondary button--lg')}
+            className={clsx('button', 'button--secondary button--lg col--6')}
             to="/docs/get-started/overview">
             Get started
           </Link>
           <Link
             key="/docs/user-guides/command-line-reference"
-            className={clsx('button', 'button--secondary button--lg')}
+            className={clsx('button', 'button--secondary button--lg col--6')}
             to="/docs/user-guides/command-line-reference">
             Command Line Reference
           </Link>

@@ -8,12 +8,12 @@ import { themes as prismThemes } from 'prism-react-renderer'
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title   : 'Liquid Labs',
-  tagline : 'Business first solutions',
+  title   : 'Cloudsite',
+  tagline : 'Fast, free website hosting',
   favicon : 'img/cloudsite-favicon.png',
 
   // Set the production url of your site here
-  url     : 'https://liquid-labs.com',
+  url     : 'https://cloudsitehosting.org',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl : '/',
@@ -21,7 +21,7 @@ const config = {
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName : 'liquid-labs', // Usually your GitHub org/user name.
-  projectName      : 'liquid-labs.com', // Usually your repo name.
+  projectName      : 'cloudsitehosting', // Usually your repo name.
 
   onBrokenLinks         : 'throw',
   onBrokenMarkdownLinks : 'throw',
@@ -45,12 +45,12 @@ const config = {
         docs : {
           sidebarPath : './sidebars.js',
           editUrl :
-            'https://github.com/liquid-labs/liquid-labs.com/'
+            'https://github.com/liquid-labs/cloudsite/tree/main/site'
         },
         blog : {
           showReadingTime : true,
           editUrl :
-            'https://github.com/liquid-labs/liquid-labs.com/',
+            'https://github.com/liquid-labs/cloudsite/tree/main/site',
           feedOptions : {
             type            : 'all',
             copyright       : `Copyright © ${new Date().getFullYear()} Liquid Labs, LLC`,
@@ -76,7 +76,7 @@ const config = {
     ({
       // Replace with your project's social card
       docs      : { sidebar : { autoCollapseCategories : true } },
-      image     : 'img/liquid-labs-social-media-card-1200x675.png',
+      image     : 'img/cloudsite-social-card.png',
       colorMode : {
         defaultMode               : 'light',
         respectPrefersColorScheme : true,
