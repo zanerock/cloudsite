@@ -10,6 +10,13 @@
   width: max-content;
 }
 
+
+@media screen and (max-width: 996px) {
+  .buttons_spaced > .button:not(:last-child) {
+    margin-bottom: 1rem;
+  }
+}
+
 .button, .button.button--secondary, a.button, a.button.button--secondary {
   color: var(--ifm-color-primary-contrast-background);
   background-color: var(--ifm-color-primary);
