@@ -17,23 +17,26 @@
   }
 }
 
-.button, .button.button--secondary, a.button, a.button.button--secondary {
-  color: var(--ifm-color-primary-contrast-background);
+.button, .button.button--secondary, a.button[href], a.button.button--secondary[href] {
+  color: var(--ifm-background-color);
   background-color: var(--ifm-color-primary);
   /* we set the border so that when we do the 'active', the UI doesn't 'jump' because the button changes dimensions */
-  border: 1px solid var(--ifm-color-primary);
+  border: var(--ll-button-border-width) solid var(--ifm-color-primary);
+  font-family: var(--ll-button-font-family);
+  text-decoration: none;
 }
 
-.button:hover, a.button:hover, a.button.button--secondary:hover {
-  color: var(--ifm-color-primary-contrast-background);
-  background-color: var(--ifm-color-content-secondary);
-  border: 1px solid var(--ifm-color-content-secondary);
+.button:hover, a.button[href]:hover, a.button.button--secondary:hover {
+  color: var(--ll-button-color-hover);
+  background-color: var(--ll-button-background-color-hover);
+  border-color: var(--ll-button-border-color-hover);
+  text-decoration: none;
 }
 
-.button:active, a.button:active, a.button.button--secondary:active {
-  color: var(--ifm-color-content-secondary);
-  background-color: var(--ifm-color-primary-contrast-background);
-  border: 1px solid var(--ifm-color-content-secondary);
+.button:active, a.button[href]:active, a.button.button--secondary[href]:active {
+  color: var(--ll-button-color-active);
+  background-color: var(--ll-button-backgronud-color-active);
+  border-color: var(--ll-button-border-color-active);
 }
 
 .button, a.button, a.button:hover, a.button:active {
@@ -51,17 +54,52 @@
   color: var(--ifm-color-primary);
   background-color: var(--ifm-color-primary-contrast-background);
   /* we set the border so that when we do the 'active', the UI doesn't 'jump' because the button changes dimensions */
-  border: 1px solid var(--ifm-color-primary-contrast-background);
+  border: var(--ll-button-border-width) solid var(--ifm-color-primary-contrast-background);
 }
 
 .reverse-colors .button:hover, .reverse-colors a.button:hover, .reverse-colors a.button.button--secondary:hover {
-  color: var(--ifm-color-primary-contrast-background);
-  background-color: var(--ifm-color-content-secondary);
-  border: 1px solid var(--ifm-color-content-secondary);
+  color: var(--ll-button-background-color-hover);
+  background-color: var(--ll-button-color-hover);
+  border-color: var(--ll-button-border-color-hover-dark);
 }
 
-.button:active, a.button:active, a.button.button--secondary:active {
+.reverse-colors .button:active, .reverse-colors a.button:active, .reverse-colors a.button.button--secondary:active {
   color: var(--ifm-color-content-secondary);
   background-color: var(--ifm-color-primary-contrast-background);
-  border: 1px solid var(--ifm-color-content-secondary);
+  border: var(--ll-button-border-width) solid var(--ifm-color-content-secondary);
+}
+
+/* fix expand/collapse buttons for sidebar */
+.button.button--secondary.button--outline:not(.button--active):not(:hover) {
+  color: var(--ifm-background-color);
+  background-color: var(--ifm-color-primary);
+}
+
+.button.button--secondary.button--outline:not(.button--active):hover {
+  color: var(--ll-button-color-hover);
+  background-color: var(--ll-button-background-color-hover);
+}
+
+.button.button--secondary.button--outline:not(.button--active):active {
+  color: var(--ll-button-color-active);
+  background-color: var(--ll-button-backgronud-color-active);
+}
+
+.button svg g, [class*="sidebarViewport"] [class*="expandButton"] svg g {
+  fill: currentColor;
+}
+
+[class*="sidebarViewport"] [class*="expandButton"] {
+  color: var(--ifm-background-color);
+  background-color: var(--ifm-color-primary);
+}
+
+[class*="sidebarViewport"] [class*="expandButton"]:hover, [class*="sidebarViewport"] [class*="expandButton"]:hover svg {
+  color: var(--ll-button-color-hover);
+  background-color: var(--ll-button-background-color-hover);
+}
+
+[class*="sidebarViewport"] [class*="expandButton"]:active, [class*="sidebarViewport"] [class*="expandButton"]:active svg {
+  color: var(--ll-button-color-active);
+  background-color: var(--ll-button-backgronud-color-active);
 }

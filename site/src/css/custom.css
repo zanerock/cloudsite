@@ -3,17 +3,21 @@
  */
 
 @import url("./brander/settings.css");
+
+@import url("./brander/alerts.css");
+@import url('./brander/blog.css');
+@import url('./brander/breadcrumbs.css');
+@import url("./brander/buttons.css");
+@import url('./brander/cards.css');
 @import url("./brander/colors.css");
-@import url("./brander/reverse-colors.css");
 @import url("./brander/links-content.css");
 @import url("./brander/links-navigation.css"); /* must come after links-content for proper precedence */
+@import url("./brander/lists.css");
 @import url("./brander/navbar.css");
-@import url("./brander/buttons.css");
-@import url("./brander/alerts.css");
-@import url('./brander/cards.css');
-@import url('./brander/blog.css');
-@import url("./brander/transitions.css");
+@import url("./brander/reverse-colors.css");
 @import url("./brander/scroll-fix.css");
+@import url("./brander/transitions.css");
+
 
 @import url("./modal.global.css");
 
@@ -47,28 +51,6 @@ main {
   color: var(--ifm-color-content-secondary);
 }
 
-dt {
-  font-weight: bold;
-}
-
-h1 {
-  width: 100%;
-  border-bottom: 2px solid var(--ifm-color-content-secondary);
-}
-
-p[class*="cardDescription"] {
-  font-size: inherit;
-}
-
-.markdown li > p { /* limit list spacing to --ifm-list-item-margin */
-  margin-top: 0px;
-  margin-bottom: 0px;
-}
-
-li .theme-code-block {
-  margin-bottom: 0; /* kill the big code block margin (default is pp spacing) */
-}
-
 pre + div button { /* make the copy buttons visible */
   opacity: 25% !important;
 }
@@ -81,23 +63,11 @@ div.sub-title {
   font-weight: bold;
 }
 
-div.sub-title > p {
-  margin-bottom: var(--ifm-heading-margin-bottom);
-}
-
-p + div.flow-list, div:has(> p) + div.flow-list {
-  margin-top: calc(-1 * var(--ifm-paragraph-margin-bottom) + 0.25rem);
-}
-
 /* not sure why, but the bottom margin of lists and bottom margin of paragraphs is different (at least in Desktop mode); let's correct that */
 :root {
   --ifm-list-margin: var(--ifm-paragraph-margin-bottom);
   --ifm-heading-margin-bottom: 0.35rem;
   --ifm-font-size-base: 115%;
-}
-
-.markdown :is(h2, h3, h4, h5, h6) {
-  margin-bottom: 0.25rem;
 }
 
 a.table-of-contents__link {

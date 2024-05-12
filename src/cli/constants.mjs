@@ -128,7 +128,7 @@ const cliSpec = {
               description : 'The name of the policy and permission set to create or reference.'
             },
             {
-              name        : 'sso-profile',
+              name        : 'sso-profile-name',
               description : 'The name of the local SSO profile to create.'
             },
             {

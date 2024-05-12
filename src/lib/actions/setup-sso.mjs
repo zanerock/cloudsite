@@ -16,15 +16,19 @@ import {
 import {
   AttachCustomerManagedPolicyReferenceToPermissionSetCommand,
   CreateAccountAssignmentCommand,
-  CreateInstanceCommand,
+  // CreateInstanceCommand,
   CreatePermissionSetCommand,
-  DescribeInstanceCommand,
+  // DescribeInstanceCommand,
   DescribePermissionSetCommand,
   ListAccountAssignmentsCommand,
   ListCustomerManagedPolicyReferencesInPermissionSetCommand,
-  ListPermissionSetsCommand
+  ListPermissionSetsCommand,
+  UpdateInstanceCommand
 } from '@aws-sdk/client-sso-admin'
 
+import { Questioner } from 'question-and-answer'
+
+import { findIdentityStore } from '../shared/find-identity-store'
 import { generateIAMPolicy } from '../shared/generate-iam-policy'
 import { progressLogger } from '../shared/progress-logger'
 
@@ -35,8 +39,8 @@ const setupSSO = async ({
   groupName,
   identityStoreInfo,
   instanceName,
-  instanceRegion,
   policyName,
+  ssoProfile,
   userEmail,
   userFamilyName,
   userGivenName,
@@ -46,7 +50,7 @@ const setupSSO = async ({
 
   const { iamClient, policyARN } = await setupPolicy({ credentials, db, policyName })
   const { identityStoreID, identityStoreRegion, instanceARN, ssoAdminClient, ssoStartURL } =
-    await setupIdentityStore({ identityStoreInfo, instanceName, instanceRegion })
+    await setupIdentityStore({ credentials, identityStoreInfo, instanceName })
   const { groupID, identityStoreClient } =
     await setupSSOGroup({ credentials, identityStoreID, identityStoreRegion, groupName })
   const permissionSetARN = await setupPermissionSet({ instanceARN, policyARN, policyName, ssoAdminClient })
@@ -57,6 +61,8 @@ const setupSSO = async ({
     identityStoreClient,
     identityStoreID,
     identityStoreRegion,
+    instanceARN,
+    ssoProfile,
     userEmail,
     userFamilyName,
     userGivenName,
@@ -203,7 +209,7 @@ const setupPolicy = async ({ credentials, db, policyName }) => {
   return { iamClient, policyARN }
 }
 
-const setupIdentityStore = async ({ identityStoreInfo, instanceName, instanceRegion }) => {
+const setupIdentityStore = async ({ credentials, identityStoreInfo, instanceName }) => {
   let {
     id: identityStoreID,
     region: identityStoreRegion,
@@ -213,6 +219,38 @@ const setupIdentityStore = async ({ identityStoreInfo, instanceName, instanceReg
   } = identityStoreInfo
 
   if (identityStoreID === undefined) {
+    const interrogationBundle = {
+      actions : [
+        {
+          prompt    : `\nIt is not currently possible to create an AWS Identity Center instance programmatically. So:\n\n1) Copy the following URL into a browser:\n\n<em>https://${identityStoreRegion}.console.aws.amazon.com/singlesignon/home?region=${identityStoreRegion}#!/<rst>\n\n2) Hit the 'Enable' button.\n3) Return here and hit <ENTER> to continue the automated setup.`,
+          parameter : 'IGNORE_ME'
+        }
+      ]
+    }
+    const questioner = new Questioner({
+      interrogationBundle,
+      output : progressLogger
+    })
+    await questioner.question()
+
+    const findIdentityStoreResult = await findIdentityStore({ credentials, instanceRegion : identityStoreRegion });
+
+    ({
+      id: identityStoreID,
+      region: identityStoreRegion,
+      instanceARN
+    } = findIdentityStoreResult)
+
+    ssoStartURL = 'https://' + findIdentityStoreResult.Name + '.awsapps.com/start'
+
+    const updateInstanceCommand = new UpdateInstanceCommand({
+      Name        : instanceName,
+      InstanceArn : instanceARN
+    })
+    await ssoAdminClient.send(updateInstanceCommand)
+
+    /* This is what we'd like to do, but AWS inexplicably does not permit you to create a Organization based Instance from the API, even though this is the recommended way to create an instance and the only way that works with permissions and such.
+
     progressLogger.write(`Creating identity store '${instanceName}'...`)
 
     const createInstanceCommand = new CreateInstanceCommand({ Name : instanceName })
@@ -232,6 +270,7 @@ const setupIdentityStore = async ({ identityStoreInfo, instanceName, instanceReg
       progressLogger.write(' ERROR.\n')
       throw e
     }
+    */
   }
 
   return { identityStoreID, identityStoreRegion, instanceARN, ssoAdminClient, ssoStartURL }
@@ -353,6 +392,7 @@ const setupSSOGroup = async ({ credentials, identityStoreID, identityStoreRegion
   let nextToken
   let groupID
   const identityStoreClient = new IdentitystoreClient({ credentials, region : identityStoreRegion })
+  console.log('identityStoreID:', identityStoreID) // DEBUG
   do {
     const listGroupsCommand = new ListGroupsCommand({
       IdentityStoreId : identityStoreID,
@@ -399,6 +439,8 @@ const setupUser = async ({
   identityStoreClient,
   identityStoreID,
   identityStoreRegion,
+  instanceARN,
+  ssoProfile,
   userEmail,
   userFamilyName,
   userGivenName,
@@ -438,7 +480,13 @@ const setupUser = async ({
     try {
       userID = (await identityStoreClient.send(createUserCommand)).UserId
       progressLogger.write(' DONE.\n')
-      progressLogger.write(`<warn>You must request AWS email '${userName}' an email verification link from the Identity Center Console.\nhttps://${identityStoreRegion}.console.aws.amazon.com/singlesignon/home</warn>\n`)
+
+      const arnBits = instanceARN.split('/')
+      const instanceShortID = arnBits[arnBits.length - 1].split('-')[1]
+
+      const usersURL = `https://${identityStoreRegion}.console.aws.amazon.com/singlesignon/home?region=${identityStoreRegion}#!/instances/${instanceShortID}/users`
+
+      progressLogger.write(`<warn>You must request AWS email '${userName}' an email verification link from the Identity Center Console<rst>.\n\n1) Navigate to the following URL:\n\n<em>${usersURL}<rst>\n\n2) Select the user '${userName}'.\n3) Click the 'Send email verification link'.\n\nOnce verified, you can authenticate, with:\n\n<em>aws sso login --profile ${ssoProfile}`)
     } catch (e) {
       progressLogger.write(' ERROR.\n')
       throw e

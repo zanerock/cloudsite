@@ -22,6 +22,22 @@
   --ifm-heading-font-family: Roboto Bold, Roboto;
   --ifm-heading-font-weight: bold;
 
+  --ifm-font-color-base: var(--ifm-color-primary);
+
+  /* buttons */
+  --ll-button-font-family: var(--ifm-font-family-base);
+  --ifm-button-font-weight: 800;
+
+  --ll-button-border-width: 3px;
+
+  --ll-button-color-hover: var(--ifm-background-color);
+  --ll-button-background-color-hover: var(--ifm-color-content-secondary);
+  --ll-button-border-color-hover: var(--ifm-color-content-secondary);
+
+  --ll-button-color-active: var(--ifm-color-content-secondary);
+  --ll-button-backgronud-color-active: var(--ifm-background-color);
+  --ll-button-border-color-active: var(--ifm-color-content-secondary);
+
   /* content link behavior */
   --ll-content-link-color: var(--ifm-color-primary);
   --ll-content-link-decoration: underline;
@@ -75,6 +91,4 @@ html[data-theme='dark'] {
 
   /* old school terminal amber */
   --ifm-color-content-secondary: #ffb000;
-
-  --ifm-font-color-base: var(--ifm-color-primary);
 }

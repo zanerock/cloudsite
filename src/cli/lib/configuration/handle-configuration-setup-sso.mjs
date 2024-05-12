@@ -10,7 +10,8 @@ import { SSOAdminClient } from '@aws-sdk/client-sso-admin'
 
 import { checkAuthentication } from '../check-authentication'
 import { cliSpec } from '../../constants'
-import { findIdentityStore } from './lib/find-identity-store'
+import { ensureRootOrganization } from './lib/ensure-root-organization'
+import { findIdentityStore } from '../../../lib/shared/find-identity-store'
 import { getCredentials } from '../../../lib/actions/lib/get-credentials'
 import { progressLogger } from '../../../lib/shared/progress-logger'
 import { setupSSO } from '../../../lib/actions/setup-sso'
@@ -20,6 +21,8 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
     .commands.find(({ name }) => name === 'configuration')
     .commands.find(({ name }) => name === 'setup-sso')
     .arguments || []
+  console.log('ssoSetupOptionsSpec:', ssoSetupOptionsSpec) // DEBUG
+  console.log('argv:', argv) // DEBUG
   const ssoSetupOptions = commandLineArgs(ssoSetupOptionsSpec, { argv })
   let {
     defaults,
@@ -29,12 +32,14 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
     'instance-region': instanceRegion = 'us-east-1',
     'no-delete': noDelete,
     'policy-name': policyName = 'CloudsiteManager',
-    'sso-profile': ssoProfile = 'cloudsite-manager',
+    'sso-profile-name': ssoProfile = 'cloudsite-manager',
     'user-email': userEmail,
     'user-family-name': userFamilyName,
     'user-given-name': userGivenName,
     'user-name': userName = 'cloudsite-manager'
   } = ssoSetupOptions
+
+  console.log('ssoSetupOptions:', ssoSetupOptions) // DEBUG
 
   try {
     await checkAuthentication()
@@ -51,26 +56,27 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
 
   const credentials = getCredentials()
 
+  await ensureRootOrganization({ credentials, db })
+
   const identityStoreInfo = {
     name   : instanceName,
     region : instanceRegion
   }
-  if (instanceName === undefined || instanceRegion === undefined) {
+
+  Object.assign(identityStoreInfo, await findIdentityStore({ credentials, instanceRegion }))
+
+  if (identityStoreInfo.id === undefined) {
     const interrogationBundle = {
       actions : [
         {
-          prompt    : "Do you have an existing Identity Center instance? (Answer 'no' if you don't know what that is.)",
-          paramType : 'boolean',
-          parameter : 'HAS_INSTANCE'
+          statement : "You do not appear to have an Identity Center associated with your account. The Identity Center is where you'll sign in with your SSO account."
         },
         {
-          condition : '!HAS_INSTANCE',
-          prompt    : "Enter the preferred name for the Identity Center instance (typically based on your primary domain name with '-' instead of '.'; e.g.: foo-com):",
+          prompt    : "Enter the preferred <em>name for the Identity Center<rst> instance (typically based on your primary domain name with '-' instead of '.'; e.g.: foo-com):",
           parameter : 'instance-name'
         },
         {
-          condition : '!HAS_INSTANCE',
-          prompt    : 'Enter the preferred AWS region for the identity store instance:',
+          prompt    : 'Enter the preferred <em>AWS region<rst> for the identity store instance:',
           default   : instanceRegion,
           parameter : 'instance-region'
         }
@@ -84,40 +90,34 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
     })
     await questioner.question()
 
-    if (questioner.get('HAS_INSTANCE') === true) {
-      Object.assign(identityStoreInfo, await findIdentityStore({ credentials, instanceRegion }))
-
-      if (identityStoreInfo.id === undefined) {
-        throw new Error('Could not locate existing identity store.')
-      }
-    }
-  } else {
-    identityStoreInfo.ssoAdminClient = new SSOAdminClient({ credentials, region : instanceRegion })
+    identityStoreInfo.instanceName = questioner.get('instance-name')
+    identityStoreInfo.instanceRegion = questioner.get('instance-region');
+    ({ instanceName, instanceRegion } = identityStoreInfo)
   }
 
-  if (identityStoreInfo.id !== undefined) {
-    if (ssoSetupOptions['user-name'] === undefined && defaults !== true) {
-      const questioner = new Questioner({
-        interrogationBundle : {
-          actions : [
-            {
-              prompt    : 'Enter the name of the Cloudsite manager user account to create or reference:',
-              default   : userName,
-              parameter : 'user-name'
-            }
-          ]
-        },
-        output : progressLogger
-      })
+  identityStoreInfo.ssoAdminClient = new SSOAdminClient({ credentials, region : instanceRegion })
 
-      await questioner.question()
-      userName = questioner.get('user-name')
-    }
+  if (ssoSetupOptions['user-name'] === undefined && defaults !== true) {
+    const questioner = new Questioner({
+      interrogationBundle : {
+        actions : [
+          {
+            prompt    : `Enter the name of the Cloudsite manager user account to create${identityStoreInfo.id === undefined ? '' : 'or reference'}:`,
+            default   : userName,
+            parameter : 'user-name'
+          }
+        ]
+      },
+      output : progressLogger
+    })
+
+    await questioner.question()
+    userName = questioner.get('user-name')
   }
 
   // are they saying create this or referencing an existing user?
   let userFound = false
-  if (identityStoreInfo !== null) {
+  if (identityStoreInfo.id !== undefined) {
     progressLogger.write(`Checking identity store for user '${userName}'...`)
     const identitystoreClient = new IdentitystoreClient({ credentials, region : identityStoreInfo.region })
     const getUserIdCommad = new GetUserIdCommand({
@@ -144,15 +144,15 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
   if (userFound === false) {
     ibActions.push(...[
       {
-        prompt    : 'Enter the email of the Cloudsite manager user:',
+        prompt    : 'Enter the <em>email<rst> of the Cloudsite manager user:',
         parameter : 'user-email'
       },
       {
-        prompt    : 'Enter the given name of the Cloudsite manager:',
+        prompt    : 'Enter the <em>given name<rst> of the Cloudsite manager:',
         parameter : 'user-given-name'
       },
       {
-        prompt    : 'Enter the family name of the Cloudsite manager:',
+        prompt    : 'Enter the <em>family name<rst> of the Cloudsite manager:',
         parameter : 'user-family-name'
       }
     ])
@@ -161,17 +161,17 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
   if (defaults !== true) {
     ibActions.push(...[ // note, any questions with values already set by CLI options will be skipped
       {
-        prompt    : "Enter the name of the SSO profile to create or reference (enter '-' to set the default profile):",
+        prompt    : "Enter the name of the <em>SSO profile<rst> to create or reference (enter '-' to set the default profile):",
         default   : ssoProfile,
-        parameter : 'sso-profile'
+        parameter : 'sso-profile-name'
       },
       {
-        prompt    : 'Enter the name of the custom policy to create or reference:',
+        prompt    : 'Enter the name of the <em>custom policy<rst> to create or reference:',
         default   : policyName,
         parameter : 'policy-name'
       },
       {
-        prompt    : 'Enter the name of the Cloudsite managers group to create or reference:',
+        prompt    : 'Enter the name of the Cloudsite managers <em>group<rst> to create or reference:',
         default   : groupName,
         parameter : 'group-name'
       }
@@ -182,7 +182,7 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
     ibActions.push({
       prompt    : 'Delete Access keys after SSO setup:',
       paramType : 'boolean',
-      default   : 'y',
+      default   : true,
       parameter : 'do-delete'
     })
   }
@@ -204,7 +204,7 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
     ({
       'group-name': groupName = groupName,
       'policy-name': policyName = policyName,
-      'sso-profile': ssoProfile = ssoProfile,
+      'sso-profile-name': ssoProfile = ssoProfile,
       'user-email': userEmail = userEmail,
       'user-family-name': userFamilyName = userFamilyName,
       'user-given-name' : userGivenName = userGivenName,
@@ -225,7 +225,7 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
   const requiredFields = [
     ['group-name', groupName],
     ['policy-name', policyName],
-    ['sso-profile', ssoProfile],
+    ['sso-profile-name', ssoProfile],
     ['user-name', userName]
   ]
 
@@ -252,8 +252,8 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
     groupName,
     identityStoreInfo,
     instanceName,
-    instanceRegion,
     policyName,
+    ssoProfile,
     userEmail,
     userFamilyName,
     userGivenName,
@@ -280,6 +280,11 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
   config.set('sso-session ' + ssoProfile, 'sso_registration_scopes', 'sso:account:access')
 
   await fs.writeFile(configPath, config.stringify())
+
+  const { account } = db
+  const { localSettings = {} } = account
+  account.localSettings = localSettings
+  localSettings['sso-profile'] = ssoProfile
 
   return { success : true, userMessage : 'Settings updated.' }
 }

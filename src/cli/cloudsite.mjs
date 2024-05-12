@@ -42,6 +42,8 @@ const cloudsite = async () => {
     db = { account : { settings : {} }, sites : {}, toCleanup : {}, reminders : [] }
   }
 
+  const origDB = structuredClone(db)
+
   const globalOptions = getGlobalOptions({ db })
   const { format } = globalOptions
   const noColor = globalOptions['no-color']
@@ -68,8 +70,6 @@ const cloudsite = async () => {
   if (noReminders !== true) {
     checkReminders({ reminders : db.reminders })
   }
-
-  const origDB = structuredClone(db)
 
   let exitCode = 0
   let data, userMessage, success

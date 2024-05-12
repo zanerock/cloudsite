@@ -1,0 +1,16 @@
+h1 {
+  width: 100%;
+  border-bottom: 2px solid var(--ifm-color-content-secondary);
+}
+
+.markdown :is(h2, h3, h4, h5, h6) {
+  margin-bottom: 0.25rem;
+}
+
+div.sub-title {  
+  font-weight: bold;
+}
+
+div.sub-title > p {
+  margin-bottom: var(--ifm-heading-margin-bottom);
+}
