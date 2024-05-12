@@ -9,6 +9,7 @@ a.breadcrumbs__link,
 [class*="sidebarItem"] [class*="sidebarItemLink"] { /* for the blog list */
   color: var(--ll-nav-color);
   text-decoration: var(--ll-nav-text-decoration);
+  font-weight: var(--ll-nav-text-font-weight);
 }
 
 a.table-of-contents__link:hover,
@@ -23,6 +24,7 @@ a.breadcrumbs__link:any-link:hover, /* a and 'any-link' necessary for precedence
 [class*="sidebarItem"] [class*="sidebarItemLink"]:hover {
   color: var(--ll-nav-color-hover);
   text-decoration: var(--ll-nav-text-decoration-hover);
+  font-weight: var(--ll-nav-text-font-weight-hover);
 }
 
 
@@ -37,6 +39,7 @@ a.breadcrumbs__link--active,
 [class*="sidebarItem"] [class*="sidebarItemLinkActive"] {
   /* there's an !important in the blog style module we have to overcome */
   color: var(--ll-nav-color-active) !important;
+  font-weight: var(--ll-nav-text-font-weight-active);
   text-decoration: var(--ll-nav-text-decoration-active);
 }
 

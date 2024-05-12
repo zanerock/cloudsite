@@ -1,0 +1,24 @@
+
+li .theme-code-block {
+  margin-bottom: 0; /* kill the big code block margin (default is pp spacing) */
+}
+
+p + div.flow-list, div:has(> p) + div.flow-list {
+  margin-top: calc(-1 * var(--ifm-paragraph-margin-bottom) + 0.25rem);
+}
+
+dt {
+  font-weight: bold;
+}
+
+.markdown li > p { /* limit list spacing to --ifm-list-item-margin */
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+/* not sure why, but the bottom margin of lists and bottom margin of paragraphs is different (at least in Desktop mode); let's correct that */
+:root {
+  --ifm-list-margin: var(--ifm-paragraph-margin-bottom);
+  --ifm-heading-margin-bottom: 0.35rem;
+  --ifm-font-size-base: 115%;
+}

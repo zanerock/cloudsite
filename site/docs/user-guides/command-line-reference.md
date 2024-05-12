@@ -97,7 +97,7 @@ Runs the SSO wizard and sets up the SSO user authentication in the IAM Identity 
 |`--instance-region`|The region in which to set up the identity center if no identity center currently set up. Defaults to 'us-east-1'.|
 |`--no-delete`|Retains the Access keys after setting up SSO access.|
 |`--policy-name`|The name of the policy and permission set to create or reference.|
-|`--sso-profile`|The name of the local SSO profile to create.|
+|`--sso-profile-name`|The name of the local SSO profile to create.|
 |`--user-email`|The primary email to associate with the user.|
 |`--user-family-name`|The family name of the cloudsite management user.|
 |`--user-given-name`|The given name of the cloudsite management user.|

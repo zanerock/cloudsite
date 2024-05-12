@@ -1,7 +1,7 @@
 import { AccountClient, ListRegionsCommand } from '@aws-sdk/client-account'
 import { ListInstancesCommand, SSOAdminClient } from '@aws-sdk/client-sso-admin'
 
-import { progressLogger } from '../../../../lib/shared/progress-logger'
+import { progressLogger } from './progress-logger'
 
 const findIdentityStore = async ({ credentials, instanceRegion }) => {
   progressLogger.write('Checking for SSO identity store...')
@@ -58,7 +58,7 @@ const findIdentityStore = async ({ credentials, instanceRegion }) => {
     nextToken = listRegionsResult.NextToken
   } while (nextToken !== undefined)
 
-  progressLogger.write(' NOT FOUND.')
+  progressLogger.write(' NOT FOUND.\n')
   return { region : instanceRegion, ssoAdminClient : new SSOAdminClient({ credentials, region : instanceRegion }) }
 }
 
