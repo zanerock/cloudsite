@@ -26,10 +26,11 @@
   text-decoration: none;
 }
 
-.button:hover, a.button:hover, a.button.button--secondary:hover {
+.button:hover, a.button[href]:hover, a.button.button--secondary:hover {
   color: var(--ll-button-color-hover);
   background-color: var(--ll-button-background-color-hover);
   border-color: var(--ll-button-border-color-hover);
+  text-decoration: none;
 }
 
 .button:active, a.button[href]:active, a.button.button--secondary[href]:active {

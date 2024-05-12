@@ -6,3 +6,7 @@ a.card[class*="cardContainer"] {
 a.card[class*="cardContainer"]:hover {
   border-color: var(--ifm-color-primary); /* match the 'next'/'previous' controls */
 }
+
+p[class*="cardDescription"] {
+  font-size: inherit;
+}
