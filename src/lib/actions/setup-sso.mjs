@@ -16,9 +16,9 @@ import {
 import {
   AttachCustomerManagedPolicyReferenceToPermissionSetCommand,
   CreateAccountAssignmentCommand,
-  CreateInstanceCommand,
+  // CreateInstanceCommand,
   CreatePermissionSetCommand,
-  DescribeInstanceCommand,
+  // DescribeInstanceCommand,
   DescribePermissionSetCommand,
   ListAccountAssignmentsCommand,
   ListCustomerManagedPolicyReferencesInPermissionSetCommand,
@@ -486,7 +486,7 @@ const setupUser = async ({
 
       const usersURL = `https://${identityStoreRegion}.console.aws.amazon.com/singlesignon/home?region=${identityStoreRegion}#!/instances/${instanceShortID}/users`
 
-      progressLogger.write(`<warn>You must request AWS email '${userName}' an email verification link from the Identity Center Console<rst>.\n\n1) Navigate to the following URL:\n\nhttps://${identityStoreRegion}.console.aws.amazon.com/singlesignon/home</warn>\n\n2) Select the user '${userName}'.\n3) Click the 'Send email verification link'.\n\nOnce verified, you can authenticate, with:\n\n<em>aws sso login --profile ${ssoProfile}`)
+      progressLogger.write(`<warn>You must request AWS email '${userName}' an email verification link from the Identity Center Console<rst>.\n\n1) Navigate to the following URL:\n\n<em>${usersURL}<rst>\n\n2) Select the user '${userName}'.\n3) Click the 'Send email verification link'.\n\nOnce verified, you can authenticate, with:\n\n<em>aws sso login --profile ${ssoProfile}`)
     } catch (e) {
       progressLogger.write(' ERROR.\n')
       throw e
