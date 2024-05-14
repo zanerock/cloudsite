@@ -50,7 +50,7 @@ const cloudsite = async () => {
   const ssoProfile = globalOptions['sso-profile']
   const throwError = globalOptions['throw-error']
 
-  configureLogger(globalOptions)
+  configureLogger({ allowOverfliow, ...globalOptions})
 
   if (help === true) {
     const commands = command === undefined
