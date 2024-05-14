@@ -24,7 +24,7 @@ const findIdentityStore = async ({ credentials, firstCheckRegion, instanceRegion
     const listRegionsResult = await accountClient.send(listRegionsCommand)
 
     let regions = listRegionsResult.Regions.map(({ RegionName }) => RegionName)
-    let origRegions = [...regions]
+    const origRegions = [...regions]
     if (instanceRegion !== undefined || scope !== undefined) {
       const testFunc = instanceRegion !== undefined
         ? (regionName) => regionName === instanceRegion
@@ -94,7 +94,7 @@ const findIdentityStoreStaged = async ({ credentials, firstCheckRegion, scope = 
     ? scope.slice(1)
     : '!' + scope
 
-  findResult = await findIdentityStore({ credentials, firstCheckRegion, scope: oppositeScope })
+  findResult = await findIdentityStore({ credentials, firstCheckRegion, scope : oppositeScope })
   return findResult
 }
 

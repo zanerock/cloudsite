@@ -59,7 +59,7 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
     region : instanceRegion
   }
 
-  Object.assign(identityStoreInfo, await findIdentityStoreStaged({ credentials, firstCheckRegion: instanceRegion }))
+  Object.assign(identityStoreInfo, await findIdentityStoreStaged({ credentials, firstCheckRegion : instanceRegion }))
 
   if (identityStoreInfo.id === undefined) {
     const interrogationBundle = {

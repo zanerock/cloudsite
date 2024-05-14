@@ -218,21 +218,21 @@ const setupIdentityStore = async ({ credentials, identityStoreInfo, instanceName
     ssoStartURL
   } = identityStoreInfo
 
-  let firstRun = true
+  const firstRun = true
   let tryCount = 0
   const maxTryCount = 4
   while (identityStoreID === undefined) {
     tryCount += 1
 
     if (tryCount === maxTryCount) {
-      throw new Error("Something appears to be wrong. If the network is unstable or you suspect some other transient error, try again later. You may also look into Cloudsite support options:\n\n<em>https://cloudsitehosting.org/support<rst>")
+      throw new Error('Something appears to be wrong. If the network is unstable or you suspect some other transient error, try again later. You may also look into Cloudsite support options:\n\n<em>https://cloudsitehosting.org/support<rst>')
     }
     const interrogationBundle = { actions : [] }
 
     const userMessage = firstRun === true
       ? '\nIt is not currently possible to create an AWS Identity Center instance programmatically. Thankfully, creating one manually is easy, just follow the following instructions.'
       : "\n<warn>No Identity Center instance was found.<rst> You may have hit <RETURN> before the Identity Center creation finished, or maybe you didn't hit the 'Enable' button. Try the following URL."
-    interrogationBundle.actions.push({ statement: userMessage })
+    interrogationBundle.actions.push({ statement : userMessage })
     interrogationBundle.actions.push({
       prompt    : `\n1) Copy the following URL into a browser:\n\n<em>https://${identityStoreRegion}.console.aws.amazon.com/singlesignon/home?region=${identityStoreRegion}#!/<rst>\n\n2) Hit the 'Enable' button.\n3) Return here and hit <ENTER> to continue the automated setup.`,
       parameter : 'IGNORE_ME'
@@ -245,7 +245,7 @@ const setupIdentityStore = async ({ credentials, identityStoreInfo, instanceName
     await questioner.question()
 
     const findIdentityStoreResult =
-      await findIdentityStore({ credentials, instanceRegion : identityStoreRegion });
+      await findIdentityStore({ credentials, instanceRegion : identityStoreRegion })
     if (findIdentityStoreResult.id !== undefined) {
       ({
         id: identityStoreID,
