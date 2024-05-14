@@ -1,6 +1,7 @@
 a.card[class*="cardContainer"] {
   box-shadow: unset; /* we have a flat style */
   border-color: var(--ifm-color-emphasis-300); /* match the 'next'/'previous' controls */
+  text-decoration: none;
 }
 
 a.card[class*="cardContainer"]:hover {

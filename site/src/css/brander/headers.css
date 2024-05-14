@@ -1,6 +1,6 @@
 h1 {
   width: 100%;
-  border-bottom: 2px solid var(--ifm-color-content-secondary);
+  border-bottom: var(--ll-navbar-bottom-border-width) solid var(--ifm-color-content-secondary);
 }
 
 .markdown :is(h2, h3, h4, h5, h6) {
