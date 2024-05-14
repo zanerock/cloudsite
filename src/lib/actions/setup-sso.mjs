@@ -253,13 +253,13 @@ const setupIdentityStore = async ({ credentials, identityStoreInfo, instanceName
         instanceARN
       } = findIdentityStoreResult)
 
-      ssoStartURL = 'https://' + findIdentityStoreResult.Name + '.awsapps.com/start'
-
       const updateInstanceCommand = new UpdateInstanceCommand({
         Name        : instanceName,
         InstanceArn : instanceARN
       })
       await ssoAdminClient.send(updateInstanceCommand)
+
+      ssoStartURL = 'https://' + identityStoreID + '.awsapps.com/start'
     } // else we loop and try again.
 
     /* This is what we'd like to do, but AWS inexplicably does not permit you to create a Organization based Instance from the API, even though this is the recommended way to create an instance and the only way that works with permissions and such.
