@@ -14,10 +14,10 @@
 @import url("./brander/links-navigation.css"); /* must come after links-content for proper precedence */
 @import url("./brander/lists.css");
 @import url("./brander/navbar.css");
+@import url("./brander/navbar-github-link.css");
 @import url("./brander/reverse-colors.css");
 @import url("./brander/scroll-fix.css");
 @import url("./brander/transitions.css");
-
 
 @import url("./modal.global.css");
 
