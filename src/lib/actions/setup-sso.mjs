@@ -218,36 +218,49 @@ const setupIdentityStore = async ({ credentials, identityStoreInfo, instanceName
     ssoStartURL
   } = identityStoreInfo
 
-  if (identityStoreID === undefined) {
-    const interrogationBundle = {
-      actions : [
-        {
-          prompt    : `\nIt is not currently possible to create an AWS Identity Center instance programmatically. So:\n\n1) Copy the following URL into a browser:\n\n<em>https://${identityStoreRegion}.console.aws.amazon.com/singlesignon/home?region=${identityStoreRegion}#!/<rst>\n\n2) Hit the 'Enable' button.\n3) Return here and hit <ENTER> to continue the automated setup.`,
-          parameter : 'IGNORE_ME'
-        }
-      ]
+  let firstRun = true
+  let tryCount = 0
+  const maxTryCount = 4
+  while (identityStoreID === undefined) {
+    tryCount += 1
+
+    if (tryCount === maxTryCount) {
+      throw new Error("Something appears to be wrong. If the network is unstable or you suspect some other transient error, try again later. You may also look into Cloudsite support options:\n\n<em>https://cloudsitehosting.org/support<rst>")
     }
+    const interrogationBundle = { actions : [] }
+
+    const userMessage = firstRun === true
+      ? '\nIt is not currently possible to create an AWS Identity Center instance programmatically. Thankfully, creating one manually is easy, just follow the following instructions.'
+      : "\n<warn>No Identity Center instance was found.<rst> You may have hit <RETURN> before the Identity Center creation finished, or maybe you didn't hit the 'Enable' button. Try the following URL."
+    interrogationBundle.actions.push({ statement: userMessage })
+    interrogationBundle.actions.push({
+      prompt    : `\n1) Copy the following URL into a browser:\n\n<em>https://${identityStoreRegion}.console.aws.amazon.com/singlesignon/home?region=${identityStoreRegion}#!/<rst>\n\n2) Hit the 'Enable' button.\n3) Return here and hit <ENTER> to continue the automated setup.`,
+      parameter : 'IGNORE_ME'
+    })
+
     const questioner = new Questioner({
       interrogationBundle,
       output : progressLogger
     })
     await questioner.question()
 
-    const findIdentityStoreResult = await findIdentityStore({ credentials, instanceRegion : identityStoreRegion });
+    const findIdentityStoreResult =
+      await findIdentityStore({ credentials, instanceRegion : identityStoreRegion });
+    if (findIdentityStoreResult.id !== undefined) {
+      ({
+        id: identityStoreID,
+        region: identityStoreRegion,
+        instanceARN
+      } = findIdentityStoreResult)
 
-    ({
-      id: identityStoreID,
-      region: identityStoreRegion,
-      instanceARN
-    } = findIdentityStoreResult)
+      ssoStartURL = 'https://' + findIdentityStoreResult.Name + '.awsapps.com/start'
 
-    ssoStartURL = 'https://' + findIdentityStoreResult.Name + '.awsapps.com/start'
-
-    const updateInstanceCommand = new UpdateInstanceCommand({
-      Name        : instanceName,
-      InstanceArn : instanceARN
-    })
-    await ssoAdminClient.send(updateInstanceCommand)
+      const updateInstanceCommand = new UpdateInstanceCommand({
+        Name        : instanceName,
+        InstanceArn : instanceARN
+      })
+      await ssoAdminClient.send(updateInstanceCommand)
+    } // else we loop and try again.
 
     /* This is what we'd like to do, but AWS inexplicably does not permit you to create a Organization based Instance from the API, even though this is the recommended way to create an instance and the only way that works with permissions and such.
 
@@ -392,7 +405,6 @@ const setupSSOGroup = async ({ credentials, identityStoreID, identityStoreRegion
   let nextToken
   let groupID
   const identityStoreClient = new IdentitystoreClient({ credentials, region : identityStoreRegion })
-  console.log('identityStoreID:', identityStoreID) // DEBUG
   do {
     const listGroupsCommand = new ListGroupsCommand({
       IdentityStoreId : identityStoreID,
@@ -486,7 +498,7 @@ const setupUser = async ({
 
       const usersURL = `https://${identityStoreRegion}.console.aws.amazon.com/singlesignon/home?region=${identityStoreRegion}#!/instances/${instanceShortID}/users`
 
-      progressLogger.write(`<warn>You must request AWS email '${userName}' an email verification link from the Identity Center Console<rst>.\n\n1) Navigate to the following URL:\n\n<em>${usersURL}<rst>\n\n2) Select the user '${userName}'.\n3) Click the 'Send email verification link'.\n\nOnce verified, you can authenticate, with:\n\n<em>aws sso login --profile ${ssoProfile}`)
+      progressLogger.write(`<warn>You must request AWS email '${userName}' an email verification link from the Identity Center Console<rst>.\n\n1) Navigate to the following URL:\n\n<em>${usersURL}<rst>\n\n2) Select the user '${userName}'.\n3) Click the 'Send email verification link'.\n\nOnce verified, you can authenticate, with:\n\n<em>aws sso login --profile ${ssoProfile}<rst>\n\n`)
     } catch (e) {
       progressLogger.write(' ERROR.\n')
       throw e
