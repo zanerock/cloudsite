@@ -124,6 +124,9 @@ const cloudsite = async () => {
       }
       userMessage += '<rst>'
       exitCode = 2
+    } else if (e.name === 'InvalidAccessKeyId') {
+      userMessage = `It looks like you're using AWS access keys which are no longer valid. These may have been deleted on the AWS end. There are two options:\n\n1) Try singing in with:\n\n  <code>aws sso login${ssoProfile === undefined ? '' : ' --profile'}<rst>\n\n2) If don't have SSO setup, you will need to regenerate the access keys. Refer to the following instructions:\n\n<em>https://cloudsitehosting.org/docs/get-started/authentication#initial-authentication-with-access-keys<rst>`
+      exitCode = 3
     } else {
       userMessage = e.message +
         `\n\nFor more information, try:\n<em>cloudsite --help${command === undefined ? '' : ' <command(s)>'}<rst>`
