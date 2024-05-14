@@ -53,6 +53,7 @@
   --ll-navbar-logo-height: 1.75rem;
   --ifm-navbar-padding-vertical: 4px;
   --ifm-navbar-padding-horizontal: var(--ifm-spacing-horizontal);
+  --ll-navbar-bottom-border-width: 1px;
   /* we don't use this to set the navbar height, but it is used by the 'anchorWithStickyNavbar' module to 
     'scroll-margin-top
     the 1px is for the bottom border */
