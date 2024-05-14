@@ -3,8 +3,13 @@ import { ListInstancesCommand, SSOAdminClient } from '@aws-sdk/client-sso-admin'
 
 import { progressLogger } from './progress-logger'
 
-const findIdentityStore = async ({ credentials, instanceRegion }) => {
-  progressLogger.write('Checking for SSO identity store...')
+const findIdentityStore = async ({ credentials, firstCheckRegion, instanceRegion, scope }) => {
+  const regionDescription = instanceRegion !== undefined
+    ? instanceRegion + ' region '
+    : scope !== undefined
+      ? scope + ' regions '
+      : ''
+  progressLogger.write(`Checking ${regionDescription}for SSO identity store...`)
 
   let nextToken
   const accountClient = new AccountClient({ credentials })
@@ -18,16 +23,32 @@ const findIdentityStore = async ({ credentials, instanceRegion }) => {
     })
     const listRegionsResult = await accountClient.send(listRegionsCommand)
 
-    const regions = listRegionsResult.Regions.sort((a, b) => {
-      const aName = a.RegionName
-      const bName = b.RegionName
+    let regions = listRegionsResult.Regions.map(({ RegionName }) => RegionName)
+    const origRegions = [...regions]
+    if (instanceRegion !== undefined || scope !== undefined) {
+      const testFunc = instanceRegion !== undefined
+        ? (regionName) => regionName === instanceRegion
+        : scope.startsWith('!') === true
+          ? (regionName) => !regionName.startsWith(scope.slice(1))
+          : (regionName) => regionName.startsWith(scope)
+
+      regions = regions.filter(testFunc)
+
+      if (regions.length === 0) {
+        throw new Error(`No such '${regionDescription}' found. Availablel regions are:\n- ` + origRegions.join('\n- '))
+      }
+    }
+
+    regions.sort((a, b) => {
+      const aName = a
+      const bName = b
 
       const aUS = aName.startsWith('us-')
       const bUS = bName.startsWith('us-')
 
-      if (aName === instanceRegion) {
+      if (aName === firstCheckRegion) {
         return -1
-      } else if (bName === instanceRegion) {
+      } else if (bName === firstCheckRegion) {
         return 1
       } else if (aUS === true && bUS === false) {
         return -1
@@ -38,7 +59,8 @@ const findIdentityStore = async ({ credentials, instanceRegion }) => {
       }
     })
 
-    for (const { RegionName: region } of regions) {
+    for (const region of regions) {
+      progressLogger.write('.')
       ssoAdminClient = new SSOAdminClient({ credentials, region })
       const listInstancesCommand = new ListInstancesCommand({})
       const listInstancesResult = await ssoAdminClient.send(listInstancesCommand)
@@ -59,7 +81,21 @@ const findIdentityStore = async ({ credentials, instanceRegion }) => {
   } while (nextToken !== undefined)
 
   progressLogger.write(' NOT FOUND.\n')
-  return { region : instanceRegion, ssoAdminClient : new SSOAdminClient({ credentials, region : instanceRegion }) }
+  return { region : firstCheckRegion, ssoAdminClient : new SSOAdminClient({ credentials, region : firstCheckRegion }) }
 }
 
-export { findIdentityStore }
+// TOOD: in future we can examine the default region to determine the first scope.
+const findIdentityStoreStaged = async ({ credentials, firstCheckRegion, scope = 'us' }) => {
+  let findResult = await findIdentityStore({ credentials, firstCheckRegion, scope })
+  if (findResult.id !== undefined) {
+    return findResult
+  }
+  const oppositeScope = scope.startsWith('!')
+    ? scope.slice(1)
+    : '!' + scope
+
+  findResult = await findIdentityStore({ credentials, firstCheckRegion, scope : oppositeScope })
+  return findResult
+}
+
+export { findIdentityStore, findIdentityStoreStaged }

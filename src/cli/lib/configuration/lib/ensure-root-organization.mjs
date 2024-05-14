@@ -4,7 +4,6 @@ import { getAccountID } from '../../../../lib/shared/get-account-id'
 import { progressLogger } from '../../../../lib/shared/progress-logger'
 
 const ensureRootOrganization = async ({ credentials, db }) => {
-  console.log('db:', db) // DEBUG
   if (db.account.accountID === undefined) {
     db.account.accountID = await getAccountID({ credentials })
   }

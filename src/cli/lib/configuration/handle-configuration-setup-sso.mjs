@@ -11,7 +11,7 @@ import { SSOAdminClient } from '@aws-sdk/client-sso-admin'
 import { checkAuthentication } from '../check-authentication'
 import { cliSpec } from '../../constants'
 import { ensureRootOrganization } from './lib/ensure-root-organization'
-import { findIdentityStore } from '../../../lib/shared/find-identity-store'
+import { findIdentityStoreStaged } from '../../../lib/shared/find-identity-store'
 import { getCredentials } from '../../../lib/actions/lib/get-credentials'
 import { progressLogger } from '../../../lib/shared/progress-logger'
 import { setupSSO } from '../../../lib/actions/setup-sso'
@@ -21,8 +21,6 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
     .commands.find(({ name }) => name === 'configuration')
     .commands.find(({ name }) => name === 'setup-sso')
     .arguments || []
-  console.log('ssoSetupOptionsSpec:', ssoSetupOptionsSpec) // DEBUG
-  console.log('argv:', argv) // DEBUG
   const ssoSetupOptions = commandLineArgs(ssoSetupOptionsSpec, { argv })
   let {
     defaults,
@@ -38,8 +36,6 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
     'user-given-name': userGivenName,
     'user-name': userName = 'cloudsite-manager'
   } = ssoSetupOptions
-
-  console.log('ssoSetupOptions:', ssoSetupOptions) // DEBUG
 
   try {
     await checkAuthentication()
@@ -63,7 +59,7 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
     region : instanceRegion
   }
 
-  Object.assign(identityStoreInfo, await findIdentityStore({ credentials, instanceRegion }))
+  Object.assign(identityStoreInfo, await findIdentityStoreStaged({ credentials, firstCheckRegion : instanceRegion }))
 
   if (identityStoreInfo.id === undefined) {
     const interrogationBundle = {
