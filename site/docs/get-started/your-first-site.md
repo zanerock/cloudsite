@@ -8,15 +8,16 @@ description: A quick example of launching a site.
 
 Cloudsite requires a domain name so your website has someplace to live.
 
-If you don't have a domain name already, you'll first need to register a domain name. Refer to our [domain name selection guide](/docs/user-guides/domain-name-selection) for ideas on finding a good name. To keep things simple, we strongly recommend registering your domain name using [Route 53](https://aws.amazon.com/route53/).
-
-If you already have a domain name, then refer to our [domain name configuration guide](/docs/user-guides/domain-name-management) on how to either [transfer a domain to Route 53](/docs/user-guides/domain-name-management#transfer-a-domain-to-route-53) or how to [configure 3rd party registered domains](/docs/user-guides/domain-name-management#configure-3rd-party-registered-domains).
+- If don't have a domain name you'll first need to register one.
+  - Refer to our [domain name selection guide](/docs/user-guides/domain-name-selection) for ideas on finding a good name.
+  - Registering your domain name using [Route 53](https://aws.amazon.com/route53/) will simplify things a bit down the road.
+- If you have a domain name you can:
+  - [transfer your domain to Route 53](/docs/user-guides/domain-name-management#transfer-a-domain-to-route-53), or
+  - [configure a domains registered with a 3rd party to work with Route 53.](/docs/user-guides/domain-name-management#configure-3rd-party-registered-domains).
 
 ## Prepare your site files
 
-Cloudsite hosts primarily [_static websites_](/docs/user-guides/static-websites), with some support for specific dynamic content and actions via plugins. Basically a static site is one defined entirely by a set of files. There are methods to turn dynamic websites, like a WordPress site, into static sites and we cover a number of specific options in the [website development guides](/docs/category/website-development).
-
-Regardless of the method used to generate the static files, at the end of the day, you end up with a collection of files in a folder. We call those files the _source files_ which are all collected and stored in a single _source folder_. If you don't have site files already, then create a source folder (call it 'website' or something) and create a single `index.html` file in the source folder with the following contents:
+We go over a few different methods of creating a website using [WordPress](/docs/user-guides/website-development/build-with-wordpress), [Docusaurus](/docs/user-guides/website-development/build-with-docusaurus), or [templates](/docs/user-guides/website-development/build-with-a-template). Regardless of the method used to create your site, at the end of the day, you end up with a collection of _source files_ in a _source folder_. If you don't have site files already, then create a source folder (call it 'website' or something) and create a single `index.html` file in the source folder with the following contents:
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -41,11 +42,11 @@ cloudsite create your-domain.com --source-path ~/website
 Where `--source-path` takes the path to your source folder. The path may be relative or absolute.
 
 :::info
-The first time you launch a particular domain, Cloudsite will create an SSL certificate for the domain if there isn't already one. This SSL certificate must be verified before further setup can happen. Follow the instructions as provided by Cloudsite to verify the SSL certificate and then re-run the create command once the certificate is verified.
+The first time you launch a domain, Cloudsite will create an SSL certificate if there isn't already one. This  certificate must be verified before further setup can happen. The Cloudsite tool will give instructions on how to verify the certificate. Once verified, re-run the create command.
 :::
 
 :::info
-The first time you set up any site, you'll get a message at the end of the process re setting up "cost allocation tags". It takes time for AWS to "discover" the new tags and Cloudsite provides instructions on how to set these up later. Refer to the [billing management guide](/docs/user-guides/billing-management) for further details.
+The first time you set up a site, you'll get a message at the end re setting up "cost allocation tags". This is an optional step that will help you track costs across multiple sites or projects. The Cloudsite tool will provide instructions. You can refer to the [billing management guide](/docs/user-guides/billing-management) for details.
 :::
 
 ## Updating your site
@@ -58,4 +59,4 @@ cloudsite update your-domain.com --do-content
 
 ## Summary
 
-That's about it. If you don't have a static website already, we suggest you look at the [website development guides](/docs/category/website-development) and go from there. You can also refer to the [common use cases guide](/docs/user-guides/common-use-cases) for an idea of what kinds of things you can do with the tool.
+That's about it. If you don't have a static website already, we suggest you look at the [website development guides](/docs/category/website-development) and go from there. You can also refer to the [common use cases guide](/docs/user-guides/common-use-cases) for an idea of what kinds of things you can do with the tool and the [Command Line Reference](/docs/user-guides/command-line-reference) for documentation on all the Cloudsite commands and options.

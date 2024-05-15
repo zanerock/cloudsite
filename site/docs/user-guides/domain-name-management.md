@@ -17,9 +17,11 @@ If you have an existing domain registered with a 3rd party, you can either [tran
 - _Registrar_ refers to a company where you can register a domain name.
 - _Top level domain_ or _TLD_ is the last bit in a domain name. E.g., '.com', '.org', '.us', etc.
 
-## Configure authoritative name servers
+## Using Route 53 as the authoritative name server
 
-When you purchase a domain name, you register _authoritative name servers_ with the _registrar_. The registrar essentially "let's the internet know" that such-and-such name servers are now the authoritative name servers for 'your-domain.com'. Now, when someone comes looking for the IP address of 'your-domain.com', they know where to send the query.
+When you purchase a domain name, you register _authoritative name servers_ with the _registrar_. The registrar essentially "let's the internet know" that such-and-such name servers are now the authoritative name servers for 'your-domain.com'. This is how the browser knows where to look for 'your-domain.com'.
+
+You can use Route 53 as the authoritative name server regardless of where your domain is actually registered. It's a little easier if the domain is registered (or transferred to) Route 53, but that's not necessary.
 
 ### Configure Route 53 registered domains
 
@@ -38,33 +40,34 @@ If you want more detail on this process, or you want to transfer the domain for 
 
 ## Verify NS and SOA records
 
-The hosted zone for each site must define 'NS' and 'SOA' records. These are typically created when the hosted zone is created and there's nothing else for you to as far as this goes. If you're having problems connecting to your site, the hosted zone was deleted, or you just want to double check, then you'll first want to verify the NS and SOA records are in place and correct.
+The hosted zone for each site must define 'NS' and 'SOA' records. Regardless of where your domain is actually registered, these records should be created for you when you create the hosted zone.
 
 ### Verify route 53 registered domains
 
 - The NS record must match the name servers registered as the authoritative name servers registered with the domain's registrar.
+  - First, check the NS record in domain's hosted Zone; click 'Hosted zones' -> &lt;domain name&gt;, look for a record with 'Type' of 'NS'.<br />
+  <div>
+    <img src="/img/docs/user-guides/domain-names/verify-hosted-zone-01-ns-record.png"
+      className="light-shadow-box"
+      style={{ width: '480px', marginBottom: '3px' }}
+    />
+  </div>
   - If the domain is registered with Route 53, you can check the registered authoritative name servers by clicking 'Registered domains' and looking for the 'Name servers' in the 'Details section.'
     <div style={{ display: 'flex', alignItems: 'start', flexWrap: 'wrap' }}>
-      <img src="/img/docs/user-guides/domain-names/verify-hosted-zone-01-select-registered-domains.png"
+      <img src="/img/docs/user-guides/domain-names/verify-hosted-zone-02-select-registered-domains.png"
         className="light-shadow-box"
         style={{ width: '140px' }}
       />
-      <img src="/img/docs/user-guides/domain-names/verify-hosted-zone-02-select-domain.png" 
+      <img src="/img/docs/user-guides/domain-names/verify-hosted-zone-03-select-domain.png" 
         className="light-shadow-box"
         style={{ width: '140px', marginRight: '1rem' }}
       />
-      <img src="/img/docs/user-guides/domain-names/verify-hosted-zone-03-name server-details.png"
+      <img src="/img/docs/user-guides/domain-names/verify-hosted-zone-04-nameserver-details.png"
         className="light-shadow-box"
         style={{ width: '420px' }}
       />
     </div>
-- Now, under 'Hosted zones' -> &lt;domain name&gt;, look for a record with 'Type' of 'NS'.<br />
-  <img src="/img/docs/user-guides/domain-names/verify-hosted-zone-04-ns-record.png"
-    className="light-shadow-box"
-    style={{ width: '480px', marginBottom: '3px' }}
-  />
-  - The record should list the name servers, in the same order, one on each line.
-  - Update or create the record as necessary.
+  - The record should list the name servers, in the same order, one on each line. If there is a mismatch, click the 'Actions' drop down, then select 'Edit name servers'. Now update the name servers to match the NS record above.
 - There should be a single record with 'Type' 'SOA'; the value should be the first name server.
   <img src="/img/docs/user-guides/domain-names/verify-hosted-zone-05-soa-record.png"
     className="light-shadow-box"
@@ -75,7 +78,7 @@ The hosted zone for each site must define 'NS' and 'SOA' records. These are typi
 
 - If the hosted zone doesn't exist, then you'll create and configure it as described in [configure authoritative name servers with a 3rd party registrar](#configure-3rd-party-registered-domains).
 - If the hosted zone exists, but the NS record was deleted, the easiest thing to do will be to delete the zone and recreate it. Be sure and take careful notes on any other DNS records so you can re-create them in the new hosted zone.
-- If the hosted zone exists and has an NS record, verify that the listed name servers match the authoritative name servers configured with the registrar. If not, update the name servers with the registrar.
+- If the hosted zone exists and has an NS record, verify that the listed name servers match the authoritative name servers configured with the registrar. If not, update the name servers with the registrar to match those in the NS record.
 - If there the SOA record is missing, then create a new SOA record. The value of the record is the first name server listed in the NS record.
 
 ## DNS email configuration
