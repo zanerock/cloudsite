@@ -1,6 +1,6 @@
 import { ACMClient, RequestCertificateCommand } from '@aws-sdk/client-acm'
 
-import { Questiorer } from 'questoin-and-answer`
+import { Questioner } from 'question-and-answer'
 
 import { findCertificate } from './lib/find-certificate'
 import { getCredentials } from './lib/get-credentials'
@@ -25,18 +25,17 @@ const ensureSSLCertificate = async ({ apexDomain, db, siteInfo }) => {
   siteInfo.certificateArn = certificateArn
 
   if (status === 'PENDING_VALIDATION') {
-    const ib = {
-      actions [
-        { statemment: `\n<warn>Attention!<rst>\nAn SSL certificate for ${apexDomain} was ${certCreated === true ? 'created' : 'found'}, but it requires validation.\n` },
-        { 
-          prompt: 'Are you using Route 53 for domain name services for this domain?'
-          parameter: 'USES_ROUTE_53',
-          paramType: 'bool'
+    const interrogationBundle = {
+      actions : [
+        { statemment : `\n<warn>Attention!<rst>\nAn SSL certificate for ${apexDomain} was ${certCreated === true ? 'created' : 'found'}, but it requires validation.\n` },
+        {
+          prompt    : 'Are you using Route 53 for domain name services for this domain?',
+          parameter : 'USES_ROUTE_53',
+          paramType : 'boolean'
         }
       ]
     }
 
-    const questioner = new Questioner()
     const questioner = new Questioner({ interrogationBundle, output : progressLogger })
     const usesRoute53 = questioner.getValue('USES_ROUTE_53')
 
