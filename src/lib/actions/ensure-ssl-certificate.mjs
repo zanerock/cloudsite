@@ -27,7 +27,7 @@ const ensureSSLCertificate = async ({ apexDomain, db, siteInfo }) => {
   if (status === 'PENDING_VALIDATION') {
     const interrogationBundle = {
       actions : [
-        { statemment : `\n<warn>Attention!<rst>\nAn SSL certificate for ${apexDomain} was ${certCreated === true ? 'created' : 'found'}, but it requires validation.\n` },
+        { statement : `\n<warn>Attention!<rst>\nAn SSL certificate for ${apexDomain} was ${certCreated === true ? 'created' : 'found'}, but it requires validation.\n` },
         {
           prompt    : 'Are you using Route 53 for domain name services for this domain?',
           parameter : 'USES_ROUTE_53',
@@ -37,16 +37,17 @@ const ensureSSLCertificate = async ({ apexDomain, db, siteInfo }) => {
     }
 
     const questioner = new Questioner({ interrogationBundle, output : progressLogger })
-    const usesRoute53 = questioner.getValue('USES_ROUTE_53')
+    await questioner.question()
+    const usesRoute53 = questioner.get('USES_ROUTE_53')
 
     const accountLocalCertID = certificateArn.replace(/[^/]+\/(.+)/, '$1')
     const certificateConsoleURL =
       `https://us-east-1.console.aws.amazon.com/acm/home?region=us-east-1#/certificates/${accountLocalCertID}`
 
     if (usesRoute53 === true) {
-      progressLogger.write(`\nTo validate the certificate, navigate to the following URL and click the 'Create records in Route 53' button.\n\n<em>${certificateConsoleURL}<rst>\n\nSubsequent validation may take up to 30 minutes or more. For further documentation see:\n\nhttps://docs.aws.amazon.com/acm/latest/userguide/dns-validation.html\n`)
+      progressLogger.writeWithOptions({ breakSpacesOnly: true }, `\nTo validate the certificate, navigate to the following URL and click the 'Create records in Route 53' button.\n\n<em>${certificateConsoleURL}<rst>\n\nSubsequent validation may take up to 30 minutes or more. For further documentation see:\n\nhttps://docs.aws.amazon.com/acm/latest/userguide/dns-validation.html\n`)
     } else {
-      progressLogger.write(`\nTo validate the certificate, navigate to the following URL:\n\n<em>${certificateConsoleURL}<rst>\n\nClick on the domain certificate that was just created. You will need to go to your DNS provider and create CNAME records for the domain, copying the names and values as they appear on the certificate detail page.\n\nSubsequent validation may take up to 30 minutes or more.`)
+      progressLogger.writeWithOptions({ breakSpacesOnly: true }, `\nTo validate the certificate, navigate to the following URL:\n\n<em>${certificateConsoleURL}<rst>\n\nClick on the domain certificate that was just created. You will need to go to your DNS provider and create CNAME records for the domain, copying the names and values as they appear on the certificate detail page.\n\nSubsequent validation may take up to 30 minutes or more.\n`)
     }
 
     throw new Error(apexDomain + ' certificate must be verified.', { cause : 'setup required' })
