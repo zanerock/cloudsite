@@ -82,3 +82,8 @@ a.table-of-contents__link {
 html[data-theme='dark'] .light-shadow-box {
   box-shadow: unset;
 }
+
+.callout {
+  font-size: 125%;
+  font-weight: 600;
+}

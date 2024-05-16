@@ -101,16 +101,6 @@ Numbers, like clever spellings, can be confusing. If you end up using numbers, y
 
 But, if you have just the perfect name and it's available with a hyphen-or even a clever enough spelling to be memorable spelling-I wouldn't say never. If you love it, and you have the perfect branding idea, then that counts for a lot. 
 
-## Registering your domain name
-
-The registration process itself is rather straightforward. You just go to your registrar of choice, tell them the name you want, select a term, and then pay some money. We offer just a few notes.
-
-First, in selecting a registrar remember it can be different than the registrar where you did your searching. If you're here specifically for the 'Host Your Own Website Free and Easy' series, then we recommend you register with [AWS Route 53](https://aws.amazon.com/route53/). Otherwise, [Namecheap.com](https://namecheap.com) is a good option, or you can just google 'registrar' and find one you like. Personally, I recommend staying away from GoDaddy.
-
-Second, you should sign up for "privacy protection" or "domain privacy". When you register a domain name, you have to provide contact information to establish ownership. By default, this information is publicly available unless you add a privacy protection service. Some registrars (like AWS Route 53) offer this for free, while others may charge a small fee.
-
-Finally, just know that you'll see some difference in pricing for domains from different registrars. Any big difference (like 50% off) is always going to be an initial price only. The prices for domains are more or less set and should pretty much cost the same (in the long run) everywhere. You can save a little by using a registrar that offer privacy protection for free.
-
 ## In closing
 
 - A domain name that works with your branding is probably the most important things
