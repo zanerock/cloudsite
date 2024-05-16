@@ -22,12 +22,12 @@ const FeatureList = [
     )
   },
   {
-    title       : "It's simple",
+    title       : "It's simple-ish",
     lightSvg    : require('@site/static/img/simple-icon-bi-color.svg').default,
     darkSvg     : require('@site/static/img/simple-icon-bi-color-dark.svg').default,
     description : (
       <>
-        Get up and running in just 4 simple steps.
+        Get up and running in 5-7 steps.
       </>
     )
   },
@@ -47,7 +47,7 @@ const FeatureList = [
     darkSvg     : require('@site/static/img/ownership-icon-bi-color-dark.svg').default,
     description : (
       <>
-        Keep control of your site, your content, and let Cloudsite handle the details.
+        Keep control of your site, your content, and your brand. Let Cloudsite handle the details.
       </>
     )
   }

@@ -33,14 +33,20 @@ function HomepageHeader () {
         </div>
         <div className={clsx('buttons_spaced row')}>
           <Link
+            key="/docs/why-cloudsite"
+            className={clsx('button', 'button--secondary button--lg col--4')}
+            to="/docs/why-cloudsite">
+            Why Cloudsite?
+          </Link>
+          <Link
             key="/docs/get-started/overview"
-            className={clsx('button', 'button--secondary button--lg col--6')}
+            className={clsx('button', 'button--secondary button--lg col--4')}
             to="/docs/get-started/overview">
             Get started
           </Link>
           <Link
             key="/docs/user-guides/command-line-reference"
-            className={clsx('button', 'button--secondary button--lg col--6')}
+            className={clsx('button', 'button--secondary button--lg col--4')}
             to="/docs/user-guides/command-line-reference">
             Command Line Reference
           </Link>

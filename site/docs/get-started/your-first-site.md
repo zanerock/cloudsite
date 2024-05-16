@@ -1,19 +1,8 @@
 ---
-sidebar_position: 5
+sidebar_position: 7
 description: A quick example of launching a site.
 ---
 # Your First Site
-
-## Register your domain name
-
-Cloudsite requires a domain name so your website has someplace to live.
-
-- If don't have a domain name you'll first need to register one.
-  - Refer to our [domain name selection guide](/docs/user-guides/domain-name-selection) for ideas on finding a good name.
-  - Registering your domain name using [Route 53](https://aws.amazon.com/route53/) will simplify things a bit down the road.
-- If you have a domain name you can:
-  - [transfer your domain to Route 53](/docs/user-guides/domain-name-management#transfer-a-domain-to-route-53), or
-  - [configure a domains registered with a 3rd party to work with Route 53.](/docs/user-guides/domain-name-management#configure-3rd-party-registered-domains).
 
 ## Prepare your site files
 
