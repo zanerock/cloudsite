@@ -10,6 +10,7 @@ import { SSOAdminClient } from '@aws-sdk/client-sso-admin'
 
 import { checkAuthentication } from '../check-authentication'
 import { cliSpec } from '../../constants'
+import { DEFAULT_SSO_POLICY_NAME, DEFAULT_SSO_GROUP_NAME } from '../../../lib/shared/constants'
 import { ensureRootOrganization } from './lib/ensure-root-organization'
 import { findIdentityStoreStaged } from '../../../lib/shared/find-identity-store'
 import { getCredentials } from '../../../lib/actions/lib/get-credentials'
@@ -25,11 +26,11 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
   let {
     defaults,
     delete: doDelete,
-    'group-name': groupName = 'Cloudsite managers',
+    'group-name': groupName = DEFAULT_SSO_GROUP_NAME,
     'instance-name': instanceName,
     'instance-region': instanceRegion = 'us-east-1',
     'no-delete': noDelete,
-    'policy-name': policyName = 'CloudsiteManager',
+    'policy-name': policyName = DEFAULT_SSO_POLICY_NAME,
     'sso-profile-name': ssoProfile = 'cloudsite-manager',
     'user-email': userEmail,
     'user-family-name': userFamilyName,
@@ -162,12 +163,12 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
         parameter : 'sso-profile-name'
       },
       {
-        prompt    : 'Enter the name of the <em>custom policy<rst> to create or reference:',
+        prompt    : 'Enter the name of the Cloudsite <em>policy<rst> to create or reference (<warn>it is highly recommended to use the default name if possible<rst>):',
         default   : policyName,
         parameter : 'policy-name'
       },
       {
-        prompt    : 'Enter the name of the Cloudsite managers <em>group<rst> to create or reference:',
+        prompt    : 'Enter the name of the Cloudsite managers <em>group<rst> to create or reference (<warn>it is highly recommended to use the default name if possible<rst>):',
         default   : groupName,
         parameter : 'group-name'
       }
@@ -209,6 +210,39 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
 
     if (doDelete === undefined && noDelete === undefined) {
       doDelete = questioner.get('do-delete')
+    }
+  }
+
+  // check and warn for non-standard names where the only way we can identify the resource is by name
+  const nonStandardNames = []
+  if (policyName !== DEFAULT_SSO_POLICY_NAME) {
+    nonStandardNames.push('policy name')
+  }
+  if (groupName !== DEFAULT_SSO_GROUP_NAME) {
+    nonStandardNames.push('group name')
+  }
+  if (nonStandardNames.length > 0) {
+    const warning = `<em>WARNING<rst> Detected non-standard <em>${nonStandardNames.join('<rst> and <em>')}<rst>. Using non-standard names will require that you remember and supply the non-standard names for certain operations. For instance, if you need to rebuild the Cloudsite database on another computer. It is highly recommended that standard names be used if at all possible.`
+    const interrogationBundle = { actions: [
+      { statement: warning },
+      {
+        prompt: "Revert to standard names? (Y=revert, N=keep)",
+        parameter: REVERT,
+        paramType: 'boolean',
+        default: true
+      }
+    ]}
+  
+    const questioner = new Questioner({ interrogationBundle, output: progressLogger })
+    await questioner.question()
+
+    if (questioner.get('REVERT') === true) {
+      progressLogger.write(`Reverting to standard policy name '${DEFAULT_SSO_POLICY_NAME}' and group name '${DEFAULT_SSO_GROUP_NAME}'...`)
+      policyName = DEFAULT_SSO_POLICY_NAME
+      groupName = DEFAULT_SSO_GROUP_NAME
+    }
+    else {
+      progressLogger.write(`Retaining non-standard ${nonStandardNames.join(' and ')}...`)
     }
   }
 

@@ -108,7 +108,7 @@ const cliSpec = {
             },
             {
               name        : 'group-name',
-              description : 'The name of the group to create or reference. This group will be associated with the permission set and user.'
+              description : "The name of the group to create or reference. This group will be associated with the permission set and user. It is highly recommended to use the default name or certain operations, like 'import', may be complicated."
             },
             {
               name        : 'instance-name',
@@ -125,7 +125,7 @@ const cliSpec = {
             },
             {
               name        : 'policy-name',
-              description : 'The name of the policy and permission set to create or reference.'
+              description : "The name of the policy and permission set to create or reference. It is highly recommended to use the default name or certain operations, like 'import', may be complicated."
             },
             {
               name        : 'sso-profile-name',
