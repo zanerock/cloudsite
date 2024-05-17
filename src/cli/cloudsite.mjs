@@ -12,6 +12,7 @@ import { handleCleanup } from './lib/handle-cleanup'
 import { handleConfiguration } from './lib/handle-configuration'
 import { handleCreate } from './lib/handle-create'
 import { handleDestroy } from './lib/handle-destroy'
+import { handleDNS } from './lib/handle-dns'
 import { handleDetail } from './lib/handle-detail'
 import { handleDocument } from './lib/handle-document'
 import { handleGetIAMPolicy } from './lib/handle-get-iam-policy'
@@ -90,6 +91,8 @@ const cloudsite = async () => {
         ({ data, success } = handleDocument({ argv, db }))
         noWrap = true
         break
+      case 'dns':
+        ({ data, success } = await handleDNS({ argv, db })); break
       case 'get-iam-policy':
         await handleGetIAMPolicy({ argv, db })
         return // get-iam-policy is handles it's own output as the IAM policy is always in JSON format

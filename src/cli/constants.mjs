@@ -201,6 +201,30 @@ const cliSpec = {
         }
       ]
     },
+    { name : 'dns',
+      description: 'Command group for DNS management actions.',
+      arguments   : [
+        {
+          name          : 'subcommand',
+          defaultOption : true,
+          required      : true,
+          description   : 'The DNS action to perform.'
+        }
+      ],
+      commands : [
+        {
+          name: 'status',
+          description: 'Provides a status report on the DNS settings for a particular site.',
+          arguments: [
+            { 
+              name: 'apex-domain',
+              description: 'The domain to report on.',
+              defaultOption: true
+            }
+          ]
+        }
+      ]
+    },
     {
       name        : 'document',
       description : 'Generates self-documentation in Markdown format.',

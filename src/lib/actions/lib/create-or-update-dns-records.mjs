@@ -1,7 +1,7 @@
 import { Route53Client, ChangeResourceRecordSetsCommand } from '@aws-sdk/client-route-53'
 import { CloudFrontClient, GetDistributionCommand } from '@aws-sdk/client-cloudfront'
 
-import { getHostedZoneID } from './get-hosted-zone-id'
+import { getHostedZoneID } from '../../shared/get-hosted-zone-id'
 import { progressLogger } from '../../shared/progress-logger'
 
 const createOrUpdateDNSRecords = async ({ credentials, siteInfo }) => {

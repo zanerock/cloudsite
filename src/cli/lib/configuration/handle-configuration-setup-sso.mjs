@@ -50,7 +50,7 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
     }
   }
 
-  const credentials = getCredentials()
+  const credentials = getCredentials() // SSO setup expects to run using AWS access keys
 
   await ensureRootOrganization({ credentials, db })
 

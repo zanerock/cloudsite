@@ -11,10 +11,6 @@ const handleDetail = ({ argv, db }) => {
   const apexDomain = detailOptions['apex-domain']
   const { format } = detailOptions
 
-  if (apexDomain === undefined) {
-    throw new Error('Apex domain must be specified.')
-  }
-
   checkFormat(format)
 
   const output = getSiteInfo({ apexDomain, db })

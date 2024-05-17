@@ -1,6 +1,6 @@
 import { Route53Client, ChangeTagsForResourceCommand } from '@aws-sdk/client-route-53'
 
-import { getHostedZoneID } from './get-hosted-zone-id'
+import { getHostedZoneID } from '../../shared/get-hosted-zone-id'
 import { getResourceTags } from '../../shared/get-resource-tags'
 
 const addTagsToHostedZone = async ({ credentials, siteInfo }) => {

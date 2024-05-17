@@ -29,6 +29,7 @@ description: Documents available Cloudsite commands.
 - [`create`](#cloudsite-create): Creates a new website, setting up infrastructure and copying content.
 - [`destroy`](#cloudsite-destroy): Destroys the named site.
 - [`detail`](#cloudsite-detail): Prints details for the indicated site.
+- [`dns`](#cloudsite-dns): Command group for DNS management actions.
 - [`document`](#cloudsite-document): Generates self-documentation in Markdown format.
 - [`get-iam-policy`](#cloudsite-get-iam-policy): Prints an IAM policy suitable for operating cloudsite.
 - [`import`](#cloudsite-import): Generates a site database based on currently deployed site stacks.
@@ -162,6 +163,37 @@ Prints details for the indicated site.
 |Option|Description|
 |------|------|
 |`[apex-domain]`|(_main argument_,_required_) The domain of the site to detail.|
+
+<span id="cloudsite-dns"></span>
+### `dns`
+
+`cloudsite dns [subcommand]`
+
+Command group for DNS management actions.
+
+#### `dns` options
+
+|Option|Description|
+|------|------|
+|`[subcommand]`|(_main argument_,_required_) The DNS action to perform.|
+
+
+#### Subcommands
+
+- [`status`](#cloudsite-dns-status): Provides a status report on the DNS settings for a particular site.
+
+<span id="cloudsite-dns-status"></span>
+##### `status`
+
+`cloudsite dns status <apex-domain>`
+
+Provides a status report on the DNS settings for a particular site.
+
+###### `status` options
+
+|Option|Description|
+|------|------|
+|`<apex-domain>`|(_main argument_,_optional_) The domain to report on.|
 
 <span id="cloudsite-document"></span>
 ### `document`
