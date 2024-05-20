@@ -276,11 +276,24 @@ const cliSpec = {
           description : "Specifies the common logs bucket name. This is only necessary if there are multiple candidates, otherwise cloudsite can usually guess. Set to 'NONE' to suppress guessing and assume there is on common logs bucket."
         },
         {
+          name        : 'confirmed',
+          description : 'If set, will overwrite any group or policy name in the DB if a new group or policy name is provided. Will otherwise initiate interactive confirmation.',
+          type        : Boolean
+        },
+        {
           name          : 'domain-and-stack',
           description   : 'The domain and stack are specified as positional parameters, in either order.',
           defaultOption : true,
           multiple      : true,
           required      : true
+        },
+        {
+          name        : 'group-name',
+          description : "The name to record for the SSO group. It will record the given name if no name is currently in the DB. With '--confirmed' set, this will override any existing name. Otherwise, it will initiate interactive confirmation if a name is already in the DB."
+        },
+        {
+          name        : 'policy-name',
+          description : "The name to record for the Cloudsite policy. It will record the given name if no name is currently in the DB. With '--confirmed' set, this will override any existing name. Otherwise, it will initiate interactive confirmation if a name is already in the DB."
         },
         {
           name        : 'refresh',

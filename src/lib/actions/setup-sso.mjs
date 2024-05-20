@@ -3,8 +3,7 @@ import {
   DeleteAccessKeyCommand,
   GetPolicyCommand,
   IAMClient,
-  ListAccessKeysCommand,
-  ListPoliciesCommand
+  ListAccessKeysCommand
 } from '@aws-sdk/client-iam'
 import {
   CreateGroupCommand,
@@ -12,7 +11,6 @@ import {
   CreateUserCommand,
   GetGroupIdCommand,
   IdentitystoreClient,
-  ListGroupsCommand,
   ListUsersCommand
 } from '@aws-sdk/client-identitystore'
 import {
@@ -21,20 +19,20 @@ import {
   // CreateInstanceCommand,
   CreatePermissionSetCommand,
   // DescribeInstanceCommand,
-  DescribePermissionSetCommand,
   ListAccountAssignmentsCommand,
   ListCustomerManagedPolicyReferencesInPermissionSetCommand,
-  ListPermissionSetsCommand,
-  SSOAdminClient,
   UpdateInstanceCommand
 } from '@aws-sdk/client-sso-admin'
 
 import { Questioner } from 'question-and-answer'
 
-import { DEFAULT_SSO_POLICY_NAME, DEFAULT_SSO_GROUP_NAME } from '../shared/constants'
-import { findIdentityStore } from '../shared/find-identity-store'
+import { DEFAULT_SSO_POLICY_NAME } from '../shared/constants'
+import { findIdentityStore, findIdentityStoreStaged } from '../shared/find-identity-store'
 import { generateIAMPolicy } from '../shared/generate-iam-policy'
 import { progressLogger } from '../shared/progress-logger'
+import { searchGroups } from './lib/search-groups'
+import { searchPermissionSets } from './lib/search-permission-sets'
+import { searchPolicies } from './lib/search-policies'
 
 const setupSSO = async ({
   credentials,
@@ -62,7 +60,7 @@ const setupSSO = async ({
 
   const { groupID } =
     await setupSSOGroup({ db, identityStoreClient, identityStoreID, identityStoreRegion, groupName })
-  const { createdNewPermissionSet, permissionSetARN } = 
+  const { createdNewPermissionSet, permissionSetARN } =
     await setupPermissionSet({ db, instanceARN, policyARN, policyName, ssoAdminClient })
   await setupPermissionSetPolicy({
     db,
@@ -179,7 +177,6 @@ const setupAccountAssignment = async ({ accountID, groupID, instanceARN, permiss
 const setupPolicy = async ({ db, iamClient, policyName }) => {
   progressLogger.write(`Checking status of policy '${policyName}'... `)
 
-  let marker
   let { policyARN } = db.account
 
   if (policyARN !== undefined) {
@@ -190,35 +187,17 @@ const setupPolicy = async ({ db, iamClient, policyName }) => {
     const retrievedName = getPolicyResult.Policy.PolicyName
     if (policyName !== retrievedName) {
       progressLogger.write('name match verified.\n')
-    }
-    else {
+    } else {
       progressLogger.write(`\n<error>!! ERROR !!<rst> Names do not match. Found '${retrievedName}', expected '${policyName}'. Are you using a custom policy name? (Expected default name: '${DEFAULT_SSO_POLICY_NAME}'.)`)
       throw new Error('Policy name mismatch.')
     }
-  }
-  else {
-    do {
-      const listPoliciesCommand = new ListPoliciesCommand({
-        Scope             : 'Local',
-        PolicyUsageFilter : 'PermissionsPolicy',
-        Marker            : marker
-      })
-
-      const listPoliciesResults = await iamClient.send(listPoliciesCommand)
-
-      for (const { PolicyName: testPolicyName, Arn: arn } of listPoliciesResults.Policies) {
-        if (testPolicyName.toLowerCase() === policyName.toLowerCase()) { // policy names must be case-insensitive unique
-          policyARN = arn
-          db.account.policyARN = policyARN
-          break
-        }
-      }
-
-      marker = listPoliciesResults.Marker
-    } while (policyARN === undefined && marker !== undefined)
+  } else {
+    policyARN = searchPolicies({ iamClient, policyName })
 
     if (policyARN !== undefined) {
       progressLogger.write(' FOUND existing.\n')
+      db.account.policyARN = policyARN
+      db.account.policyName = policyName
     } else {
       progressLogger.write(' CREATING...')
 
@@ -232,6 +211,7 @@ const setupPolicy = async ({ db, iamClient, policyName }) => {
       try {
         const createPolicyResult = await iamClient.send(createPolicyCommand)
         policyARN = createPolicyResult.Policy.Arn
+        db.account.policyName = policyName
         db.account.policyARN = policyARN
         progressLogger.write(' CREATED.\n')
       } catch (e) {
@@ -253,10 +233,10 @@ const setupIdentityStore = async ({ credentials, db, identityStoreInfo, instance
     ssoStartURL
   } = identityStoreInfo
 
-  if (db.account.identityStoreID !== undefined 
-      && db.account.identityStoreARN !== undefined
-      && db.account.identityStoreRegion !== undefined
-      && db.account.ssoStartURL !== undefined) {
+  if (db.account.identityStoreID !== undefined &&
+      db.account.identityStoreARN !== undefined &&
+      db.account.identityStoreRegion !== undefined &&
+      db.account.ssoStartURL !== undefined) {
     progressLogger.write('Found identity store IDs in local database')
     return
   }
@@ -352,33 +332,15 @@ const setupIdentityStore = async ({ credentials, db, identityStoreInfo, instance
   }
 }
 
-const setupPermissionSet = async ({ db, instanceARN, policyARN, policyName, ssoAdminClient }) => {
+const setupPermissionSet = async ({ db, instanceARN, policyName, ssoAdminClient }) => {
   progressLogger.write(`Looking for permission set '${policyName}'... `)
   let { permissionSetARN } = db.account
 
   let createdNewPermissionSet = false
   if (permissionSetARN !== undefined) {
     progressLogger.write('found permission set ARN in local DB.\n')
-  }
-  else {
-    let nextToken
-    do {
-      const listPermissionSetsCommand = new ListPermissionSetsCommand({ InstanceArn : instanceARN })
-      const listPermissionSetsResult = await ssoAdminClient.send(listPermissionSetsCommand)
-      for (const testARN of listPermissionSetsResult.PermissionSets) {
-        const describePermissionSetCommand = new DescribePermissionSetCommand({
-          InstanceArn      : instanceARN,
-          PermissionSetArn : testARN
-        })
-        const { Name: name } = (await ssoAdminClient.send(describePermissionSetCommand)).PermissionSet
-
-        if (name === policyName) {
-          permissionSetARN = testARN
-          break
-        }
-      }
-      nextToken = listPermissionSetsResult.NextToken
-    } while (permissionSetARN === undefined && nextToken !== undefined)
+  } else {
+    permissionSetARN = searchPermissionSets({ instanceARN, policyName, ssoAdminClient })
 
     if (permissionSetARN !== undefined) {
       progressLogger.write(' FOUND.\n')
@@ -406,7 +368,6 @@ const setupPermissionSet = async ({ db, instanceARN, policyARN, policyName, ssoA
 }
 
 const setupPermissionSetPolicy = async ({
-  db,
   instanceARN,
   permissionSetARN,
   policyName,
@@ -459,7 +420,7 @@ const setupPermissionSetPolicy = async ({
   }
 }
 
-const setupSSOGroup = async ({ db, identityStoreClient, identityStoreID, identityStoreRegion, groupName }) => {
+const setupSSOGroup = async ({ db, identityStoreClient, identityStoreID, groupName }) => {
   progressLogger.write(`Checking for SSO group '${groupName}'... `)
 
   let { groupID } = db.account
@@ -468,41 +429,23 @@ const setupSSOGroup = async ({ db, identityStoreClient, identityStoreID, identit
     progressLogger.write('\nFound group ID in local database...')
 
     const getGroupIDCommand = new GetGroupIdCommand({
-      IdentityStoreId: identityStoreID,
-      UniqueAttribute: {
-        AttributePath: 'displayName',
-        AttributeValue: groupName
+      IdentityStoreId : identityStoreID,
+      UniqueAttribute : {
+        AttributePath  : 'displayName',
+        AttributeValue : groupName
       }
     })
     const getGroupIDResult = await identityStoreClient.send(getGroupIDCommand)
     if (getGroupIDResult.GroupId === groupID) {
       progressLogger.write('CONFIRMED\n')
       return
-    }
-    else {
+    } else {
       progressLogger.write('ERROR')
       throw new Error('Group name/id mismatch.')
     }
   }
 
-  let nextToken
-  
-  do {
-    const listGroupsCommand = new ListGroupsCommand({
-      IdentityStoreId : identityStoreID,
-      NextToken       : nextToken
-    })
-    const listGroupsCommandResult = await identityStoreClient.send(listGroupsCommand)
-
-    for (const { GroupId: testGroupID, DisplayName: displayName } of listGroupsCommandResult.Groups) {
-      if (displayName === groupName) {
-        groupID = testGroupID
-        break
-      }
-    }
-
-    nextToken = listGroupsCommandResult.NextToken
-  } while (groupID === undefined && nextToken !== undefined)
+  groupID = searchGroups({ groupName, identityStoreClient, identityStoreID })
 
   if (groupID !== undefined) {
     progressLogger.write(' FOUND existing.\n')

@@ -223,25 +223,26 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
   }
   if (nonStandardNames.length > 0) {
     const warning = `<em>WARNING<rst> Detected non-standard <em>${nonStandardNames.join('<rst> and <em>')}<rst>. Using non-standard names will require that you remember and supply the non-standard names for certain operations. For instance, if you need to rebuild the Cloudsite database on another computer. It is highly recommended that standard names be used if at all possible.`
-    const interrogationBundle = { actions: [
-      { statement: warning },
-      {
-        prompt: "Revert to standard names? (Y=revert, N=keep)",
-        parameter: REVERT,
-        paramType: 'boolean',
-        default: true
-      }
-    ]}
-  
-    const questioner = new Questioner({ interrogationBundle, output: progressLogger })
+    const interrogationBundle = {
+      actions : [
+        { statement : warning },
+        {
+          prompt    : 'Revert to standard names? (Y=revert, N=keep)',
+          parameter : 'REVERT',
+          paramType : 'boolean',
+          default   : true
+        }
+      ]
+    }
+
+    const questioner = new Questioner({ interrogationBundle, output : progressLogger })
     await questioner.question()
 
     if (questioner.get('REVERT') === true) {
       progressLogger.write(`Reverting to standard policy name '${DEFAULT_SSO_POLICY_NAME}' and group name '${DEFAULT_SSO_GROUP_NAME}'...`)
       policyName = DEFAULT_SSO_POLICY_NAME
       groupName = DEFAULT_SSO_GROUP_NAME
-    }
-    else {
+    } else {
       progressLogger.write(`Retaining non-standard ${nonStandardNames.join(' and ')}...`)
     }
   }
