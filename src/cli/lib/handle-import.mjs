@@ -1,12 +1,18 @@
+import { stat as fileStat } from 'node:fs/promises'
 import { resolve as resolvePath } from 'node:path'
+
+import { CloudFormationClient } from '@aws-sdk/client-cloudformation'
 
 import commandLineArgs from 'command-line-args'
 import { Questioner } from 'question-and-answer'
 
 import { cliSpec } from '../constants'
 import { DEFAULT_SSO_GROUP_NAME, DEFAULT_SSO_POLICY_NAME } from '../../lib/shared/constants'
-import { doImport } from '../../lib/actions/import'
+import { doImportAccount } from '../../lib/actions/import-account'
+import { doImportSite } from '../../lib/actions/import-site'
+import { getCredentials } from '../../lib/actions/lib/get-credentials'
 import { getOptionsSpec } from './get-options-spec'
+import { getStacksBy } from './get-stacks-by'
 import { processSourceType } from './process-source-type'
 import { progressLogger } from '../../lib/shared/progress-logger'
 
@@ -15,96 +21,125 @@ const handleImport = async ({ argv, db }) => {
   const importOptionsSpec = getOptionsSpec({ cliSpec, name : 'import' })
   const importOptions = commandLineArgs(importOptionsSpec, { argv })
   const {
-    'common-logs-bucket': commonLogsBucket,
-    'domain-and-stack': domainAndStack,
     'group-name': groupName = DEFAULT_SSO_GROUP_NAME,
+    'no-account': noAccount,
     'policy-name': policyName = DEFAULT_SSO_POLICY_NAME,
     refresh,
     region
   } = importOptions
-  let { confirmed, 'source-path': sourcePath } = importOptions
+  let { 'apex-domain': apexDomain, confirmed, 'source-path': sourcePath } = importOptions
 
   // verify input parameters form correct
-  if (sourcePath === undefined) {
-    throw new Error("Must define '--source-path'.")
-  }
-
-  sourcePath = resolvePath(sourcePath)
-  const sourceType = processSourceType({ sourcePath, sourceType : importOptions['source-type'] })
-
-  if (domainAndStack?.length !== 2) {
-    throw new Error(`Unexpected number of positional arguments, expect 2 (domain and stack name), but got ${domainAndStack?.length || '0'}.\n`)
-  }
   if (region === undefined) {
     throw new Error("You must specify the '--region' parameter.\n")
   }
-  if (sourcePath === undefined) {
-    throw new Error("You must specify the '--source-path' parameter.\n")
-  }
 
-  let domain, stack
-  for (const domainOrStack of domainAndStack) {
-    if (domainOrStack.match(/\./)) {
-      domain = domainOrStack
-    } else if (domainOrStack.match(/^[a-z][a-z0-9-]*$/i)) {
-      stack = domainOrStack
-    }
+  const updateSites = apexDomain !== undefined
+    ? [{ apexDomain, sourcePath }]
+    : []
+
+  const credentials = getCredentials(db.account.localSettings)
+  const cloudFormationClient = new CloudFormationClient({ credentials, region })
+
+  if (updateSites.length === 0) { // then we find the mall
+    updateSites.push(...(await getStacksBy({ cloudFormationClient, region, testFunc : isCloudsiteAppStack })))
   }
 
   const sitesInfo = db.sites
 
-  if (sitesInfo[domain] !== undefined && refresh !== true) {
-    throw new Error(`Domain '${domain}' is already in the sites DB. To update/refresh the values, use the '--refresh' option.`)
-  }
-  if (domain === undefined) {
-    throw new Error(`Could not determine domain name from arguments (${domainAndStack}).\n`)
-  }
-  if (stack === undefined) {
-    throw new Error(`Could not determine stack name from arguments (${domainAndStack}).\n`)
-  }
-
-  const overrideGroupName = groupName !== undefined && groupName !== db.account.groupName
-  const overridePolicyName = policyName !== undefined && policyName !== db.account.policyName
-  if (confirmed === false(overrideGroupName || overridePolicyName)) {
-    const overrides = []
-    if (overrideGroupName === true) {
-      overrides.push(`group name '${db.account.groupName}' with '${groupName}'`)
-    }
-    if (overridePolicyName === true) {
-      overrides.push(`policy name '${db.account.policyName}' with '${policyName}'`)
-    }
-    const interrogationBundle = {
-      actions : [
-        { prompt : `Override existing ${overrides.join(' and ')}?`, parameter : 'CONFIRMED' }
-      ]
+  let i = 0
+  for (let { apexDomain, sourcePath, sourceType } of updateSites) {
+    if (sitesInfo[apexDomain] !== undefined && refresh !== true) {
+      throw new Error(`Domain '${apexDomain}' is already in the sites DB. To update/refresh the values, use the '--refresh' option.`)
     }
 
-    const questioner = new Questioner({ interrogationBundle, output : progressLogger })
-    await questioner.question()
-    confirmed = questioner.get('CONFIRMED')
+    while (sourcePath === undefined) {
+      const interrogationBundle = {
+        actions : [
+          {
+            prompt    : `Enter the source path for '${apexDomain}:'`,
+            parameter : 'SOURCE_PATH'
+          }
+        ]
+      }
 
-    if (confirmed !== true) {
-      throw new Error('Cannot override existing policy or group names without explicit confirmation.')
+      const questioner = new Questioner({ interrogationBundle, output : progressLogger })
+      await questioner.question()
+      sourcePath = resolvePath(questioner.get('SOURCE_PATH'))
+      try {
+        const stat = await fileStat(sourcePath)
+        if (!stat.isDirectory()) {
+          throw new Error(`Source path '${sourcePath}' is not a directory.`)
+        }
+      } catch (e) {
+        throw e
+      }
+      sourceType = processSourceType({ sourcePath, sourceType })
     }
+    updateSites[i].sourcePath = sourcePath
+    updateSites[i].sourceType = sourceType
+    i += 1
   }
 
-  // now, actually do the import
-  const dbEntry =
-    await doImport({
-      commonLogsBucket,
-      db,
-      domain,
-      groupName  : overrideGroupName && groupName, // don't trigger an updated unless really an update
-      policyName : overridePolicyName && policyName,
-      region,
-      sourcePath,
-      sourceType,
-      stack
-    })
-  progressLogger.write(`Updating DB entry for '${domain}'...\n`)
-  sitesInfo[domain] = dbEntry
+  for (let { apexDomain, region, sourcePath, sourceType, stackID, stackName } of updateSites) {
+    if (stackID === undefined) {
+      // then apexDomain must be defined
+      const testFunc = ({ Key : key, Value : value }) => key === 'site' && value === apexDomain
+      const stackData =
+        (await getStacksBy({ cloudFormationClient, region, testFunc }))
+      if (stackData === undefined) {
+        throw new Error(`Could not locate data for site with apex domain: ${apexDomain}`)
+      } // else, good to go
 
-  return { success : true, userMessage : `Imported site '${domain}'.` }
+      ({ stackID, stackName } = stackData)
+    }
+
+    const dbEntry =
+      await doImportSite({
+        apexDomain,
+        db,
+        region,
+        sourcePath,
+        sourceType,
+        stackName
+      })
+    progressLogger.write(`Updating DB entry for '${apexDomain}'...\n`)
+    sitesInfo[apexDomain] = dbEntry
+  }
+
+  if (noAccount !== true) {
+    const overrideGroupName = groupName !== undefined && groupName !== db.account.groupName
+    const overridePolicyName = policyName !== undefined && policyName !== db.account.policyName
+    if (confirmed === false && (overrideGroupName || overridePolicyName)) {
+      const overrides = []
+      if (overrideGroupName === true) {
+        overrides.push(`group name '${db.account.groupName}' with '${groupName}'`)
+      }
+      if (overridePolicyName === true) {
+        overrides.push(`policy name '${db.account.policyName}' with '${policyName}'`)
+      }
+      const interrogationBundle = {
+        actions : [
+          { prompt : `Override existing ${overrides.join(' and ')}?`, parameter : 'CONFIRMED' }
+        ]
+      }
+
+      const questioner = new Questioner({ interrogationBundle, output : progressLogger })
+      await questioner.question()
+      confirmed = questioner.get('CONFIRMED')
+
+      if (confirmed !== true) {
+        throw new Error('Cannot override existing policy or group names without explicit confirmation.')
+      }
+    }
+
+    // now, actually do the import
+    await doImportAccount({ credentials, db, groupName, policyName })
+  }
+
+  return { success : true, userMessage : 'Imported data.' }
 }
+
+const isCloudsiteAppStack = ({ Key : key, Value : value }) => key === 'application' && value === 'Cloudsite'
 
 export { handleImport }

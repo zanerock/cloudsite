@@ -1,7 +1,7 @@
 const getResourceTags = ({ funcDesc, siteInfo }) => [
-  { Key : 'function', Value : funcDesc },
+  { Key : 'application', value : 'Cloudsite' },
   { Key : 'site', Value : siteInfo.apexDomain },
-  { Key : 'site:' + siteInfo.apexDomain, Value : '' }
+  { Key : 'function', Value : funcDesc }
 ]
 
 export { getResourceTags }

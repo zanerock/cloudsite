@@ -272,8 +272,8 @@ const cliSpec = {
       description : 'Generates a site database based on currently deployed site stacks.',
       arguments   : [
         {
-          name        : 'common-logs-bucket',
-          description : "Specifies the common logs bucket name. This is only necessary if there are multiple candidates, otherwise cloudsite can usually guess. Set to 'NONE' to suppress guessing and assume there is on common logs bucket."
+          name        : 'apex-domain',
+          description : "The apex domain of the site to import data for. If '--source-path' is not specified, it will be dynamically queried."
         },
         {
           name        : 'confirmed',
@@ -281,15 +281,13 @@ const cliSpec = {
           type        : Boolean
         },
         {
-          name          : 'domain-and-stack',
-          description   : 'The domain and stack are specified as positional parameters, in either order.',
-          defaultOption : true,
-          multiple      : true,
-          required      : true
-        },
-        {
           name        : 'group-name',
           description : "The name to record for the SSO group. It will record the given name if no name is currently in the DB. With '--confirmed' set, this will override any existing name. Otherwise, it will initiate interactive confirmation if a name is already in the DB."
+        },
+        {
+          name        : 'no-account',
+          description : 'If set, then the account-level data import is skipped.',
+          type        : Boolean
         },
         {
           name        : 'policy-name',
