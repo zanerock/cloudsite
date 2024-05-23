@@ -1,4 +1,5 @@
 import * as fs from 'node:fs/promises'
+import * as fsPath from 'node:path'
 
 import commandLineArgs from 'command-line-args'
 import { commandLineHelp } from 'command-line-help'
@@ -174,6 +175,7 @@ const cloudsite = async () => {
 const checkAndUpdateSitesInfo = async ({ origDB, db }) => {
   if (!isEqual(origDB, db)) {
     progressLogger.write('Updating Cloudsite DB... ')
+    await fs.mkdir(fsPath.dirname(DB_PATH), { recursive : true })
     const dbContents = JSON.stringify(db, null, '  ')
     await fs.writeFile(DB_PATH, dbContents, { encoding : 'utf8' })
     progressLogger.write('SUCCESS\n')
