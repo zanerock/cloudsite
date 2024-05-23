@@ -6,7 +6,7 @@ import { handleConfigurationSetupLocal } from './configuration/handle-configurat
 import { handleConfigurationShow } from './configuration/handle-configuration-show'
 import { handleConfigurationSetupSSO } from './configuration/handle-configuration-setup-sso'
 
-const handleConfiguration = async ({ argv, db }) => {
+const handleConfiguration = async ({ argv, db, globalOptions }) => {
   const configurationOptionsSpec = getOptionsSpec({ cliSpec, name : 'configuration' })
   const configurationOptions = commandLineArgs(configurationOptionsSpec, { argv, stopAtFirstUnknown : true })
   const { subcommand } = configurationOptions
@@ -18,7 +18,7 @@ const handleConfiguration = async ({ argv, db }) => {
     case 'show':
       return await handleConfigurationShow({ argv, db })
     case 'setup-sso':
-      return await handleConfigurationSetupSSO({ argv, db })
+      return await handleConfigurationSetupSSO({ argv, db, globalOptions })
     default:
       throw new Error('Unknown configuration command: ' + subcommand)
   }

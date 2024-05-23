@@ -10,9 +10,9 @@ import { findCertificate } from './lib/find-certificate'
 import * as plugins from '../plugins'
 import { progressLogger } from '../shared/progress-logger'
 
-const doImportSite = async ({ apexDomain, commonLogsBucket, db, region, sourcePath, sourceType, stackName }) => {
+const doImportSite = async ({ apexDomain, commonLogsBucket, db, globalOptions, region, sourcePath, sourceType, stackName }) => {
   const siteInfo = { apexDomain, stackName, region, sourcePath, sourceType }
-  const credentials = getCredentials(db.account.localSettings)
+  const credentials = getCredentials(globalOptions)
 
   const acmClient = new ACMClient({ credentials, region : 'us-east-1' }) // certificates are always in us-east-1
   const { certificateArn } = await findCertificate({ apexDomain, acmClient })

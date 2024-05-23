@@ -38,6 +38,7 @@ const setupSSO = async ({
   credentials,
   db,
   doDelete,
+  globalOptions,
   groupName,
   identityStoreInfo,
   instanceName,
@@ -52,7 +53,7 @@ const setupSSO = async ({
 
   const iamClient = new IAMClient({ credentials })
 
-  const { policyARN } = await setupPolicy({ db, iamClient, policyName })
+  const { policyARN } = await setupPolicy({ db, iamClient, globalOptions, policyName })
   const { identityStoreID, identityStoreRegion, instanceARN, ssoAdminClient, ssoStartURL } =
     await setupIdentityStore({ credentials, db, identityStoreInfo, instanceName })
 
@@ -174,7 +175,7 @@ const setupAccountAssignment = async ({ accountID, groupID, instanceARN, permiss
   }
 }
 
-const setupPolicy = async ({ db, iamClient, policyName }) => {
+const setupPolicy = async ({ db, globalOptions, iamClient, policyName }) => {
   progressLogger.write(`Checking status of policy '${policyName}'... `)
 
   let { policyARN } = db.account
@@ -201,7 +202,7 @@ const setupPolicy = async ({ db, iamClient, policyName }) => {
     } else {
       progressLogger.write(' CREATING...')
 
-      const iamPolicy = await generateIAMPolicy({ db })
+      const iamPolicy = await generateIAMPolicy({ db, globalOptions })
 
       const createPolicyCommand = new CreatePolicyCommand({
         PolicyName     : policyName,

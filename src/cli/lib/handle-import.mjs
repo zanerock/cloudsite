@@ -16,7 +16,7 @@ import { getStacksBy } from './get-stacks-by'
 import { processSourceType } from './process-source-type'
 import { progressLogger } from '../../lib/shared/progress-logger'
 
-const handleImport = async ({ argv, db }) => {
+const handleImport = async ({ argv, db, globalOptions }) => {
   // gather parameter values
   const importOptionsSpec = getOptionsSpec({ cliSpec, name : 'import' })
   const importOptions = commandLineArgs(importOptionsSpec, { argv })
@@ -38,7 +38,7 @@ const handleImport = async ({ argv, db }) => {
     ? [{ apexDomain, sourcePath }]
     : []
 
-  const credentials = getCredentials(db.account.localSettings)
+  const credentials = getCredentials(globalOptions)
   const cloudFormationClient = new CloudFormationClient({ credentials, region })
 
   if (updateSites.length === 0) { // then we find the mall
@@ -98,6 +98,7 @@ const handleImport = async ({ argv, db }) => {
       await doImportSite({
         apexDomain,
         db,
+        globalOptions,
         region,
         sourcePath,
         sourceType,

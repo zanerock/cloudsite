@@ -15,13 +15,14 @@ const update = async ({
   doContent,
   doDNS,
   doStack,
+  globalOptions,
   noBuild,
   noCacheInvalidation,
   siteInfo
 }) => {
   const doAll = doBilling === undefined && doContent === undefined && doDNS === undefined && doStack === undefined
 
-  const credentials = getCredentials(db.account.localSettings)
+  const credentials = getCredentials(globalOptions)
 
   const firstRoundUpdates = []
   if (doAll === true || doContent === true) {

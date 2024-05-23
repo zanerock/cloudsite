@@ -17,7 +17,7 @@ import { getCredentials } from '../../../lib/actions/lib/get-credentials'
 import { progressLogger } from '../../../lib/shared/progress-logger'
 import { setupSSO } from '../../../lib/actions/setup-sso'
 
-const handleConfigurationSetupSSO = async ({ argv, db }) => {
+const handleConfigurationSetupSSO = async ({ argv, db, globalOptions }) => {
   const ssoSetupOptionsSpec = cliSpec
     .commands.find(({ name }) => name === 'configuration')
     .commands.find(({ name }) => name === 'setup-sso')
@@ -280,6 +280,7 @@ const handleConfigurationSetupSSO = async ({ argv, db }) => {
     credentials,
     db,
     doDelete,
+    globalOptions,
     groupName,
     identityStoreInfo,
     instanceName,

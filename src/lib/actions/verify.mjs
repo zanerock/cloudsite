@@ -11,11 +11,11 @@ import { progressLogger } from '../shared/progress-logger'
 
 const RECHECK_WAIT_TIME = 2000 // ms
 
-const verify = async ({ checkContent, checkSiteUp, checkStack, db, siteInfo }) => {
+const verify = async ({ checkContent, checkSiteUp, checkStack, db, globalOptions, siteInfo }) => {
   const checkAll = checkContent === undefined && checkSiteUp === undefined && checkStack === undefined
   let credentials
   if (checkAll || checkContent || checkStack) {
-    credentials = getCredentials(db.account.localSettings)
+    credentials = getCredentials(globalOptions)
   }
 
   const checks = []

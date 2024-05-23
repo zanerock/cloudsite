@@ -8,10 +8,10 @@ import { progressLogger } from '../shared/progress-logger'
 import { SiteTemplate } from '../shared/site-template'
 import { trackStackStatus } from './lib/track-stack-status'
 
-const destroy = async ({ db, siteInfo, verbose }) => {
+const destroy = async ({ db, globalOptions, siteInfo, verbose }) => {
   const { apexDomain, siteBucketName, stackName } = siteInfo
 
-  const credentials = getCredentials(db.account.localSettings)
+  const credentials = getCredentials(globalOptions)
   const s3Client = new S3Client({ credentials })
 
   // this method provides user udptaes

@@ -1,10 +1,10 @@
 import { getAccountID } from './get-account-id'
 import { getCredentials } from '../actions/lib/get-credentials' // TODO: move to shared
 
-const generateIAMPolicy = async ({ db }) => {
+const generateIAMPolicy = async ({ db, globalOptions }) => {
   let { accountID } = db.account
   if (accountID === undefined) {
-    const credentials = getCredentials(db.account?.localSettings)
+    const credentials = getCredentials(globalOptions)
     accountID = await getAccountID({ credentials })
   }
 

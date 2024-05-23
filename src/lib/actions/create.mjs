@@ -15,13 +15,14 @@ const STACK_CREATE_TIMEOUT = 30 // min
 
 const create = async ({
   db,
+  globalOptions,
   noBuild,
   noDeleteOnFailure,
   siteInfo
 }) => {
   let { siteBucketName } = siteInfo
 
-  const credentials = getCredentials(db.account.localSettings)
+  const credentials = getCredentials(globalOptions)
 
   siteBucketName = await determineBucketName({ bucketName : siteBucketName, credentials, findName : true, siteInfo })
   siteInfo.siteBucketName = siteBucketName

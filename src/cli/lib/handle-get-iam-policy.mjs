@@ -16,12 +16,12 @@ const instructions =
 6. Copy and paste the above policy into the edit box.
 7. Hit 'Next' and then 'Save'.`
 
-const handleGetIAMPolicy = async ({ argv, db }) => {
+const handleGetIAMPolicy = async ({ argv, db, globalOptions }) => {
   const getIAMPolicyOptionsSpec = getOptionsSpec({ cliSpec, name : 'get-iam-policy' })
   const getIAMPolicyOptions = commandLineArgs(getIAMPolicyOptionsSpec, { argv })
   const withInstructions = getIAMPolicyOptions['with-instructions']
 
-  progressLogger.write(JSON.stringify(await generateIAMPolicy({ db }), null, '  ') + '\n')
+  progressLogger.write(JSON.stringify(await generateIAMPolicy({ db, globalOptions }), null, '  ') + '\n')
 
   if (withInstructions === true) {
     // As of 2024-03-29, smartIndent does not work with numbered lists, but it should in the future.

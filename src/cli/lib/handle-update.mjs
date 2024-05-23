@@ -5,7 +5,7 @@ import { getOptionsSpec } from './get-options-spec'
 import { getSiteInfo } from './get-site-info'
 import { update } from '../../lib/actions/update'
 
-const handleUpdate = async ({ argv, db }) => {
+const handleUpdate = async ({ argv, db, globalOptions }) => {
   const updateOptionsSpec = getOptionsSpec({ cliSpec, name : 'update' })
   const updateOptions = commandLineArgs(updateOptionsSpec, { argv })
   const apexDomain = updateOptions['apex-domain']
@@ -16,9 +16,10 @@ const handleUpdate = async ({ argv, db }) => {
   const noBuild = updateOptions['no-build']
   const noCacheInvalidation = updateOptions['no-cache-invalidation']
 
-  const siteInfo = getSiteInfo({ apexDomain, db })
+  const siteInfo = getSiteInfo({ apexDomain, db, globalOptions })
 
-  const { doAll } = await update({ db, doBilling, doContent, doDNS, doStack, noBuild, noCacheInvalidation, siteInfo })
+  const { doAll } = 
+    await update({ db, doBilling, doContent, doDNS, doStack, globalOptions, noBuild, noCacheInvalidation, siteInfo })
 
   if (doAll === true || doBilling === true) {
     db.reminders.splice(db.reminders.findIndex(({ todo, references }) =>
