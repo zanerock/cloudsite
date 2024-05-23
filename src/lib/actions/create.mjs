@@ -73,10 +73,10 @@ const createSiteStack = async ({ credentials, noDeleteOnFailure, siteInfo }) => 
   const createCommand = new CreateStackCommand(createInput)
   const createResponse = await cloudFormationClient.send(createCommand)
 
-  const { StackId } = createResponse
+  const { StackId: stackID } = createResponse
 
   siteInfo.stackName = stackName
-  siteInfo.stackArn = StackId
+  siteInfo.stackID = stackID
 
   const finalStatus = await trackStackStatus({ cloudFormationClient, noDeleteOnFailure, stackName })
   return { success : finalStatus === 'CREATE_COMPLETE', stackName }
