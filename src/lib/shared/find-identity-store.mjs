@@ -65,7 +65,6 @@ const findIdentityStore = async ({ credentials, firstCheckRegion, instanceRegion
       const listInstancesCommand = new ListInstancesCommand({})
       const listInstancesResult = await ssoAdminClient.send(listInstancesCommand)
       if (listInstancesResult.Instances.length > 0) {
-        console.log('FOUND; ssoAdminClient', ssoAdminClient) // DEBUG
         progressLogger.write(' FOUND.\n')
         const instance = listInstancesResult.Instances[0]
         return {
@@ -81,7 +80,6 @@ const findIdentityStore = async ({ credentials, firstCheckRegion, instanceRegion
     nextToken = listRegionsResult.NextToken
   } while (nextToken !== undefined)
 
-  console.log('HUH??') // DEBUG
   progressLogger.write(' NOT FOUND.\n')
   // return { region : firstCheckRegion, ssoAdminClient : new SSOAdminClient({ credentials, region : firstCheckRegion }) }
   return {}
@@ -91,7 +89,6 @@ const findIdentityStore = async ({ credentials, firstCheckRegion, instanceRegion
 const findIdentityStoreStaged = async ({ credentials, firstCheckRegion, scope = 'us' }) => {
   let findResult = await findIdentityStore({ credentials, firstCheckRegion, scope })
   if (findResult.id !== undefined) {
-    console.log('WHAT?') // DEBUG
     return findResult
   }
   const oppositeScope = scope.startsWith('!')

@@ -9,7 +9,6 @@ import { searchPolicies } from './lib/search-policies'
 const doImportAccount = async ({ credentials, db, groupName, policyName }) => {
   const { identityStoreID, identityStoreRegion, instanceARN, ssoAdminClient }= 
     await importIdentityStoreData({ credentials, db })
-  console.log('doImportAccount identityStoreID:', identityStoreID) // DEBUG
   const iamClient = new IAMClient({ credentials })
 
   Promise.all([
@@ -41,7 +40,6 @@ const importIdentityStoreData = async ({ credentials, db }) => {
 }
 
 const importPermissionSet = async ({ db, instanceARN, policyName, ssoAdminClient }) => {
-  console.log('importPermissionSet ssoAdminClient:', ssoAdminClient) // DEBUG
   const permissionSetARN = await searchPermissionSets({ instanceARN, policyName, ssoAdminClient })
   db.account.permissionSetARN = permissionSetARN
 }
