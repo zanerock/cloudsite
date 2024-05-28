@@ -55,8 +55,6 @@ All the benefits of [OSS Support](#oss-support), plus get answers to any questio
 - Explain how to add content and media.
 </div>
 
-Refer to the Liquid Labs support page for full terms of service.
-
 <!--
 ### Technology partner for individuals and businesses
 
