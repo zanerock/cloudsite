@@ -3,7 +3,7 @@ import { CloudFrontClient, CreateInvalidationCommand } from '@aws-sdk/client-clo
 import { addTagsToHostedZone } from './lib/add-tags-to-hosted-zone'
 import { associateCostAllocationTags } from './lib/associate-cost-allocation-tags'
 import { createOrUpdateDNSRecords } from './lib/create-or-update-dns-records'
-import { getCredentials } from './lib/get-credentials'
+import { checkAdminAuthentication, getCredentials } from '../shared/authentication-lib'
 import { progressLogger } from '../shared/progress-logger'
 import { syncSiteContent } from './lib/sync-site-content'
 import { updatePlugins } from './lib/update-plugins'
@@ -23,6 +23,9 @@ const update = async ({
   const doAll = doBilling === undefined && doContent === undefined && doDNS === undefined && doStack === undefined
 
   const credentials = getCredentials(globalOptions)
+  if (doAll === true || doStack === true) {
+    await checkAdminAuthentication({ credentials, db })
+  }
 
   const firstRoundUpdates = []
   if (doAll === true || doContent === true) {
