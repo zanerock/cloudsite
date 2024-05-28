@@ -103,6 +103,7 @@ const config = {
             position : 'right'
           },
           {
+            html         : '<img class="light none" src="/img/github-mark.svg" /><img class="light hover" src="/img/github-mark-hover.svg" /><img class="dark none" src="/img/github-mark-dark.svg" /><img class="dark hover" src="/img/github-mark-dark-hover.svg" />',
             href         : 'https://github.com/liquid-labs/cloudsite',
             position     : 'right',
             className    : 'header-github-link',

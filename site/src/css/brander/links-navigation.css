@@ -8,7 +8,8 @@ a.table-of-contents__link:not(.table-of-contents__link--active),
 a.breadcrumbs__link,
 [class*="sidebarItem"] [class*="sidebarItemLink"] { /* for the blog list */
   color: var(--ll-nav-color);
-  text-decoration: var(--ll-nav-text-decoration);
+  text-decoration: var(--ll-nav-text-decoration-hover);
+  text-decoration-color: var(--ifm-background-color);
   font-weight: var(--ll-nav-text-font-weight);
 }
 
@@ -24,6 +25,7 @@ a.breadcrumbs__link:any-link:hover, /* a and 'any-link' necessary for precedence
 [class*="sidebarItem"] [class*="sidebarItemLink"]:hover {
   color: var(--ll-nav-color-hover);
   text-decoration: var(--ll-nav-text-decoration-hover);
+  text-decoration-color: var(--ll-nav-color-hover);
   font-weight: var(--ll-nav-text-font-weight-hover);
 }
 
@@ -41,6 +43,7 @@ a.breadcrumbs__link--active,
   color: var(--ll-nav-color-active) !important;
   font-weight: var(--ll-nav-text-font-weight-active);
   text-decoration: var(--ll-nav-text-decoration-active);
+  text-decoration-color: var(--ifm-background-color);
 }
 
 a.table-of-contents__link--active:hover,
@@ -53,6 +56,7 @@ a.menu__link--active:hover,
 a.breadcrumbs__link--active:hover,
 [class*="sidebarItem"] [class*="sidebarItemLinkActive"]:hover {
   font-weight: var(--ll-nav-text-font-weight-active);
+  text-decoration: var(--ll-nav-text-decoration-hover);
 }
 
 .footer__item a[href] {
