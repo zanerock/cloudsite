@@ -92,11 +92,11 @@ Runs the SSO wizard and sets up the SSO user authentication in the IAM Identity 
 |------|------|
 |`--defaults`|Use the defaults were possible and skip unnecessary interactive setup.|
 |`--delete`|Confirms deletion of the Access keys after setting up the SSO access. If neither '--delete' nor '--no-delete' are set, then deletion will be interactively confirmed.|
-|`--group-name`|The name of the group to create or reference. This group will be associated with the permission set and user.|
+|`--group-name`|The name of the group to create or reference. This group will be associated with the permission set and user. It is highly recommended to use the default name or certain operations, like 'import', may be complicated.|
 |`--instance-name`|The name to assign to the newly created identity center, if needed.|
 |`--instance-region`|The region in which to set up the identity center if no identity center currently set up. Defaults to 'us-east-1'.|
 |`--no-delete`|Retains the Access keys after setting up SSO access.|
-|`--policy-name`|The name of the policy and permission set to create or reference.|
+|`--policy-name`|The name of the policy and permission set to create or reference. It is highly recommended to use the default name or certain operations, like 'import', may be complicated.|
 |`--sso-profile-name`|The name of the local SSO profile to create.|
 |`--user-email`|The primary email to associate with the user.|
 |`--user-family-name`|The family name of the cloudsite management user.|
@@ -193,7 +193,7 @@ Prints an IAM policy suitable for operating cloudsite.
 <span id="cloudsite-import"></span>
 ### `import`
 
-`cloudsite import <options> [domain-and-stack]`
+`cloudsite import <options>`
 
 Generates a site database based on currently deployed site stacks.
 
@@ -201,8 +201,11 @@ Generates a site database based on currently deployed site stacks.
 
 |Option|Description|
 |------|------|
-|`[domain-and-stack]`|(_main argument_,_required_) The domain and stack are specified as positional parameters, in either order.|
-|`--common-logs-bucket`|Specifies the common logs bucket name. This is only necessary if there are multiple candidates, otherwise cloudsite can usually guess. Set to 'NONE' to suppress guessing and assume there is on common logs bucket.|
+|`--apex-domain`|The apex domain of the site to import data for. If '--source-path' is not specified, it will be dynamically queried.|
+|`--confirmed`|If set, will overwrite any group or policy name in the DB if a new group or policy name is provided. Will otherwise initiate interactive confirmation.|
+|`--group-name`|The name to record for the SSO group. It will record the given name if no name is currently in the DB. With '--confirmed' set, this will override any existing name. Otherwise, it will initiate interactive confirmation if a name is already in the DB.|
+|`--no-account`|If set, then the account-level data import is skipped.|
+|`--policy-name`|The name to record for the Cloudsite policy. It will record the given name if no name is currently in the DB. With '--confirmed' set, this will override any existing name. Otherwise, it will initiate interactive confirmation if a name is already in the DB.|
 |`--refresh`|By defaualt, cloudsite will refuse to overwrite existing site DB entries. if '--refresh' is true, then it will update/refresh the existing entry.|
 |`--region`|Specifies the region where the stack is to be found.|
 |`--source-path`|Local path to the static site root.|

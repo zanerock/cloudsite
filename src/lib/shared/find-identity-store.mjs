@@ -73,7 +73,7 @@ const findIdentityStore = async ({ credentials, firstCheckRegion, instanceRegion
           name        : instance.Name,
           region,
           ssoAdminClient,
-          ssoStartURL : 'https://' + instance.Name + '.awsapps.com/start'
+          ssoStartURL : 'https://' + instance.IdentityStoreId + '.awsapps.com/start'
         }
       }
     }
@@ -81,7 +81,8 @@ const findIdentityStore = async ({ credentials, firstCheckRegion, instanceRegion
   } while (nextToken !== undefined)
 
   progressLogger.write(' NOT FOUND.\n')
-  return { region : firstCheckRegion, ssoAdminClient : new SSOAdminClient({ credentials, region : firstCheckRegion }) }
+  // return { region : firstCheckRegion, ssoAdminClient : new SSOAdminClient({ credentials, region : firstCheckRegion }) }
+  return {}
 }
 
 // TOOD: in future we can examine the default region to determine the first scope.

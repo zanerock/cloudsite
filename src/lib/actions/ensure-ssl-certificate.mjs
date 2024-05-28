@@ -3,11 +3,11 @@ import { ACMClient, RequestCertificateCommand } from '@aws-sdk/client-acm'
 import { Questioner } from 'question-and-answer'
 
 import { findCertificate } from './lib/find-certificate'
-import { getCredentials } from './lib/get-credentials'
+import { getCredentials } from '../shared/authentication-lib'
 import { progressLogger } from '../shared/progress-logger'
 
-const ensureSSLCertificate = async ({ apexDomain, db, siteInfo }) => {
-  const credentials = getCredentials(db.account.localSettings)
+const ensureSSLCertificate = async ({ apexDomain, globalOptions, siteInfo }) => {
+  const credentials = getCredentials(globalOptions)
 
   const acmClient = new ACMClient({
     credentials,

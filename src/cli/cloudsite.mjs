@@ -1,4 +1,5 @@
 import * as fs from 'node:fs/promises'
+import * as fsPath from 'node:path'
 
 import commandLineArgs from 'command-line-args'
 import { commandLineHelp } from 'command-line-help'
@@ -79,11 +80,11 @@ const cloudsite = async () => {
       case 'cleanup':
         ({ success, userMessage } = await handleCleanup({ argv, db })); break
       case 'configuration':
-        ({ data, success, userMessage } = await handleConfiguration({ argv, db })); break
+        ({ data, success, userMessage } = await handleConfiguration({ argv, db, globalOptions })); break
       case 'create':
-        ({ success, userMessage } = await handleCreate({ argv, db })); break
+        ({ success, userMessage } = await handleCreate({ argv, db, globalOptions })); break
       case 'destroy':
-        ({ success, userMessage } = await handleDestroy({ argv, db })); break
+        ({ success, userMessage } = await handleDestroy({ argv, db, globalOptions })); break
       case 'detail':
         ({ data, success } = await handleDetail({ argv, db })); break
       case 'document':
@@ -91,20 +92,20 @@ const cloudsite = async () => {
         noWrap = true
         break
       case 'get-iam-policy':
-        await handleGetIAMPolicy({ argv, db })
+        await handleGetIAMPolicy({ argv, db, globalOptions })
         return // get-iam-policy is handles it's own output as the IAM policy is always in JSON format
       case 'list':
         ({ data, noWrap, success } = await handleList({ argv, db })); break
       case 'import':
-        ({ success, userMessage } = await handleImport({ argv, db })); break
+        ({ success, userMessage } = await handleImport({ argv, db, globalOptions })); break
       case 'plugin-settings':
         ({ data, success, userMessage } = await handlePluginSettings({ argv, db })); break
       case 'reminders':
         ({ data, success } = await handleReminders({ argv, db })); break
       case 'update':
-        ({ success, userMessage } = await handleUpdate({ argv, db })); break
+        ({ success, userMessage } = await handleUpdate({ argv, db, globalOptions })); break
       case 'verify':
-        ({ data } = await handleVerify({ argv, db })); break
+        ({ data } = await handleVerify({ argv, db, globalOptions })); break
       case undefined:
         throw new Error("Must specify command or '--help' option.", { exitCode : 1 })
       default:
@@ -174,6 +175,7 @@ const cloudsite = async () => {
 const checkAndUpdateSitesInfo = async ({ origDB, db }) => {
   if (!isEqual(origDB, db)) {
     progressLogger.write('Updating Cloudsite DB... ')
+    await fs.mkdir(fsPath.dirname(DB_PATH), { recursive : true })
     const dbContents = JSON.stringify(db, null, '  ')
     await fs.writeFile(DB_PATH, dbContents, { encoding : 'utf8' })
     progressLogger.write('SUCCESS\n')

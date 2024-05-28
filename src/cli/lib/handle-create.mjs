@@ -12,7 +12,7 @@ import {
   INCLUDE_PLUGIN_REQUIRED,
   INCLUDE_PLUGIN_NEVER
 } from '../../lib/shared/constants'
-import { checkAuthentication } from './check-authentication'
+import { checkAuthentication } from '../../lib/shared/authentication-lib'
 import { create } from '../../lib/actions/create'
 import { ensureSSLCertificate } from '../../lib/actions/ensure-ssl-certificate'
 import { getOptionsSpec } from './get-options-spec'
@@ -21,8 +21,8 @@ import * as plugins from '../../lib/plugins'
 import { processSourceType } from './process-source-type'
 import { progressLogger } from '../../lib/shared/progress-logger'
 
-const handleCreate = async ({ argv, db }) => {
-  await checkAuthentication({ db })
+const handleCreate = async ({ argv, db, globalOptions }) => {
+  await checkAuthentication({ globalOptions })
 
   const createOptionsSpec = getOptionsSpec({ cliSpec, name : 'create' })
   const createOptions = commandLineArgs(createOptionsSpec, { argv })
@@ -96,7 +96,7 @@ const handleCreate = async ({ argv, db }) => {
     }
   }
 
-  await ensureSSLCertificate({ apexDomain, db, siteInfo })
+  await ensureSSLCertificate({ apexDomain, globalOptions, siteInfo })
 
   optionsLib.updatePluginSettings({ options, siteInfo })
   // since we set on site info, we don't need the option anymore (and this avoids double setting later)
@@ -204,7 +204,7 @@ const handleCreate = async ({ argv, db }) => {
   }
 
   let success
-  ({ stackName, success } = await create({ db, noBuild, noDeleteOnFailure, siteInfo }))
+  ({ stackName, success } = await create({ db, globalOptions, noBuild, noDeleteOnFailure, siteInfo }))
 
   if (success === true) {
     const now = new Date()

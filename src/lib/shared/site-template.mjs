@@ -29,7 +29,7 @@ const SiteTemplate = class {
    * @param {string} input.siteInfo.accountID - the ID of the account under which the stack resides (not ARN)
    * @param {string} input.siteInfo.siteBucketName - the name of the bucket where the site's static files are stored
    * @param {string} input.siteInfo.stackName - the name of the stack
-   * @param {string} input.siteInfo.stackArn - the stack's ARN
+   * @param {string} input.siteInfo.stack - the stack's ID
    * @param {string} input.siteInfo.cloudFrontDistributionID - the stack's CloudfFront ID (not ARN)
    * @param {object} input.siteInfo.plugins - collection of plugin settings; settings are grouped/keyed by the
    *   plugin's name; setting values are dependent on the plugin

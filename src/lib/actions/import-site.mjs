@@ -4,29 +4,29 @@ import { ACMClient } from '@aws-sdk/client-acm'
 import { CloudFormationClient, DescribeStacksCommand, GetTemplateCommand } from '@aws-sdk/client-cloudformation'
 
 import { getAccountID } from '../shared/get-account-id'
-import { getCredentials } from './lib/get-credentials'
+import { getCredentials } from '../shared/authentication-lib'
 import { findBucketByTags } from '../shared/find-bucket-by-tags'
 import { findCertificate } from './lib/find-certificate'
 import * as plugins from '../plugins'
 import { progressLogger } from '../shared/progress-logger'
 
-const doImport = async ({ commonLogsBucket, db, domain, region, sourcePath, sourceType, stack }) => {
-  const siteInfo = { apexDomain : domain, stackName : stack, region, sourcePath, sourceType }
-  const credentials = getCredentials(db.account.localSettings)
+const doImportSite = async ({ apexDomain, commonLogsBucket, db, globalOptions, region, sourcePath, sourceType, stackName }) => {
+  const siteInfo = { apexDomain, stackName, region, sourcePath, sourceType }
+  const credentials = getCredentials(globalOptions)
 
   const acmClient = new ACMClient({ credentials, region : 'us-east-1' }) // certificates are always in us-east-1
-  const { certificateArn } = await findCertificate({ apexDomain : domain, acmClient })
+  const { certificateArn } = await findCertificate({ apexDomain, acmClient })
   siteInfo.certificateArn = certificateArn
 
   const accountID = await getAccountID({ credentials })
-  siteInfo.accountID = accountID
+  db.account.accountID = accountID
 
-  progressLogger?.write(`Examining stack '${stack}' outputs...\n`)
+  progressLogger?.write(`Examining stack '${stackName}' outputs...\n`)
   const cloudFormationClient = new CloudFormationClient({ credentials, region })
-  const describeStacksCommand = new DescribeStacksCommand({ StackName : stack })
+  const describeStacksCommand = new DescribeStacksCommand({ StackName : stackName })
   const stacksInfo = await cloudFormationClient.send(describeStacksCommand)
 
-  const getTemplateCommand = new GetTemplateCommand({ StackName : stack })
+  const getTemplateCommand = new GetTemplateCommand({ StackName : stackName })
   const templateBody = (await cloudFormationClient.send(getTemplateCommand)).TemplateBody
   const template = yaml.load(templateBody)
 
@@ -42,7 +42,7 @@ const doImport = async ({ commonLogsBucket, db, domain, region, sourcePath, sour
           credentials,
           description : 'common logs',
           tags        : [
-            { key : 'site', value : domain },
+            { key : 'site', value : apexDomain },
             { key : 'function', value : 'common logs storage' }
           ]
         })
@@ -73,4 +73,4 @@ const doImport = async ({ commonLogsBucket, db, domain, region, sourcePath, sour
   return siteInfo
 }
 
-export { doImport }
+export { doImportSite }

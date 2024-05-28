@@ -4,7 +4,8 @@ import { associateCostAllocationTags } from './lib/associate-cost-allocation-tag
 import { convertDomainToBucketName } from '../shared/convert-domain-to-bucket-name'
 import { createOrUpdateDNSRecords } from './lib/create-or-update-dns-records'
 import { determineBucketName } from '../shared/determine-bucket-name'
-import { getCredentials } from './lib/get-credentials'
+import { getCredentials } from '../shared/authentication-lib'
+import { getResourceTags } from '../shared/get-resource-tags'
 import * as plugins from '../plugins'
 import { SiteTemplate } from '../shared/site-template'
 import { syncSiteContent } from './lib/sync-site-content'
@@ -15,13 +16,14 @@ const STACK_CREATE_TIMEOUT = 30 // min
 
 const create = async ({
   db,
+  globalOptions,
   noBuild,
   noDeleteOnFailure,
   siteInfo
 }) => {
   let { siteBucketName } = siteInfo
 
-  const credentials = getCredentials(db.account.localSettings)
+  const credentials = getCredentials(globalOptions)
 
   siteBucketName = await determineBucketName({ bucketName : siteBucketName, credentials, findName : true, siteInfo })
   siteInfo.siteBucketName = siteBucketName
@@ -68,15 +70,16 @@ const createSiteStack = async ({ credentials, noDeleteOnFailure, siteInfo }) => 
     TemplateBody     : cloudFormationTemplate,
     DisableRollback  : false,
     Capabilities     : ['CAPABILITY_IAM', 'CAPABILITY_NAMED_IAM'],
-    TimeoutInMinutes : STACK_CREATE_TIMEOUT
+    TimeoutInMinutes : STACK_CREATE_TIMEOUT,
+    Tags             : getResourceTags({ siteInfo })
   }
   const createCommand = new CreateStackCommand(createInput)
   const createResponse = await cloudFormationClient.send(createCommand)
 
-  const { StackId } = createResponse
+  const { StackId: stackID } = createResponse
 
   siteInfo.stackName = stackName
-  siteInfo.stackArn = StackId
+  siteInfo.stackID = stackID
 
   const finalStatus = await trackStackStatus({ cloudFormationClient, noDeleteOnFailure, stackName })
   return { success : finalStatus === 'CREATE_COMPLETE', stackName }

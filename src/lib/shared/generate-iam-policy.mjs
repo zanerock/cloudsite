@@ -1,16 +1,26 @@
 import { getAccountID } from './get-account-id'
-import { getCredentials } from '../actions/lib/get-credentials' // TODO: move to shared
+import { getCredentials } from './authentication-lib'
 
-const generateIAMPolicy = async ({ db }) => {
+const generateIAMPolicy = async ({ db, globalOptions }) => {
   let { accountID } = db.account
   if (accountID === undefined) {
-    const credentials = getCredentials(db.account?.localSettings)
+    const credentials = getCredentials(globalOptions)
     accountID = await getAccountID({ credentials })
   }
 
   return {
     Version   : '2012-10-17',
     Statement : [
+      {
+        Sid    : 'AccontGrants',
+        Effect : 'Allow',
+        Action : [
+          'account:ListRegions'
+        ],
+        Resource : [
+          `arn:aws:account::${accountID}:account`
+        ]
+      },
       {
         Sid    : 'CloudsiteAcmGrants',
         Effect : 'Allow',
@@ -46,6 +56,7 @@ const generateIAMPolicy = async ({ db }) => {
           'cloudformation:DetectStackResourceDrift',
           'cloudformation:GetTemplate',
           'cloudformation:ListChangeSets',
+          'cloudformation:ListStacks',
           'cloudformation:UpdateStack'
         ],
         Resource : [
@@ -95,7 +106,8 @@ const generateIAMPolicy = async ({ db }) => {
         Action : [
           'iam:AttachRolePolicy',
           'iam:DetachRolePolicy',
-          'iam:DeleteRolePolicy'
+          'iam:DeleteRolePolicy',
+          'iam:ListPolicies'
         ],
         Resource : [
           '*'
@@ -130,6 +142,16 @@ const generateIAMPolicy = async ({ db }) => {
           'iam:TagRole',
           'iam:UntagRole',
           'iam:UpdateRole'
+        ],
+        Resource : [
+          '*'
+        ]
+      },
+      {
+        Sid    : 'CloudsiteIdentityStoreGrants',
+        Effect : 'Allow',
+        Action : [
+          'identitystore:ListGroups'
         ],
         Resource : [
           '*'
@@ -215,6 +237,18 @@ const generateIAMPolicy = async ({ db }) => {
         ],
         Resource : [
           'arn:aws:s3:::*'
+        ]
+      },
+      {
+        Sid    : 'SingleSignOnGrants',
+        Effect : 'Allow',
+        Action : [
+          'sso:DescribePermissionSet',
+          'sso:ListInstances',
+          'sso:ListPermissionSets'
+        ],
+        Resource : [
+          '*'
         ]
       }
     ]

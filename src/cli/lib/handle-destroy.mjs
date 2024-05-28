@@ -7,7 +7,7 @@ import { getOptionsSpec } from './get-options-spec'
 import { getSiteInfo } from './get-site-info'
 import { progressLogger } from '../../lib/shared/progress-logger'
 
-const handleDestroy = async ({ argv, db }) => {
+const handleDestroy = async ({ argv, db, globalOptions }) => {
   const destroyOptionsSpec = getOptionsSpec({ cliSpec, name : 'destroy' })
   const destroyOptions = commandLineArgs(destroyOptionsSpec, { argv })
   const apexDomain = destroyOptions['apex-domain']
@@ -33,7 +33,7 @@ const handleDestroy = async ({ argv, db }) => {
     }
   }
 
-  const deleted = await destroy({ db, siteInfo, verbose : true })
+  const deleted = await destroy({ globalOptions, siteInfo, verbose : true })
 
   if (deleted === true) {
     delete db.sites[apexDomain]
