@@ -1,6 +1,7 @@
 import { CloudFormationClient, GetTemplateCommand, UpdateStackCommand } from '@aws-sdk/client-cloudformation'
 import isEqual from 'lodash/isEqual'
 
+import { getResourceTags } from '../../shared/get-resource-tags'
 import * as plugins from '../../plugins'
 import { progressLogger } from '../../shared/progress-logger'
 import { SiteTemplate } from '../../shared/site-template'
@@ -24,7 +25,7 @@ const updateStack = async ({ credentials, siteInfo }) => {
   const getTemplateResponse = await cloudFormationClient.send(getTemplateCommand)
   const currentTemplate = getTemplateResponse.TemplateBody
 
-  if (isEqual(currentTemplate, newTemplate)) {
+  if (isEqual(currentTemplate, newTemplate)) { // TODO: check if tags changed
     progressLogger.write('No change to template; skipping stack update.\n')
     return
   }
@@ -35,7 +36,8 @@ const updateStack = async ({ credentials, siteInfo }) => {
     TemplateBody        : newTemplate,
     UsePreviousTemplate : false,
     Capabilities        : ['CAPABILITY_IAM', 'CAPABILITY_NAMED_IAM'],
-    DisableRollback     : false
+    DisableRollback     : false,
+    Tags                : getResourceTags({ siteInfo })
   })
 
   await cloudFormationClient.send(stackUpdateCommand)
