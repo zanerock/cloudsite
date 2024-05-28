@@ -4,7 +4,8 @@ import { associateCostAllocationTags } from './lib/associate-cost-allocation-tag
 import { convertDomainToBucketName } from '../shared/convert-domain-to-bucket-name'
 import { createOrUpdateDNSRecords } from './lib/create-or-update-dns-records'
 import { determineBucketName } from '../shared/determine-bucket-name'
-import { getCredentials } from './lib/get-credentials'
+import { getCredentials } from '../shared/authentication-lib'
+import { getResourceTags } from '../shared/get-resource-tags'
 import * as plugins from '../plugins'
 import { SiteTemplate } from '../shared/site-template'
 import { syncSiteContent } from './lib/sync-site-content'
@@ -69,7 +70,8 @@ const createSiteStack = async ({ credentials, noDeleteOnFailure, siteInfo }) => 
     TemplateBody     : cloudFormationTemplate,
     DisableRollback  : false,
     Capabilities     : ['CAPABILITY_IAM', 'CAPABILITY_NAMED_IAM'],
-    TimeoutInMinutes : STACK_CREATE_TIMEOUT
+    TimeoutInMinutes : STACK_CREATE_TIMEOUT,
+    Tags             : getResourceTags({ siteInfo })
   }
   const createCommand = new CreateStackCommand(createInput)
   const createResponse = await cloudFormationClient.send(createCommand)

@@ -10,7 +10,7 @@ import { cliSpec } from '../constants'
 import { DEFAULT_SSO_GROUP_NAME, DEFAULT_SSO_POLICY_NAME } from '../../lib/shared/constants'
 import { doImportAccount } from '../../lib/actions/import-account'
 import { doImportSite } from '../../lib/actions/import-site'
-import { getCredentials } from '../../lib/actions/lib/get-credentials'
+import { getCredentials } from '../../lib/shared/authentication-lib'
 import { getOptionsSpec } from './get-options-spec'
 import { getStacksBy } from './get-stacks-by'
 import { processSourceType } from './process-source-type'
@@ -141,6 +141,7 @@ const handleImport = async ({ argv, db, globalOptions }) => {
   return { success : true, userMessage : 'Imported data.' }
 }
 
-const isCloudsiteAppStack = ({ Key : key, Value : value }) => key === 'application' && value === 'Cloudsite'
+const isCloudsiteAppStack = ({ Tags : tags }) => 
+  tags.some(({ Key: key, Value: value }) => key === 'application' && value === 'Cloudsite')
 
 export { handleImport }

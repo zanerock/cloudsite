@@ -1,6 +1,6 @@
 import { ListBucketsCommand, S3Client } from '@aws-sdk/client-s3'
 
-import { getCredentials } from '../../lib/actions/lib/get-credentials' // move to shared
+import { getCredentials } from '../../lib/shared/authentication-lib'
 
 const checkAuthentication = async ({ globalOptions = {} } = {}) => {
   const credentials = getCredentials(globalOptions) // passes in 'sso-profile'

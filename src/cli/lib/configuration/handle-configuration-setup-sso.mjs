@@ -13,7 +13,7 @@ import { cliSpec } from '../../constants'
 import { DEFAULT_SSO_POLICY_NAME, DEFAULT_SSO_GROUP_NAME } from '../../../lib/shared/constants'
 import { ensureRootOrganization } from './lib/ensure-root-organization'
 import { findIdentityStoreStaged } from '../../../lib/shared/find-identity-store'
-import { getCredentials } from '../../../lib/actions/lib/get-credentials'
+import { getCredentials } from '../../../lib/shared/authentication-lib'
 import { progressLogger } from '../../../lib/shared/progress-logger'
 import { setupSSO } from '../../../lib/actions/setup-sso'
 

@@ -6,7 +6,7 @@ import {
 import { S3Client } from '@aws-sdk/client-s3'
 import { S3SyncClient } from 's3-sync-client'
 
-import { getCredentials } from './lib/get-credentials'
+import { getCredentials } from '../shared/authentication-lib'
 import { progressLogger } from '../shared/progress-logger'
 
 const RECHECK_WAIT_TIME = 2000 // ms

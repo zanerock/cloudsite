@@ -4,7 +4,7 @@ import { ACMClient } from '@aws-sdk/client-acm'
 import { CloudFormationClient, DescribeStacksCommand, GetTemplateCommand } from '@aws-sdk/client-cloudformation'
 
 import { getAccountID } from '../shared/get-account-id'
-import { getCredentials } from './lib/get-credentials'
+import { getCredentials } from '../shared/authentication-lib'
 import { findBucketByTags } from '../shared/find-bucket-by-tags'
 import { findCertificate } from './lib/find-certificate'
 import * as plugins from '../plugins'
