@@ -1,21 +1,37 @@
 .header-github-link {
+  position: relative;
   display: flex;
   height: 30px;
   width: calc(var(--ifm-navbar-item-padding-horizontal) + 30px);
-  /* docusaurus.io does this with data-urls, but even though I confirmed the SVG was correct and everything, I could not get it to work. Chrome kept saying there was an error in the attribute, but I couldn't find it */
-  background-image: url(/img/github-mark.svg);
-  background-repeat: no-repeat;
-  transition: background-image var(--ifm-transition-fast) var(--ifm-transition-timing-default);
 }
 
-.header-github-link:hover {
-  background-image: url(/img/github-mark-hover.svg);
+.header-github-link img {
+  position: absolute;
+  left: 0;
+  transition: opacity var(--ifm-transition-fast) var(--ifm-transition-timing-default);
+  opacity: 0;
 }
 
-html[data-theme="dark"] .header-github-link {
-  background-image: url(/img/github-mark-dark.svg);
+html[data-theme="light"] .header-github-link img.light.none {
+  opacity: 1;
 }
 
-html[data-theme="dark"] .header-github-link:hover {
-  background-image: url(/img/github-mark-dark-hover.svg);
+html[data-theme="dark"] .header-github-link img.dark.none {
+  opacity: 1;
+}
+
+html[data-theme] .header-github-link img.hover {
+  opacity: 0;
+}
+
+html[data-theme] .header-github-link:hover img.none {
+  opacity: 0;
+}
+
+html[data-theme="light"] .header-github-link:hover img.light.hover {
+  opacity: 1;
+}
+
+html[data-theme="dark"] .header-github-link:hover img.dark.hover {
+  opacity: 1;
 }

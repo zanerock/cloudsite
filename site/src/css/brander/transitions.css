@@ -10,6 +10,7 @@
 a, p, button {
   transition: color var(--ifm-transition-fast) var(--ifm-transition-timing-default),
     background-color var(--ifm-transition-fast) var(--ifm-transition-timing-default),
-    border-color var(--ifm-transition-fast) var(--ifm-transition-timing-default)
+    border-color var(--ifm-transition-fast) var(--ifm-transition-timing-default),
+    text-decoration-color var(--ifm-transition-fast) var(--ifm-transition-timing-default)
     !important;
 }

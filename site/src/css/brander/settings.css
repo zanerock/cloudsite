@@ -26,9 +26,9 @@
 
   /* buttons */
   --ll-button-font-family: var(--ifm-font-family-base);
-  --ifm-button-font-weight: 800;
+  --ifm-button-font-weight: 600;
 
-  --ll-button-border-width: 3px;
+  --ll-button-border-width: 2px;
 
   --ll-button-color-hover: var(--ifm-background-color);
   --ll-button-background-color-hover: var(--ifm-color-content-secondary);
