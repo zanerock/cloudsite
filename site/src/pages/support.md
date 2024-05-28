@@ -13,7 +13,7 @@ import Link from '@docusaurus/Link'
   </Link>
 </div>
 
-Trying to get something done with your website? Want a say in the next new feature? We offer affordable, comprehensive support plans. Anything question. Any request. We're here for you. And of course we'll address any bugs for free.
+Trying to get something done with your website? Want a say in the next new feature? We offer affordable, comprehensive support plans. Any question. Any request. We're here for you. And of course we'll address any bugs for free.
 
 ## What's you get
 
@@ -76,15 +76,8 @@ All the benefits of [Unlimited Website Consultation](#unlimited-website-consulta
 
 ## How it works
 
-When you become a patron at [Patreon @liquidlabs](https://patreon.com/liquidlabs), you 1) gain access to our private Discord support channels. You can post your query or send a direct message to Liquid Labs. 2) You can also email us from your registered Patreon email.
+When you become a patron at [Patreon @liquidlabs](https://patreon.com/liquidlabs), you can email us questions from your registered Patreon email.
 
 ## Terms of service
 
-* Production Liquid Labs OSS software not marked as alpha, beta, or similar is fully supported as documented and Liquid Labs commits to rectify any deviance from the documented behavior.
-* Website support covers WordPress, Docusaurus, and custom built (manual) websites.
-* Plugins, themes, add-ons, and customizations in general are supported on a "best effort" basis.
-* Support operates Mon-Fri from 9:00 AM to 5:00 PM Central and between 10:00 AM and 2:00 PM Saturday, and is closed Sundays and for US federal holidays.
-* For Liquid Labs OSS support subscribers we guarantee initial response to your first query each month when posted to the Discord channel within two business days, excepting weekends and US federal holidays.
-* For all other support subscribers we guarantee initial response to your first query each month when posted to the Discord channel within one business days, excepting weekends and US federal holidays.
-* Allow up to one additional day for queries sent by DM or email.
-* Additional questions will be addressed in the order they are received as time permits.
+Refer to the [Liquid Labs support page](https://liquid-labs.com/support) for full [terms of service](https://liquid-labs.com/support#terms-of-service).
