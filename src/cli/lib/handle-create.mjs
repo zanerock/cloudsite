@@ -12,7 +12,7 @@ import {
   INCLUDE_PLUGIN_REQUIRED,
   INCLUDE_PLUGIN_NEVER
 } from '../../lib/shared/constants'
-import { checkAuthentication } from './check-authentication'
+import { checkAuthentication } from '../../lib/shared/authentication-lib'
 import { create } from '../../lib/actions/create'
 import { ensureSSLCertificate } from '../../lib/actions/ensure-ssl-certificate'
 import { getOptionsSpec } from './get-options-spec'
