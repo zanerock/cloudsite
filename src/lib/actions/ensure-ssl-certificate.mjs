@@ -6,7 +6,7 @@ import { findCertificate } from './lib/find-certificate'
 import { getCredentials } from '../shared/authentication-lib'
 import { progressLogger } from '../shared/progress-logger'
 
-const ensureSSLCertificate = async ({ apexDomain, db, globalOptions, siteInfo }) => {
+const ensureSSLCertificate = async ({ apexDomain, globalOptions, siteInfo }) => {
   const credentials = getCredentials(globalOptions)
 
   const acmClient = new ACMClient({

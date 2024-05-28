@@ -11,7 +11,7 @@ import { progressLogger } from '../shared/progress-logger'
 
 const RECHECK_WAIT_TIME = 2000 // ms
 
-const verify = async ({ checkContent, checkSiteUp, checkStack, db, globalOptions, siteInfo }) => {
+const verify = async ({ checkContent, checkSiteUp, checkStack, globalOptions, siteInfo }) => {
   const checkAll = checkContent === undefined && checkSiteUp === undefined && checkStack === undefined
   let credentials
   if (checkAll || checkContent || checkStack) {

@@ -8,7 +8,7 @@ import { progressLogger } from '../shared/progress-logger'
 import { SiteTemplate } from '../shared/site-template'
 import { trackStackStatus } from './lib/track-stack-status'
 
-const destroy = async ({ db, globalOptions, siteInfo, verbose }) => {
+const destroy = async ({ globalOptions, siteInfo, verbose }) => {
   const { apexDomain, siteBucketName, stackName } = siteInfo
 
   const credentials = getCredentials(globalOptions)

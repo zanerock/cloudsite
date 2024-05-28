@@ -96,7 +96,7 @@ const handleCreate = async ({ argv, db, globalOptions }) => {
     }
   }
 
-  await ensureSSLCertificate({ apexDomain, db, globalOptions, siteInfo })
+  await ensureSSLCertificate({ apexDomain, globalOptions, siteInfo })
 
   optionsLib.updatePluginSettings({ options, siteInfo })
   // since we set on site info, we don't need the option anymore (and this avoids double setting later)

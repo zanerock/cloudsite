@@ -33,7 +33,7 @@ const handleDestroy = async ({ argv, db, globalOptions }) => {
     }
   }
 
-  const deleted = await destroy({ db, globalOptions, siteInfo, verbose : true })
+  const deleted = await destroy({ globalOptions, siteInfo, verbose : true })
 
   if (deleted === true) {
     delete db.sites[apexDomain]

@@ -66,14 +66,11 @@ const handleImport = async ({ argv, db, globalOptions }) => {
       const questioner = new Questioner({ interrogationBundle, output : progressLogger })
       await questioner.question()
       sourcePath = resolvePath(questioner.get('SOURCE_PATH'))
-      try {
-        const stat = await fileStat(sourcePath)
-        if (!stat.isDirectory()) {
-          throw new Error(`Source path '${sourcePath}' is not a directory.`)
-        }
-      } catch (e) {
-        throw e
+      const stat = await fileStat(sourcePath)
+      if (!stat.isDirectory()) {
+        throw new Error(`Source path '${sourcePath}' is not a directory.`)
       }
+
       sourceType = processSourceType({ sourcePath, sourceType })
     }
     updateSites[i].sourcePath = sourcePath
@@ -141,7 +138,7 @@ const handleImport = async ({ argv, db, globalOptions }) => {
   return { success : true, userMessage : 'Imported data.' }
 }
 
-const isCloudsiteAppStack = ({ Tags : tags }) => 
+const isCloudsiteAppStack = ({ Tags : tags }) =>
   tags.some(({ Key: key, Value: value }) => key === 'application' && value === 'Cloudsite')
 
 export { handleImport }

@@ -7,7 +7,7 @@ import { searchPermissionSets } from './lib/search-permission-sets'
 import { searchPolicies } from './lib/search-policies'
 
 const doImportAccount = async ({ credentials, db, groupName, policyName }) => {
-  const { identityStoreID, identityStoreRegion, instanceARN, ssoAdminClient }= 
+  const { identityStoreID, identityStoreRegion, instanceARN, ssoAdminClient } =
     await importIdentityStoreData({ credentials, db })
   const iamClient = new IAMClient({ credentials })
 
@@ -36,7 +36,7 @@ const importIdentityStoreData = async ({ credentials, db }) => {
   db.account.identityStoreRegion = region
   db.account.ssoStartURL = ssoStartURL
 
-  return { identityStoreID: id, identityStoreRegion : region, instanceARN, ssoAdminClient }
+  return { identityStoreID : id, identityStoreRegion : region, instanceARN, ssoAdminClient }
 }
 
 const importPermissionSet = async ({ db, instanceARN, policyName, ssoAdminClient }) => {
@@ -46,7 +46,7 @@ const importPermissionSet = async ({ db, instanceARN, policyName, ssoAdminClient
 
 const importPolicyData = async ({ db, iamClient, policyName }) => {
   if (policyName !== undefined) {
-    const policyARN = await searchPolicies({ policyName : policyName, iamClient })
+    const policyARN = await searchPolicies({ policyName, iamClient })
     db.account.policyName = policyName
     db.account.policyARN = policyARN
   } else if (db.account.policyName === undefined || db.account.policyID === undefined) {

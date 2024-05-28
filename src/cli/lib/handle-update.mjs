@@ -18,7 +18,7 @@ const handleUpdate = async ({ argv, db, globalOptions }) => {
 
   const siteInfo = getSiteInfo({ apexDomain, db, globalOptions })
 
-  const { doAll } = 
+  const { doAll } =
     await update({ db, doBilling, doContent, doDNS, doStack, globalOptions, noBuild, noCacheInvalidation, siteInfo })
 
   if (doAll === true || doBilling === true) {

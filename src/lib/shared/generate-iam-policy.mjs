@@ -11,10 +11,10 @@ const generateIAMPolicy = async ({ db, globalOptions }) => {
   return {
     Version   : '2012-10-17',
     Statement : [
-      { 
-        Sid : 'AccontGrants',
-        Effect: 'Allow',
-        Action: [
+      {
+        Sid    : 'AccontGrants',
+        Effect : 'Allow',
+        Action : [
           'account:ListRegions'
         ],
         Resource : [
@@ -148,12 +148,12 @@ const generateIAMPolicy = async ({ db, globalOptions }) => {
         ]
       },
       {
-        Sid  : 'CloudsiteIdentityStoreGrants',
+        Sid    : 'CloudsiteIdentityStoreGrants',
         Effect : 'Allow',
         Action : [
           'identitystore:ListGroups'
         ],
-        Resource: [
+        Resource : [
           '*'
         ]
       },
@@ -240,14 +240,14 @@ const generateIAMPolicy = async ({ db, globalOptions }) => {
         ]
       },
       {
-        Sid : 'SingleSignOnGrants',
-        Effect: 'Allow',
+        Sid    : 'SingleSignOnGrants',
+        Effect : 'Allow',
         Action : [
           'sso:DescribePermissionSet',
           'sso:ListInstances',
           'sso:ListPermissionSets'
         ],
-        Resource: [
+        Resource : [
           '*'
         ]
       }
