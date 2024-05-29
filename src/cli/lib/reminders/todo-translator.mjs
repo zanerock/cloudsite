@@ -5,7 +5,7 @@ const todoTranslator = ({ references, todo }) => {
     case ACTION_CLEANUP:
       return `Cleanup partially deleted site '${references}'.`
     case ACTION_SETUP_BILLING:
-      return `Setup billing tags.`
+      return 'Setup billing tags.'
     default:
       throw new Error(`Unrecognized reminder type (todo): '${todo}'`)
   }
