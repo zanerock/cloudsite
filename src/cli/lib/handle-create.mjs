@@ -211,9 +211,9 @@ const handleCreate = async ({ argv, db, globalOptions }) => {
     const remindAfter = new Date(now.getTime() + 4 * 60 * 60 * 1000) // give it 4 hours
     db.reminders.push({
       todo        : ACTION_SETUP_BILLING,
-      command     : `cloudsite update --do-billing ${apexDomain}`,
+      command     : 'cloudsite billing configure-tags',
       remindAfter : remindAfter.toISOString(),
-      references  : apexDomain
+      references  : 'global'
     })
     return { success, userMessage : `Created site '${stackName}'/'www.${stackName}'.` }
   } else {
