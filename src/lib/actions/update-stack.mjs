@@ -28,8 +28,7 @@ const updateStack = async ({ credentials, db, globalOptions, siteInfo }) => {
   const currentTemplate = getTemplateResponse.TemplateBody
 
   if (isEqual(currentTemplate, newTemplate)) { // TODO: check if tags changed
-    progressLogger.write('No change to template; skipping stack update.\n')
-    return
+    return { success: true, userMessage: 'No change to template; skipping stack update.\n' }
   }
   // else, the template has changed
 
@@ -61,7 +60,7 @@ const updateStack = async ({ credentials, db, globalOptions, siteInfo }) => {
   }
 
   if (finalStatus === 'UPDATE_COMPLETE') {
-    progressLogger.write('Stack updated.\n')
+    progressLogger.write(`Stack update complete.\n`)
   }
 
   if (finalStatus === 'UPDATE_COMPLETE') {
