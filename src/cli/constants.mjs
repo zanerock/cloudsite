@@ -62,8 +62,8 @@ const cliSpec = {
       arguments   : [subcommandSpec],
       commands    : [
         {
-          name: 'configure-tags',
-          description: 'Configures the global cost allocation tags.'
+          name        : 'configure-tags',
+          description : 'Configures the global cost allocation tags.'
         }
       ]
     },
@@ -387,7 +387,7 @@ const cliSpec = {
         }
       ]
     },
-        {
+    {
       name        : 'update-contents',
       description : 'Updates a website content and/or infrastructure.',
       arguments   : [

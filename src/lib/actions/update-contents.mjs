@@ -3,9 +3,9 @@ import { CloudFrontClient, CreateInvalidationCommand } from '@aws-sdk/client-clo
 import { progressLogger } from '../shared/progress-logger'
 import { syncSiteContent } from './lib/sync-site-content'
 
-const updateContents = async ({ credentials, db, globalOptions, noBuild, noCacheInvalidation, siteInfo }) => {
+const updateContents = async ({ credentials, noBuild, noCacheInvalidation, siteInfo }) => {
   await syncSiteContent({ credentials, noBuild, siteInfo })
-  
+
   if (noCacheInvalidation !== true) {
     await invalidateCache({ credentials, siteInfo })
   }

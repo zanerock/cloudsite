@@ -1,7 +1,6 @@
 import { CloudFormationClient, GetTemplateCommand, UpdateStackCommand } from '@aws-sdk/client-cloudformation'
 import isEqual from 'lodash/isEqual'
 
-import { checkAdminAuthentication, getCredentials } from '../shared/authentication-lib'
 import { getResourceTags } from '../shared/get-resource-tags'
 import * as plugins from '../plugins'
 import { progressLogger } from '../shared/progress-logger'
@@ -10,7 +9,7 @@ import { trackStackStatus } from './lib/track-stack-status'
 import { updatePlugins } from './lib/update-plugins'
 import { updateSiteInfo } from './lib/update-site-info'
 
-const updateStack = async ({ credentials, db, globalOptions, siteInfo }) => {
+const updateStack = async ({ credentials, siteInfo }) => {
   const { region, stackName } = siteInfo
 
   const siteTemplate = new SiteTemplate({ credentials, siteInfo })
@@ -28,7 +27,7 @@ const updateStack = async ({ credentials, db, globalOptions, siteInfo }) => {
   const currentTemplate = getTemplateResponse.TemplateBody
 
   if (isEqual(currentTemplate, newTemplate)) { // TODO: check if tags changed
-    return { success: true, userMessage: 'No change to template; skipping stack update.\n' }
+    return { success : true, userMessage : 'No change to template; skipping stack update.\n' }
   }
   // else, the template has changed
 
@@ -60,7 +59,7 @@ const updateStack = async ({ credentials, db, globalOptions, siteInfo }) => {
   }
 
   if (finalStatus === 'UPDATE_COMPLETE') {
-    progressLogger.write(`Stack update complete.\n`)
+    progressLogger.write('Stack update complete.\n')
   }
 
   if (finalStatus === 'UPDATE_COMPLETE') {

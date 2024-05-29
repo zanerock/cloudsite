@@ -4,7 +4,7 @@ import { cliSpec } from '../constants'
 import { getOptionsSpec } from './get-options-spec'
 import { handleBillingConfigureTags } from './billing/handle-billing-configure-tags'
 
-const handleBilling = async ({ argv, db, globalOptions }) => {
+const handleBilling = async ({ argv, db }) => {
   const billingOptionsSpec = getOptionsSpec({ cliSpec, name : 'billing' })
   const billingOptions = commandLineArgs(billingOptionsSpec, { argv, stopAtFirstUnknown : true })
   const { subcommand } = billingOptions

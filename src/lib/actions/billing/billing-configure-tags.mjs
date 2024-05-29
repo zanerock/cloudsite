@@ -12,7 +12,7 @@ import {
 import { progressLogger } from '../../shared/progress-logger'
 
 const billingConfigureTags = async ({ credentials, db }) => {
-    const costExplorerClient = new CostExplorerClient({ credentials })
+  const costExplorerClient = new CostExplorerClient({ credentials })
 
   progressLogger.write('Examining cost allocation status... ')
 
@@ -96,7 +96,7 @@ const handleAssociateCostAllocationTagsError = ({ e }) => {
 
   progressLogger.write('<error>!! ERROR !!<rst>: ' + e.message)
 
-  progressLogger.write(`\nThe attempt to setup your cost allocation tags has failed (refer to the error message above). If this is the first time the tags have been set up, then the issue may be that AWS must 'discover' your tags before they can be activated for cost allocation. This process can take a little time. Wait a little while and try setting up the cost allocation tags again with:\n\n<code>cloudsite billing configure-tags<rst>\n\n`)
+  progressLogger.write('\nThe attempt to setup your cost allocation tags has failed (refer to the error message above). If this is the first time the tags have been set up, then the issue may be that AWS must \'discover\' your tags before they can be activated for cost allocation. This process can take a little time. Wait a little while and try setting up the cost allocation tags again with:\n\n<code>cloudsite billing configure-tags<rst>\n\n')
 }
 
 export { billingConfigureTags }
