@@ -1,14 +1,16 @@
 import { CloudFormationClient, GetTemplateCommand, UpdateStackCommand } from '@aws-sdk/client-cloudformation'
 import isEqual from 'lodash/isEqual'
 
-import { getResourceTags } from '../../shared/get-resource-tags'
-import * as plugins from '../../plugins'
-import { progressLogger } from '../../shared/progress-logger'
-import { SiteTemplate } from '../../shared/site-template'
-import { trackStackStatus } from './track-stack-status'
-import { updateSiteInfo } from './update-site-info'
+import { checkAdminAuthentication, getCredentials } from '../shared/authentication-lib'
+import { getResourceTags } from '../shared/get-resource-tags'
+import * as plugins from '../plugins'
+import { progressLogger } from '../shared/progress-logger'
+import { SiteTemplate } from '../shared/site-template'
+import { trackStackStatus } from './lib/track-stack-status'
+import { updatePlugins } from './lib/update-plugins'
+import { updateSiteInfo } from './lib/update-site-info'
 
-const updateStack = async ({ credentials, siteInfo }) => {
+const updateStack = async ({ credentials, db, globalOptions, siteInfo }) => {
   const { region, stackName } = siteInfo
 
   const siteTemplate = new SiteTemplate({ credentials, siteInfo })
@@ -62,7 +64,9 @@ const updateStack = async ({ credentials, siteInfo }) => {
     progressLogger.write('Stack updated.\n')
   }
 
-  return finalStatus
+  if (finalStatus === 'UPDATE_COMPLETE') {
+    await updatePlugins({ credentials, siteInfo })
+  }
 }
 
 export { updateStack }

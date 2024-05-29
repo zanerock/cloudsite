@@ -24,6 +24,7 @@ description: Documents available Cloudsite commands.
 
 ## Commands
 
+- [`billing`](#cloudsite-billing): Billing group commands.
 - [`cleanup`](#cloudsite-cleanup): Attempts to fully delete partially deleted sites in the 'needs to be cleaned up' state.
 - [`configuration`](#cloudsite-configuration): Command group for managing the cloudsite CLI configuration.
 - [`create`](#cloudsite-create): Creates a new website, setting up infrastructure and copying content.
@@ -35,8 +36,35 @@ description: Documents available Cloudsite commands.
 - [`list`](#cloudsite-list): Lists the sites registered in the local database.
 - [`plugin-settings`](#cloudsite-plugin-settings): Command group for managing plugin settings.
 - [`reminders`](#cloudsite-reminders): Command group for managing reminders.
-- [`update`](#cloudsite-update): Updates a website content and/or infrastructure.
+- [`update-content`](#cloudsite-update-content): Updates a website content and/or infrastructure.
+- [`update-dns`](#cloudsite-update-dns): Updates the DNS entries to match the new site endpoint.
+- [`update-stack`](#cloudsite-update-stack): Updates website infrastructure.
 - [`verify`](#cloudsite-verify): Verifies the site is up and running and that the stack and content are up-to-date.
+
+<span id="cloudsite-billing"></span>
+### `billing`
+
+`cloudsite billing [subcommand]`
+
+Billing group commands.
+
+#### `billing` options
+
+|Option|Description|
+|------|------|
+|`[subcommand]`|(_main argument_,_required_) The subcommand to execute.|
+
+
+#### Subcommands
+
+- [`configure-tags`](#cloudsite-billing-configure-tags): Configures the global cost allocation tags.
+
+<span id="cloudsite-billing-configure-tags"></span>
+##### `configure-tags`
+
+`cloudsite billing configure-tags`
+
+Configures the global cost allocation tags.
 
 <span id="cloudsite-cleanup"></span>
 ### `cleanup`
@@ -299,24 +327,46 @@ Command group for managing reminders.
 
 List currently active reminders.
 
-<span id="cloudsite-update"></span>
-### `update`
+<span id="cloudsite-update-content"></span>
+### `update-content`
 
-`cloudsite update <options> [apex-domain]`
+`cloudsite update-content <options> [apex-domain]`
 
 Updates a website content and/or infrastructure.
 
-#### `update` options
+#### `update-content` options
+
+|Option|Description|
+|------|------|
+|`[apex-domain]`|(_main argument_,_required_) The apex domain identifying the site to update.|
+|`--no-build`|Suppresses the default behavior of building before updating the site.|
+|`--no-cache-invalidation`|Suppresses the default behavior of invalidating the CloudFront cache after the files are updated. Note that invalidation events are chargeable thought at the time of this writing, each account gets 1,000 free requests per year.|
+
+<span id="cloudsite-update-dns"></span>
+### `update-dns`
+
+`cloudsite update-dns [apex-domain]`
+
+Updates the DNS entries to match the new site endpoint.
+
+#### `update-dns` options
 
 |Option|Description|
 |------|------|
 |`[apex-domain]`|(_main argument_,_required_) The apex domain identifying the site.|
-|`--do-billing`|Limits updates to billing related matters (cost allocation tags) and other other specified updates.|
-|`--do-content`|Limits update to site content and any other specified updates.|
-|`--do-dns`|Limits update to DNS entries and any other specified updates.|
-|`--do-stack`|Limits update to stack infrastructure and any other specified updates.|
-|`--no-build`|Supresses the default behavior of building before updating the site.|
-|`--no-cache-invalidation`|Suppresses the default behavior of invalidating the CloudFront cache after the files are updated. Note that invalidation events are chargeable thought at the time of this writing, each account gets 1,000 free requests per year.|
+
+<span id="cloudsite-update-stack"></span>
+### `update-stack`
+
+`cloudsite update-stack [apex-domain]`
+
+Updates website infrastructure.
+
+#### `update-stack` options
+
+|Option|Description|
+|------|------|
+|`[apex-domain]`|(_main argument_,_required_) The apex domain identifying the site.|
 
 <span id="cloudsite-verify"></span>
 ### `verify`

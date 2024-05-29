@@ -9,6 +9,7 @@ import { cliSpec, DB_PATH, globalOptionsSpec } from './constants'
 import { checkReminders } from './lib/check-reminders'
 import { configureLogger, progressLogger } from '../lib/shared/progress-logger'
 import { getGlobalOptions } from './lib/get-global-options'
+import { handleBilling } from './lib/handle-billing'
 import { handleCleanup } from './lib/handle-cleanup'
 import { handleConfiguration } from './lib/handle-configuration'
 import { handleCreate } from './lib/handle-create'
@@ -20,7 +21,9 @@ import { handleList } from './lib/handle-list'
 import { handleImport } from './lib/handle-import'
 import { handlePluginSettings } from './lib/handle-plugin-settings'
 import { handleReminders } from './lib/handle-reminders'
-import { handleUpdate } from './lib/handle-update'
+import { handleUpdateContents } from './lib/handle-update-contents'
+import { handleUpdateDNS } from './lib/handle-update-dns'
+import { handleUpdateStack } from './lib/handle-update-stack'
 import { handleVerify } from './lib/handle-verify'
 
 const cloudsite = async () => {
@@ -77,6 +80,8 @@ const cloudsite = async () => {
   let noWrap = false // i.e., wrap by default
   try {
     switch (command) {
+      case 'billing':
+        ({ success, userMessage } = await handleBilling({ argv, db })); break
       case 'cleanup':
         ({ success, userMessage } = await handleCleanup({ argv, db })); break
       case 'configuration':
@@ -102,8 +107,12 @@ const cloudsite = async () => {
         ({ data, success, userMessage } = await handlePluginSettings({ argv, db })); break
       case 'reminders':
         ({ data, success } = await handleReminders({ argv, db })); break
-      case 'update':
-        ({ success, userMessage } = await handleUpdate({ argv, db, globalOptions })); break
+      case 'update-contents':
+        ({ success, userMessage } = await handleUpdateContents({ argv, db, globalOptions })); break
+      case 'update-dns':
+        ({ success, userMessage } = await handleUpdateDNS({ argv, db, globalOptions })); break
+      case 'update-stack':
+        ({ success, userMessage } = await handleUpdateStack({ argv, db, globalOptions })); break
       case 'verify':
         ({ data } = await handleVerify({ argv, db, globalOptions })); break
       case undefined:

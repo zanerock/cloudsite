@@ -57,6 +57,17 @@ const cliSpec = {
   ],
   commands : [
     {
+      name        : 'billing',
+      description : 'Billing group commands.',
+      arguments   : [subcommandSpec],
+      commands    : [
+        {
+          name: 'configure-tags',
+          description: 'Configures the global cost allocation tags.'
+        }
+      ]
+    },
+    {
       name        : 'cleanup',
       description : "Attempts to fully delete partially deleted sites in the 'needs to be cleaned up' state.",
       arguments   : [
@@ -376,44 +387,48 @@ const cliSpec = {
         }
       ]
     },
-    {
-      name        : 'update',
+        {
+      name        : 'update-content',
       description : 'Updates a website content and/or infrastructure.',
+      arguments   : [
+        {
+          name          : 'apex-domain',
+          description   : 'The apex domain identifying the site to update.',
+          defaultOption : true,
+          required      : true
+        },
+        {
+          name        : 'no-build',
+          description : 'Suppresses the default behavior of building before updating the site.',
+          type        : Boolean
+        },
+        {
+          name        : 'no-cache-invalidation',
+          description : 'Suppresses the default behavior of invalidating the CloudFront cache after the files are updated. Note that invalidation events are chargeable thought at the time of this writing, each account gets 1,000 free requests per year.'
+        }
+      ]
+    },
+    {
+      name        : 'update-dns',
+      description : 'Updates the DNS entries to match the new site endpoint.',
       arguments   : [
         {
           name          : 'apex-domain',
           description   : 'The apex domain identifying the site.',
           defaultOption : true,
           required      : true
-        },
+        }
+      ]
+    },
+    {
+      name        : 'update-stack',
+      description : 'Updates website infrastructure.',
+      arguments   : [
         {
-          name        : 'do-billing',
-          description : 'Limits updates to billing related matters (cost allocation tags) and other other specified updates.',
-          type        : Boolean
-        },
-        {
-          name        : 'do-content',
-          description : 'Limits update to site content and any other specified updates.',
-          type        : Boolean
-        },
-        {
-          name        : 'do-dns',
-          description : 'Limits update to DNS entries and any other specified updates.',
-          type        : Boolean
-        },
-        {
-          name        : 'do-stack',
-          description : 'Limits update to stack infrastructure and any other specified updates.',
-          type        : Boolean
-        },
-        {
-          name        : 'no-build',
-          description : 'Supresses the default behavior of building before updating the site.',
-          type        : Boolean
-        },
-        {
-          name        : 'no-cache-invalidation',
-          description : 'Suppresses the default behavior of invalidating the CloudFront cache after the files are updated. Note that invalidation events are chargeable thought at the time of this writing, each account gets 1,000 free requests per year.'
+          name          : 'apex-domain',
+          description   : 'The apex domain identifying the site.',
+          defaultOption : true,
+          required      : true
         }
       ]
     },
