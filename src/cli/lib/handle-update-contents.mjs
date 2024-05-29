@@ -1,6 +1,7 @@
 import commandLineArgs from 'command-line-args'
 
 import { cliSpec } from '../constants'
+import { getCredentials } from '../../lib/shared/authentication-lib'
 import { getOptionsSpec } from './get-options-spec'
 import { getSiteInfo } from './get-site-info'
 import { updateContents } from '../../lib/actions/update-contents'

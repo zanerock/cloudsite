@@ -36,7 +36,7 @@ description: Documents available Cloudsite commands.
 - [`list`](#cloudsite-list): Lists the sites registered in the local database.
 - [`plugin-settings`](#cloudsite-plugin-settings): Command group for managing plugin settings.
 - [`reminders`](#cloudsite-reminders): Command group for managing reminders.
-- [`update-content`](#cloudsite-update-content): Updates a website content and/or infrastructure.
+- [`update-contents`](#cloudsite-update-contents): Updates a website content and/or infrastructure.
 - [`update-dns`](#cloudsite-update-dns): Updates the DNS entries to match the new site endpoint.
 - [`update-stack`](#cloudsite-update-stack): Updates website infrastructure.
 - [`verify`](#cloudsite-verify): Verifies the site is up and running and that the stack and content are up-to-date.
@@ -327,14 +327,14 @@ Command group for managing reminders.
 
 List currently active reminders.
 
-<span id="cloudsite-update-content"></span>
-### `update-content`
+<span id="cloudsite-update-contents"></span>
+### `update-contents`
 
-`cloudsite update-content <options> [apex-domain]`
+`cloudsite update-contents <options> [apex-domain]`
 
 Updates a website content and/or infrastructure.
 
-#### `update-content` options
+#### `update-contents` options
 
 |Option|Description|
 |------|------|

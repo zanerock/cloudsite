@@ -388,7 +388,7 @@ const cliSpec = {
       ]
     },
         {
-      name        : 'update-content',
+      name        : 'update-contents',
       description : 'Updates a website content and/or infrastructure.',
       arguments   : [
         {
@@ -404,7 +404,8 @@ const cliSpec = {
         },
         {
           name        : 'no-cache-invalidation',
-          description : 'Suppresses the default behavior of invalidating the CloudFront cache after the files are updated. Note that invalidation events are chargeable thought at the time of this writing, each account gets 1,000 free requests per year.'
+          description : 'Suppresses the default behavior of invalidating the CloudFront cache after the files are updated. Note that invalidation events are chargeable thought at the time of this writing, each account gets 1,000 free requests per year.',
+          type        : Boolean
         }
       ]
     },
