@@ -97,68 +97,11 @@ const cliSpec = {
       commands : [
         {
           name        : 'setup-local',
-          description : "Runs the local setup wizard and updates all options. This should be used after the SSO account has been created (see 'cloudsite configuration setup-sso')."
+          description : "Runs the local setup wizard and updates all options. This should be used after SSO accounts have been created (see 'cloudsite permissions sso create')."
         },
         {
           name        : 'show',
           description : 'Displays the current configuration.'
-        },
-        {
-          name        : 'setup-sso',
-          description : 'Runs the SSO wizard and sets up the SSO user authentication in the IAM Identity Center.',
-          arguments   : [
-            {
-              name        : 'defaults',
-              type        : Boolean,
-              description : 'Use the defaults were possible and skip unnecessary interactive setup.'
-            },
-            {
-              name        : 'delete',
-              type        : Boolean,
-              description : "Confirms deletion of the Access keys after setting up the SSO access. If neither '--delete' nor '--no-delete' are set, then deletion will be interactively confirmed."
-            },
-            {
-              name        : 'group-name',
-              description : "The name of the group to create or reference. This group will be associated with the permission set and user. It is highly recommended to use the default name or certain operations, like 'import', may be complicated."
-            },
-            {
-              name        : 'instance-name',
-              description : 'The name to assign to the newly created identity center, if needed.'
-            },
-            {
-              name        : 'instance-region',
-              description : "The region in which to set up the identity center if no identity center currently set up. Defaults to 'us-east-1'."
-            },
-            {
-              name        : 'no-delete',
-              type        : Boolean,
-              description : 'Retains the Access keys after setting up SSO access.'
-            },
-            {
-              name        : 'policy-name',
-              description : "The name of the policy and permission set to create or reference. It is highly recommended to use the default name or certain operations, like 'import', may be complicated."
-            },
-            {
-              name        : 'sso-profile-name',
-              description : 'The name of the local SSO profile to create.'
-            },
-            {
-              name        : 'user-email',
-              description : 'The primary email to associate with the user.'
-            },
-            {
-              name        : 'user-family-name',
-              description : 'The family name of the cloudsite management user.'
-            },
-            {
-              name        : 'user-given-name',
-              description : 'The given name of the cloudsite management user.'
-            },
-            {
-              name        : 'user-name',
-              description : 'The name of the user account to create or reference.'
-            }
-          ]
         }
       ]
     },
@@ -320,6 +263,75 @@ const cliSpec = {
           required    : true
         },
         sourceTypeArgSpec
+      ]
+    },
+    {
+      name        : 'permissions',
+      description : 'Command group for permission related commands.',
+      commands    : [
+        {
+          name        : 'sso',
+          description : 'Command group for sso related commands.',
+          commands    : [
+            {
+              name        : 'create',
+              description : 'Runs the SSO setup wizard and creates global permission groups and initial user as necessary.',
+              arguments   : [
+                {
+                  name        : 'defaults',
+                  type        : Boolean,
+                  description : 'Use the defaults were possible and skip unnecessary interactive setup.'
+                },
+                {
+                  name        : 'delete',
+                  type        : Boolean,
+                  description : "Confirms deletion of the Access keys after setting up the SSO access. If neither '--delete' nor '--no-delete' are set, then deletion will be interactively confirmed."
+                },
+                {
+                  name        : 'group-name',
+                  description : "The name of the group to create or reference. This group will be associated with the permission set and user. It is highly recommended to use the default name or certain operations, like 'import', may be complicated."
+                },
+                {
+                  name        : 'instance-name',
+                  description : 'The name to assign to the newly created identity center, if needed.'
+                },
+                {
+                  name        : 'instance-region',
+                  description : "The region in which to set up the identity center if no identity center currently set up. Defaults to 'us-east-1'."
+                },
+                {
+                  name        : 'no-delete',
+                  type        : Boolean,
+                  description : 'Retains the Access keys after setting up SSO access.'
+                },
+                {
+                  name        : 'policy-name',
+                  description : "The name of the policy and permission set to create or reference. It is highly recommended to use the default name or certain operations, like 'import', may be complicated."
+                },
+                {
+                  name        : 'sso-profile-name',
+                  description : 'The name of the local SSO profile to create.'
+                },
+                {
+                  name        : 'user-email',
+                  description : 'The primary email to associate with the user.'
+                },
+                {
+                  name        : 'user-family-name',
+                  description : 'The family name of the cloudsite management user.'
+                },
+                {
+                  name        : 'user-given-name',
+                  description : 'The given name of the cloudsite management user.'
+                },
+                {
+                  name        : 'user-name',
+                  description : 'The name of the user account to create or reference.'
+                }
+              ]
+            }
+          ]
+        }
       ]
     },
     {

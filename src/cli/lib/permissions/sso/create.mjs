@@ -8,15 +8,15 @@ import { Questioner } from 'question-and-answer'
 import { IdentitystoreClient, GetUserIdCommand } from '@aws-sdk/client-identitystore'
 import { SSOAdminClient } from '@aws-sdk/client-sso-admin'
 
-import { checkAuthentication, getCredentials } from '../../../lib/shared/authentication-lib'
-import { cliSpec } from '../../constants'
-import { DEFAULT_SSO_POLICY_NAME, DEFAULT_SSO_GROUP_NAME } from '../../../lib/shared/constants'
+import { checkAuthentication, getCredentials } from '../../../../lib/shared/authentication-lib'
+import { cliSpec } from '../../../constants'
+import { DEFAULT_SSO_POLICY_NAME, DEFAULT_SSO_GROUP_NAME } from '../../../../lib/shared/constants'
 import { ensureRootOrganization } from './lib/ensure-root-organization'
-import { findIdentityStoreStaged } from '../../../lib/shared/find-identity-store'
-import { progressLogger } from '../../../lib/shared/progress-logger'
-import { setupSSO } from '../../../lib/actions/setup-sso'
+import { findIdentityStoreStaged } from '../../../../lib/shared/find-identity-store'
+import { progressLogger } from '../../../../lib/shared/progress-logger'
+import { setupSSO } from '../../../../lib/actions/setup-sso'
 
-const handleConfigurationSetupSSO = async ({ argv, db, globalOptions }) => {
+const create = async ({ argv, db, globalOptions }) => {
   const ssoSetupOptionsSpec = cliSpec
     .commands.find(({ name }) => name === 'configuration')
     .commands.find(({ name }) => name === 'setup-sso')
@@ -320,4 +320,4 @@ const handleConfigurationSetupSSO = async ({ argv, db, globalOptions }) => {
   return { success : true, userMessage : 'Settings updated.' }
 }
 
-export { handleConfigurationSetupSSO }
+export { create }

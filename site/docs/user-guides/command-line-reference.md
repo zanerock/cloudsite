@@ -34,6 +34,7 @@ description: Documents available Cloudsite commands.
 - [`get-iam-policy`](#cloudsite-get-iam-policy): Prints an IAM policy suitable for operating cloudsite.
 - [`import`](#cloudsite-import): Generates a site database based on currently deployed site stacks.
 - [`list`](#cloudsite-list): Lists the sites registered in the local database.
+- [`permissions`](#cloudsite-permissions): Command group for permission related commands.
 - [`plugin-settings`](#cloudsite-plugin-settings): Command group for managing plugin settings.
 - [`reminders`](#cloudsite-reminders): Command group for managing reminders.
 - [`update-contents`](#cloudsite-update-contents): Updates a website content and/or infrastructure.
@@ -97,7 +98,6 @@ Command group for managing the cloudsite CLI configuration.
 #### Subcommands
 
 - [`setup-local`](#cloudsite-configuration-setup-local): Runs the local setup wizard and updates all options.
-- [`setup-sso`](#cloudsite-configuration-setup-sso): Runs the SSO wizard and sets up the SSO user authentication in the IAM Identity Center.
 - [`show`](#cloudsite-configuration-show): Displays the current configuration.
 
 <span id="cloudsite-configuration-setup-local"></span>
@@ -105,31 +105,7 @@ Command group for managing the cloudsite CLI configuration.
 
 `cloudsite configuration setup-local`
 
-Runs the local setup wizard and updates all options. This should be used after the SSO account has been created (see 'cloudsite configuration setup-sso').
-
-<span id="cloudsite-configuration-setup-sso"></span>
-##### `setup-sso`
-
-`cloudsite configuration setup-sso <options>`
-
-Runs the SSO wizard and sets up the SSO user authentication in the IAM Identity Center.
-
-###### `setup-sso` options
-
-|Option|Description|
-|------|------|
-|`--defaults`|Use the defaults were possible and skip unnecessary interactive setup.|
-|`--delete`|Confirms deletion of the Access keys after setting up the SSO access. If neither '--delete' nor '--no-delete' are set, then deletion will be interactively confirmed.|
-|`--group-name`|The name of the group to create or reference. This group will be associated with the permission set and user. It is highly recommended to use the default name or certain operations, like 'import', may be complicated.|
-|`--instance-name`|The name to assign to the newly created identity center, if needed.|
-|`--instance-region`|The region in which to set up the identity center if no identity center currently set up. Defaults to 'us-east-1'.|
-|`--no-delete`|Retains the Access keys after setting up SSO access.|
-|`--policy-name`|The name of the policy and permission set to create or reference. It is highly recommended to use the default name or certain operations, like 'import', may be complicated.|
-|`--sso-profile-name`|The name of the local SSO profile to create.|
-|`--user-email`|The primary email to associate with the user.|
-|`--user-family-name`|The family name of the cloudsite management user.|
-|`--user-given-name`|The given name of the cloudsite management user.|
-|`--user-name`|The name of the user account to create or reference.|
+Runs the local setup wizard and updates all options. This should be used after SSO accounts have been created (see 'cloudsite permissions sso create').
 
 <span id="cloudsite-configuration-show"></span>
 ##### `show`
@@ -251,6 +227,54 @@ Lists the sites registered in the local database.
 |Option|Description|
 |------|------|
 |`--all-fields`|Includes all fields in the output.|
+
+<span id="cloudsite-permissions"></span>
+### `permissions`
+
+`cloudsite permissions`
+
+Command group for permission related commands.
+
+
+#### Subcommands
+
+- [`sso`](#cloudsite-permissions-sso): Command group for sso related commands.
+
+<span id="cloudsite-permissions-sso"></span>
+##### `sso`
+
+`cloudsite permissions sso`
+
+Command group for sso related commands.
+
+
+###### Subcommands
+
+- [`create`](#cloudsite-permissions-sso-create): Runs the SSO setup wizard and creates global permission groups and initial user as necessary.
+
+<span id="cloudsite-permissions-sso-create"></span>
+___`create`___
+
+`cloudsite permissions sso create <options>`
+
+Runs the SSO setup wizard and creates global permission groups and initial user as necessary.
+
+__`create` options__
+
+|Option|Description|
+|------|------|
+|`--defaults`|Use the defaults were possible and skip unnecessary interactive setup.|
+|`--delete`|Confirms deletion of the Access keys after setting up the SSO access. If neither '--delete' nor '--no-delete' are set, then deletion will be interactively confirmed.|
+|`--group-name`|The name of the group to create or reference. This group will be associated with the permission set and user. It is highly recommended to use the default name or certain operations, like 'import', may be complicated.|
+|`--instance-name`|The name to assign to the newly created identity center, if needed.|
+|`--instance-region`|The region in which to set up the identity center if no identity center currently set up. Defaults to 'us-east-1'.|
+|`--no-delete`|Retains the Access keys after setting up SSO access.|
+|`--policy-name`|The name of the policy and permission set to create or reference. It is highly recommended to use the default name or certain operations, like 'import', may be complicated.|
+|`--sso-profile-name`|The name of the local SSO profile to create.|
+|`--user-email`|The primary email to associate with the user.|
+|`--user-family-name`|The family name of the cloudsite management user.|
+|`--user-given-name`|The given name of the cloudsite management user.|
+|`--user-name`|The name of the user account to create or reference.|
 
 <span id="cloudsite-plugin-settings"></span>
 ### `plugin-settings`

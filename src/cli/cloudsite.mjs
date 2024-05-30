@@ -28,12 +28,13 @@ import { handleBillingConfigureTags } from './lib/billing/handle-billing-configu
 // configuration handlers
 import { handleConfigurationSetupLocal } from './lib/configuration/handle-configuration-setup-local'
 import { handleConfigurationShow } from './lib/configuration/handle-configuration-show'
-import { handleConfigurationSetupSSO } from './lib/configuration/handle-configuration-setup-sso'
 // plugin-settings handlers
 import { handlePluginSettingsSet } from './lib/plugin-settings/handle-plugin-settings-set'
 import { handlePluginSettingsShow } from './lib/plugin-settings/handle-plugin-settings-show'
 // reminders handlers
 import { handleRemindersList } from './lib/reminders/handle-reminders-list'
+// permissions sso handlers
+import { create as permissionsSSOCreate } from './lib/permissions/sso/create'
 
 const cloudsite = async () => {
   // we can 'stopAtFirstUnknown' because the globals are defined at the root level
@@ -89,24 +90,25 @@ const cloudsite = async () => {
   let noWrap = false // i.e., wrap by default
   try {
     switch (command) {
-      case 'billing':
+      case 'billing': {
         const handleBilling = createCommandGroupHandler({
-          commandHandlerMap : { 'configure-tags': handleBillingConfigureTags },
-          groupPath: ['billing']
+          commandHandlerMap : { 'configure-tags' : handleBillingConfigureTags },
+          groupPath         : ['billing']
         });
         ({ success, userMessage } = await handleBilling({ argv, db })); break
+      }
       case 'cleanup':
         ({ success, userMessage } = await handleCleanup({ argv, db })); break
-      case 'configuration':
+      case 'configuration': {
         const handleConfiguration = createCommandGroupHandler({
           commandHandlerMap : {
             'setup-local' : handleConfigurationSetupLocal,
-            show : handleConfigurationShow,
-            'setup-sso' : handleConfigurationSetupSSO
+            show          : handleConfigurationShow
           },
-          groupPath: ['configuration']
+          groupPath : ['configuration']
         });
         ({ data, success, userMessage } = await handleConfiguration({ argv, db, globalOptions })); break
+      }
       case 'create':
         ({ success, userMessage } = await handleCreate({ argv, db, globalOptions })); break
       case 'destroy':
@@ -124,23 +126,39 @@ const cloudsite = async () => {
         ({ data, noWrap, success } = await handleList({ argv, db })); break
       case 'import':
         ({ success, userMessage } = await handleImport({ argv, db, globalOptions })); break
-      case 'plugin-settings':
+      case 'permissions': {
+        const handlePermsissions = createCommandGroupHandler({
+          commandHandlerMap : {
+            sso : createCommandGroupHandler({
+              commandHandlerMap : {
+                create : permissionsSSOCreate
+              },
+              groupPath : ['permissions', 'sso']
+            })
+          },
+          groupPath : ['permissions']
+        });
+        ({ data, success } = await handlePermsissions({ argv, db, getGlobalOptions })); break
+      }
+      case 'plugin-settings': {
         const handlePluginSettings = createCommandGroupHandler({
           commandHandlerMap : {
-            set : handlePluginSettingsSet,
+            set  : handlePluginSettingsSet,
             show : handlePluginSettingsShow
           },
-          groupPath: ['plugin-settings']
+          groupPath : ['plugin-settings']
         });
         ({ data, success, userMessage } = await handlePluginSettings({ argv, db })); break
-      case 'reminders':
+      }
+      case 'reminders': {
         const handleReminders = createCommandGroupHandler({
           commandHandlerMap : {
             list : handleRemindersList
           },
-          groupPath: ['reminders']
+          groupPath : ['reminders']
         });
         ({ data, success } = await handleReminders({ argv, db })); break
+      }
       case 'update-contents':
         ({ success, userMessage } = await handleUpdateContents({ argv, db, globalOptions })); break
       case 'update-dns':

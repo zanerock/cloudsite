@@ -1,7 +1,7 @@
 import { OrganizationsClient, CreateOrganizationCommand, DescribeAccountCommand } from '@aws-sdk/client-organizations'
 
-import { getAccountID } from '../../../../lib/shared/get-account-id'
-import { progressLogger } from '../../../../lib/shared/progress-logger'
+import { getAccountID } from '../../../../../lib/shared/get-account-id'
+import { progressLogger } from '../../../../../lib/shared/progress-logger'
 
 const ensureRootOrganization = async ({ credentials, db }) => {
   if (db.account.accountID === undefined) {
