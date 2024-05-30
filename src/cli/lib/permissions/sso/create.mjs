@@ -18,8 +18,9 @@ import { setupSSO } from '../../../../lib/actions/setup-sso'
 
 const create = async ({ argv, db, globalOptions }) => {
   const ssoSetupOptionsSpec = cliSpec
-    .commands.find(({ name }) => name === 'configuration')
-    .commands.find(({ name }) => name === 'setup-sso')
+    .commands.find(({ name }) => name === 'permissions')
+    .commands.find(({ name }) => name === 'sso')
+    .commands.find(({ name }) => name === 'create')
     .arguments || []
   const ssoSetupOptions = commandLineArgs(ssoSetupOptionsSpec, { argv })
   let {

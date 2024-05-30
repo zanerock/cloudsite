@@ -231,9 +231,15 @@ Lists the sites registered in the local database.
 <span id="cloudsite-permissions"></span>
 ### `permissions`
 
-`cloudsite permissions`
+`cloudsite permissions [subcommand]`
 
 Command group for permission related commands.
+
+#### `permissions` options
+
+|Option|Description|
+|------|------|
+|`[subcommand]`|(_main argument_,_required_) The subcommand to execute.|
 
 
 #### Subcommands
@@ -243,9 +249,15 @@ Command group for permission related commands.
 <span id="cloudsite-permissions-sso"></span>
 ##### `sso`
 
-`cloudsite permissions sso`
+`cloudsite permissions sso [subcommand]`
 
 Command group for sso related commands.
+
+###### `sso` options
+
+|Option|Description|
+|------|------|
+|`[subcommand]`|(_main argument_,_required_) The subcommand to execute.|
 
 
 ###### Subcommands

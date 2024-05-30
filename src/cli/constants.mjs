@@ -268,10 +268,12 @@ const cliSpec = {
     {
       name        : 'permissions',
       description : 'Command group for permission related commands.',
+      arguments   : [subcommandSpec],
       commands    : [
         {
           name        : 'sso',
           description : 'Command group for sso related commands.',
+          arguments   : [subcommandSpec],
           commands    : [
             {
               name        : 'create',

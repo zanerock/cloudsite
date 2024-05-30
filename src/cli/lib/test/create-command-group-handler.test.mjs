@@ -11,6 +11,21 @@ describe('createCommandGroupHandler', () => {
     expect(result).toBe(true)
   })
 
+  test.only('returns valid 2nd level handler', async () => {
+    const groupHandlerFunction = createCommandGroupHandler({
+      commandHandlerMap : {
+        sso : createCommandGroupHandler({
+          commandHandlerMap : { 'create' : () => true },
+          groupPath : ['permissions', 'sso']
+        })
+      },
+      groupPath : ['permissions']
+    })
+
+    const result = await groupHandlerFunction({ argv: ['sso', 'create'] })
+    expect(result).toBe(true)
+  })
+
   test('complains if command handler map entry count too low', () => {
     expect(() => createCommandGroupHandler({
       commandHandlerMap : {},
