@@ -8,10 +8,9 @@ import isEqual from 'lodash/isEqual'
 import { cliSpec, DB_PATH, globalOptionsSpec } from './constants'
 import { checkReminders } from './lib/check-reminders'
 import { configureLogger, progressLogger } from '../lib/shared/progress-logger'
+import { createCommandGroupHandler } from './lib/create-command-group-handler'
 import { getGlobalOptions } from './lib/get-global-options'
-import { handleBilling } from './lib/handle-billing'
 import { handleCleanup } from './lib/handle-cleanup'
-import { handleConfiguration } from './lib/handle-configuration'
 import { handleCreate } from './lib/handle-create'
 import { handleDestroy } from './lib/handle-destroy'
 import { handleDetail } from './lib/handle-detail'
@@ -19,12 +18,22 @@ import { handleDocument } from './lib/handle-document'
 import { handleGetIAMPolicy } from './lib/handle-get-iam-policy'
 import { handleList } from './lib/handle-list'
 import { handleImport } from './lib/handle-import'
-import { handlePluginSettings } from './lib/handle-plugin-settings'
-import { handleReminders } from './lib/handle-reminders'
 import { handleUpdateContents } from './lib/handle-update-contents'
 import { handleUpdateDNS } from './lib/handle-update-dns'
 import { handleUpdateStack } from './lib/handle-update-stack'
 import { handleVerify } from './lib/handle-verify'
+
+// billing handlers
+import { handleBillingConfigureTags } from './lib/billing/handle-billing-configure-tags'
+// configuration handlers
+import { handleConfigurationSetupLocal } from './lib/configuration/handle-configuration-setup-local'
+import { handleConfigurationShow } from './lib/configuration/handle-configuration-show'
+import { handleConfigurationSetupSSO } from './lib/configuration/handle-configuration-setup-sso'
+// plugin-settings handlers
+import { handlePluginSettingsSet } from './lib/plugin-settings/handle-plugin-settings-set'
+import { handlePluginSettingsShow } from './lib/plugin-settings/handle-plugin-settings-show'
+// reminders handlers
+import { handleRemindersList } from './lib/reminders/handle-reminders-list'
 
 const cloudsite = async () => {
   // we can 'stopAtFirstUnknown' because the globals are defined at the root level
@@ -81,10 +90,22 @@ const cloudsite = async () => {
   try {
     switch (command) {
       case 'billing':
+        const handleBilling = createCommandGroupHandler({
+          commandHandlerMap : { 'configure-tags': handleBillingConfigureTags },
+          groupPath: ['billing']
+        });
         ({ success, userMessage } = await handleBilling({ argv, db })); break
       case 'cleanup':
         ({ success, userMessage } = await handleCleanup({ argv, db })); break
       case 'configuration':
+        const handleConfiguration = createCommandGroupHandler({
+          commandHandlerMap : {
+            'setup-local' : handleConfigurationSetupLocal,
+            show : handleConfigurationShow,
+            'setup-sso' : handleConfigurationSetupSSO
+          },
+          groupPath: ['configuration']
+        });
         ({ data, success, userMessage } = await handleConfiguration({ argv, db, globalOptions })); break
       case 'create':
         ({ success, userMessage } = await handleCreate({ argv, db, globalOptions })); break
@@ -104,8 +125,21 @@ const cloudsite = async () => {
       case 'import':
         ({ success, userMessage } = await handleImport({ argv, db, globalOptions })); break
       case 'plugin-settings':
+        const handlePluginSettings = createCommandGroupHandler({
+          commandHandlerMap : {
+            set : handlePluginSettingsSet,
+            show : handlePluginSettingsShow
+          },
+          groupPath: ['plugin-settings']
+        });
         ({ data, success, userMessage } = await handlePluginSettings({ argv, db })); break
       case 'reminders':
+        const handleReminders = createCommandGroupHandler({
+          commandHandlerMap : {
+            list : handleRemindersList
+          },
+          groupPath: ['reminders']
+        });
         ({ data, success } = await handleReminders({ argv, db })); break
       case 'update-contents':
         ({ success, userMessage } = await handleUpdateContents({ argv, db, globalOptions })); break
