@@ -48,6 +48,19 @@ const subcommandSpec = {
   required      : true
 }
 
+const keyDeleteSpec = [
+  {
+    name        : 'delete',
+    type        : Boolean,
+    description : "Confirms deletion of the Access keys after setting up the SSO access. If neither '--delete' nor '--no-delete' are set, then deletion will be interactively confirmed."
+  },
+  {
+    name        : 'no-delete',
+    type        : Boolean,
+    description : 'Retains the Access keys after setting up SSO access.'
+  }
+]
+
 const cliSpec = {
   mainCommand : 'cloudsite', // TODO: should just be command
   description : 'Low cost, high performance cloud based website hosting manager.',
@@ -235,17 +248,9 @@ const cliSpec = {
           type        : Boolean
         },
         {
-          name        : 'group-name',
-          description : "The name to record for the SSO group. It will record the given name if no name is currently in the DB. With '--confirmed' set, this will override any existing name. Otherwise, it will initiate interactive confirmation if a name is already in the DB."
-        },
-        {
           name        : 'no-account',
           description : 'If set, then the account-level data import is skipped.',
           type        : Boolean
-        },
-        {
-          name        : 'policy-name',
-          description : "The name to record for the Cloudsite policy. It will record the given name if no name is currently in the DB. With '--confirmed' set, this will override any existing name. Otherwise, it will initiate interactive confirmation if a name is already in the DB."
         },
         {
           name        : 'refresh',
@@ -280,56 +285,14 @@ const cliSpec = {
               description : 'Runs the SSO setup wizard and creates global permission groups and initial user as necessary.',
               arguments   : [
                 {
-                  name        : 'defaults',
-                  type        : Boolean,
-                  description : 'Use the defaults were possible and skip unnecessary interactive setup.'
-                },
-                {
-                  name        : 'delete',
-                  type        : Boolean,
-                  description : "Confirms deletion of the Access keys after setting up the SSO access. If neither '--delete' nor '--no-delete' are set, then deletion will be interactively confirmed."
-                },
-                {
-                  name        : 'group-name',
-                  description : "The name of the group to create or reference. This group will be associated with the permission set and user. It is highly recommended to use the default name or certain operations, like 'import', may be complicated."
-                },
-                {
-                  name        : 'instance-name',
+                  name        : 'identity-store-name',
                   description : 'The name to assign to the newly created identity center, if needed.'
                 },
                 {
-                  name        : 'instance-region',
+                  name        : 'identity-store-region',
                   description : "The region in which to set up the identity center if no identity center currently set up. Defaults to 'us-east-1'."
                 },
-                {
-                  name        : 'no-delete',
-                  type        : Boolean,
-                  description : 'Retains the Access keys after setting up SSO access.'
-                },
-                {
-                  name        : 'policy-name',
-                  description : "The name of the policy and permission set to create or reference. It is highly recommended to use the default name or certain operations, like 'import', may be complicated."
-                },
-                {
-                  name        : 'sso-profile-name',
-                  description : 'The name of the local SSO profile to create.'
-                },
-                {
-                  name        : 'user-email',
-                  description : 'The primary email to associate with the user.'
-                },
-                {
-                  name        : 'user-family-name',
-                  description : 'The family name of the cloudsite management user.'
-                },
-                {
-                  name        : 'user-given-name',
-                  description : 'The given name of the cloudsite management user.'
-                },
-                {
-                  name        : 'user-name',
-                  description : 'The name of the user account to create or reference.'
-                }
+                ...keyDeleteSpec
               ]
             }
           ]
@@ -399,6 +362,41 @@ const cliSpec = {
           name        : 'list',
           description : 'List currently active reminders.'
         }
+      ]
+    },
+    {
+      name : 'setup',
+      description: 'Runs the initial setup wizard. This is safe to re-run in order to deal with cases of partial success or mid-setup errors.',
+      arguments: [
+        {
+          name        : 'identity-store-name',
+          description : 'The name to assign to the newly created identity center, if needed.'
+        },
+        {
+          name        : 'identity-store-region',
+          description : "The region in which to set up the identity center if no identity center currently set up. Defaults to 'us-east-1'."
+        },
+        {
+          name        : 'sso-profile-name',
+          description : 'The name of the local SSO profile to create.'
+        },
+        {
+          name        : 'user-email',
+          description : 'The primary email to associate with the user.'
+        },
+        {
+          name        : 'user-family-name',
+          description : 'The family name of the cloudsite management user.'
+        },
+        {
+          name        : 'user-given-name',
+          description : 'The given name of the cloudsite management user.'
+        },
+        {
+          name        : 'user-name',
+          description : 'The name of the user account to create or reference.'
+        },
+        ...keyDeleteSpec
       ]
     },
     {

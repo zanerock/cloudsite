@@ -18,6 +18,7 @@ import { handleDocument } from './lib/handle-document'
 import { handleGetIAMPolicy } from './lib/handle-get-iam-policy'
 import { handleList } from './lib/handle-list'
 import { handleImport } from './lib/handle-import'
+import { handler as handleSetup } from './handlers/setup'
 import { handleUpdateContents } from './lib/handle-update-contents'
 import { handleUpdateDNS } from './lib/handle-update-dns'
 import { handleUpdateStack } from './lib/handle-update-stack'
@@ -159,6 +160,8 @@ const cloudsite = async () => {
         });
         ({ data, success } = await handleReminders({ argv, db })); break
       }
+      case 'setup':
+        ({ success, userMessage } = await handleSetup({ argv, db, globalOptions })); break
       case 'update-contents':
         ({ success, userMessage } = await handleUpdateContents({ argv, db, globalOptions })); break
       case 'update-dns':

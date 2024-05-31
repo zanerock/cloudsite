@@ -1,3 +1,4 @@
+import { existsSync as fileExists } from 'node:fs'
 import * as fs from 'node:fs/promises'
 import * as fsPath from 'node:path'
 
@@ -8,7 +9,7 @@ import { Questioner } from 'question-and-answer'
 import { IdentitystoreClient, GetUserIdCommand } from '@aws-sdk/client-identitystore'
 import { SSOAdminClient } from '@aws-sdk/client-sso-admin'
 
-import { checkAuthentication, getCredentials } from '../../../../lib/shared/authentication-lib'
+import { checkAdminAuthentication, getCredentials } from '../../../../lib/shared/authentication-lib'
 import { cliSpec } from '../../../constants'
 import { DEFAULT_SSO_POLICY_NAME, DEFAULT_SSO_GROUP_NAME } from '../../../../lib/shared/constants'
 import { ensureRootOrganization } from './lib/ensure-root-organization'
@@ -26,168 +27,99 @@ const create = async ({ argv, db, globalOptions }) => {
   let {
     defaults,
     delete: doDelete,
-    'group-name': groupName = DEFAULT_SSO_GROUP_NAME,
-    'instance-name': instanceName,
-    'instance-region': instanceRegion = 'us-east-1',
+    'identity-store-name': identityStoreName,
+    'identity-store-region': identityStoreRegion = 'us-east-1',
     'no-delete': noDelete,
-    'policy-name': policyName = DEFAULT_SSO_POLICY_NAME,
-    'sso-profile-name': ssoProfile = 'cloudsite-manager',
     'user-email': userEmail,
     'user-family-name': userFamilyName,
     'user-given-name': userGivenName,
-    'user-name': userName = 'cloudsite-manager'
+    'user-name': userName
   } = ssoSetupOptions
+  let identityStoreID
 
-  try {
-    await checkAuthentication()
-  } catch (e) {
-    let exitCode
-    if (e.name === 'CredentialsProviderError') {
-      progressLogger.write('<error>No credentials were found.<rst> Refer to cloudsite instructions on how to configure API credentials for the SSO setup process.\n')
-      exitCode = 2
-      process.exit(exitCode) // eslint-disable-line  no-process-exit
-    } else {
-      throw (e)
-    }
-  }
-
-  const credentials = getCredentials()
-
-  await ensureRootOrganization({ credentials, db })
-
-  const identityStoreInfo = {
-    name   : instanceName,
-    region : instanceRegion
-  }
-
-  Object.assign(identityStoreInfo, await findIdentityStoreStaged({ credentials, firstCheckRegion : instanceRegion }))
-
-  if (identityStoreInfo.id === undefined) {
-    const interrogationBundle = {
-      actions : [
-        {
-          statement : "You do not appear to have an Identity Center associated with your account. The Identity Center is where you'll sign in with your SSO account."
-        },
-        {
-          prompt    : "Enter the preferred <em>name for the Identity Center<rst> instance (typically based on your primary domain name with '-' instead of '.'; e.g.: foo-com):",
-          parameter : 'instance-name'
-        },
-        {
-          prompt    : 'Enter the preferred <em>AWS region<rst> for the identity store instance:',
-          default   : instanceRegion,
-          parameter : 'instance-region'
-        }
-      ]
-    }
-
-    const questioner = new Questioner({
-      initialParameters : ssoSetupOptions,
-      interrogationBundle,
-      output            : progressLogger
-    })
-    await questioner.question()
-
-    identityStoreInfo.instanceName = questioner.get('instance-name')
-    identityStoreInfo.instanceRegion = questioner.get('instance-region');
-    ({ instanceName, instanceRegion } = identityStoreInfo)
-  }
-
-  identityStoreInfo.ssoAdminClient = new SSOAdminClient({ credentials, region : instanceRegion })
-
-  if (ssoSetupOptions['user-name'] === undefined && defaults !== true) {
-    const questioner = new Questioner({
-      interrogationBundle : {
-        actions : [
-          {
-            prompt    : `Enter the name of the Cloudsite manager user account to create${identityStoreInfo.id === undefined ? '' : 'or reference'}:`,
-            default   : userName,
-            parameter : 'user-name'
-          }
-        ]
-      },
-      output : progressLogger
-    })
-
-    await questioner.question()
-    userName = questioner.get('user-name')
-  }
-
-  // are they saying create this or referencing an existing user?
-  let userFound = false
-  if (identityStoreInfo.id !== undefined) {
-    progressLogger.write(`Checking identity store for user '${userName}'...`)
-    const identitystoreClient = new IdentitystoreClient({ credentials, region : identityStoreInfo.region })
-    const getUserIdCommad = new GetUserIdCommand({
-      IdentityStoreId     : identityStoreInfo.id,
-      AlternateIdentifier : {
-        UniqueAttribute : { AttributePath : 'userName', AttributeValue : userName }
-      }
-    })
+  let authenticated = false
+  let authenicationAttempts = 0
+  let credentials
+  let setupProfile = 'cloudsite-setup'
+  while (authenticated === false) {
+    credentials = getCredentials({ 'sso-profile': setupProfile })
     try {
-      await identitystoreClient.send(getUserIdCommad)
-      progressLogger.write(' FOUND.\n')
-      userFound = true // if no exception
+      await checkAdminAuthentication({ credentials })
+      authenticated = true
     } catch (e) {
-      if (e.name !== 'ResourceNotFoundException') {
-        progressLogger.write(' ERROR.\n')
-        throw e // otherwise, it's just not found and we leave 'userFound' false
+      if (e.name === 'CredentialsProviderError') {
+        if (authenicationAttempts > 0) {
+          progressLogger.write('<warn>The previous authentication attempt failed.<rst> Was the access key information copied correctly and fully? You can try again or refer to the documentation referenced below.\n\n')
+        }
+
+        progressLogger.writeWithOptions({ breakSpacesOnly: true }, "<error>No credentials were found.<rst> You can refer to the documentation here:\n<code>https://cloudsitehosting.org/docs/get-started/authentication#initial-authentication-with-access-keys<rst>\nor simply follow the directions below.\n\n1) Log into your aws account:\n\n   <code>https://console.aws.amazon.com/<rst>\n\n2) Click the <em>account name<rst> in the upper right hand corner and select <em>Security credentials<rst>.\n3) From the IAM security credentials page, scroll down to the <em>Access keys<rst> section.\n4) Click the <em>Create access key<rst> button.\n5) Confirm you wish to create an access key and click <em>Create access key<rst>.\n\n")
+
+        const interrogationBundle = { actions: [
+          { prompt: 'Copy and paste the <em>Access key<rst> here:', parameter : 'ACCESS_KEY', requireSomething: true },
+          { 
+            prompt: 'Copy and paste the <em>Secret access key<rst> here:',
+            parameter: 'SECRET_ACCESS_KEY', 
+            requireSomething: true
+          }
+        ]}
+        const questioner = new Questioner({ interrogationBundle, output: progressLogger })
+        await questioner.question()
+
+        const credentialsFile = fsPath.join(process.env.HOME, '.aws', 'credentials')
+        const creds = new ConfigIniParser()
+        if (fileExists(credentialsFile)) {
+          progressLogger.write('Found existing <code>~/.aws/credentials<rst> file.\nParsing...')
+          const credentialsContents = await fs.readFile(credentialsFile, { encoding: 'utf8' })
+          creds.parse(credentialsContents)
+          let counter = 0
+          while (creds.isHaveSection(setupProfile)) {
+            setupProfile = 'setup-profile-' + counter
+            counter += 1
+          }
+        } // else, there is no previous creds file
+        await fs.mkdir(fsPath.dirname(credentialsFile), { recursive: true })
+        // now we can update or create the credentials file
+        creds.addSection(setupProfile)
+        creds.set(setupProfile, 'aws_access_key_id', questioner.get('ACCESS_KEY'))
+        creds.set(setupProfile, 'aws_secret_access_key', questioner.get('SECRET_ACCESS_KEY'))
+
+        const credsContents = creds.stringify()
+        await fs.writeFile(credentialsFile, credsContents, { encoding: 'utf8' })
+        // new we loop and try the authentication again
+      } else {
+        throw (e)
       }
-      progressLogger.write(' NOT FOUND.\n')
     }
   }
 
-  const ibActions = []
+  await ensureRootOrganization({ credentials, db });
 
-  if (userFound === false) {
-    ibActions.push(...[
-      {
-        prompt    : 'Enter the <em>email<rst> of the Cloudsite manager user:',
-        parameter : 'user-email'
-      },
-      {
-        prompt    : 'Enter the <em>given name<rst> of the Cloudsite manager:',
-        parameter : 'user-given-name'
-      },
-      {
-        prompt    : 'Enter the <em>family name<rst> of the Cloudsite manager:',
-        parameter : 'user-family-name'
-      }
-    ])
-  }
+  ({ identityStoreID, identityStoreRegion } =
+    await findIdentityStoreStaged({ credentials, firstCheckRegion : identityStoreRegion }));
 
-  if (defaults !== true) {
-    ibActions.push(...[ // note, any questions with values already set by CLI options will be skipped
-      {
-        prompt    : "Enter the name of the <em>SSO profile<rst> to create or reference (enter '-' to set the default profile):",
-        default   : ssoProfile,
-        parameter : 'sso-profile-name'
-      },
-      {
-        prompt    : 'Enter the name of the Cloudsite <em>policy<rst> to create or reference (<warn>it is highly recommended to use the default name if possible<rst>):',
-        default   : policyName,
-        parameter : 'policy-name'
-      },
-      {
-        prompt    : 'Enter the name of the Cloudsite managers <em>group<rst> to create or reference (<warn>it is highly recommended to use the default name if possible<rst>):',
-        default   : groupName,
-        parameter : 'group-name'
-      }
-    ])
-  }
+  if (identityStoreID === undefined) {
+    const interrogationBundle = {
+      actions : [
+        {
+          statement : "You do not appear to have an Identity Center associated with your account. The Identity Center is where you'll sign in to allow Cloudsite to work with AWS."
+        }
+      ]
+    }
 
-  if (noDelete === undefined && doDelete === undefined) {
-    ibActions.push({
-      prompt    : 'Delete Access keys after SSO setup:',
-      paramType : 'boolean',
-      default   : true,
-      parameter : 'do-delete'
-    })
-  }
+    if (identityStoreName === undefined) {
+      interrogationBundle.actions.push({
+        prompt    : "Enter the preferred <em>name for the Identity Center<rst> instance (typically based on your primary domain name with '-' instead of '.'; e.g.: foo-com):",
+        parameter : 'identity-store-name'
+      })
+    }
 
-  if (ibActions.length > 0) {
-    ibActions.push({ review : 'questions' })
-
-    const interrogationBundle = { actions : ibActions }
+    if (identityStoreID === undefined) {
+      interrogationBundle.actions.push({
+        prompt    : 'Enter the preferred <em>AWS region<rst> for the identity store instance:',
+        default   : identityStoreRegion,
+        parameter : 'identity-store-region'
+      })
+    }
 
     const questioner = new Questioner({
       initialParameters : ssoSetupOptions,
@@ -196,83 +128,11 @@ const create = async ({ argv, db, globalOptions }) => {
     })
     await questioner.question()
 
-    const { values } = questioner;
-
-    ({
-      'group-name': groupName = groupName,
-      'policy-name': policyName = policyName,
-      'sso-profile-name': ssoProfile = ssoProfile,
-      'user-email': userEmail = userEmail,
-      'user-family-name': userFamilyName = userFamilyName,
-      'user-given-name' : userGivenName = userGivenName,
-      'user-name': userName = userName
-    } = values)
-
-    if (doDelete === undefined && noDelete === undefined) {
-      doDelete = questioner.get('do-delete')
+    if (identityStoreName === undefined) {
+      identityStoreName = questioner.get('identity-store-name')
     }
-  }
-
-  // check and warn for non-standard names where the only way we can identify the resource is by name
-  const nonStandardNames = []
-  if (policyName !== DEFAULT_SSO_POLICY_NAME) {
-    nonStandardNames.push('policy name')
-  }
-  if (groupName !== DEFAULT_SSO_GROUP_NAME) {
-    nonStandardNames.push('group name')
-  }
-  if (nonStandardNames.length > 0) {
-    const warning = `<em>WARNING<rst> Detected non-standard <em>${nonStandardNames.join('<rst> and <em>')}<rst>. Using non-standard names will require that you remember and supply the non-standard names for certain operations. For instance, if you need to rebuild the Cloudsite database on another computer. It is highly recommended that standard names be used if at all possible.`
-    const interrogationBundle = {
-      actions : [
-        { statement : warning },
-        {
-          prompt    : 'Revert to standard names? (Y=revert, N=keep)',
-          parameter : 'REVERT',
-          paramType : 'boolean',
-          default   : true
-        }
-      ]
-    }
-
-    const questioner = new Questioner({ interrogationBundle, output : progressLogger })
-    await questioner.question()
-
-    if (questioner.get('REVERT') === true) {
-      progressLogger.write(`Reverting to standard policy name '${DEFAULT_SSO_POLICY_NAME}' and group name '${DEFAULT_SSO_GROUP_NAME}'...`)
-      policyName = DEFAULT_SSO_POLICY_NAME
-      groupName = DEFAULT_SSO_GROUP_NAME
-    } else {
-      progressLogger.write(`Retaining non-standard ${nonStandardNames.join(' and ')}...`)
-    }
-  }
-
-  if (noDelete === true) {
-    doDelete = false
-  } else if (doDelete === undefined) {
-    doDelete = false
-  }
-
-  const requiredFields = [
-    ['group-name', groupName],
-    ['policy-name', policyName],
-    ['sso-profile-name', ssoProfile],
-    ['user-name', userName]
-  ]
-
-  if (userFound === false) {
-    requiredFields.push(
-      ['user-email', userEmail],
-      ['user-family-name', userFamilyName],
-      ['user-given-name', userGivenName]
-    )
-  }
-
-  for (const [label, value] of requiredFields) {
-    // between the CLI options and interactive setup, the only way thees aren't set is if the user explicitly set to
-    // '-' (undefined)
-    if (value === undefined) {
-      throw new Error(`Required parameter '${label}' is undefined.`)
+    if (identityStoreID === undefined) {
+      identityStoreRegion = questioner.get('identity-store-region')
     }
   }
 
@@ -282,14 +142,17 @@ const create = async ({ argv, db, globalOptions }) => {
     doDelete,
     globalOptions,
     groupName,
-    identityStoreInfo,
-    instanceName,
+    identityStoreARN,
+    identityStoreID,
+    identityStoreName,
+    identityStoreRegion,
     policyName,
     ssoProfile,
+    ssoStartURL,
     userEmail,
     userFamilyName,
     userGivenName,
-    userName
+    userName,
   })
 
   progressLogger.write('Configuring local SSO profile...')
@@ -316,9 +179,8 @@ const create = async ({ argv, db, globalOptions }) => {
   const { account } = db
   const { localSettings = {} } = account
   account.localSettings = localSettings
-  localSettings['sso-profile'] = ssoProfile
 
-  return { success : true, userMessage : 'Settings updated.' }
+  return { success : true, userMessage : 'Settings updated.', identityStoreARN, identityStoreRegion, identityStoreID }
 }
 
 export { create }
