@@ -1,22 +1,23 @@
-import { IdentitystoreClient, ListUsersCommand } from '@aws-sdk/client-identitystore'
-import { ListBucketsCommand, S3Client } from '@aws-sdk/client-s3'
+import { IAMClient, GetAccountSummaryCommand } from '@aws-sdk/client-iam'
+import { STSClient, GetCallerIdentityCommand } from "@aws-sdk/client-sts"
 import { fromIni } from '@aws-sdk/credential-providers'
 
 const checkAuthentication = async ({ globalOptions = {} } = {}) => {
   const credentials = getCredentials(globalOptions) // passes in 'sso-profile'
 
-  const s3Client = new S3Client({ credentials })
-  const listBucketsCommand = new ListBucketsCommand({})
-  await s3Client.send(listBucketsCommand) // we don't actually care about the result, we're just checking the auth
+  const stsClient = new STSClient({ credentials })
+  const getCallerIdentityCommand = new GetCallerIdentityCommand({})
+  // we don't actually care about the result, we're just checking the auth
+  await stsClient.send(getCallerIdentityCommand)
 
   return credentials
 }
 
-const checkAdminAuthentication = async ({ credentials, db } = {}) => {
-  const identitystoreClient = new IdentitystoreClient({ credentials, region : db.permissions.sso.identityStoreRegion })
-  const listUsersCommand = new ListUsersCommand({ IdentityStoreId : db.permissions.sso.identityStoreID })
+const checkAdminAuthentication = async ({ credentials } = {}) => {
+  const iamClient = new IAMClient({ credentials })
+  const getAccountSummaryCommand = new GetAccountSummaryCommand({ })
   // we don't actually care about the result, we're just checking the auth
-  await identitystoreClient.send(listUsersCommand)
+  await iamClient.send(getAccountSummaryCommand)
 
   return credentials
 }
