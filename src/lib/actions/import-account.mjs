@@ -31,10 +31,10 @@ const importGroupData = async ({ credentials, db, groupName, identityStoreID, id
 
 const importIdentityStoreData = async ({ credentials, db }) => {
   const { id, instanceARN, region, ssoAdminClient, ssoStartURL } = await findIdentityStoreStaged({ credentials })
-  db.account.identityStoreID = id
-  db.account.identityStoreARN = instanceARN
-  db.account.identityStoreRegion = region
-  db.account.ssoStartURL = ssoStartURL
+  db.permissions.sso.identityStoreID = id
+  db.permissions.sso.identityStoreARN = instanceARN
+  db.permissions.sso.identityStoreRegion = region
+  db.permissions.sso.ssoStartURL = ssoStartURL
 
   return { identityStoreID : id, identityStoreRegion : region, instanceARN, ssoAdminClient }
 }

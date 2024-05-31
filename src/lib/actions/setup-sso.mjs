@@ -234,10 +234,10 @@ const setupIdentityStore = async ({ credentials, db, identityStoreInfo, instance
     ssoStartURL
   } = identityStoreInfo
 
-  if (db.account.identityStoreID !== undefined &&
-      db.account.identityStoreARN !== undefined &&
-      db.account.identityStoreRegion !== undefined &&
-      db.account.ssoStartURL !== undefined) {
+  if (db.permissions.sso.identityStoreID !== undefined &&
+      db.permissions.sso.identityStoreARN !== undefined &&
+      db.permissions.sso.identityStoreRegion !== undefined &&
+      db.permissions.sso.ssoStartURL !== undefined) {
     progressLogger.write('Found identity store IDs in local database')
     return
   }
@@ -278,10 +278,10 @@ const setupIdentityStore = async ({ credentials, db, identityStoreInfo, instance
         ssoStartURL
       } = findIdentityStoreResult)
 
-      db.account.identityStoreID = identityStoreID
-      db.account.identityStoreARN = instanceARN
-      db.account.identityStoreRegion = identityStoreRegion
-      db.account.ssoStartURL = ssoStartURL
+      db.permissions.sso.identityStoreID = identityStoreID
+      db.permissions.sso.identityStoreARN = instanceARN
+      db.permissions.sso.identityStoreRegion = identityStoreRegion
+      db.permissions.sso.ssoStartURL = ssoStartURL
 
       const updateInstanceCommand = new UpdateInstanceCommand({
         Name        : instanceName,

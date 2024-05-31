@@ -53,7 +53,7 @@ const cloudsite = async () => {
       throw e
     }
     // otherwise, it's fine, there just are no options
-    db = { account : { settings : {} }, sites : {}, toCleanup : {}, reminders : [] }
+    db = { account : { settings : {} }, permissions: { sso: {} }, reminders : [], sites : {}, toCleanup : {} }
   }
 
   const origDB = structuredClone(db)
