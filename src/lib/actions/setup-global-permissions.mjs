@@ -17,13 +17,14 @@ import {
 
 import { searchGroups } from './lib/search-groups'
 
-import { DEFAULT_SSO_POLICY_NAME, DEFAULT_SSO_GROUP_NAME } from '../../../../lib/shared/constants'
+import { DEFAULT_SSO_POLICY_NAME, DEFAULT_SSO_GROUP_NAME } from '../shared/constants'
 import { generateIAMPolicy } from '../shared/generate-iam-policy'
 import { progressLogger } from '../shared/progress-logger'
 import { searchPermissionSets } from './lib/search-permission-sets'
 import { searchPolicies } from './lib/search-policies'
 
-const setupGlobalPermissions = ({ db, globalOptions, identityStoreARN, identityStoreID, identityStoreRegion }) => {
+const setupGlobalPermissions = 
+    async ({ db, globalOptions, identityStoreARN, identityStoreID, identityStoreRegion }) => {
   const { policyARN } = await setupPolicy({ db, iamClient, globalOptions })
 
   const iamClient = new IAMClient({ credentials })

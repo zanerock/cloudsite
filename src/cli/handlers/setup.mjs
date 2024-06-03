@@ -1,4 +1,4 @@
-import { create as createUser } from './users/create'
+import { handler as createUser } from './users/create'
 import { create as createSSO} from '../lib/permissions/sso/create'
 import { setupGlobalPermissions } from '../../lib/actions/setup-global-permissions'
 

@@ -1,4 +1,4 @@
-const handler = ({ argv, db, globalOptions }) => {
+const handler = async ({ argv, db, globalOptions }) => {
   if (ssoSetupOptions['user-name'] === undefined && defaults !== true) {
     const questioner = new Questioner({
       interrogationBundle : {

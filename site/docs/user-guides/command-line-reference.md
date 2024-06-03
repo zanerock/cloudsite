@@ -274,16 +274,10 @@ __`create` options__
 
 |Option|Description|
 |------|------|
-|`--defaults`|Use the defaults were possible and skip unnecessary interactive setup.|
-|`--delete`|Confirms deletion of the Access keys after setting up the SSO access. If neither '--delete' nor '--no-delete' are set, then deletion will be interactively confirmed.|
 |`--identity-store-name`|The name to assign to the newly created identity center, if needed.|
 |`--identity-store-region`|The region in which to set up the identity center if no identity center currently set up. Defaults to 'us-east-1'.|
+|`--delete`|Confirms deletion of the Access keys after setting up the SSO access. If neither '--delete' nor '--no-delete' are set, then deletion will be interactively confirmed.|
 |`--no-delete`|Retains the Access keys after setting up SSO access.|
-|`--sso-profile-name`|The name of the local SSO profile to create.|
-|`--user-email`|The primary email to associate with the user.|
-|`--user-family-name`|The family name of the cloudsite management user.|
-|`--user-given-name`|The given name of the cloudsite management user.|
-|`--user-name`|The name of the user account to create or reference.|
 
 <span id="cloudsite-plugin-settings"></span>
 ### `plugin-settings`
@@ -371,16 +365,15 @@ Runs the initial setup wizard. This is safe to re-run in order to deal with case
 
 |Option|Description|
 |------|------|
-|`--defaults`|Use the defaults were possible and skip unnecessary interactive setup.|
-|`--delete`|Confirms deletion of the Access keys after setting up the SSO access. If neither '--delete' nor '--no-delete' are set, then deletion will be interactively confirmed.|
 |`--identity-store-name`|The name to assign to the newly created identity center, if needed.|
 |`--identity-store-region`|The region in which to set up the identity center if no identity center currently set up. Defaults to 'us-east-1'.|
-|`--no-delete`|Retains the Access keys after setting up SSO access.|
 |`--sso-profile-name`|The name of the local SSO profile to create.|
 |`--user-email`|The primary email to associate with the user.|
 |`--user-family-name`|The family name of the cloudsite management user.|
 |`--user-given-name`|The given name of the cloudsite management user.|
 |`--user-name`|The name of the user account to create or reference.|
+|`--delete`|Confirms deletion of the Access keys after setting up the SSO access. If neither '--delete' nor '--no-delete' are set, then deletion will be interactively confirmed.|
+|`--no-delete`|Retains the Access keys after setting up SSO access.|
 
 <span id="cloudsite-update-contents"></span>
 ### `update-contents`
