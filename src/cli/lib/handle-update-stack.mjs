@@ -14,7 +14,7 @@ const handleUpdateStack = async ({ argv, db, globalOptions }) => {
   const siteInfo = getSiteInfo({ apexDomain, db, globalOptions })
 
   const credentials = getCredentials(globalOptions)
-  await checkAdminAuthentication({ credentials, db })
+  await checkAdminAuthentication({ credentials })
 
   const { success = true, userMessage = `Updated '${apexDomain}' stack.` } =
     await updateStack({ credentials, db, globalOptions, siteInfo }) || {}

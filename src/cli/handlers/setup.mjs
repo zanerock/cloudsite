@@ -1,81 +1,149 @@
-import { handler as createUser } from './users/create'
-import { create as createSSO} from '../lib/permissions/sso/create'
-import { setupGlobalPermissions } from '../../lib/actions/setup-global-permissions'
+import commandLineArgs from 'command-line-args'
+import { Questioner } from 'question-and-answer'
 
-const handler = async ({ argv, db, globalOpitons }) => {
-  const { success : ssoSuccess, userMessage : ssoUserMessage, identityStoreARN, identityStoreRegion, identityStoreID } =
-    await createSSO({ argv, db, globalOpitons })
+import { cliSpec } from '../constants'
+import { ensureAdminAuthentication, removeTemporaryAccessKey } from '../../lib/shared/authentication-lib'
+import { getAccountID } from '../../lib/shared/get-account-id'
+import { getOptionsSpec } from '../lib/get-options-spec'
+import { handler as createUser } from './users/create'
+import { ensureRootOrganization } from './_lib/ensure-root-organization'
+import { findIdentityStoreStaged } from '../../lib/shared/find-identity-store'
+import { progressLogger } from '../../lib/shared/progress-logger'
+import { setupGlobalPermissions } from '../../lib/actions/setup-global-permissions'
+import { SETUP_SSO_PROFILE_NAME } from '../../lib/shared/constants'
+import { setupSSO } from '../../lib/actions/setup-sso'
+
+const handler = async ({ argv, db, globalOptions }) => {
+  const ssoSetupOptionsSpec = getOptionsSpec({ cliSpec, name : 'setup' })
+  const ssoSetupOptions = commandLineArgs(ssoSetupOptionsSpec, { argv })
+  let {
+    'key-delete': keyDelete,
+    'identity-store-name': identityStoreName,
+    'identity-store-region': identityStoreRegion = 'us-east-1',
+    'no-key-delete': noKeyDelete
+  } = ssoSetupOptions
+  let credentials, identityStoreARN, identityStoreID
+
+  globalOptions['sso-profile'] =
+    (globalOptions.ssoCLIOverride && globalOptions['sso-profile']) || SETUP_SSO_PROFILE_NAME;
+
+  ({ credentials, noKeyDelete } = await ensureAdminAuthentication({ globalOptions, noKeyDelete }))
+
+  const accountID = getAccountID({ credentials })
+
+  let ssoStartURL, ssoSuccess, ssoUserMessage
+  ({
+    success : ssoSuccess,
+    userMessage : ssoUserMessage,
+    identityStoreARN,
+    identityStoreRegion,
+    identityStoreID,
+    ssoStartURL
+  } =
+    await createSSO({
+      credentials,
+      db,
+      identityStoreARN,
+      identityStoreID,
+      identityStoreName,
+      identityStoreRegion,
+      ssoSetupOptions,
+      ssoStartURL
+    }))
+
   if (ssoSuccess !== true) {
-    return { success, userMessage }
+    return { success : ssoSuccess, userMessage : ssoUserMessage }
   }
 
-  await setupGlobalPermissions({ db, globalOptions, identityStoreARN, identityStoreID, identityStoreRegion })
+  await setupGlobalPermissions({
+    accountID,
+    credentials,
+    db,
+    globalOptions,
+    identityStoreARN,
+    identityStoreID,
+    identityStoreRegion
+  })
 
-  const { success : userSuccess, userMessage : userUserMessage } = await createUser({ argv, db, globalOpitons })
+  const { success : userSuccess, userMessage : userUserMessage } = await createUser({ argv, db, globalOptions })
 
+  await removeTemporaryAccessKey({ credentials, keyDelete, noKeyDelete })
 
-  if (noDelete === undefined && doDelete === undefined) {
-    const interrogationBundle = { actions: [
-      {
-        prompt    : 'Delete Access keys after SSO setup:',
-        paramType : 'boolean',
-        default   : true,
-        parameter : 'do-delete'
-      }
-    ]}
-    const questioner = new Questioner({ interrogationBundle, output: progressLogger })
+  return { succes : userSuccess, message : ssoUserMessage + '\n' + userUserMessage }
+}
+
+const createSSO = async ({
+  credentials,
+  db,
+  globalOptions,
+  identityStoreARN,
+  identityStoreID,
+  identityStoreName,
+  identityStoreRegion,
+  ssoSetupOptions,
+  ssoStartURL
+}) => {
+  await ensureRootOrganization({ credentials, db, globalOptions });
+
+  ({ identityStoreID, identityStoreRegion } =
+    await findIdentityStoreStaged({ credentials, firstCheckRegion : identityStoreRegion }))
+
+  if (identityStoreID === undefined) {
+    const interrogationBundle = {
+      actions : [
+        {
+          statement : "You do not appear to have an Identity Center associated with your account. The Identity Center is where you'll sign in to allow Cloudsite to work with AWS."
+        }
+      ]
+    }
+
+    if (identityStoreName === undefined) {
+      interrogationBundle.actions.push({
+        prompt    : "Enter the preferred <em>name for the Identity Center<rst> instance (typically based on your primary domain name with '-' instead of '.'; e.g.: foo-com):",
+        parameter : 'identity-store-name'
+      })
+    }
+
+    if (identityStoreID === undefined) {
+      interrogationBundle.actions.push({
+        prompt    : 'Enter the preferred <em>AWS region<rst> for the identity store instance:',
+        default   : identityStoreRegion,
+        parameter : 'identity-store-region'
+      })
+    }
+
+    const questioner = new Questioner({
+      initialParameters : ssoSetupOptions,
+      interrogationBundle,
+      output            : progressLogger
+    })
     await questioner.question()
 
-    doDelete = questioner.get(',do-delete')
-  }
-
-
-
-  if (noDelete === true) {
-    doDelete = false
-  } else if (doDelete === undefined) {
-    doDelete = false
-  }
-
-  if (doDelete === true) {
-    progressLogger.write('Checking Access Keys...')
-
-    let marker
-    let accessKeyID = false
-    let activeCount = 0
-    do {
-      const listAccessKeysCommand = new ListAccessKeysCommand({
-        Marker : marker
-      })
-      const listAccessKeysResult = await iamClient.send(listAccessKeysCommand)
-      for (const { AccessKeyId: testKeyID, Status: status } of listAccessKeysResult.AccessKeyMetadata) {
-        if (status === 'Active') {
-          accessKeyID = activeCount === 0 && testKeyID
-          activeCount += 1
-        }
-      }
-
-      marker = listAccessKeysResult.Marker
-    } while (accessKeyID === undefined && marker !== undefined)
-
-    if (accessKeyID === false && activeCount > 1) {
-      progressLogger.write(' MULTIPLE keys found.\nSkipping Access Key deletion.')
-    } else if (accessKeyID === false) {
-      progressLogger.write(' NO KEYS FOUND.\n')
-    } else {
-      progressLogger.write(' DELETING...')
-      const deleteAccessKeyCommand = new DeleteAccessKeyCommand({ AccessKeyId : accessKeyID })
-
-      try {
-        await iamClient.send(deleteAccessKeyCommand)
-        progressLogger.write('  DONE.\n')
-      } catch (e) {
-        progressLogger.write('  ERROR.\n')
-        throw e
-      }
+    if (identityStoreName === undefined) {
+      identityStoreName = questioner.get('identity-store-name')
     }
-  } else {
-    progressLogger.write('Leaving Access Keys in place.\n')
+    if (identityStoreID === undefined) {
+      identityStoreRegion = questioner.get('identity-store-region')
+    }
+  }
+
+  ({ identityStoreRegion, ssoStartURL } = await setupSSO({
+    credentials,
+    db,
+    identityStoreARN,
+    identityStoreID,
+    identityStoreName,
+    identityStoreRegion,
+    ssoStartURL
+  }))
+
+  return {
+    success     : true,
+    userMessage : 'Settings updated.',
+    identityStoreARN,
+    identityStoreRegion,
+    identityStoreID,
+    ssoStartURL
   }
 }
 

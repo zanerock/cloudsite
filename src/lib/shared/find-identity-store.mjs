@@ -68,12 +68,12 @@ const findIdentityStore = async ({ credentials, firstCheckRegion, identityStoreR
         progressLogger.write(' FOUND.\n')
         const instance = listInstancesResult.Instances[0]
         return {
-          identityStoreID          : instance.IdentityStoreId,
-          identityStoreARN : instance.InstanceArn,
+          identityStoreID     : instance.IdentityStoreId,
+          identityStoreARN    : instance.InstanceArn,
           identityStoreName   : instance.Name,
           identityStoreRegion : region,
           ssoAdminClient,
-          ssoStartURL : 'https://' + instance.IdentityStoreId + '.awsapps.com/start'
+          ssoStartURL         : 'https://' + instance.IdentityStoreId + '.awsapps.com/start'
         }
       }
     }

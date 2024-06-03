@@ -1,69 +1,52 @@
-import {
-  CreateGroupMembershipCommand,
-  CreateUserCommand,
-  ListUsersCommand
-} from '@aws-sdk/client-identitystore'
+import { CreateGroupMembershipCommand, CreateUserCommand, IdentitystoreClient } from '@aws-sdk/client-identitystore'
 
 import { progressLogger } from '../shared/progress-logger'
 
+/**
+ * Creates a new IAM Identity Center user.
+ *
+ * Note, this method expects that the existence of the user has already been checked or the caller is OK with an error
+ * being raised.
+ * @param {object} options - The options bundle.
+ * @param {object} options.credentials - The credentials to use.
+ * @param {string} options.groupID - The ID of the group to assign to the user.
+ * @param {string} options.groupName - The name of group to assign to the user.
+ * @param {string} options.identityStoreID - The ID of the Identity Store where the user will be created.
+ * @param {string} options.identityStoreRegion - The region of the Identity Store where the user will be created.
+ * @param {string} options.userEmail - The email to assign to the new user.
+ * @param {string} options.userFamilyName - The family name to assign to the new user.
+ * @param {string} options.userGivenName - The given name to assign to the new user.
+ * @param {string} options.userName - The user name (login ID) to use for the new user.
+ */
 const setupUser = async ({
+  credentials,
   groupID,
   groupName,
-  identityStoreClient,
   identityStoreID,
   identityStoreRegion,
-  identityStoreARN,
-  ssoProfile,
   userEmail,
   userFamilyName,
   userGivenName,
   userName
 }) => {
-  progressLogger.write(`Checking for user '${userName}'...`)
+  progressLogger.write(`Creating user '${userName}'...`)
 
-  let nextToken, userID
-  do {
-    const listUsersCommand = new ListUsersCommand({
-      IdentityStoreId : identityStoreID,
-      NextToken       : nextToken
-    })
-    const listUsersResults = await identityStoreClient.send(listUsersCommand)
+  const identityStoreClient = new IdentitystoreClient({ credentials, region : identityStoreRegion })
 
-    for (const { UserName: testName, UserId: testID } of listUsersResults.Users) {
-      if (testName === userName) {
-        userID = testID
-      }
-    }
-
-    nextToken = listUsersResults.NextToken
-  } while (userID === undefined && nextToken !== undefined)
-
-  if (userID !== undefined) {
-    progressLogger.write(' FOUND.\n')
-  } else {
-    progressLogger.write(' CREATING...')
-
-    const createUserCommand = new CreateUserCommand({
-      IdentityStoreId : identityStoreID,
-      UserName        : userName,
-      DisplayName     : userName,
-      Name            : { GivenName : userGivenName, FamilyName : userFamilyName },
-      Emails          : [{ Value : userEmail, Primary : true }]
-    })
-    try {
-      userID = (await identityStoreClient.send(createUserCommand)).UserId
-      progressLogger.write(' DONE.\n')
-
-      const arnBits = identityStoreARN.split('/')
-      const instanceShortID = arnBits[arnBits.length - 1].split('-')[1]
-
-      const usersURL = `https://${identityStoreRegion}.console.aws.amazon.com/singlesignon/home?region=${identityStoreRegion}#!/instances/${instanceShortID}/users`
-
-      progressLogger.write(`<warn>You must request AWS email '${userName}' an email verification link from the Identity Center Console<rst>.\n\n1) Navigate to the following URL:\n\n<em>${usersURL}<rst>\n\n2) Select the user '${userName}'.\n3) Click the 'Send email verification link'.\n\nOnce verified, you can authenticate, with:\n\n<em>aws sso login --profile ${ssoProfile}<rst>\n\n`)
-    } catch (e) {
-      progressLogger.write(' ERROR.\n')
-      throw e
-    }
+  const createUserCommand = new CreateUserCommand({
+    IdentityStoreId : identityStoreID,
+    UserName        : userName,
+    DisplayName     : userName,
+    Name            : { GivenName : userGivenName, FamilyName : userFamilyName },
+    Emails          : [{ Value : userEmail, Primary : true }]
+  })
+  let userID
+  try {
+    userID = (await identityStoreClient.send(createUserCommand)).UserId
+    progressLogger.write(' DONE.\n')
+  } catch (e) {
+    progressLogger.write(' ERROR.\n')
+    throw e
   }
 
   progressLogger.write(`Associating user '${userName}' with group '${groupName}'...`)

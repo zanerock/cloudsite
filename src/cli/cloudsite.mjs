@@ -34,8 +34,8 @@ import { handlePluginSettingsSet } from './lib/plugin-settings/handle-plugin-set
 import { handlePluginSettingsShow } from './lib/plugin-settings/handle-plugin-settings-show'
 // reminders handlers
 import { handleRemindersList } from './lib/reminders/handle-reminders-list'
-// permissions sso handlers
-import { create as permissionsSSOCreate } from './lib/permissions/sso/create'
+// users handlers
+import { create as handleUsersCreate } from './handlers/users/create'
 
 const cloudsite = async () => {
   // we can 'stopAtFirstUnknown' because the globals are defined at the root level
@@ -54,7 +54,7 @@ const cloudsite = async () => {
       throw e
     }
     // otherwise, it's fine, there just are no options
-    db = { account : { settings : {} }, permissions: { sso: {} }, reminders : [], sites : {}, toCleanup : {} }
+    db = { account : { settings : {} }, permissions : { sso : {} }, reminders : [], sites : {}, toCleanup : {} }
   }
 
   const origDB = structuredClone(db)
@@ -127,8 +127,8 @@ const cloudsite = async () => {
         ({ data, noWrap, success } = await handleList({ argv, db })); break
       case 'import':
         ({ success, userMessage } = await handleImport({ argv, db, globalOptions })); break
-      case 'permissions': {
-        const handlePermsissions = createCommandGroupHandler({
+      /* case 'permissions': {
+        const handlePermissions = createCommandGroupHandler({
           commandHandlerMap : {
             sso : createCommandGroupHandler({
               commandHandlerMap : {
@@ -139,8 +139,8 @@ const cloudsite = async () => {
           },
           groupPath : ['permissions']
         });
-        ({ data, success } = await handlePermsissions({ argv, db, getGlobalOptions })); break
-      }
+        ({ data, success } = await handlePermissions({ argv, db, globalOptions })); break
+      } */
       case 'plugin-settings': {
         const handlePluginSettings = createCommandGroupHandler({
           commandHandlerMap : {
@@ -149,7 +149,7 @@ const cloudsite = async () => {
           },
           groupPath : ['plugin-settings']
         });
-        ({ data, success, userMessage } = await handlePluginSettings({ argv, db })); break
+        ({ data, success, userMessage } = await handlePluginSettings({ argv, db, globalOptions })); break
       }
       case 'reminders': {
         const handleReminders = createCommandGroupHandler({
@@ -158,7 +158,7 @@ const cloudsite = async () => {
           },
           groupPath : ['reminders']
         });
-        ({ data, success } = await handleReminders({ argv, db })); break
+        ({ data, success } = await handleReminders({ argv, db, globalOptions })); break
       }
       case 'setup':
         ({ success, userMessage } = await handleSetup({ argv, db, globalOptions })); break
@@ -168,6 +168,15 @@ const cloudsite = async () => {
         ({ success, userMessage } = await handleUpdateDNS({ argv, db, globalOptions })); break
       case 'update-stack':
         ({ success, userMessage } = await handleUpdateStack({ argv, db, globalOptions })); break
+      case 'users': {
+        const handleUsers = createCommandGroupHandler({
+          commandHandlerMap : {
+            create : handleUsersCreate
+          },
+          groupPath : ['users']
+        });
+        ({ data, success } = await handleUsers({ argv, db, globalOptions })); break
+      }
       case 'verify':
         ({ data } = await handleVerify({ argv, db, globalOptions })); break
       case undefined:
@@ -229,7 +238,7 @@ const cloudsite = async () => {
       } else if (status === 'FAILURE') {
         message = '<warn>PARTIAL success: <rst>' + message
       }
-      progressLogger.write(message + '\n')
+      progressLogger.write('\n' + message + '\n')
     }
   }
 

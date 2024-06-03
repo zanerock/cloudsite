@@ -1,49 +1,55 @@
 import {
   CreatePolicyCommand,
-  DeleteAccessKeyCommand,
   GetPolicyCommand,
-  IAMClient,
-  ListAccessKeysCommand
+  IAMClient
 } from '@aws-sdk/client-iam'
-
 import {
   CreateGroupCommand,
-  CreateGroupMembershipCommand,
-  CreateUserCommand,
   GetGroupIdCommand,
-  IdentitystoreClient,
-  ListUsersCommand
+  IdentitystoreClient
 } from '@aws-sdk/client-identitystore'
+import {
+  AttachCustomerManagedPolicyReferenceToPermissionSetCommand,
+  CreateAccountAssignmentCommand,
+  // CreateInstanceCommand,
+  CreatePermissionSetCommand,
+  // DescribeInstanceCommand,
+  ListAccountAssignmentsCommand,
+  ListCustomerManagedPolicyReferencesInPermissionSetCommand,
+  SSOAdminClient
+} from '@aws-sdk/client-sso-admin'
 
-import { searchGroups } from './lib/search-groups'
-
-import { DEFAULT_SSO_POLICY_NAME, DEFAULT_SSO_GROUP_NAME } from '../shared/constants'
 import { generateIAMPolicy } from '../shared/generate-iam-policy'
 import { progressLogger } from '../shared/progress-logger'
+import { searchGroups } from './lib/search-groups'
 import { searchPermissionSets } from './lib/search-permission-sets'
 import { searchPolicies } from './lib/search-policies'
+import { SSO_POLICY_CONTENT_MANAGER, SSO_GROUP_CONTENT_MANAGERS } from '../shared/constants'
 
-const setupGlobalPermissions = 
-    async ({ db, globalOptions, identityStoreARN, identityStoreID, identityStoreRegion }) => {
-  const { policyARN } = await setupPolicy({ db, iamClient, globalOptions })
+const setupGlobalPermissions =
+    async ({ accountID, credentials, db, globalOptions, identityStoreARN, identityStoreID, identityStoreRegion }) => {
+      const iamClient = new IAMClient({ credentials })
 
-  const iamClient = new IAMClient({ credentials })
-  const identityStoreClient = new IdentitystoreClient({ credentials, region : identityStoreRegion })
+      const { policyARN } = await setupPolicy({ db, iamClient, globalOptions })
 
-  const { groupID } =
-    await setupSSOGroup({ db, identityStoreClient, identityStoreID, identityStoreRegion })
-  const { createdNewPermissionSet, permissionSetARN } =
-    await setupPermissionSet({ db, identityStoreARN, policyARN, ssoAdminClient })
-  await setupPermissionSetPolicy({
-    db,
-    identityStoreARN,
-    permissionSetARN,
-    searchExisting : !createdNewPermissionSet,
-    ssoAdminClient
-  })
-  await setupAccountAssignment({ accountID, groupID, identityStoreARN, permissionSetARN, ssoAdminClient })
+      const identityStoreClient = new IdentitystoreClient({ credentials, region : identityStoreRegion })
 
-}
+      const { groupID } =
+      await setupSSOGroup({ db, identityStoreClient, identityStoreID, identityStoreRegion })
+
+      const ssoAdminClient = new SSOAdminClient({ credentials, region : identityStoreRegion })
+
+      const { createdNewPermissionSet, permissionSetARN } =
+      await setupPermissionSet({ db, identityStoreARN, policyARN, ssoAdminClient })
+      await setupPermissionSetPolicy({
+        db,
+        identityStoreARN,
+        permissionSetARN,
+        searchExisting : !createdNewPermissionSet,
+        ssoAdminClient
+      })
+      await setupAccountAssignment({ accountID, groupID, identityStoreARN, permissionSetARN, ssoAdminClient })
+    }
 
 const setupAccountAssignment = async ({ accountID, groupID, identityStoreARN, permissionSetARN, ssoAdminClient }) => {
   progressLogger.write('Checking for account assignment...')
@@ -91,7 +97,7 @@ const setupAccountAssignment = async ({ accountID, groupID, identityStoreARN, pe
 }
 
 const setupPolicy = async ({ db, globalOptions, iamClient }) => {
-  progressLogger.write(`Checking status of policy '${DEFAULT_SSO_POLICY_NAME}'... `)
+  progressLogger.write(`Checking status of policy '${SSO_POLICY_CONTENT_MANAGER}'... `)
 
   let { policyARN } = db.account
 
@@ -101,10 +107,10 @@ const setupPolicy = async ({ db, globalOptions, iamClient }) => {
     const getPolicyCommand = new GetPolicyCommand({ PolicyArn : policyARN })
     const getPolicyResult = iamClient.send(getPolicyCommand)
     const retrievedName = getPolicyResult.Policy.PolicyName
-    if (DEFAULT_SSO_POLICY_NAME === retrievedName) {
+    if (SSO_POLICY_CONTENT_MANAGER === retrievedName) {
       progressLogger.write('name match verified.\n')
     } else {
-      progressLogger.write(`\n<error>!! ERROR !!<rst> Names do not match. Found '${retrievedName}', expected '${DEFAULT_SSO_POLICY_NAME}'. (Policy name is required.)`)
+      progressLogger.write(`\n<error>!! ERROR !!<rst> Names do not match. Found '${retrievedName}', expected '${SSO_POLICY_CONTENT_MANAGER}'. (Policy name is required.)`)
       throw new Error('Policy name mismatch.')
     }
   } else {
@@ -113,21 +119,21 @@ const setupPolicy = async ({ db, globalOptions, iamClient }) => {
     if (policyARN !== undefined) {
       progressLogger.write(' FOUND existing.\n')
       db.account.policyARN = policyARN
-      db.account.policyName = DEFAULT_SSO_POLICY_NAME
+      db.account.policyName = SSO_POLICY_CONTENT_MANAGER
     } else {
       progressLogger.write(' CREATING...')
 
       const iamPolicy = await generateIAMPolicy({ db, globalOptions })
 
       const createPolicyCommand = new CreatePolicyCommand({
-        PolicyName     : DEFAULT_SSO_POLICY_NAME,
+        PolicyName     : SSO_POLICY_CONTENT_MANAGER,
         PolicyDocument : JSON.stringify(iamPolicy, null, '  ')
       })
 
       try {
         const createPolicyResult = await iamClient.send(createPolicyCommand)
         policyARN = createPolicyResult.Policy.Arn
-        db.account.policyName = DEFAULT_SSO_POLICY_NAME
+        db.account.policyName = SSO_POLICY_CONTENT_MANAGER
         db.account.policyARN = policyARN
         progressLogger.write(' CREATED.\n')
       } catch (e) {
@@ -141,7 +147,7 @@ const setupPolicy = async ({ db, globalOptions, iamClient }) => {
 }
 
 const setupPermissionSet = async ({ db, identityStoreARN, ssoAdminClient }) => {
-  progressLogger.write(`Looking for permission set '${DEFAULT_SSO_POLICY_NAME}'... `)
+  progressLogger.write(`Looking for permission set '${SSO_POLICY_CONTENT_MANAGER}'... `)
   let { permissionSetARN } = db.account
 
   let createdNewPermissionSet = false
@@ -156,7 +162,7 @@ const setupPermissionSet = async ({ db, identityStoreARN, ssoAdminClient }) => {
       progressLogger.write(' CREATING...')
 
       const createPermissionSetCommand = new CreatePermissionSetCommand({
-        Name            : DEFAULT_SSO_POLICY_NAME,
+        Name            : SSO_POLICY_CONTENT_MANAGER,
         InstanceArn     : identityStoreARN,
         SessionDuration : 'PT4H'
       })
@@ -181,7 +187,7 @@ const setupPermissionSetPolicy = async ({
   searchExisting,
   ssoAdminClient
 }) => {
-  progressLogger.write(`Checking permission set '${DEFAULT_SSO_POLICY_NAME}' associated policies...`)
+  progressLogger.write(`Checking permission set '${SSO_POLICY_CONTENT_MANAGER}' associated policies...`)
 
   let policyFound = false
   if (searchExisting === true) {
@@ -199,7 +205,7 @@ const setupPermissionSetPolicy = async ({
 
       for (const { Name : name } of
         listCustomerManagedPolicyReferencesInPermissionSetResults.CustomerManagedPolicyReferences) {
-        if (name === DEFAULT_SSO_POLICY_NAME) {
+        if (name === SSO_POLICY_CONTENT_MANAGER) {
           policyFound = true
         }
       }
@@ -215,7 +221,7 @@ const setupPermissionSetPolicy = async ({
       new AttachCustomerManagedPolicyReferenceToPermissionSetCommand({
         InstanceArn                    : identityStoreARN,
         PermissionSetArn               : permissionSetARN,
-        CustomerManagedPolicyReference : { Name: DEFAULT_SSO_POLICY_NAME }
+        CustomerManagedPolicyReference : { Name : SSO_POLICY_CONTENT_MANAGER }
       })
     try {
       await ssoAdminClient.send(attachCustomerManagedPolicyReferenceToPermissionSetCommand)
@@ -228,7 +234,7 @@ const setupPermissionSetPolicy = async ({
 }
 
 const setupSSOGroup = async ({ db, identityStoreClient, identityStoreID }) => {
-  progressLogger.write(`Checking for SSO group '${DEFAULT_SSO_GROUP_NAME}'... `)
+  progressLogger.write(`Checking for SSO group '${SSO_GROUP_CONTENT_MANAGERS}'... `)
 
   let { groupID } = db.account
 
@@ -239,7 +245,7 @@ const setupSSOGroup = async ({ db, identityStoreClient, identityStoreID }) => {
       IdentityStoreId : identityStoreID,
       UniqueAttribute : {
         AttributePath  : 'displayName',
-        AttributeValue : DEFAULT_SSO_GROUP_NAME
+        AttributeValue : SSO_GROUP_CONTENT_MANAGERS
       }
     })
     const getGroupIDResult = await identityStoreClient.send(getGroupIDCommand)
@@ -261,14 +267,14 @@ const setupSSOGroup = async ({ db, identityStoreClient, identityStoreID }) => {
 
     const createGroupCommand = new CreateGroupCommand({
       IdentityStoreId : identityStoreID,
-      DisplayName     : DEFAULT_SSO_GROUP_NAME
+      DisplayName     : SSO_GROUP_CONTENT_MANAGERS
     })
 
     try {
       const createGroupResult = await identityStoreClient.send(createGroupCommand)
       groupID = createGroupResult.GroupId
       db.account.groupID = groupID
-      db.account.groupName = DEFAULT_SSO_GROUP_NAME
+      db.account.groupName = SSO_GROUP_CONTENT_MANAGERS
       progressLogger.write(' CREATED.\n')
     } catch (e) {
       progressLogger.write(' ERROR while creating.\n')

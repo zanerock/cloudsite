@@ -50,14 +50,33 @@ const subcommandSpec = {
 
 const keyDeleteSpec = [
   {
-    name        : 'delete',
+    name        : 'key-delete',
     type        : Boolean,
     description : "Confirms deletion of the Access keys after setting up the SSO access. If neither '--delete' nor '--no-delete' are set, then deletion will be interactively confirmed."
   },
   {
-    name        : 'no-delete',
+    name        : 'no-key-delete',
     type        : Boolean,
     description : 'Retains the Access keys after setting up SSO access.'
+  }
+]
+
+const userPropertiesSpec = [
+  {
+    name        : 'user-email',
+    description : 'The primary email to associate with the user.'
+  },
+  {
+    name        : 'user-family-name',
+    description : 'The family name of the cloudsite management user.'
+  },
+  {
+    name        : 'user-given-name',
+    description : 'The given name of the cloudsite management user.'
+  },
+  {
+    name        : 'user-name',
+    description : 'The name of the user account to create or reference.'
   }
 ]
 
@@ -270,7 +289,7 @@ const cliSpec = {
         sourceTypeArgSpec
       ]
     },
-    {
+    /* {
       name        : 'permissions',
       description : 'Command group for permission related commands.',
       arguments   : [subcommandSpec],
@@ -298,7 +317,7 @@ const cliSpec = {
           ]
         }
       ]
-    },
+    }, */
     {
       name        : 'plugin-settings',
       description : 'Command group for managing plugin settings.',
@@ -365,9 +384,9 @@ const cliSpec = {
       ]
     },
     {
-      name : 'setup',
-      description: 'Runs the initial setup wizard. This is safe to re-run in order to deal with cases of partial success or mid-setup errors.',
-      arguments: [
+      name        : 'setup',
+      description : 'Runs the initial setup wizard. This is safe to re-run in order to deal with cases of partial success or mid-setup errors.',
+      arguments   : [
         {
           name        : 'identity-store-name',
           description : 'The name to assign to the newly created identity center, if needed.'
@@ -377,25 +396,15 @@ const cliSpec = {
           description : "The region in which to set up the identity center if no identity center currently set up. Defaults to 'us-east-1'."
         },
         {
+          name        : 'no-delete-keys',
+          description : "By default, if 'access keys' are created during the setup process, they will be deleted after the setup is complete. Setting this option suppresses this behavior and retains any created keys. Note that existing keys are never deleted.",
+          type        : Boolean
+        },
+        {
           name        : 'sso-profile-name',
           description : 'The name of the local SSO profile to create.'
         },
-        {
-          name        : 'user-email',
-          description : 'The primary email to associate with the user.'
-        },
-        {
-          name        : 'user-family-name',
-          description : 'The family name of the cloudsite management user.'
-        },
-        {
-          name        : 'user-given-name',
-          description : 'The given name of the cloudsite management user.'
-        },
-        {
-          name        : 'user-name',
-          description : 'The name of the user account to create or reference.'
-        },
+        ...userPropertiesSpec,
         ...keyDeleteSpec
       ]
     },
@@ -469,6 +478,17 @@ const cliSpec = {
           name        : 'check-stack',
           description : 'If set, then checks for stack drift and skips other checks unless also specifically specified.',
           type        : Boolean
+        }
+      ]
+    },
+    {
+      name        : 'users',
+      description : 'Users command group',
+      commands    : [
+        {
+          name        : 'create',
+          description : 'Creates a new user. Any unspecified properties will be interactively queried.',
+          arguments   : [...keyDeleteSpec, ...userPropertiesSpec]
         }
       ]
     }

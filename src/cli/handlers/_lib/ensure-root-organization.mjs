@@ -1,9 +1,9 @@
 import { OrganizationsClient, CreateOrganizationCommand, DescribeAccountCommand } from '@aws-sdk/client-organizations'
 
-import { getAccountID } from '../../../../../lib/shared/get-account-id'
-import { progressLogger } from '../../../../../lib/shared/progress-logger'
+import { getAccountID } from '../../../lib/shared/get-account-id'
+import { progressLogger } from '../../../lib/shared/progress-logger'
 
-const ensureRootOrganization = async ({ credentials, db }) => {
+const ensureRootOrganization = async ({ credentials, db, globalOptions }) => {
   if (db.account.accountID === undefined) {
     db.account.accountID = await getAccountID({ credentials })
   }
@@ -18,7 +18,11 @@ const ensureRootOrganization = async ({ credentials, db }) => {
     progressLogger.write('FOUND\n')
     return
   } catch (e) {
-    if (e.name !== 'AWSOrganizationsNotInUseException') {
+    if (e.name === 'AccountNotFoundException') {
+      progressLogger.write(`\n<error>!! ERROR !!<rst>: The account ${accountID} was not found. This may mean that you have an old Cloudsite configuration referencing a different account than the one configured to use AWS profile '${globalOptions['sso-profile']}'. Check the file:\n\n<code>~/.config/cloudsite/cloudsite-db.json<rst>\n\nIf the file exists and you are trying to use a different account, move or delete the existing file. Alternately, you may have set up credentials using the wrong account.`)
+      // TODO: support 'throw-error'
+      process.exit(1) // eslint-disable-line no-process-exit
+    } else if (e.name !== 'AWSOrganizationsNotInUseException') {
       throw e
     } // else, there's no organization so we continue on to create one
     progressLogger.write('NOT found\n')

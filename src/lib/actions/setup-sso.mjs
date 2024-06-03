@@ -1,13 +1,4 @@
-import {
-  AttachCustomerManagedPolicyReferenceToPermissionSetCommand,
-  CreateAccountAssignmentCommand,
-  // CreateInstanceCommand,
-  CreatePermissionSetCommand,
-  // DescribeInstanceCommand,
-  ListAccountAssignmentsCommand,
-  ListCustomerManagedPolicyReferencesInPermissionSetCommand,
-  UpdateInstanceCommand
-} from '@aws-sdk/client-sso-admin'
+import { UpdateInstanceCommand } from '@aws-sdk/client-sso-admin'
 
 import { Questioner } from 'question-and-answer'
 
@@ -17,19 +8,13 @@ import { progressLogger } from '../shared/progress-logger'
 const setupSSO = async ({
   credentials,
   db,
-  globalOptions,
   identityStoreARN,
   identityStoreID,
   identityStoreName,
   identityStoreRegion,
-  ssoProfile,
-  ssoStartURL,
+  ssoStartURL
 }) => {
-  const { accountID } = db.account
-
-  const ssoAdminClient = new SSOAdminClient({ credentials, region : identityStoreRegion })
-
-    if (db.permissions.sso.identityStoreID !== undefined &&
+  if (db.permissions.sso.identityStoreID !== undefined &&
       db.permissions.sso.identityStoreARN !== undefined &&
       db.permissions.sso.identityStoreRegion !== undefined &&
       db.permissions.sso.ssoStartURL !== undefined) {
@@ -65,6 +50,7 @@ const setupSSO = async ({
     const findIdentityStoreResult =
       await findIdentityStore({ credentials, identityStoreRegion })
     if (findIdentityStoreResult.id !== undefined) {
+      let ssoAdminClient
       ({
         id: identityStoreID,
         identityStoreRegion,
@@ -74,7 +60,7 @@ const setupSSO = async ({
       } = findIdentityStoreResult)
 
       db.permissions.sso.identityStoreID = identityStoreID
-      db.permissions.sso.identityStoreARN = iidentityStoreARN
+      db.permissions.sso.identityStoreARN = identityStoreARN
       db.permissions.sso.identityStoreRegion = identityStoreRegion
       db.permissions.sso.ssoStartURL = ssoStartURL
 
@@ -84,7 +70,7 @@ const setupSSO = async ({
       })
       await ssoAdminClient.send(updateInstanceCommand)
 
-      return { identityStoreID, identityStoreRegion, identityStoreARN, ssoAdminClient, ssoStartURL }
+      return { identityStoreID, identityStoreRegion, identityStoreARN, ssoStartURL }
     } // else we loop and try again.
 
     /* This is what we'd like to do, but AWS inexplicably does not permit you to create a Organization based Instance from the API, even though this is the recommended way to create an instance and the only way that works with permissions and such.
@@ -119,8 +105,6 @@ const setupSSO = async ({
   } else {
     throw new Error("Your account's Identity Store ID appears to be defined in the local database, but could not be found.")
   }
-
-  return { ssoStartURL }
 }
 
 export { setupSSO }

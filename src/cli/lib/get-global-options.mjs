@@ -16,6 +16,9 @@ const getGlobalOptions = ({ db }) => {
   delete overrideOptions._unknown // don't need or want this
 
   const globalOptions = Object.assign({}, defaultOptions, overrideOptions)
+  if (overrideOptions['sso-profile'] !== undefined) {
+    globalOptions.ssoCLIOverride = true
+  }
 
   const { format, verbose } = globalOptions
 

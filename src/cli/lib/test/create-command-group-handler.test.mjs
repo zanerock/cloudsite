@@ -15,14 +15,14 @@ describe('createCommandGroupHandler', () => {
     const groupHandlerFunction = createCommandGroupHandler({
       commandHandlerMap : {
         sso : createCommandGroupHandler({
-          commandHandlerMap : { 'create' : () => true },
-          groupPath : ['permissions', 'sso']
+          commandHandlerMap : { create : () => true },
+          groupPath         : ['permissions', 'sso']
         })
       },
       groupPath : ['permissions']
     })
 
-    const result = await groupHandlerFunction({ argv: ['sso', 'create'] })
+    const result = await groupHandlerFunction({ argv : ['sso', 'create'] })
     expect(result).toBe(true)
   })
 
