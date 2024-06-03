@@ -3,7 +3,7 @@ import { create as createSSO} from '../lib/permissions/sso/create'
 import { setupGlobalPermissions } from '../../lib/actions/setup-global-permissions'
 
 const handler = async ({ argv, db, globalOpitons }) => {
-  const { success : ssoSuccess, userMessage : ssoUserMessage, identityStoreARN, identityStoreRegion, identityStoreID } = 
+  const { success : ssoSuccess, userMessage : ssoUserMessage, identityStoreARN, identityStoreRegion, identityStoreID } =
     await createSSO({ argv, db, globalOpitons })
   if (ssoSuccess !== true) {
     return { success, userMessage }

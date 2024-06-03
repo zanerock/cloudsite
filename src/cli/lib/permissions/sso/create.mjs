@@ -44,10 +44,13 @@ const create = async ({ argv, db, globalOptions }) => {
   while (authenticated === false) {
     credentials = getCredentials({ 'sso-profile': setupProfile })
     try {
+      progressLogger.write('Checking admin authentication... ')
       await checkAdminAuthentication({ credentials })
+      progressLogger.write('AUTHENTICATED.\n')
       authenticated = true
     } catch (e) {
       if (e.name === 'CredentialsProviderError') {
+        progressLogger.write('NOT authenticated.\n')
         if (authenicationAttempts > 0) {
           progressLogger.write('<warn>The previous authentication attempt failed.<rst> Was the access key information copied correctly and fully? You can try again or refer to the documentation referenced below.\n\n')
         }
@@ -87,6 +90,7 @@ const create = async ({ argv, db, globalOptions }) => {
         await fs.writeFile(credentialsFile, credsContents, { encoding: 'utf8' })
         // new we loop and try the authentication again
       } else {
+        progressLogger.write('ERROR.\n')
         throw (e)
       }
     }
