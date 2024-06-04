@@ -26,30 +26,45 @@ import { searchPermissionSets } from './lib/search-permission-sets'
 import { searchPolicies } from './lib/search-policies'
 import { SSO_POLICY_CONTENT_MANAGER, SSO_GROUP_CONTENT_MANAGERS } from '../shared/constants'
 
-const setupGlobalPermissions =
-    async ({ accountID, credentials, db, globalOptions, identityStoreARN, identityStoreID, identityStoreRegion }) => {
-      const iamClient = new IAMClient({ credentials })
+const setupGlobalPermissions = async ({
+  accountID,
+  credentials,
+  db,
+  globalOptions,
+  identityStoreARN,
+  identityStoreID,
+  identityStoreRegion
+}) => {
+  const iamClient = new IAMClient({ credentials })
+  const ssoAdminClient = new SSOAdminClient({ credentials, region : identityStoreRegion })
 
-      const { policyARN } = await setupPolicy({ db, iamClient, globalOptions })
+  for (const [groupName, policyName] of [[SSO_GROUP_CONTENT_MANAGERS, SSO_POLICY_CONTENT_MANAGER]]) {
+    const { policyARN } = await setupPolicy({ db, iamClient, globalOptions, policyName })
 
-      const identityStoreClient = new IdentitystoreClient({ credentials, region : identityStoreRegion })
+    const identityStoreClient = new IdentitystoreClient({ credentials, region : identityStoreRegion })
 
-      const { groupID } =
-      await setupSSOGroup({ db, identityStoreClient, identityStoreID, identityStoreRegion })
+    const { groupID } = await setupSSOGroup({
+      db,
+      groupName,
+      identityStoreClient,
+      identityStoreID,
+      identityStoreRegion,
+      policyName
+    })
 
-      const ssoAdminClient = new SSOAdminClient({ credentials, region : identityStoreRegion })
-
-      const { createdNewPermissionSet, permissionSetARN } =
-      await setupPermissionSet({ db, identityStoreARN, policyARN, ssoAdminClient })
-      await setupPermissionSetPolicy({
-        db,
-        identityStoreARN,
-        permissionSetARN,
-        searchExisting : !createdNewPermissionSet,
-        ssoAdminClient
-      })
-      await setupAccountAssignment({ accountID, groupID, identityStoreARN, permissionSetARN, ssoAdminClient })
-    }
+    const { createdNewPermissionSet, permissionSetARN } =
+    await setupPermissionSet({ db, identityStoreARN, policyARN, policyName, ssoAdminClient })
+    await setupPermissionSetPolicy({
+      db,
+      identityStoreARN,
+      permissionSetARN,
+      policyName,
+      searchExisting : !createdNewPermissionSet,
+      ssoAdminClient
+    })
+    await setupAccountAssignment({ accountID, groupID, identityStoreARN, permissionSetARN, ssoAdminClient })
+  }
+}
 
 const setupAccountAssignment = async ({ accountID, groupID, identityStoreARN, permissionSetARN, ssoAdminClient }) => {
   progressLogger.write('Checking for account assignment...')
@@ -96,10 +111,10 @@ const setupAccountAssignment = async ({ accountID, groupID, identityStoreARN, pe
   }
 }
 
-const setupPolicy = async ({ db, globalOptions, iamClient }) => {
-  progressLogger.write(`Checking status of policy '${SSO_POLICY_CONTENT_MANAGER}'... `)
+const setupPolicy = async ({ db, globalOptions, iamClient, policyName }) => {
+  progressLogger.write(`Checking status of policy '${policyName}'... `)
 
-  let { policyARN } = db.account
+  let { policyARN } = db.permissions.policies[policyName]
 
   if (policyARN !== undefined) {
     progressLogger.write('\nFound policy ARN in local database... ')
@@ -107,37 +122,35 @@ const setupPolicy = async ({ db, globalOptions, iamClient }) => {
     const getPolicyCommand = new GetPolicyCommand({ PolicyArn : policyARN })
     const getPolicyResult = iamClient.send(getPolicyCommand)
     const retrievedName = getPolicyResult.Policy.PolicyName
-    if (SSO_POLICY_CONTENT_MANAGER === retrievedName) {
+    if (policyName === retrievedName) {
       progressLogger.write('name match verified.\n')
     } else {
-      progressLogger.write(`\n<error>!! ERROR !!<rst> Names do not match. Found '${retrievedName}', expected '${SSO_POLICY_CONTENT_MANAGER}'. (Policy name is required.)`)
+      progressLogger.write(`\n<error>!! ERROR !!<rst> Names do not match. Found '${retrievedName}', expected '${policyName}'. (Policy name is required.)`)
       throw new Error('Policy name mismatch.')
     }
   } else {
-    policyARN = searchPolicies({ iamClient })
+    policyARN = searchPolicies({ iamClient, policyName })
 
     if (policyARN !== undefined) {
-      progressLogger.write(' FOUND existing.\n')
-      db.account.policyARN = policyARN
-      db.account.policyName = SSO_POLICY_CONTENT_MANAGER
+      progressLogger.write(' FOUND existing; updating local DB.\n')
+      db.permissions.policies[policyName].policyARN = policyARN
     } else {
-      progressLogger.write(' CREATING...')
+      progressLogger.write(' CREATING... ')
 
-      const iamPolicy = await generateIAMPolicy({ db, globalOptions })
+      const iamPolicy = await generateIAMPolicy({ db, globalOptions, policyName })
 
       const createPolicyCommand = new CreatePolicyCommand({
-        PolicyName     : SSO_POLICY_CONTENT_MANAGER,
+        PolicyName     : policyName,
         PolicyDocument : JSON.stringify(iamPolicy, null, '  ')
       })
 
       try {
         const createPolicyResult = await iamClient.send(createPolicyCommand)
-        policyARN = createPolicyResult.Policy.Arn
-        db.account.policyName = SSO_POLICY_CONTENT_MANAGER
-        db.account.policyARN = policyARN
-        progressLogger.write(' CREATED.\n')
+        policyARN = createPolicyResult.PolicyArn
+        db.permissions.policies[policyName] = { policyARN }
+        progressLogger.write('CREATED.\n')
       } catch (e) {
-        progressLogger.write(' ERROR while creating.\n')
+        progressLogger.write('ERROR while creating.\n')
         throw e
       }
     }
@@ -146,15 +159,15 @@ const setupPolicy = async ({ db, globalOptions, iamClient }) => {
   return { policyARN }
 }
 
-const setupPermissionSet = async ({ db, identityStoreARN, ssoAdminClient }) => {
-  progressLogger.write(`Looking for permission set '${SSO_POLICY_CONTENT_MANAGER}'... `)
-  let { permissionSetARN } = db.account
+const setupPermissionSet = async ({ db, identityStoreARN, policyName, ssoAdminClient }) => {
+  progressLogger.write(`Looking for permission set '${policyName}'... `)
+  let { permissionSetARN } = db.permissions.policies[policyName]
 
   let createdNewPermissionSet = false
   if (permissionSetARN !== undefined) {
     progressLogger.write('found permission set ARN in local DB.\n')
   } else {
-    permissionSetARN = searchPermissionSets({ identityStoreARN, ssoAdminClient })
+    permissionSetARN = searchPermissionSets({ identityStoreARN, policyName, ssoAdminClient })
 
     if (permissionSetARN !== undefined) {
       progressLogger.write(' FOUND.\n')
@@ -162,7 +175,7 @@ const setupPermissionSet = async ({ db, identityStoreARN, ssoAdminClient }) => {
       progressLogger.write(' CREATING...')
 
       const createPermissionSetCommand = new CreatePermissionSetCommand({
-        Name            : SSO_POLICY_CONTENT_MANAGER,
+        Name            : policyName,
         InstanceArn     : identityStoreARN,
         SessionDuration : 'PT4H'
       })
@@ -184,10 +197,11 @@ const setupPermissionSet = async ({ db, identityStoreARN, ssoAdminClient }) => {
 const setupPermissionSetPolicy = async ({
   identityStoreARN,
   permissionSetARN,
+  policyName,
   searchExisting,
   ssoAdminClient
 }) => {
-  progressLogger.write(`Checking permission set '${SSO_POLICY_CONTENT_MANAGER}' associated policies...`)
+  progressLogger.write(`Checking permission set '${policyName}' associated policies...`)
 
   let policyFound = false
   if (searchExisting === true) {
@@ -205,7 +219,7 @@ const setupPermissionSetPolicy = async ({
 
       for (const { Name : name } of
         listCustomerManagedPolicyReferencesInPermissionSetResults.CustomerManagedPolicyReferences) {
-        if (name === SSO_POLICY_CONTENT_MANAGER) {
+        if (name === policyName) {
           policyFound = true
         }
       }
@@ -221,7 +235,7 @@ const setupPermissionSetPolicy = async ({
       new AttachCustomerManagedPolicyReferenceToPermissionSetCommand({
         InstanceArn                    : identityStoreARN,
         PermissionSetArn               : permissionSetARN,
-        CustomerManagedPolicyReference : { Name : SSO_POLICY_CONTENT_MANAGER }
+        CustomerManagedPolicyReference : { Name : policyName }
       })
     try {
       await ssoAdminClient.send(attachCustomerManagedPolicyReferenceToPermissionSetCommand)
@@ -233,10 +247,10 @@ const setupPermissionSetPolicy = async ({
   }
 }
 
-const setupSSOGroup = async ({ db, identityStoreClient, identityStoreID }) => {
-  progressLogger.write(`Checking for SSO group '${SSO_GROUP_CONTENT_MANAGERS}'... `)
+const setupSSOGroup = async ({ db, groupName, identityStoreClient, identityStoreID, policyName }) => {
+  progressLogger.write(`Checking for SSO group '${groupName}'... `)
 
-  let { groupID } = db.account
+  let { groupID } = db.permissions.policies[policyName]
 
   if (groupID !== undefined) {
     progressLogger.write('\nFound group ID in local database...')
@@ -245,12 +259,14 @@ const setupSSOGroup = async ({ db, identityStoreClient, identityStoreID }) => {
       IdentityStoreId : identityStoreID,
       UniqueAttribute : {
         AttributePath  : 'displayName',
-        AttributeValue : SSO_GROUP_CONTENT_MANAGERS
+        AttributeValue : groupName
       }
     })
     const getGroupIDResult = await identityStoreClient.send(getGroupIDCommand)
     if (getGroupIDResult.GroupId === groupID) {
       progressLogger.write('CONFIRMED\n')
+      // probably redundant, but just in case we have only partial data
+      db.permissions.policies[policyName].groupName = groupName
       return
     } else {
       progressLogger.write('ERROR')
@@ -258,7 +274,7 @@ const setupSSOGroup = async ({ db, identityStoreClient, identityStoreID }) => {
     }
   }
 
-  groupID = searchGroups({ identityStoreClient, identityStoreID })
+  groupID = searchGroups({ groupName, identityStoreClient, identityStoreID })
 
   if (groupID !== undefined) {
     progressLogger.write(' FOUND existing.\n')
@@ -267,14 +283,14 @@ const setupSSOGroup = async ({ db, identityStoreClient, identityStoreID }) => {
 
     const createGroupCommand = new CreateGroupCommand({
       IdentityStoreId : identityStoreID,
-      DisplayName     : SSO_GROUP_CONTENT_MANAGERS
+      DisplayName     : groupName
     })
 
     try {
       const createGroupResult = await identityStoreClient.send(createGroupCommand)
       groupID = createGroupResult.GroupId
-      db.account.groupID = groupID
-      db.account.groupName = SSO_GROUP_CONTENT_MANAGERS
+      db.permissions.policies[policyName].groupId = groupID
+      db.permissions.policies[policyName].groupName = groupName
       progressLogger.write(' CREATED.\n')
     } catch (e) {
       progressLogger.write(' ERROR while creating.\n')

@@ -1,7 +1,7 @@
 import { ListPoliciesCommand } from '@aws-sdk/client-iam'
 
 const searchPolicies = async ({ iamClient, policyName }) => {
-  let marker, policyARN
+  let marker
   do {
     const listPoliciesCommand = new ListPoliciesCommand({
       Scope             : 'Local',
@@ -13,15 +13,14 @@ const searchPolicies = async ({ iamClient, policyName }) => {
 
     for (const { PolicyName: testPolicyName, Arn: arn } of listPoliciesResults.Policies) {
       if (testPolicyName.toLowerCase() === policyName.toLowerCase()) { // policy names must be case-insensitive unique
-        policyARN = arn
-        break
+        return arn
       }
     }
 
     marker = listPoliciesResults.Marker
-  } while (policyARN === undefined && marker !== undefined)
+  } while (marker !== undefined) // exits via return if a match is made
 
-  return policyARN
+  return undefined
 }
 
 export { searchPolicies }

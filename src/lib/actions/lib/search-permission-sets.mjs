@@ -1,26 +1,25 @@
 import { DescribePermissionSetCommand, ListPermissionSetsCommand } from '@aws-sdk/client-sso-admin'
 
 const searchPermissionSets = async ({ identityStoreARN, policyName, ssoAdminClient }) => {
-  let nextToken, permissionSetARN
+  let nextToken
   do {
     const listPermissionSetsCommand = new ListPermissionSetsCommand({ InstanceArn : identityStoreARN })
     const listPermissionSetsResult = await ssoAdminClient.send(listPermissionSetsCommand)
-    for (const testARN of listPermissionSetsResult.PermissionSets) {
+    for (const permissionSetARN of listPermissionSetsResult.PermissionSets) {
       const describePermissionSetCommand = new DescribePermissionSetCommand({
         InstanceArn      : identityStoreARN,
-        PermissionSetArn : testARN
+        PermissionSetArn : permissionSetARN
       })
       const { Name: name } = (await ssoAdminClient.send(describePermissionSetCommand)).PermissionSet
 
       if (name === policyName) {
-        permissionSetARN = testARN
-        break
+        return permissionSetARN
       }
     }
     nextToken = listPermissionSetsResult.NextToken
-  } while (permissionSetARN === undefined && nextToken !== undefined)
+  } while (nextToken !== undefined) // exits via return if a match is made
 
-  return permissionSetARN
+  return undefined
 }
 
 export { searchPermissionSets }

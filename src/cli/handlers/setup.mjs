@@ -10,7 +10,7 @@ import { ensureRootOrganization } from './_lib/ensure-root-organization'
 import { findIdentityStoreStaged } from '../../lib/shared/find-identity-store'
 import { progressLogger } from '../../lib/shared/progress-logger'
 import { setupGlobalPermissions } from '../../lib/actions/setup-global-permissions'
-import { SETUP_SSO_PROFILE_NAME } from '../../lib/shared/constants'
+import { SETUP_SSO_PROFILE_NAME, SSO_POLICY_CONTENT_MANAGER } from '../../lib/shared/constants'
 import { setupSSO } from '../../lib/actions/setup-sso'
 
 const handler = async ({ argv, db, globalOptions }) => {
@@ -65,7 +65,10 @@ const handler = async ({ argv, db, globalOptions }) => {
     identityStoreRegion
   })
 
-  const { success : userSuccess, userMessage : userUserMessage } = await createUser({ argv, db, globalOptions })
+  // the initial user is always an admin user
+  const createUserArgv = (argv || []).push('--policy-name', SSO_POLICY_CONTENT_MANAGER)
+  const { success : userSuccess, userMessage : userUserMessage } = 
+    await createUser({ argv: createUserArgv, db, globalOptions })
 
   await removeTemporaryAccessKey({ credentials, keyDelete, noKeyDelete })
 

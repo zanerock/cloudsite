@@ -6,17 +6,21 @@ import { GetUserIdCommand, IdentitystoreClient } from '@aws-sdk/client-identitys
 import { cliSpec } from '../../constants'
 import { ensureAdminAuthentication, removeTemporaryAccessKeys } from '../../../lib/shared/authentication-lib'
 import { getOptionsSpec } from '../../lib/get-options-spec'
-import { findIdentityStoreStaged } from '../../../lib/shared/find-identity-store'
 import { progressLogger } from '../../../lib/shared/progress-logger'
-import { SETUP_SSO_PROFILE_NAME } from '../../../lib/shared/constants'
+import { SETUP_SSO_PROFILE_NAME, SSO_POLICY_CONTENT_MANAGER } from '../../../lib/shared/constants'
 import { setupUser } from '../../../lib/actions/setup-user'
 
-const handler = async ({ argv, db, globalOptions, identityStoreARN, identityStoreID, identityStoreRegion }) => {
+const handler = async ({
+  argv,
+  db,
+  globalOptions
+}) => {
   const userCreateOptionsSpec = getOptionsSpec({ cliSpec, path : ['users', 'create'] })
   const userCreateOptions = commandLineArgs(userCreateOptionsSpec, { argv })
   let {
     'key-delete' : keyDelete,
     'no-key-delete': noKeyDelete,
+    'policy-name': policyName,
     'user-email': userEmail,
     'user-family-name' : userFamilyName,
     'user-given-name' : userGivenName,
@@ -30,9 +34,10 @@ const handler = async ({ argv, db, globalOptions, identityStoreARN, identityStor
   ({ credentials, noKeyDelete } = await ensureAdminAuthentication({ globalOptions, noKeyDelete }))
 
   // let's get the identity store info
+  const { identityStoreARN, identityStoreID, identityStoreRegion } = db.permissions.sso
+
   if (identityStoreARN === undefined || identityStoreID === undefined || identityStoreRegion === undefined) {
-    ({ identityStoreARN, identityStoreID, identityStoreRegion } =
-      await findIdentityStoreStaged({ credentials, firstCheckRegion : identityStoreRegion }))
+    throw new Error("DB 'permissions.sso' field is missing or incomplete; try:\n\n<code>cloudsite import<rst>")
   }
 
   // first, we make sure we have a user name and then search for it
@@ -80,6 +85,11 @@ const handler = async ({ argv, db, globalOptions, identityStoreARN, identityStor
     actions :
     [
       {
+        prompt    : 'Select the policy to assign to the user:',
+        options   : [SSO_POLICY_CONTENT_MANAGER],
+        parameter : 'policy-name'
+      },
+      {
         prompt    : 'Enter the <em>email<rst> of the Cloudsite manager user:',
         parameter : 'user-email'
       },
@@ -105,6 +115,7 @@ const handler = async ({ argv, db, globalOptions, identityStoreARN, identityStor
   const { values } = questioner;
 
   ({
+    'policy-name': policyName = policyName,
     'user-email': userEmail = userEmail,
     'user-family-name': userFamilyName = userFamilyName,
     'user-given-name' : userGivenName = userGivenName,
@@ -112,6 +123,12 @@ const handler = async ({ argv, db, globalOptions, identityStoreARN, identityStor
   } = values)
 
   // all user fields should be set at this point
+
+  const { groupID, groupName } = db.permissions.policies[policyName]
+
+  if (groupID === undefined || groupName === undefined) {
+    throw new Error(`Missing 'groupID' and/or 'groupName' definitions in local DB 'permissions.policies["${policyName}"]'. Try:\n\n<code>cloudsite import<rst>`)
+  }
 
   await setupUser({
     credentials,

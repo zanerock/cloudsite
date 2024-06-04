@@ -488,7 +488,14 @@ const cliSpec = {
         {
           name        : 'create',
           description : 'Creates a new user. Any unspecified properties will be interactively queried.',
-          arguments   : [...keyDeleteSpec, ...userPropertiesSpec]
+          arguments   : [
+            {
+              name        : 'policy-name',
+              description : 'The policy to assign (via group) to this user.'
+            },
+            ...keyDeleteSpec,
+            ...userPropertiesSpec
+          ]
         }
       ]
     }
