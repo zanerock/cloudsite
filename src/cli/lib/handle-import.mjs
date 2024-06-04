@@ -7,7 +7,7 @@ import commandLineArgs from 'command-line-args'
 import { Questioner } from 'question-and-answer'
 
 import { cliSpec } from '../constants'
-import { SSO_GROUP_CONTENT_MANAGERS, SSO_POLICY_CONTENT_MANAGER } from '../../lib/shared/constants'
+import { POLICY_SITE_MANAGER_GROUP, POLICY_SITE_MANAGER_POLICY } from '../../lib/shared/constants'
 import { doImportAccount } from '../../lib/actions/import-account'
 import { doImportSite } from '../../lib/actions/import-site'
 import { getCredentials } from '../../lib/shared/authentication-lib'
@@ -21,9 +21,9 @@ const handleImport = async ({ argv, db, globalOptions }) => {
   const importOptionsSpec = getOptionsSpec({ cliSpec, name : 'import' })
   const importOptions = commandLineArgs(importOptionsSpec, { argv })
   const {
-    'group-name': groupName = SSO_GROUP_CONTENT_MANAGERS,
+    'group-name': groupName = POLICY_SITE_MANAGER_GROUP,
     'no-account': noAccount,
-    'policy-name': policyName = SSO_POLICY_CONTENT_MANAGER,
+    'policy-name': policyName = POLICY_SITE_MANAGER_POLICY,
     refresh,
     region
   } = importOptions

@@ -24,7 +24,12 @@ import { progressLogger } from '../shared/progress-logger'
 import { searchGroups } from './lib/search-groups'
 import { searchPermissionSets } from './lib/search-permission-sets'
 import { searchPolicies } from './lib/search-policies'
-import { SSO_POLICY_CONTENT_MANAGER, SSO_GROUP_CONTENT_MANAGERS } from '../shared/constants'
+import {
+  POLICY_CONTENT_MANAGER_GROUP,
+  POLICY_CONTENT_MANAGER_POLICY,
+  POLICY_SITE_MANAGER_GROUP,
+  POLICY_SITE_MANAGER_POLICY
+} from '../shared/constants'
 
 const setupGlobalPermissions = async ({
   accountID,
@@ -38,7 +43,12 @@ const setupGlobalPermissions = async ({
   const iamClient = new IAMClient({ credentials })
   const ssoAdminClient = new SSOAdminClient({ credentials, region : identityStoreRegion })
 
-  for (const [groupName, policyName] of [[SSO_GROUP_CONTENT_MANAGERS, SSO_POLICY_CONTENT_MANAGER]]) {
+  const standardPolicies = [
+    [POLICY_CONTENT_MANAGER_GROUP, POLICY_CONTENT_MANAGER_POLICY],
+    [POLICY_SITE_MANAGER_GROUP, POLICY_SITE_MANAGER_POLICY]
+  ]
+
+  for (const [groupName, policyName] of standardPolicies) {
     const { policyARN } = await setupPolicy({ db, iamClient, globalOptions, policyName })
 
     const identityStoreClient = new IdentitystoreClient({ credentials, region : identityStoreRegion })

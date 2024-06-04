@@ -1,8 +1,9 @@
 import commandLineArgs from 'command-line-args'
 import { Questioner } from 'question-and-answer'
 
+import { AUTHENTICATION_PROFILE_ADMIN, POLICY_SITE_MANAGER_POLICY } from '../../lib/shared/constants'
 import { cliSpec } from '../constants'
-import { ensureAdminAuthentication, removeTemporaryAccessKey } from '../../lib/shared/authentication-lib'
+import { ensureAdminAuthentication, removeTemporaryAccessKeys } from '../../lib/shared/authentication-lib'
 import { getAccountID } from '../../lib/shared/get-account-id'
 import { getOptionsSpec } from '../lib/get-options-spec'
 import { handler as createUser } from './users/create'
@@ -10,7 +11,6 @@ import { ensureRootOrganization } from './_lib/ensure-root-organization'
 import { findIdentityStoreStaged } from '../../lib/shared/find-identity-store'
 import { progressLogger } from '../../lib/shared/progress-logger'
 import { setupGlobalPermissions } from '../../lib/actions/setup-global-permissions'
-import { SETUP_SSO_PROFILE_NAME, SSO_POLICY_CONTENT_MANAGER } from '../../lib/shared/constants'
 import { setupSSO } from '../../lib/actions/setup-sso'
 
 const handler = async ({ argv, db, globalOptions }) => {
@@ -25,7 +25,7 @@ const handler = async ({ argv, db, globalOptions }) => {
   let credentials, identityStoreARN, identityStoreID
 
   globalOptions['sso-profile'] =
-    (globalOptions.ssoCLIOverride && globalOptions['sso-profile']) || SETUP_SSO_PROFILE_NAME;
+    (globalOptions.ssoCLIOverride && globalOptions['sso-profile']) || AUTHENTICATION_PROFILE_ADMIN;
 
   ({ credentials, noKeyDelete } = await ensureAdminAuthentication({ globalOptions, noKeyDelete }))
 
@@ -66,11 +66,11 @@ const handler = async ({ argv, db, globalOptions }) => {
   })
 
   // the initial user is always an admin user
-  const createUserArgv = (argv || []).push('--policy-name', SSO_POLICY_CONTENT_MANAGER)
-  const { success : userSuccess, userMessage : userUserMessage } = 
-    await createUser({ argv: createUserArgv, db, globalOptions })
+  const createUserArgv = (argv || []).push('--policy-name', POLICY_SITE_MANAGER_POLICY)
+  const { success : userSuccess, userMessage : userUserMessage } =
+    await createUser({ argv : createUserArgv, db, globalOptions })
 
-  await removeTemporaryAccessKey({ credentials, keyDelete, noKeyDelete })
+  await removeTemporaryAccessKeys({ credentials, keyDelete, noKeyDelete })
 
   return { succes : userSuccess, message : ssoUserMessage + '\n' + userUserMessage }
 }

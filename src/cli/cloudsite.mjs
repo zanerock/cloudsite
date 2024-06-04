@@ -35,7 +35,7 @@ import { handlePluginSettingsShow } from './lib/plugin-settings/handle-plugin-se
 // reminders handlers
 import { handleRemindersList } from './lib/reminders/handle-reminders-list'
 // users handlers
-import { create as handleUsersCreate } from './handlers/users/create'
+import { handler as handleUsersCreate } from './handlers/users/create'
 
 const cloudsite = async () => {
   // we can 'stopAtFirstUnknown' because the globals are defined at the root level

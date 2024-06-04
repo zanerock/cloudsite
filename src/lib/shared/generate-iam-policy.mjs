@@ -1,6 +1,6 @@
 import { getAccountID } from './get-account-id'
 import { getCredentials } from './authentication-lib'
-import { SSO_POLICY_CONTENT_MANAGER } from './constants'
+import { POLICY_SITE_MANAGER_POLICY } from './constants'
 
 const generateIAMPolicy = async ({ db, globalOptions, policyName }) => {
   let { accountID } = db.account
@@ -9,7 +9,7 @@ const generateIAMPolicy = async ({ db, globalOptions, policyName }) => {
     accountID = await getAccountID({ credentials })
   }
 
-  if (policyName === SSO_POLICY_CONTENT_MANAGER) {
+  if (policyName === POLICY_SITE_MANAGER_POLICY) {
     return contentManagerPolicy(accountID)
   } else {
     throw new Error(`Cannot generate unknown policy: ${policyName}`)

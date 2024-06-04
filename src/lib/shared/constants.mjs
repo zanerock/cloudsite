@@ -7,8 +7,12 @@ export const COST_ALLOCATION_NOT_SET = 'NOT set'
 export const COST_ALLOCATION_TAGS_ACTIVATED = 'tags activated; NO allocation rule'
 export const COST_ALLOCATION_RULE_DEFINED = 'site cost allocation rule defined'
 
-export const SSO_GROUP_CONTENT_MANAGERS = 'Cloudsite content managers'
-export const SSO_POLICY_CONTENT_MANAGER = 'CloudsiteContentManager'
+export const AUTHENTICATION_PROFILE_ADMIN = 'cloudsite-admin'
 
-export const AUTHENTICATION_PROFILE_NAME_ADMIN = 'cloudsite-admin'
-export const AUTHENTICATION_PROFILE_NAME_CONTENT_MANAGER = 'cloudsite-content-manager'
+export const POLICY_SITE_MANAGER_GROUP = 'Cloudsite site managers'
+export const POLICY_SITE_MANAGER_POLICY = 'CloudsiteSiteManager'
+export const AUTHENTICATION_PROFILE_SITE_MANAGER = 'cloudsite-site-manager'
+
+export const POLICY_CONTENT_MANAGER_GROUP = 'Cloudsite content manager'
+export const POLICY_CONTENT_MANAGER_POLICY = 'CloudsiteContentManager'
+export const AUTHENTICATION_PROFILE_CONTENT_MANAGER = 'cloudsite-content-manager'

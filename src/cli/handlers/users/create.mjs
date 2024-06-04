@@ -3,11 +3,11 @@ import { Questioner } from 'question-and-answer'
 
 import { GetUserIdCommand, IdentitystoreClient } from '@aws-sdk/client-identitystore'
 
+import { AUTHENTICATION_PROFILE_ADMIN, POLICY_SITE_MANAGER_POLICY } from '../../../lib/shared/constants'
 import { cliSpec } from '../../constants'
 import { ensureAdminAuthentication, removeTemporaryAccessKeys } from '../../../lib/shared/authentication-lib'
 import { getOptionsSpec } from '../../lib/get-options-spec'
 import { progressLogger } from '../../../lib/shared/progress-logger'
-import { SETUP_SSO_PROFILE_NAME, SSO_POLICY_CONTENT_MANAGER } from '../../../lib/shared/constants'
 import { setupUser } from '../../../lib/actions/setup-user'
 
 const handler = async ({
@@ -28,7 +28,7 @@ const handler = async ({
   } = userCreateOptions
 
   globalOptions['sso-profile'] =
-    (globalOptions.ssoCLIOverride && globalOptions['sso-profile']) || SETUP_SSO_PROFILE_NAME
+    (globalOptions.ssoCLIOverride && globalOptions['sso-profile']) || AUTHENTICATION_PROFILE_ADMIN
 
   let credentials
   ({ credentials, noKeyDelete } = await ensureAdminAuthentication({ globalOptions, noKeyDelete }))
@@ -86,7 +86,7 @@ const handler = async ({
     [
       {
         prompt    : 'Select the policy to assign to the user:',
-        options   : [SSO_POLICY_CONTENT_MANAGER],
+        options   : [POLICY_SITE_MANAGER_POLICY],
         parameter : 'policy-name'
       },
       {
