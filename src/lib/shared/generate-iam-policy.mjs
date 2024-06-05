@@ -1,6 +1,6 @@
 import { getAccountID } from './get-account-id'
 import { getCredentials } from './authentication-lib'
-import { POLICY_SITE_MANAGER_POLICY } from './constants'
+import { POLICY_CONTENT_MANAGER_POLICY, POLICY_SITE_MANAGER_POLICY } from './constants'
 
 const generateIAMPolicy = async ({ db, globalOptions, policyName }) => {
   let { accountID } = db.account
@@ -10,13 +10,35 @@ const generateIAMPolicy = async ({ db, globalOptions, policyName }) => {
   }
 
   if (policyName === POLICY_SITE_MANAGER_POLICY) {
-    return contentManagerPolicy(accountID)
+    return siteManagerPolicy(accountID)
+  } else if (policyName === POLICY_CONTENT_MANAGER_POLICY) {
+    return contentManagerPolicy(accountID) 
   } else {
     throw new Error(`Cannot generate unknown policy: ${policyName}`)
   }
 }
 
 const contentManagerPolicy = (accountID) => ({
+  Version   : '2012-10-17',
+  Statement : [
+    {
+      Sid    : 'CloudsiteS3Grants',
+      Effect : 'Allow',
+      Action : [
+        's3:PutObject',
+        's3:DeleteObject',
+        's3:GetObject',
+        's3:ListAllMyBuckets',
+        's3:ListBucket'
+      ],
+      Resource : [
+        'arn:aws:s3:::*'
+      ]
+    }
+  ]
+})
+
+const siteManagerPolicy = (accountID) => ({
   Version   : '2012-10-17',
   Statement : [
     {

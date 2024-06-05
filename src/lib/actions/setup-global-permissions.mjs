@@ -63,7 +63,7 @@ const setupGlobalPermissions = async ({
     })
 
     const { createdNewPermissionSet, permissionSetARN } =
-    await setupPermissionSet({ db, identityStoreARN, policyARN, policyName, ssoAdminClient })
+      await setupPermissionSet({ db, identityStoreARN, policyARN, policyName, ssoAdminClient })
     await setupPermissionSetPolicy({
       db,
       identityStoreARN,
@@ -124,13 +124,13 @@ const setupAccountAssignment = async ({ accountID, groupID, identityStoreARN, pe
 const setupPolicy = async ({ db, globalOptions, iamClient, policyName }) => {
   progressLogger.write(`Checking status of policy '${policyName}'... `)
 
-  let { policyARN } = db.permissions.policies[policyName]
+  let { policyARN } = db.permissions.policies[policyName] || {}
 
   if (policyARN !== undefined) {
     progressLogger.write('\nFound policy ARN in local database... ')
 
     const getPolicyCommand = new GetPolicyCommand({ PolicyArn : policyARN })
-    const getPolicyResult = iamClient.send(getPolicyCommand)
+    const getPolicyResult = await iamClient.send(getPolicyCommand)
     const retrievedName = getPolicyResult.Policy.PolicyName
     if (policyName === retrievedName) {
       progressLogger.write('name match verified.\n')
@@ -139,10 +139,13 @@ const setupPolicy = async ({ db, globalOptions, iamClient, policyName }) => {
       throw new Error('Policy name mismatch.')
     }
   } else {
-    policyARN = searchPolicies({ iamClient, policyName })
+    policyARN = await searchPolicies({ iamClient, policyName })
 
     if (policyARN !== undefined) {
       progressLogger.write(' FOUND existing; updating local DB.\n')
+      if (db.permissions.policies[policyName] === undefined) {
+        db.permissions.policies[policyName] = {}
+      }
       db.permissions.policies[policyName].policyARN = policyARN
     } else {
       progressLogger.write(' CREATING... ')
@@ -177,7 +180,7 @@ const setupPermissionSet = async ({ db, identityStoreARN, policyName, ssoAdminCl
   if (permissionSetARN !== undefined) {
     progressLogger.write('found permission set ARN in local DB.\n')
   } else {
-    permissionSetARN = searchPermissionSets({ identityStoreARN, policyName, ssoAdminClient })
+    permissionSetARN = await searchPermissionSets({ identityStoreARN, policyName, ssoAdminClient })
 
     if (permissionSetARN !== undefined) {
       progressLogger.write(' FOUND.\n')
@@ -263,13 +266,15 @@ const setupSSOGroup = async ({ db, groupName, identityStoreClient, identityStore
   let { groupID } = db.permissions.policies[policyName]
 
   if (groupID !== undefined) {
-    progressLogger.write('\nFound group ID in local database...')
+    progressLogger.write('\nFound group ID in local database; verifying data... ')
 
     const getGroupIDCommand = new GetGroupIdCommand({
       IdentityStoreId : identityStoreID,
-      UniqueAttribute : {
-        AttributePath  : 'displayName',
-        AttributeValue : groupName
+      AlternateIdentifier: {
+        UniqueAttribute : {
+          AttributePath  : 'displayName',
+          AttributeValue : groupName
+        }
       }
     })
     const getGroupIDResult = await identityStoreClient.send(getGroupIDCommand)
@@ -277,14 +282,14 @@ const setupSSOGroup = async ({ db, groupName, identityStoreClient, identityStore
       progressLogger.write('CONFIRMED\n')
       // probably redundant, but just in case we have only partial data
       db.permissions.policies[policyName].groupName = groupName
-      return
+      return { groupID }
     } else {
       progressLogger.write('ERROR')
       throw new Error('Group name/id mismatch.')
     }
   }
 
-  groupID = searchGroups({ groupName, identityStoreClient, identityStoreID })
+  groupID = await searchGroups({ groupName, identityStoreClient, identityStoreID })
 
   if (groupID !== undefined) {
     progressLogger.write(' FOUND existing.\n')
@@ -299,7 +304,7 @@ const setupSSOGroup = async ({ db, groupName, identityStoreClient, identityStore
     try {
       const createGroupResult = await identityStoreClient.send(createGroupCommand)
       groupID = createGroupResult.GroupId
-      db.permissions.policies[policyName].groupId = groupID
+      db.permissions.policies[policyName].groupID = groupID
       db.permissions.policies[policyName].groupName = groupName
       progressLogger.write(' CREATED.\n')
     } catch (e) {

@@ -35,7 +35,7 @@ const findIdentityStore = async ({ credentials, firstCheckRegion, identityStoreR
       regions = regions.filter(testFunc)
 
       if (regions.length === 0) {
-        throw new Error(`No such '${regionDescription}' found. Availablel regions are:\n- ` + origRegions.join('\n- '))
+        throw new Error(`No such '${regionDescription}' found. Available regions are:\n- ` + origRegions.join('\n- '))
       }
     }
 
@@ -88,7 +88,7 @@ const findIdentityStore = async ({ credentials, firstCheckRegion, identityStoreR
 // TOOD: in future we can examine the default region to determine the first scope.
 const findIdentityStoreStaged = async ({ credentials, firstCheckRegion, scope = 'us' }) => {
   let findResult = await findIdentityStore({ credentials, firstCheckRegion, scope })
-  if (findResult.id !== undefined) {
+  if (findResult.identityStoreID !== undefined) {
     return findResult
   }
   const oppositeScope = scope.startsWith('!')

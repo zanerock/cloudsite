@@ -20,18 +20,21 @@ const handler = async ({ argv, db, globalOptions }) => {
     'key-delete': keyDelete,
     'identity-store-name': identityStoreName,
     'identity-store-region': identityStoreRegion = 'us-east-1',
-    'no-key-delete': noKeyDelete
+    'no-key-delete': noKeyDelete,
+    'user-email': userEmail,
+    'user-family-name': userFamilyName,
+    'user-given-name': userGivenName,
+    'user-name': userName
   } = ssoSetupOptions
-  let credentials, identityStoreARN, identityStoreID
+  let credentials
 
-  globalOptions['sso-profile'] =
-    (globalOptions.ssoCLIOverride && globalOptions['sso-profile']) || AUTHENTICATION_PROFILE_ADMIN;
+  const authProfile = (globalOptions.ssoCLIOverride && globalOptions['sso-profile']) || AUTHENTICATION_PROFILE_ADMIN;
 
-  ({ credentials, noKeyDelete } = await ensureAdminAuthentication({ globalOptions, noKeyDelete }))
+  ({ credentials, noKeyDelete } = await ensureAdminAuthentication({ authProfile, noKeyDelete }))
 
-  const accountID = getAccountID({ credentials })
+  const accountID = await getAccountID({ credentials })
 
-  let ssoStartURL, ssoSuccess, ssoUserMessage
+  let identityStoreARN, identityStoreID, ssoStartURL, ssoSuccess, ssoUserMessage
   ({
     success : ssoSuccess,
     userMessage : ssoUserMessage,
@@ -43,18 +46,14 @@ const handler = async ({ argv, db, globalOptions }) => {
     await createSSO({
       credentials,
       db,
-      identityStoreARN,
-      identityStoreID,
       identityStoreName,
       identityStoreRegion,
       ssoSetupOptions,
-      ssoStartURL
     }))
 
   if (ssoSuccess !== true) {
     return { success : ssoSuccess, userMessage : ssoUserMessage }
   }
-
   await setupGlobalPermissions({
     accountID,
     credentials,
@@ -65,12 +64,17 @@ const handler = async ({ argv, db, globalOptions }) => {
     identityStoreRegion
   })
 
+  const createUserArgv = (argv || [])
   // the initial user is always an admin user
-  const createUserArgv = (argv || []).push('--policy-name', POLICY_SITE_MANAGER_POLICY)
+  createUserArgv.push('--policy-name', POLICY_SITE_MANAGER_POLICY)
+  createUserArgv.push('--no-error-on-existing')
+  // noKeyDelete may have been set by ensureAdminAuthentication
+  if (noKeyDelete === true && !argv.includes('--no-key-delete')) { 
+    createUserArgv.push('--no-key-delete')
+  }
   const { success : userSuccess, userMessage : userUserMessage } =
     await createUser({ argv : createUserArgv, db, globalOptions })
-
-  await removeTemporaryAccessKeys({ credentials, keyDelete, noKeyDelete })
+  // createUser will handle removing the auth key
 
   return { succes : userSuccess, message : ssoUserMessage + '\n' + userUserMessage }
 }
@@ -79,19 +83,23 @@ const createSSO = async ({
   credentials,
   db,
   globalOptions,
-  identityStoreARN,
-  identityStoreID,
   identityStoreName,
   identityStoreRegion,
-  ssoSetupOptions,
-  ssoStartURL
+  ssoSetupOptions
 }) => {
-  await ensureRootOrganization({ credentials, db, globalOptions });
-
-  ({ identityStoreID, identityStoreRegion } =
+  let identityStoreARN, identityStoreID, ssoStartURL
+  ({ identityStoreARN, identityStoreID, identityStoreName, identityStoreRegion, ssoStartURL } =
     await findIdentityStoreStaged({ credentials, firstCheckRegion : identityStoreRegion }))
 
-  if (identityStoreID === undefined) {
+  if (identityStoreID !== undefined) {
+    db.permissions.sso.identityStoreARN = identityStoreARN
+    db.permissions.sso.identityStoreID = identityStoreID
+    db.permissions.sso.identityStoreName = identityStoreName
+    db.permissions.sso.identityStoreRegion = identityStoreRegion
+    db.permissions.sso.ssoStartURL = ssoStartURL
+  } else { // (identityStoreID === undefined)
+    await ensureRootOrganization({ credentials, db, globalOptions });
+
     const interrogationBundle = {
       actions : [
         {
@@ -128,17 +136,17 @@ const createSSO = async ({
     if (identityStoreID === undefined) {
       identityStoreRegion = questioner.get('identity-store-region')
     }
-  }
 
-  ({ identityStoreRegion, ssoStartURL } = await setupSSO({
-    credentials,
-    db,
-    identityStoreARN,
-    identityStoreID,
-    identityStoreName,
-    identityStoreRegion,
-    ssoStartURL
-  }))
+    ({ identityStoreARN, identityStoreID, identityStoreName, identityStoreRegion, ssoStartURL } = await setupSSO({
+      credentials,
+      db,
+      identityStoreARN,
+      identityStoreID,
+      identityStoreName,
+      identityStoreRegion,
+      ssoStartURL
+    }))
+  }
 
   return {
     success     : true,

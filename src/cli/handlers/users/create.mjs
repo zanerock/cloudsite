@@ -19,6 +19,7 @@ const handler = async ({
   const userCreateOptions = commandLineArgs(userCreateOptionsSpec, { argv })
   let {
     'key-delete' : keyDelete,
+    'no-error-on-existing': noErrorOnExisting,
     'no-key-delete': noKeyDelete,
     'policy-name': policyName,
     'user-email': userEmail,
@@ -27,11 +28,11 @@ const handler = async ({
     'user-name': userName
   } = userCreateOptions
 
-  globalOptions['sso-profile'] =
-    (globalOptions.ssoCLIOverride && globalOptions['sso-profile']) || AUTHENTICATION_PROFILE_ADMIN
+
+  const authProfile = (globalOptions.ssoCLIOverride && globalOptions['sso-profile']) || AUTHENTICATION_PROFILE_ADMIN
 
   let credentials
-  ({ credentials, noKeyDelete } = await ensureAdminAuthentication({ globalOptions, noKeyDelete }))
+  ({ credentials, noKeyDelete } = await ensureAdminAuthentication({ authProfile, noKeyDelete }))
 
   // let's get the identity store info
   const { identityStoreARN, identityStoreID, identityStoreRegion } = db.permissions.sso
@@ -46,7 +47,7 @@ const handler = async ({
       interrogationBundle : {
         actions : [
           {
-            prompt    : 'Enter the name of the Cloudsite manager user account to create or reference:',
+            prompt    : 'Enter the user name of the Cloudsite manager SSO account to create or reference:',
             default   : userName,
             parameter : 'user-name'
           }
@@ -71,6 +72,10 @@ const handler = async ({
   try {
     await identitystoreClient.send(getUserIdCommad)
     progressLogger.write(' FOUND.\n')
+    if (noErrorOnExisting === true) {
+      await removeTemporaryAccessKeys({ authProfile, credentials, keyDelete, noKeyDelete })
+      return { success: true, userMessage: 'User already exists' }
+    }
     throw new Error(`Found existing user ${userName}. To update the user, try:\n\n<code>cloudsite users ${userName} update<rst>`)
   } catch (e) {
     if (e.name !== 'ResourceNotFoundException') {
@@ -142,14 +147,15 @@ const handler = async ({
     userName
   })
 
-  await removeTemporaryAccessKeys({ credentials, keyDelete, noKeyDelete })
+  await removeTemporaryAccessKeys({ authProfile, credentials, keyDelete, noKeyDelete })
 
   const arnBits = identityStoreARN.split('/')
   const instanceShortID = arnBits[arnBits.length - 1].split('-')[1]
 
   const usersURL = `https://${identityStoreRegion}.console.aws.amazon.com/singlesignon/home?region=${identityStoreRegion}#!/instances/${instanceShortID}/users`
+  const userMessage = `<warn>You must request AWS email '${userName}' an email verification link from the Identity Center Console<rst>.\n\n1) Navigate to the following URL:\n\n<code>${usersURL}<rst>\n\n2) Select the user '${userName}'.\n3) Click the '<em>Send email verification link<rst>'.\n\nOnce verified, you can setup their local configuration with:\n\n<code>cloudsite configuration setup<rst>\n\n`
 
-  progressLogger.write(`<warn>You must request AWS email '${userName}' an email verification link from the Identity Center Console<rst>.\n\n1) Navigate to the following URL:\n\n<code>${usersURL}<rst>\n\n2) Select the user '${userName}'.\n3) Click the '<em>Send email verification link<rst>'.\n\nOnce verified, you can setup their local configuration with:\n\n<code>cloudsite configuration setup<rst>\n\n`)
+  return { success: true, userMessage }
 }
 
 export { handler }

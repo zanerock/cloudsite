@@ -31,41 +31,24 @@ const checkAdminAuthentication = async ({ credentials } = {}) => {
   return credentials
 }
 
-const ensureAdminAuthentication = async ({ globalOptions, noKeyDelete }) => {
+const ensureAdminAuthentication = async ({ authProfile, noKeyDelete }) => {
+  progressLogger.write(`Checking admin authentication using authentication profile '${authProfile}'.`)
   let authenticated = false
   const authenticationAttempts = 0
   let credentials
-  let hasProfile = false
-  const ssoProfile = globalOptions['sso-profile']
 
-  const credentialsFile = fsPath.join(process.env.HOME, '.aws', 'credentials')
-  const creds = new ConfigIniParser()
-  if (fileExists(credentialsFile)) {
-    progressLogger.write('Found existing <code>~/.aws/credentials<rst> file.\nParsing... ')
-    try {
-      const credentialsContents = await fs.readFile(credentialsFile, { encoding : 'utf8' })
-      creds.parse(credentialsContents)
-      progressLogger.write('DONE.\n')
-    } catch (e) {
-      progressLogger.write('ERROR.\n')
-      throw e
-    }
-
-    if (creds.isHaveSection(globalOptions['sso-profile']) === true) {
-      hasProfile = true
-      // if there is an existing key set, we retain it by default
-      noKeyDelete = noKeyDelete !== undefined ? true : noKeyDelete
-    }
-  } else { // there is no previous creds file
-    await fs.mkdir(fsPath.dirname(credentialsFile), { recursive : true })
-  }
-  if (hasProfile === false) {
-    creds.addSection(ssoProfile)
+  const credsINI = await getCredentialsINI()
+  
+  if (credsINI.isHaveSection(authProfile) === true) {
+    // if there is an existing key set, we retain it by default
+    noKeyDelete = noKeyDelete === undefined ? true : noKeyDelete
+  } else {
+    credsINI.addSection(authProfile)
   }
 
   while (authenticated === false) {
     // the caller should do any special settings for global options
-    credentials = getCredentials(globalOptions)
+    credentials = getCredentials({ 'sso-profile': authProfile })
     try {
       progressLogger.write('Checking admin authentication... ')
       await checkAdminAuthentication({ credentials })
@@ -79,7 +62,7 @@ const ensureAdminAuthentication = async ({ globalOptions, noKeyDelete }) => {
           progressLogger.write('<warn>The previous authentication attempt failed.<rst> Was the access key information copied correctly and fully? You can try again or refer to the documentation referenced below.\n\n')
         }
         const errorMsg = authenticationAttempts === 0
-          ? 'No credentials were found.'
+          ? 'No admin/super-user credentials were found.'
           : 'Failed to authenticate with credentials.'
 
         progressLogger.writeWithOptions({ breakSpacesOnly : true }, `<error>${errorMsg}<rst> You can refer to the documentation here:\n<code>https://cloudsitehosting.org/docs/get-started/authentication#initial-authentication-with-access-keys<rst>\nor simply follow the directions below.\n\n1) Log into your aws account:\n\n   <code>https://console.aws.amazon.com/<rst>\n\n2) Click the <em>account name<rst> in the upper right hand corner and select <em>Security credentials<rst>.\n3) From the IAM security credentials page, scroll down to the <em>Access keys<rst> section.\n4) Click the <em>Create access key<rst> button.\n5) Confirm you wish to create an access key and click <em>Create access key<rst>.\n\n`)
@@ -97,11 +80,10 @@ const ensureAdminAuthentication = async ({ globalOptions, noKeyDelete }) => {
         const questioner = new Questioner({ interrogationBundle, output : progressLogger })
         await questioner.question()
 
-        creds.set(ssoProfile, 'aws_access_key_id', questioner.get('ACCESS_KEY'))
-        creds.set(ssoProfile, 'aws_secret_access_key', questioner.get('SECRET_ACCESS_KEY'))
+        credsINI.set(authProfile, 'aws_access_key_id', questioner.get('ACCESS_KEY'))
+        credsINI.set(authProfile, 'aws_secret_access_key', questioner.get('SECRET_ACCESS_KEY'))
 
-        const credsContents = creds.stringify()
-        await fs.writeFile(credentialsFile, credsContents, { encoding : 'utf8' })
+        await saveCredentialsINI()
         // new we loop and try the authentication again
       } else { // error is something other than 'CredentialsProviderError'
         progressLogger.write('ERROR.\n')
@@ -121,7 +103,34 @@ const getCredentials = ({ 'sso-profile': ssoProfile } = {}) => {
   return credentials
 }
 
-const removeTemporaryAccessKeys = async ({ credentials, keyDelete, noKeyDelete }) => {
+const credsINIFile = fsPath.join(process.env.HOME, '.aws', 'credentials')
+
+const getCredentialsINI = async () => {
+  const credsINI = new ConfigIniParser()
+  if (fileExists(credsINIFile)) {
+    progressLogger.write('Found existing <code>~/.aws/credentials<rst> file.\nParsing... ')
+    try {
+      const credentialsContents = await fs.readFile(credsINIFile, { encoding : 'utf8' })
+      credsINI.parse(credentialsContents)
+      progressLogger.write('DONE.\n')
+    } catch (e) {
+      progressLogger.write('ERROR.\n')
+      throw e
+    }
+  }
+  else { // there is no previous creds file; let's make sure we can write one later
+    await fs.mkdir(fsPath.dirname(credsINIFile), { recursive : true })
+  }
+
+  return credsINI
+}
+
+const saveCredentialsINI = async ({ credsINI }) => {
+  const credsINIContents = credsINI.stringify()
+  await fs.writeFile(credsINIFile, credsINIContents, { encoding : 'utf8' })
+}
+
+const removeTemporaryAccessKeys = async ({ authProfile, credentials, keyDelete, noKeyDelete }) => {
   if (noKeyDelete === undefined && keyDelete === undefined) {
     const interrogationBundle = {
       actions : [
@@ -182,6 +191,12 @@ const removeTemporaryAccessKeys = async ({ credentials, keyDelete, noKeyDelete }
         progressLogger.write('  ERROR.\n')
         throw e
       }
+
+      progressLogger.write(`Updating <code>~/.aws/credentials<rst>; removing '${authProfile}' section... `)
+      const credsINI = await getCredentialsINI()
+      credsINI.removeSection(authProfile)
+      await saveCredentialsINI({ credsINI })
+
     }
   } else {
     progressLogger.write('Leaving Access Keys in place.\n')

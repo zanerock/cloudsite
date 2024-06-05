@@ -388,6 +388,7 @@ Creates a new user. Any unspecified properties will be interactively queried.
 
 |Option|Description|
 |------|------|
+|`--no-error-on-existing`|Simply exits rather than raising an error if the user already exists.|
 |`--policy-name`|The policy to assign (via group) to this user.|
 |`--key-delete`|Confirms deletion of the Access keys after setting up the SSO access. If neither '--delete' nor '--no-delete' are set, then deletion will be interactively confirmed.|
 |`--no-key-delete`|Retains the Access keys after setting up SSO access.|
