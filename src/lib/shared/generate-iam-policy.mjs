@@ -12,13 +12,13 @@ const generateIAMPolicy = async ({ db, globalOptions, policyName }) => {
   if (policyName === POLICY_SITE_MANAGER_POLICY) {
     return siteManagerPolicy(accountID)
   } else if (policyName === POLICY_CONTENT_MANAGER_POLICY) {
-    return contentManagerPolicy(accountID) 
+    return contentManagerPolicy(accountID)
   } else {
     throw new Error(`Cannot generate unknown policy: ${policyName}`)
   }
 }
 
-const contentManagerPolicy = (accountID) => ({
+const contentManagerPolicy = () => ({
   Version   : '2012-10-17',
   Statement : [
     {

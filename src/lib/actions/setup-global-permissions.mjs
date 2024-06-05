@@ -269,8 +269,8 @@ const setupSSOGroup = async ({ db, groupName, identityStoreClient, identityStore
     progressLogger.write('\nFound group ID in local database; verifying data... ')
 
     const getGroupIDCommand = new GetGroupIdCommand({
-      IdentityStoreId : identityStoreID,
-      AlternateIdentifier: {
+      IdentityStoreId     : identityStoreID,
+      AlternateIdentifier : {
         UniqueAttribute : {
           AttributePath  : 'displayName',
           AttributeValue : groupName

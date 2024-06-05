@@ -490,9 +490,9 @@ const cliSpec = {
           description : 'Creates a new user. Any unspecified properties will be interactively queried.',
           arguments   : [
             {
-              name : 'no-error-on-existing',
-              description: 'Simply exits rather than raising an error if the user already exists.',
-              type : Boolean
+              name        : 'no-error-on-existing',
+              description : 'Simply exits rather than raising an error if the user already exists.',
+              type        : Boolean
             },
             {
               name        : 'policy-name',

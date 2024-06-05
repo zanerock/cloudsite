@@ -3,7 +3,7 @@ import { Questioner } from 'question-and-answer'
 
 import { AUTHENTICATION_PROFILE_ADMIN, POLICY_SITE_MANAGER_POLICY } from '../../lib/shared/constants'
 import { cliSpec } from '../constants'
-import { ensureAdminAuthentication, removeTemporaryAccessKeys } from '../../lib/shared/authentication-lib'
+import { ensureAdminAuthentication } from '../../lib/shared/authentication-lib'
 import { getAccountID } from '../../lib/shared/get-account-id'
 import { getOptionsSpec } from '../lib/get-options-spec'
 import { handler as createUser } from './users/create'
@@ -17,14 +17,10 @@ const handler = async ({ argv, db, globalOptions }) => {
   const ssoSetupOptionsSpec = getOptionsSpec({ cliSpec, name : 'setup' })
   const ssoSetupOptions = commandLineArgs(ssoSetupOptionsSpec, { argv })
   let {
-    'key-delete': keyDelete,
     'identity-store-name': identityStoreName,
     'identity-store-region': identityStoreRegion = 'us-east-1',
-    'no-key-delete': noKeyDelete,
-    'user-email': userEmail,
-    'user-family-name': userFamilyName,
-    'user-given-name': userGivenName,
-    'user-name': userName
+    'no-key-delete': noKeyDelete
+    // we don't need the 'user' parameters; they'll be extracted by createUser
   } = ssoSetupOptions
   let credentials
 
@@ -34,21 +30,20 @@ const handler = async ({ argv, db, globalOptions }) => {
 
   const accountID = await getAccountID({ credentials })
 
-  let identityStoreARN, identityStoreID, ssoStartURL, ssoSuccess, ssoUserMessage
+  let identityStoreARN, identityStoreID, ssoSuccess, ssoUserMessage
   ({
     success : ssoSuccess,
     userMessage : ssoUserMessage,
     identityStoreARN,
     identityStoreRegion,
-    identityStoreID,
-    ssoStartURL
+    identityStoreID
   } =
     await createSSO({
       credentials,
       db,
       identityStoreName,
       identityStoreRegion,
-      ssoSetupOptions,
+      ssoSetupOptions
     }))
 
   if (ssoSuccess !== true) {
@@ -69,7 +64,7 @@ const handler = async ({ argv, db, globalOptions }) => {
   createUserArgv.push('--policy-name', POLICY_SITE_MANAGER_POLICY)
   createUserArgv.push('--no-error-on-existing')
   // noKeyDelete may have been set by ensureAdminAuthentication
-  if (noKeyDelete === true && !argv.includes('--no-key-delete')) { 
+  if (noKeyDelete === true && !argv.includes('--no-key-delete')) {
     createUserArgv.push('--no-key-delete')
   }
   const { success : userSuccess, userMessage : userUserMessage } =
@@ -98,7 +93,7 @@ const createSSO = async ({
     db.permissions.sso.identityStoreRegion = identityStoreRegion
     db.permissions.sso.ssoStartURL = ssoStartURL
   } else { // (identityStoreID === undefined)
-    await ensureRootOrganization({ credentials, db, globalOptions });
+    await ensureRootOrganization({ credentials, db, globalOptions })
 
     const interrogationBundle = {
       actions : [

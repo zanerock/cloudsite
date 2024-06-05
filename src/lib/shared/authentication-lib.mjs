@@ -38,7 +38,7 @@ const ensureAdminAuthentication = async ({ authProfile, noKeyDelete }) => {
   let credentials
 
   const credsINI = await getCredentialsINI()
-  
+
   if (credsINI.isHaveSection(authProfile) === true) {
     // if there is an existing key set, we retain it by default
     noKeyDelete = noKeyDelete === undefined ? true : noKeyDelete
@@ -48,7 +48,7 @@ const ensureAdminAuthentication = async ({ authProfile, noKeyDelete }) => {
 
   while (authenticated === false) {
     // the caller should do any special settings for global options
-    credentials = getCredentials({ 'sso-profile': authProfile })
+    credentials = getCredentials({ 'sso-profile' : authProfile })
     try {
       progressLogger.write('Checking admin authentication... ')
       await checkAdminAuthentication({ credentials })
@@ -117,8 +117,7 @@ const getCredentialsINI = async () => {
       progressLogger.write('ERROR.\n')
       throw e
     }
-  }
-  else { // there is no previous creds file; let's make sure we can write one later
+  } else { // there is no previous creds file; let's make sure we can write one later
     await fs.mkdir(fsPath.dirname(credsINIFile), { recursive : true })
   }
 
@@ -196,7 +195,6 @@ const removeTemporaryAccessKeys = async ({ authProfile, credentials, keyDelete, 
       const credsINI = await getCredentialsINI()
       credsINI.removeSection(authProfile)
       await saveCredentialsINI({ credsINI })
-
     }
   } else {
     progressLogger.write('Leaving Access Keys in place.\n')

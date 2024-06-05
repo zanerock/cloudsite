@@ -28,7 +28,6 @@ const handler = async ({
     'user-name': userName
   } = userCreateOptions
 
-
   const authProfile = (globalOptions.ssoCLIOverride && globalOptions['sso-profile']) || AUTHENTICATION_PROFILE_ADMIN
 
   let credentials
@@ -74,7 +73,7 @@ const handler = async ({
     progressLogger.write(' FOUND.\n')
     if (noErrorOnExisting === true) {
       await removeTemporaryAccessKeys({ authProfile, credentials, keyDelete, noKeyDelete })
-      return { success: true, userMessage: 'User already exists' }
+      return { success : true, userMessage : 'User already exists' }
     }
     throw new Error(`Found existing user ${userName}. To update the user, try:\n\n<code>cloudsite users ${userName} update<rst>`)
   } catch (e) {
@@ -155,7 +154,7 @@ const handler = async ({
   const usersURL = `https://${identityStoreRegion}.console.aws.amazon.com/singlesignon/home?region=${identityStoreRegion}#!/instances/${instanceShortID}/users`
   const userMessage = `<warn>You must request AWS email '${userName}' an email verification link from the Identity Center Console<rst>.\n\n1) Navigate to the following URL:\n\n<code>${usersURL}<rst>\n\n2) Select the user '${userName}'.\n3) Click the '<em>Send email verification link<rst>'.\n\nOnce verified, you can setup their local configuration with:\n\n<code>cloudsite configuration setup<rst>\n\n`
 
-  return { success: true, userMessage }
+  return { success : true, userMessage }
 }
 
 export { handler }

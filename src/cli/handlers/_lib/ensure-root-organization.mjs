@@ -1,8 +1,8 @@
-import { 
-  OrganizationsClient, 
-  CreateOrganizationCommand, 
-  DescribeAccountCommand, 
-  EnableAWSServiceAccessCommand 
+import {
+  OrganizationsClient,
+  CreateOrganizationCommand,
+  DescribeAccountCommand,
+  EnableAWSServiceAccessCommand
 } from '@aws-sdk/client-organizations'
 
 import { getAccountID } from '../../../lib/shared/get-account-id'
@@ -48,13 +48,12 @@ const ensureRootOrganization = async ({ credentials, db, globalOptions }) => {
 
   progressLogger.write('Enabling Identity Center SSO Organization integration... ')
   const enableAWSServiceAccessCommand = new EnableAWSServiceAccessCommand({
-    ServicePrincipal: 'sso.amazonaws.com'
+    ServicePrincipal : 'sso.amazonaws.com'
   })
   try {
     await organizationsClient.send(enableAWSServiceAccessCommand)
     progressLogger.write('SUCCESS.\n')
-  }
-  catch (e) {
+  } catch (e) {
     progressLogger.write('ERROR.\n')
     throw e
   }
