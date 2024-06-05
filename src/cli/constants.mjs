@@ -48,6 +48,38 @@ const subcommandSpec = {
   required      : true
 }
 
+const keyDeleteSpec = [
+  {
+    name        : 'key-delete',
+    type        : Boolean,
+    description : "Confirms deletion of the Access keys after setting up the SSO access. If neither '--delete' nor '--no-delete' are set, then deletion will be interactively confirmed."
+  },
+  {
+    name        : 'no-key-delete',
+    type        : Boolean,
+    description : 'Retains the Access keys after setting up SSO access.'
+  }
+]
+
+const userPropertiesSpec = [
+  {
+    name        : 'user-email',
+    description : 'The primary email to associate with the user.'
+  },
+  {
+    name        : 'user-family-name',
+    description : 'The family name of the cloudsite management user.'
+  },
+  {
+    name        : 'user-given-name',
+    description : 'The given name of the cloudsite management user.'
+  },
+  {
+    name        : 'user-name',
+    description : 'The name of the user account to create or reference.'
+  }
+]
+
 const cliSpec = {
   mainCommand : 'cloudsite', // TODO: should just be command
   description : 'Low cost, high performance cloud based website hosting manager.',
@@ -97,68 +129,11 @@ const cliSpec = {
       commands : [
         {
           name        : 'setup-local',
-          description : "Runs the local setup wizard and updates all options. This should be used after the SSO account has been created (see 'cloudsite configuration setup-sso')."
+          description : "Runs the local setup wizard and updates all options. This should be used after SSO accounts have been created (see 'cloudsite permissions sso create')."
         },
         {
           name        : 'show',
           description : 'Displays the current configuration.'
-        },
-        {
-          name        : 'setup-sso',
-          description : 'Runs the SSO wizard and sets up the SSO user authentication in the IAM Identity Center.',
-          arguments   : [
-            {
-              name        : 'defaults',
-              type        : Boolean,
-              description : 'Use the defaults were possible and skip unnecessary interactive setup.'
-            },
-            {
-              name        : 'delete',
-              type        : Boolean,
-              description : "Confirms deletion of the Access keys after setting up the SSO access. If neither '--delete' nor '--no-delete' are set, then deletion will be interactively confirmed."
-            },
-            {
-              name        : 'group-name',
-              description : "The name of the group to create or reference. This group will be associated with the permission set and user. It is highly recommended to use the default name or certain operations, like 'import', may be complicated."
-            },
-            {
-              name        : 'instance-name',
-              description : 'The name to assign to the newly created identity center, if needed.'
-            },
-            {
-              name        : 'instance-region',
-              description : "The region in which to set up the identity center if no identity center currently set up. Defaults to 'us-east-1'."
-            },
-            {
-              name        : 'no-delete',
-              type        : Boolean,
-              description : 'Retains the Access keys after setting up SSO access.'
-            },
-            {
-              name        : 'policy-name',
-              description : "The name of the policy and permission set to create or reference. It is highly recommended to use the default name or certain operations, like 'import', may be complicated."
-            },
-            {
-              name        : 'sso-profile-name',
-              description : 'The name of the local SSO profile to create.'
-            },
-            {
-              name        : 'user-email',
-              description : 'The primary email to associate with the user.'
-            },
-            {
-              name        : 'user-family-name',
-              description : 'The family name of the cloudsite management user.'
-            },
-            {
-              name        : 'user-given-name',
-              description : 'The given name of the cloudsite management user.'
-            },
-            {
-              name        : 'user-name',
-              description : 'The name of the user account to create or reference.'
-            }
-          ]
         }
       ]
     },
@@ -292,17 +267,9 @@ const cliSpec = {
           type        : Boolean
         },
         {
-          name        : 'group-name',
-          description : "The name to record for the SSO group. It will record the given name if no name is currently in the DB. With '--confirmed' set, this will override any existing name. Otherwise, it will initiate interactive confirmation if a name is already in the DB."
-        },
-        {
           name        : 'no-account',
           description : 'If set, then the account-level data import is skipped.',
           type        : Boolean
-        },
-        {
-          name        : 'policy-name',
-          description : "The name to record for the Cloudsite policy. It will record the given name if no name is currently in the DB. With '--confirmed' set, this will override any existing name. Otherwise, it will initiate interactive confirmation if a name is already in the DB."
         },
         {
           name        : 'refresh',
@@ -322,6 +289,35 @@ const cliSpec = {
         sourceTypeArgSpec
       ]
     },
+    /* {
+      name        : 'permissions',
+      description : 'Command group for permission related commands.',
+      arguments   : [subcommandSpec],
+      commands    : [
+        {
+          name        : 'sso',
+          description : 'Command group for sso related commands.',
+          arguments   : [subcommandSpec],
+          commands    : [
+            {
+              name        : 'create',
+              description : 'Runs the SSO setup wizard and creates global permission groups and initial user as necessary.',
+              arguments   : [
+                {
+                  name        : 'identity-store-name',
+                  description : 'The name to assign to the newly created identity center, if needed.'
+                },
+                {
+                  name        : 'identity-store-region',
+                  description : "The region in which to set up the identity center if no identity center currently set up. Defaults to 'us-east-1'."
+                },
+                ...keyDeleteSpec
+              ]
+            }
+          ]
+        }
+      ]
+    }, */
     {
       name        : 'plugin-settings',
       description : 'Command group for managing plugin settings.',
@@ -385,6 +381,31 @@ const cliSpec = {
           name        : 'list',
           description : 'List currently active reminders.'
         }
+      ]
+    },
+    {
+      name        : 'setup',
+      description : 'Runs the initial setup wizard. This is safe to re-run in order to deal with cases of partial success or mid-setup errors.',
+      arguments   : [
+        {
+          name        : 'identity-store-name',
+          description : 'The name to assign to the newly created identity center, if needed.'
+        },
+        {
+          name        : 'identity-store-region',
+          description : "The region in which to set up the identity center if no identity center currently set up. Defaults to 'us-east-1'."
+        },
+        {
+          name        : 'no-delete-keys',
+          description : "By default, if 'access keys' are created during the setup process, they will be deleted after the setup is complete. Setting this option suppresses this behavior and retains any created keys. Note that existing keys are never deleted.",
+          type        : Boolean
+        },
+        {
+          name        : 'sso-profile-name',
+          description : 'The name of the local SSO profile to create.'
+        },
+        ...userPropertiesSpec,
+        ...keyDeleteSpec
       ]
     },
     {
@@ -457,6 +478,29 @@ const cliSpec = {
           name        : 'check-stack',
           description : 'If set, then checks for stack drift and skips other checks unless also specifically specified.',
           type        : Boolean
+        }
+      ]
+    },
+    {
+      name        : 'users',
+      description : 'Users command group',
+      commands    : [
+        {
+          name        : 'create',
+          description : 'Creates a new user. Any unspecified properties will be interactively queried.',
+          arguments   : [
+            {
+              name        : 'no-error-on-existing',
+              description : 'Simply exits rather than raising an error if the user already exists.',
+              type        : Boolean
+            },
+            {
+              name        : 'policy-name',
+              description : 'The policy to assign (via group) to this user.'
+            },
+            ...keyDeleteSpec,
+            ...userPropertiesSpec
+          ]
         }
       ]
     }

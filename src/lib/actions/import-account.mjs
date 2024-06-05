@@ -7,13 +7,13 @@ import { searchPermissionSets } from './lib/search-permission-sets'
 import { searchPolicies } from './lib/search-policies'
 
 const doImportAccount = async ({ credentials, db, groupName, policyName }) => {
-  const { identityStoreID, identityStoreRegion, instanceARN, ssoAdminClient } =
+  const { identityStoreID, identityStoreRegion, identityStoreARN, ssoAdminClient } =
     await importIdentityStoreData({ credentials, db })
   const iamClient = new IAMClient({ credentials })
 
   Promise.all([
     await importGroupData({ credentials, db, groupName, identityStoreID, identityStoreRegion }),
-    await importPermissionSet({ db, instanceARN, policyName, ssoAdminClient }),
+    await importPermissionSet({ db, identityStoreARN, policyName, ssoAdminClient }),
     await importPolicyData({ db, iamClient, policyName })
   ])
 }
@@ -21,7 +21,7 @@ const doImportAccount = async ({ credentials, db, groupName, policyName }) => {
 const importGroupData = async ({ credentials, db, groupName, identityStoreID, identityStoreRegion }) => {
   if (groupName !== undefined && (db.account.groupName !== groupName || db.account.groupID === undefined)) {
     db.account.groupName = groupName
-    const identityStoreClient = new IdentitystoreClient({ credentials, region : identityStoreRegion })
+    const identityStoreClient = new IdentitystoreClient({ credentials, identityStoreRegion })
     const groupID = await searchGroups({ groupName : db.account.groupName, identityStoreClient, identityStoreID })
     db.account.groupID = groupID
   } else if (db.account.groupName === undefined || db.account.groupID === undefined) {
@@ -30,28 +30,24 @@ const importGroupData = async ({ credentials, db, groupName, identityStoreID, id
 }
 
 const importIdentityStoreData = async ({ credentials, db }) => {
-  const { id, instanceARN, region, ssoAdminClient, ssoStartURL } = await findIdentityStoreStaged({ credentials })
-  db.account.identityStoreID = id
-  db.account.identityStoreARN = instanceARN
-  db.account.identityStoreRegion = region
-  db.account.ssoStartURL = ssoStartURL
+  const { id, identityStoreARN, identityStoreRegion, ssoAdminClient, ssoStartURL } =
+    await findIdentityStoreStaged({ credentials })
+  db.permissions.sso.identityStoreID = id
+  db.permissions.sso.identityStoreARN = identityStoreARN
+  db.permissions.sso.identityStoreRegion = identityStoreRegion
+  db.permissions.sso.ssoStartURL = ssoStartURL
 
-  return { identityStoreID : id, identityStoreRegion : region, instanceARN, ssoAdminClient }
+  return { identityStoreID : id, identityStoreRegion, identityStoreARN, ssoAdminClient }
 }
 
-const importPermissionSet = async ({ db, instanceARN, policyName, ssoAdminClient }) => {
-  const permissionSetARN = await searchPermissionSets({ instanceARN, policyName, ssoAdminClient })
-  db.account.permissionSetARN = permissionSetARN
+const importPermissionSet = async ({ db, identityStoreARN, policyName, ssoAdminClient }) => {
+  const permissionSetARN = await searchPermissionSets({ identityStoreARN, policyName, ssoAdminClient })
+  db.permissions.policies[policyName].permissionSetARN = permissionSetARN
 }
 
 const importPolicyData = async ({ db, iamClient, policyName }) => {
-  if (policyName !== undefined) {
-    const policyARN = await searchPolicies({ policyName, iamClient })
-    db.account.policyName = policyName
-    db.account.policyARN = policyARN
-  } else if (db.account.policyName === undefined || db.account.policyID === undefined) {
-    throw new Error('No policy name and/or ARN defined in local DB; must provide policy name to resolve.')
-  }
+  const policyARN = await searchPolicies({ policyName, iamClient })
+  db.permissions.policies[policyName].policyARN = policyARN
 }
 
 export { doImportAccount }

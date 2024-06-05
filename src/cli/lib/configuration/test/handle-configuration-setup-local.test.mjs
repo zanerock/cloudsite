@@ -1,8 +1,12 @@
 import { Questioner } from 'question-and-answer'
 
 import { handleConfigurationSetupLocal } from '../handle-configuration-setup-local'
+import { progressLogger } from '../../../../lib/shared/progress-logger'
 
 jest.mock('node:fs/promises')
+jest.mock('config-ini-parser')
+
+progressLogger.write = () => {}
 
 describe('handleConfigurationSetupLocal', () => {
   const questionValues = { 'sso-profile' : 'some-profile' }
@@ -13,7 +17,7 @@ describe('handleConfigurationSetupLocal', () => {
   beforeAll(async () => {
     jest.spyOn(Questioner.prototype, 'question').mockResolvedValue(undefined)
     jest.spyOn(Questioner.prototype, 'values', 'get').mockReturnValue(questionValues)
-    db = { account : { localSettings : {} } }
+    db = { account : { localSettings : {} }, permissions : { sso : {} } }
     await handleConfigurationSetupLocal({ db })
   })
 

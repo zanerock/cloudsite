@@ -1,7 +1,7 @@
 import { ListGroupsCommand } from '@aws-sdk/client-identitystore'
 
 const searchGroups = async ({ groupName, identityStoreClient, identityStoreID }) => {
-  let nextToken, groupID
+  let nextToken
   do {
     const listGroupsCommand = new ListGroupsCommand({
       IdentityStoreId : identityStoreID,
@@ -9,17 +9,16 @@ const searchGroups = async ({ groupName, identityStoreClient, identityStoreID })
     })
     const listGroupsCommandResult = await identityStoreClient.send(listGroupsCommand)
 
-    for (const { GroupId: testGroupID, DisplayName: displayName } of listGroupsCommandResult.Groups) {
+    for (const { GroupId: groupID, DisplayName: displayName } of listGroupsCommandResult.Groups) {
       if (displayName === groupName) {
-        groupID = testGroupID
-        break
+        return groupID
       }
     }
 
     nextToken = listGroupsCommandResult.NextToken
-  } while (groupID === undefined && nextToken !== undefined)
+  } while (nextToken !== undefined) // exits via 'return' if a match is made
 
-  return groupID
+  return undefined
 }
 
 export { searchGroups }

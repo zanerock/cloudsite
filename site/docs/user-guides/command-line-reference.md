@@ -36,9 +36,11 @@ description: Documents available Cloudsite commands.
 - [`list`](#cloudsite-list): Lists the sites registered in the local database.
 - [`plugin-settings`](#cloudsite-plugin-settings): Command group for managing plugin settings.
 - [`reminders`](#cloudsite-reminders): Command group for managing reminders.
+- [`setup`](#cloudsite-setup): Runs the initial setup wizard.
 - [`update-contents`](#cloudsite-update-contents): Updates a website content and/or infrastructure.
 - [`update-dns`](#cloudsite-update-dns): Updates the DNS entries to match the new site endpoint.
 - [`update-stack`](#cloudsite-update-stack): Updates website infrastructure.
+- [`users`](#cloudsite-users): Users command group
 - [`verify`](#cloudsite-verify): Verifies the site is up and running and that the stack and content are up-to-date.
 
 <span id="cloudsite-billing"></span>
@@ -97,7 +99,6 @@ Command group for managing the cloudsite CLI configuration.
 #### Subcommands
 
 - [`setup-local`](#cloudsite-configuration-setup-local): Runs the local setup wizard and updates all options.
-- [`setup-sso`](#cloudsite-configuration-setup-sso): Runs the SSO wizard and sets up the SSO user authentication in the IAM Identity Center.
 - [`show`](#cloudsite-configuration-show): Displays the current configuration.
 
 <span id="cloudsite-configuration-setup-local"></span>
@@ -105,31 +106,7 @@ Command group for managing the cloudsite CLI configuration.
 
 `cloudsite configuration setup-local`
 
-Runs the local setup wizard and updates all options. This should be used after the SSO account has been created (see 'cloudsite configuration setup-sso').
-
-<span id="cloudsite-configuration-setup-sso"></span>
-##### `setup-sso`
-
-`cloudsite configuration setup-sso <options>`
-
-Runs the SSO wizard and sets up the SSO user authentication in the IAM Identity Center.
-
-###### `setup-sso` options
-
-|Option|Description|
-|------|------|
-|`--defaults`|Use the defaults were possible and skip unnecessary interactive setup.|
-|`--delete`|Confirms deletion of the Access keys after setting up the SSO access. If neither '--delete' nor '--no-delete' are set, then deletion will be interactively confirmed.|
-|`--group-name`|The name of the group to create or reference. This group will be associated with the permission set and user. It is highly recommended to use the default name or certain operations, like 'import', may be complicated.|
-|`--instance-name`|The name to assign to the newly created identity center, if needed.|
-|`--instance-region`|The region in which to set up the identity center if no identity center currently set up. Defaults to 'us-east-1'.|
-|`--no-delete`|Retains the Access keys after setting up SSO access.|
-|`--policy-name`|The name of the policy and permission set to create or reference. It is highly recommended to use the default name or certain operations, like 'import', may be complicated.|
-|`--sso-profile-name`|The name of the local SSO profile to create.|
-|`--user-email`|The primary email to associate with the user.|
-|`--user-family-name`|The family name of the cloudsite management user.|
-|`--user-given-name`|The given name of the cloudsite management user.|
-|`--user-name`|The name of the user account to create or reference.|
+Runs the local setup wizard and updates all options. This should be used after SSO accounts have been created (see 'cloudsite permissions sso create').
 
 <span id="cloudsite-configuration-show"></span>
 ##### `show`
@@ -231,9 +208,7 @@ Generates a site database based on currently deployed site stacks.
 |------|------|
 |`--apex-domain`|The apex domain of the site to import data for. If '--source-path' is not specified, it will be dynamically queried.|
 |`--confirmed`|If set, will overwrite any group or policy name in the DB if a new group or policy name is provided. Will otherwise initiate interactive confirmation.|
-|`--group-name`|The name to record for the SSO group. It will record the given name if no name is currently in the DB. With '--confirmed' set, this will override any existing name. Otherwise, it will initiate interactive confirmation if a name is already in the DB.|
 |`--no-account`|If set, then the account-level data import is skipped.|
-|`--policy-name`|The name to record for the Cloudsite policy. It will record the given name if no name is currently in the DB. With '--confirmed' set, this will override any existing name. Otherwise, it will initiate interactive confirmation if a name is already in the DB.|
 |`--refresh`|By defaualt, cloudsite will refuse to overwrite existing site DB entries. if '--refresh' is true, then it will update/refresh the existing entry.|
 |`--region`|Specifies the region where the stack is to be found.|
 |`--source-path`|Local path to the static site root.|
@@ -327,6 +302,28 @@ Command group for managing reminders.
 
 List currently active reminders.
 
+<span id="cloudsite-setup"></span>
+### `setup`
+
+`cloudsite setup <options>`
+
+Runs the initial setup wizard. This is safe to re-run in order to deal with cases of partial success or mid-setup errors.
+
+#### `setup` options
+
+|Option|Description|
+|------|------|
+|`--identity-store-name`|The name to assign to the newly created identity center, if needed.|
+|`--identity-store-region`|The region in which to set up the identity center if no identity center currently set up. Defaults to 'us-east-1'.|
+|`--no-delete-keys`|By default, if 'access keys' are created during the setup process, they will be deleted after the setup is complete. Setting this option suppresses this behavior and retains any created keys. Note that existing keys are never deleted.|
+|`--sso-profile-name`|The name of the local SSO profile to create.|
+|`--user-email`|The primary email to associate with the user.|
+|`--user-family-name`|The family name of the cloudsite management user.|
+|`--user-given-name`|The given name of the cloudsite management user.|
+|`--user-name`|The name of the user account to create or reference.|
+|`--key-delete`|Confirms deletion of the Access keys after setting up the SSO access. If neither '--delete' nor '--no-delete' are set, then deletion will be interactively confirmed.|
+|`--no-key-delete`|Retains the Access keys after setting up SSO access.|
+
 <span id="cloudsite-update-contents"></span>
 ### `update-contents`
 
@@ -367,6 +364,38 @@ Updates website infrastructure.
 |Option|Description|
 |------|------|
 |`[apex-domain]`|(_main argument_,_required_) The apex domain identifying the site.|
+
+<span id="cloudsite-users"></span>
+### `users`
+
+`cloudsite users`
+
+Users command group
+
+
+#### Subcommands
+
+- [`create`](#cloudsite-users-create): Creates a new user.
+
+<span id="cloudsite-users-create"></span>
+##### `create`
+
+`cloudsite users create <options>`
+
+Creates a new user. Any unspecified properties will be interactively queried.
+
+###### `create` options
+
+|Option|Description|
+|------|------|
+|`--no-error-on-existing`|Simply exits rather than raising an error if the user already exists.|
+|`--policy-name`|The policy to assign (via group) to this user.|
+|`--key-delete`|Confirms deletion of the Access keys after setting up the SSO access. If neither '--delete' nor '--no-delete' are set, then deletion will be interactively confirmed.|
+|`--no-key-delete`|Retains the Access keys after setting up SSO access.|
+|`--user-email`|The primary email to associate with the user.|
+|`--user-family-name`|The family name of the cloudsite management user.|
+|`--user-given-name`|The given name of the cloudsite management user.|
+|`--user-name`|The name of the user account to create or reference.|
 
 <span id="cloudsite-verify"></span>
 ### `verify`

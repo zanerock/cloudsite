@@ -3,9 +3,9 @@ import { ListInstancesCommand, SSOAdminClient } from '@aws-sdk/client-sso-admin'
 
 import { progressLogger } from './progress-logger'
 
-const findIdentityStore = async ({ credentials, firstCheckRegion, instanceRegion, scope }) => {
-  const regionDescription = instanceRegion !== undefined
-    ? instanceRegion + ' region '
+const findIdentityStore = async ({ credentials, firstCheckRegion, identityStoreRegion, scope }) => {
+  const regionDescription = identityStoreRegion !== undefined
+    ? identityStoreRegion + ' region '
     : scope !== undefined
       ? scope + ' regions '
       : ''
@@ -25,9 +25,9 @@ const findIdentityStore = async ({ credentials, firstCheckRegion, instanceRegion
 
     let regions = listRegionsResult.Regions.map(({ RegionName }) => RegionName)
     const origRegions = [...regions]
-    if (instanceRegion !== undefined || scope !== undefined) {
-      const testFunc = instanceRegion !== undefined
-        ? (regionName) => regionName === instanceRegion
+    if (identityStoreRegion !== undefined || scope !== undefined) {
+      const testFunc = identityStoreRegion !== undefined
+        ? (regionName) => regionName === identityStoreRegion
         : scope.startsWith('!') === true
           ? (regionName) => !regionName.startsWith(scope.slice(1))
           : (regionName) => regionName.startsWith(scope)
@@ -35,7 +35,7 @@ const findIdentityStore = async ({ credentials, firstCheckRegion, instanceRegion
       regions = regions.filter(testFunc)
 
       if (regions.length === 0) {
-        throw new Error(`No such '${regionDescription}' found. Availablel regions are:\n- ` + origRegions.join('\n- '))
+        throw new Error(`No such '${regionDescription}' found. Available regions are:\n- ` + origRegions.join('\n- '))
       }
     }
 
@@ -68,12 +68,12 @@ const findIdentityStore = async ({ credentials, firstCheckRegion, instanceRegion
         progressLogger.write(' FOUND.\n')
         const instance = listInstancesResult.Instances[0]
         return {
-          id          : instance.IdentityStoreId,
-          instanceARN : instance.InstanceArn,
-          name        : instance.Name,
-          region,
+          identityStoreID     : instance.IdentityStoreId,
+          identityStoreARN    : instance.InstanceArn,
+          identityStoreName   : instance.Name,
+          identityStoreRegion : region,
           ssoAdminClient,
-          ssoStartURL : 'https://' + instance.IdentityStoreId + '.awsapps.com/start'
+          ssoStartURL         : 'https://' + instance.IdentityStoreId + '.awsapps.com/start'
         }
       }
     }
@@ -88,7 +88,7 @@ const findIdentityStore = async ({ credentials, firstCheckRegion, instanceRegion
 // TOOD: in future we can examine the default region to determine the first scope.
 const findIdentityStoreStaged = async ({ credentials, firstCheckRegion, scope = 'us' }) => {
   let findResult = await findIdentityStore({ credentials, firstCheckRegion, scope })
-  if (findResult.id !== undefined) {
+  if (findResult.identityStoreID !== undefined) {
     return findResult
   }
   const oppositeScope = scope.startsWith('!')
