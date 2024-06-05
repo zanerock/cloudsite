@@ -42,17 +42,12 @@ const importIdentityStoreData = async ({ credentials, db }) => {
 
 const importPermissionSet = async ({ db, identityStoreARN, policyName, ssoAdminClient }) => {
   const permissionSetARN = await searchPermissionSets({ identityStoreARN, policyName, ssoAdminClient })
-  db.account.permissionSetARN = permissionSetARN
+  db.permissions.policies[policyName].permissionSetARN = permissionSetARN
 }
 
 const importPolicyData = async ({ db, iamClient, policyName }) => {
-  if (policyName !== undefined) {
-    const policyARN = await searchPolicies({ policyName, iamClient })
-    db.account.policyName = policyName
-    db.account.policyARN = policyARN
-  } else if (db.account.policyName === undefined || db.account.policyID === undefined) {
-    throw new Error('No policy name and/or ARN defined in local DB; must provide policy name to resolve.')
-  }
+  const policyARN = await searchPolicies({ policyName, iamClient })
+  db.permissions.policies[policyName].policyARN = policyARN
 }
 
 export { doImportAccount }

@@ -194,7 +194,7 @@ const setupPermissionSet = async ({ db, identityStoreARN, policyName, ssoAdminCl
       })
       try {
         permissionSetARN = (await ssoAdminClient.send(createPermissionSetCommand)).PermissionSet.PermissionSetArn
-        db.account.permissionSetARN = permissionSetARN
+        db.permissions.policies[policyName].permissionSetARN = permissionSetARN
         progressLogger.write(' CREATED.\n')
         createdNewPermissionSet = true
       } catch (e) {
