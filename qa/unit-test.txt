@@ -1,0 +1,120 @@
+Test git rev: 738701b5feba1d5b63b9b9f2db62a4d73684b65c
+PASS cli/lib/test/create-command-group-handler.test.js
+PASS lib/shared/test/find-bucket-by-tags.test.js
+PASS cli/lib/configuration/test/handle-configuration-setup-local.test.js
+PASS cli/lib/configuration/test/handle-configuration-show.test.js
+PASS cli/lib/test/get-options-spec.test.js
+---------------------------------------|---------|----------|---------|---------|-------------------
+File                                   | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+---------------------------------------|---------|----------|---------|---------|-------------------
+All files                              |    6.07 |     5.01 |    8.85 |    5.97 |                   
+ cli                                   |    7.97 |     7.59 |   16.66 |    8.27 |                   
+  cloudsite.mjs                        |       0 |        0 |       0 |       0 | 1-263             
+  constants.mjs                        |   92.85 |      100 |      50 |    92.3 | 197               
+ cli/handlers                          |       0 |        0 |       0 |       0 |                   
+  setup.mjs                            |       0 |        0 |       0 |       0 | 1-146             
+ cli/handlers/_lib                     |       0 |        0 |       0 |       0 |                   
+  ensure-root-organization.mjs         |       0 |        0 |       0 |       0 | 1-60              
+ cli/handlers/users                    |       0 |        0 |       0 |       0 |                   
+  create.mjs                           |       0 |        0 |       0 |       0 | 1-158             
+ cli/lib                               |    6.23 |     6.79 |   16.66 |    6.03 |                   
+  check-format.mjs                     |       0 |        0 |       0 |       0 | 1-7               
+  check-reminders.mjs                  |       0 |        0 |       0 |       0 | 1-22              
+  create-command-group-handler.mjs     |   96.15 |    88.88 |     100 |      96 | 13                
+  get-global-options.mjs               |       0 |        0 |       0 |       0 | 1-35              
+  get-options-spec.mjs                 |     100 |    83.33 |     100 |     100 | 4-5               
+  get-site-info.mjs                    |       0 |        0 |       0 |       0 | 1-12              
+  get-stacks-by.mjs                    |       0 |        0 |       0 |       0 | 1-26              
+  get-value-container-and-key.mjs      |       0 |        0 |       0 |       0 | 1-47              
+  handle-cleanup.mjs                   |       0 |        0 |       0 |       0 | 1-50              
+  handle-create.mjs                    |       0 |        0 |       0 |       0 | 1-222             
+  handle-destroy.mjs                   |       0 |        0 |       0 |       0 | 1-58              
+  handle-detail.mjs                    |       0 |        0 |       0 |       0 | 1-23              
+  handle-document.mjs                  |       0 |        0 |       0 |       0 | 1-16              
+  handle-get-iam-policy.mjs            |       0 |        0 |       0 |       0 | 1-30              
+  handle-import.mjs                    |       0 |        0 |       0 |       0 | 1-142             
+  handle-list.mjs                      |       0 |        0 |       0 |       0 | 1-22              
+  handle-update-contents.mjs           |       0 |      100 |       0 |       0 | 1-23              
+  handle-update-dns.mjs                |       0 |      100 |       0 |       0 | 1-21              
+  handle-update-stack.mjs              |       0 |        0 |       0 |       0 | 1-23              
+  handle-verify.mjs                    |       0 |        0 |       0 |       0 | 1-31              
+  options.mjs                          |       0 |        0 |       0 |       0 | 1-77              
+  process-source-type.mjs              |       0 |        0 |       0 |       0 | 1-15              
+  smart-convert.mjs                    |       0 |        0 |       0 |       0 | 1-20              
+ cli/lib/billing                       |       0 |      100 |       0 |       0 |                   
+  handle-billing-configure-tags.mjs    |       0 |      100 |       0 |       0 | 1-13              
+ cli/lib/configuration                 |   88.88 |    64.28 |     100 |   88.67 |                   
+  handle-configuration-setup-local.mjs |      88 |    66.66 |     100 |   87.75 | 50,57-60,88-89    
+  handle-configuration-show.mjs        |     100 |       50 |     100 |     100 | 16                
+ cli/lib/plugin-settings               |       0 |        0 |       0 |       0 |                   
+  handle-plugin-settings-set.mjs       |       0 |        0 |       0 |       0 | 1-45              
+  handle-plugin-settings-show.mjs      |       0 |        0 |       0 |       0 | 1-18              
+ cli/lib/reminders                     |       0 |        0 |       0 |       0 |                   
+  handle-reminders-list.mjs            |       0 |        0 |       0 |       0 | 1-11              
+  todo-translator.mjs                  |       0 |        0 |       0 |       0 | 1-12              
+ lib/actions                           |       0 |        0 |       0 |       0 |                   
+  create.mjs                           |       0 |        0 |       0 |       0 | 1-85              
+  destroy.mjs                          |       0 |        0 |       0 |       0 | 1-61              
+  ensure-ssl-certificate.mjs           |       0 |        0 |       0 |       0 | 1-90              
+  import-account.mjs                   |       0 |        0 |       0 |       0 | 1-50              
+  import-site.mjs                      |       0 |        0 |       0 |       0 | 1-74              
+  setup-global-permissions.mjs         |       0 |        0 |       0 |       0 | 1-316             
+  setup-sso.mjs                        |       0 |        0 |       0 |       0 | 1-108             
+  setup-user.mjs                       |       0 |        0 |       0 |       0 | 1-69              
+  update-contents.mjs                  |       0 |        0 |       0 |       0 | 1-30              
+  update-dns.mjs                       |       0 |      100 |       0 |       0 | 1-7               
+  update-stack.mjs                     |       0 |        0 |       0 |       0 | 1-68              
+  verify.mjs                           |       0 |        0 |       0 |       0 | 1-179             
+ lib/actions/billing                   |       0 |        0 |       0 |       0 |                   
+  billing-configure-tags.mjs           |       0 |        0 |       0 |       0 | 1-99              
+ lib/actions/lib                       |       0 |        0 |       0 |       0 |                   
+  add-tags-to-hosted-zone.mjs          |       0 |      100 |       0 |       0 | 1-17              
+  associate-cost-allocation-tags.mjs   |       0 |        0 |       0 |       0 | 1-101             
+  create-or-update-dns-records.mjs     |       0 |      100 |       0 |       0 | 1-41              
+  find-certificate.mjs                 |       0 |        0 |       0 |       0 | 1-27              
+  get-hosted-zone-id.mjs               |       0 |        0 |       0 |       0 | 1-19              
+  search-groups.mjs                    |       0 |        0 |       0 |       0 | 1-22              
+  search-permission-sets.mjs           |       0 |        0 |       0 |       0 | 1-23              
+  search-policies.mjs                  |       0 |        0 |       0 |       0 | 1-24              
+  sync-site-content.mjs                |       0 |        0 |       0 |       0 | 1-34              
+  track-stack-status.mjs               |       0 |        0 |       0 |       0 | 1-41              
+  update-plugins.mjs                   |       0 |        0 |       0 |       0 | 1-18              
+  update-site-info.mjs                 |       0 |      100 |       0 |       0 | 1-15              
+ lib/plugins                           |       0 |        0 |       0 |       0 |                   
+  access-logs.mjs                      |       0 |      100 |       0 |       0 | 1-11              
+  cloudfront-logs.mjs                  |       0 |        0 |       0 |       0 | 1-39              
+ lib/plugins/contact-handler/lib       |       0 |        0 |       0 |       0 |                   
+  constants.mjs                        |       0 |      100 |     100 |       0 | 1-5               
+  setup-contact-emailer.mjs            |       0 |        0 |       0 |       0 | 1-151             
+  setup-contact-form-table.mjs         |       0 |      100 |       0 |       0 | 1-28              
+  setup-contact-handler.mjs            |       0 |        0 |       0 |       0 | 1-178             
+  setup-request-signer.mjs             |       0 |        0 |       0 |       0 | 1-103             
+  update-cloud-front-distribution.mjs  |       0 |        0 |       0 |       0 | 1-43              
+ lib/plugins/index-rewriter/lib        |       0 |        0 |       0 |       0 |                   
+  constants.mjs                        |       0 |      100 |     100 |       0 | 1                 
+  setup-index-rewriter.mjs             |       0 |        0 |       0 |       0 | 1-103             
+  update-cloudfront-distribution.mjs   |       0 |        0 |       0 |       0 | 1-31              
+ lib/plugins/shared                    |       0 |        0 |       0 |       0 |                   
+  determine-lambda-function-name.mjs   |       0 |        0 |       0 |       0 | 1-32              
+  ensure-lambda-function-bucket.js     |       0 |        0 |       0 |       0 | 1-45              
+  stage-lambda-function-zip-files.mjs  |       0 |      100 |       0 |       0 | 3-53              
+ lib/shared                            |   13.02 |     7.28 |   10.25 |   12.83 |                   
+  authentication-lib.mjs               |       0 |        0 |       0 |       0 | 1-202             
+  constants.mjs                        |     100 |      100 |     100 |     100 |                   
+  convert-domain-to-bucket-name.js     |       0 |      100 |       0 |       0 | 1                 
+  determine-bucket-name.mjs            |       0 |        0 |       0 |       0 | 1-47              
+  determine-oac-name.mjs               |       0 |        0 |       0 |       0 | 1-45              
+  find-bucket-by-tags.mjs              |   89.28 |    71.42 |     100 |   88.46 | 26,36-37          
+  find-identity-store.mjs              |       0 |        0 |       0 |       0 | 1-100             
+  generate-iam-policy.mjs              |       0 |        0 |       0 |       0 | 1-41              
+  get-account-id.mjs                   |       0 |        0 |       0 |       0 | 1-11              
+  get-resource-tags.mjs                |       0 |        0 |       0 |       0 | 1-10              
+  progress-logger.mjs                  |   73.33 |    33.33 |   33.33 |   73.33 | 15-16,21-22       
+  site-template.mjs                    |       0 |        0 |       0 |       0 | 1-265             
+---------------------------------------|---------|----------|---------|---------|-------------------
+
+Test Suites: 5 passed, 5 total
+Tests:       12 passed, 12 total
+Snapshots:   0 total
+Time:        0.977 s, estimated 1 s
+Ran all test suites.
