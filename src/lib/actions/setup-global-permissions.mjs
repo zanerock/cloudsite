@@ -49,7 +49,7 @@ const setupGlobalPermissions = async ({
   ]
 
   for (const [groupName, policyName] of standardPolicies) {
-    const { policyARN } = await setupPolicy({ db, iamClient, globalOptions, policyName })
+    const { policyARN } = await setupPolicy({ db, groupName, iamClient, globalOptions, policyName })
 
     const identityStoreClient = new IdentitystoreClient({ credentials, region : identityStoreRegion })
 
@@ -63,7 +63,7 @@ const setupGlobalPermissions = async ({
     })
 
     const { createdNewPermissionSet, permissionSetARN } =
-      await setupPermissionSet({ db, identityStoreARN, policyARN, policyName, ssoAdminClient })
+      await setupPermissionSet({ db, groupName, identityStoreARN, policyARN, policyName, ssoAdminClient })
     await setupPermissionSetPolicy({
       db,
       identityStoreARN,
@@ -121,10 +121,10 @@ const setupAccountAssignment = async ({ accountID, groupID, identityStoreARN, pe
   }
 }
 
-const setupPolicy = async ({ db, globalOptions, iamClient, policyName }) => {
+const setupPolicy = async ({ db, groupName, globalOptions, iamClient, policyName }) => {
   progressLogger.write(`Checking status of policy '${policyName}'... `)
 
-  let { policyARN } = db.permissions.policies[policyName] || {}
+  let { policyARN } = db.sso.groups[groupName] || {}
 
   if (policyARN !== undefined) {
     progressLogger.write('\nFound policy ARN in local database... ')
@@ -143,10 +143,10 @@ const setupPolicy = async ({ db, globalOptions, iamClient, policyName }) => {
 
     if (policyARN !== undefined) {
       progressLogger.write(' FOUND existing; updating local DB.\n')
-      if (db.permissions.policies[policyName] === undefined) {
-        db.permissions.policies[policyName] = {}
+      if (db.sso.groups[groupName] === undefined) {
+        db.sso.groups[groupName] = {}
       }
-      db.permissions.policies[policyName].policyARN = policyARN
+      db.sso.groups[groupName].policyARN = policyARN
     } else {
       progressLogger.write(' CREATING... ')
 
@@ -160,7 +160,7 @@ const setupPolicy = async ({ db, globalOptions, iamClient, policyName }) => {
       try {
         const createPolicyResult = await iamClient.send(createPolicyCommand)
         policyARN = createPolicyResult.PolicyArn
-        db.permissions.policies[policyName] = { policyARN }
+        db.sso.groups[groupName] = { policyARN }
         progressLogger.write('CREATED.\n')
       } catch (e) {
         progressLogger.write('ERROR while creating.\n')
@@ -172,9 +172,9 @@ const setupPolicy = async ({ db, globalOptions, iamClient, policyName }) => {
   return { policyARN }
 }
 
-const setupPermissionSet = async ({ db, identityStoreARN, policyName, ssoAdminClient }) => {
+const setupPermissionSet = async ({ db, groupName, identityStoreARN, policyName, ssoAdminClient }) => {
   progressLogger.write(`Looking for permission set '${policyName}'... `)
-  let { permissionSetARN } = db.permissions.policies[policyName]
+  let { permissionSetARN } = db.sso.groups[groupName]
 
   let createdNewPermissionSet = false
   if (permissionSetARN !== undefined) {
@@ -194,7 +194,7 @@ const setupPermissionSet = async ({ db, identityStoreARN, policyName, ssoAdminCl
       })
       try {
         permissionSetARN = (await ssoAdminClient.send(createPermissionSetCommand)).PermissionSet.PermissionSetArn
-        db.permissions.policies[policyName].permissionSetARN = permissionSetARN
+        db.sso.groups[groupName].permissionSetARN = permissionSetARN
         progressLogger.write(' CREATED.\n')
         createdNewPermissionSet = true
       } catch (e) {
@@ -260,10 +260,10 @@ const setupPermissionSetPolicy = async ({
   }
 }
 
-const setupSSOGroup = async ({ db, groupName, identityStoreClient, identityStoreID, policyName }) => {
+const setupSSOGroup = async ({ db, groupName, identityStoreClient, identityStoreID }) => {
   progressLogger.write(`Checking for SSO group '${groupName}'... `)
 
-  let { groupID } = db.permissions.policies[policyName]
+  let { groupID } = db.sso.groups[groupName]
 
   if (groupID !== undefined) {
     progressLogger.write('\nFound group ID in local database; verifying data... ')
@@ -280,8 +280,6 @@ const setupSSOGroup = async ({ db, groupName, identityStoreClient, identityStore
     const getGroupIDResult = await identityStoreClient.send(getGroupIDCommand)
     if (getGroupIDResult.GroupId === groupID) {
       progressLogger.write('CONFIRMED\n')
-      // probably redundant, but just in case we have only partial data
-      db.permissions.policies[policyName].groupName = groupName
       return { groupID }
     } else {
       progressLogger.write('ERROR')
@@ -304,8 +302,7 @@ const setupSSOGroup = async ({ db, groupName, identityStoreClient, identityStore
     try {
       const createGroupResult = await identityStoreClient.send(createGroupCommand)
       groupID = createGroupResult.GroupId
-      db.permissions.policies[policyName].groupID = groupID
-      db.permissions.policies[policyName].groupName = groupName
+      db.sso.groups[groupName].groupID = groupID
       progressLogger.write(' CREATED.\n')
     } catch (e) {
       progressLogger.write(' ERROR while creating.\n')

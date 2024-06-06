@@ -14,10 +14,10 @@ const setupSSO = async ({
   identityStoreRegion,
   ssoStartURL
 }) => {
-  if (db.permissions.sso.identityStoreID !== undefined &&
-      db.permissions.sso.identityStoreARN !== undefined &&
-      db.permissions.sso.identityStoreRegion !== undefined &&
-      db.permissions.sso.ssoStartURL !== undefined) {
+  if (db.sso.details.identityStoreID !== undefined &&
+      db.sso.details.identityStoreARN !== undefined &&
+      db.sso.details.identityStoreRegion !== undefined &&
+      db.sso.details.ssoStartURL !== undefined) {
     progressLogger.write('Found identity store IDs in local database.')
     return
   }
@@ -37,8 +37,9 @@ const setupSSO = async ({
       : "\n<warn>No Identity Center instance was found.<rst> You may have hit <RETURN> before the Identity Center creation finished, or maybe you didn't hit the 'Enable' button. Try the following URL."
     interrogationBundle.actions.push({ statement : userMessage })
     interrogationBundle.actions.push({
-      prompt    : `\n1) Copy the following URL into a browser:\n\n  <code>https://${identityStoreRegion}.console.aws.amazon.com/singlesignon/home?region=${identityStoreRegion}#!/<rst>\n\n2) Hit the 'Enable' button.\n3) Return here and hit <ENTER> to continue the automated setup.`,
-      parameter : 'IGNORE_ME'
+      prompt        : `\n1) Copy the following URL into a browser:\n\n  <code>https://${identityStoreRegion}.console.aws.amazon.com/singlesignon/home?region=${identityStoreRegion}#!/<rst>\n\n2) Hit the 'Enable' button.\n3) Return here and hit <ENTER> to continue the automated setup.`,
+      parameter     : 'IGNORE_ME',
+      outputOptions : { breakSpacesOnly : true }
     })
 
     const questioner = new Questioner({
@@ -59,10 +60,10 @@ const setupSSO = async ({
         ssoStartURL
       } = findIdentityStoreResult)
 
-      db.permissions.sso.identityStoreID = identityStoreID
-      db.permissions.sso.identityStoreARN = identityStoreARN
-      db.permissions.sso.identityStoreRegion = identityStoreRegion
-      db.permissions.sso.ssoStartURL = ssoStartURL
+      db.sso.details.identityStoreID = identityStoreID
+      db.sso.details.identityStoreARN = identityStoreARN
+      db.sso.details.identityStoreRegion = identityStoreRegion
+      db.sso.details.ssoStartURL = ssoStartURL
 
       const updateInstanceCommand = new UpdateInstanceCommand({
         Name        : identityStoreName,

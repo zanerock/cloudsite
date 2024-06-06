@@ -1,7 +1,7 @@
 import commandLineArgs from 'command-line-args'
 import { Questioner } from 'question-and-answer'
 
-import { AUTHENTICATION_PROFILE_ADMIN, POLICY_SITE_MANAGER_POLICY } from '../../lib/shared/constants'
+import { AUTHENTICATION_PROFILE_ADMIN, POLICY_SITE_MANAGER_GROUP } from '../../lib/shared/constants'
 import { cliSpec } from '../constants'
 import { ensureAdminAuthentication } from '../../lib/shared/authentication-lib'
 import { getAccountID } from '../../lib/shared/get-account-id'
@@ -61,7 +61,7 @@ const handler = async ({ argv, db, globalOptions }) => {
 
   const createUserArgv = (argv || [])
   // the initial user is always an admin user
-  createUserArgv.push('--policy-name', POLICY_SITE_MANAGER_POLICY)
+  createUserArgv.push('--group-name', POLICY_SITE_MANAGER_GROUP)
   createUserArgv.push('--no-error-on-existing')
   // noKeyDelete may have been set by ensureAdminAuthentication
   if (noKeyDelete === true && !argv.includes('--no-key-delete')) {
@@ -87,11 +87,11 @@ const createSSO = async ({
     await findIdentityStoreStaged({ credentials, firstCheckRegion : identityStoreRegion }))
 
   if (identityStoreID !== undefined) {
-    db.permissions.sso.identityStoreARN = identityStoreARN
-    db.permissions.sso.identityStoreID = identityStoreID
-    db.permissions.sso.identityStoreName = identityStoreName
-    db.permissions.sso.identityStoreRegion = identityStoreRegion
-    db.permissions.sso.ssoStartURL = ssoStartURL
+    db.sso.details.identityStoreARN = identityStoreARN
+    db.sso.details.identityStoreID = identityStoreID
+    db.sso.details.identityStoreName = identityStoreName
+    db.sso.details.identityStoreRegion = identityStoreRegion
+    db.sso.details.ssoStartURL = ssoStartURL
   } else { // (identityStoreID === undefined)
     await ensureRootOrganization({ credentials, db, globalOptions })
 

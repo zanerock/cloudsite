@@ -7,9 +7,8 @@ import commandLineArgs from 'command-line-args'
 import { Questioner } from 'question-and-answer'
 
 import { cliSpec } from '../constants'
-import { POLICY_SITE_MANAGER_GROUP, POLICY_SITE_MANAGER_POLICY } from '../../lib/shared/constants'
-import { doImportAccount } from '../../lib/actions/import-account'
 import { doImportSite } from '../../lib/actions/import-site'
+import { doImportSSO } from '../../lib/actions/import-sso'
 import { getCredentials } from '../../lib/shared/authentication-lib'
 import { getOptionsSpec } from './get-options-spec'
 import { getStacksBy } from './get-stacks-by'
@@ -21,13 +20,11 @@ const handleImport = async ({ argv, db, globalOptions }) => {
   const importOptionsSpec = getOptionsSpec({ cliSpec, name : 'import' })
   const importOptions = commandLineArgs(importOptionsSpec, { argv })
   const {
-    'group-name': groupName = POLICY_SITE_MANAGER_GROUP,
-    'no-account': noAccount,
-    'policy-name': policyName = POLICY_SITE_MANAGER_POLICY,
+    'no-sso': noSSO,
     refresh,
     region
   } = importOptions
-  let { 'apex-domain': apexDomain, confirmed, 'source-path': sourcePath } = importOptions
+  const { 'apex-domain': apexDomain, 'source-path': sourcePath } = importOptions
 
   // verify input parameters form correct
   if (region === undefined) {
@@ -105,34 +102,9 @@ const handleImport = async ({ argv, db, globalOptions }) => {
     sitesInfo[apexDomain] = dbEntry
   }
 
-  if (noAccount !== true) {
-    const overrideGroupName = groupName !== undefined && groupName !== db.account.groupName
-    const overridePolicyName = policyName !== undefined && policyName !== db.account.policyName
-    if (confirmed === false && (overrideGroupName || overridePolicyName)) {
-      const overrides = []
-      if (overrideGroupName === true) {
-        overrides.push(`group name '${db.account.groupName}' with '${groupName}'`)
-      }
-      if (overridePolicyName === true) {
-        overrides.push(`policy name '${db.account.policyName}' with '${policyName}'`)
-      }
-      const interrogationBundle = {
-        actions : [
-          { prompt : `Override existing ${overrides.join(' and ')}?`, parameter : 'CONFIRMED' }
-        ]
-      }
-
-      const questioner = new Questioner({ interrogationBundle, output : progressLogger })
-      await questioner.question()
-      confirmed = questioner.get('CONFIRMED')
-
-      if (confirmed !== true) {
-        throw new Error('Cannot override existing policy or group names without explicit confirmation.')
-      }
-    }
-
+  if (noSSO !== true) {
     // now, actually do the import
-    await doImportAccount({ credentials, db, groupName, policyName })
+    await doImportSSO({ credentials, db })
   }
 
   return { success : true, userMessage : 'Imported data.' }
