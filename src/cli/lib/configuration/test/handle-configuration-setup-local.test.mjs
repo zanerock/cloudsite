@@ -17,7 +17,7 @@ describe('handleConfigurationSetupLocal', () => {
   beforeAll(async () => {
     jest.spyOn(Questioner.prototype, 'question').mockResolvedValue(undefined)
     jest.spyOn(Questioner.prototype, 'values', 'get').mockReturnValue(questionValues)
-    db = { account : { localSettings : {} }, permissions : { sso : {} } }
+    db = { account : { localSettings : {} }, sso : { details : {} } }
     await handleConfigurationSetupLocal({ db })
   })
 

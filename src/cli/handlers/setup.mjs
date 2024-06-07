@@ -140,7 +140,7 @@ const createSSO = async ({
     identityStoreRegion = questioner.get('identity-store-region');
 
     ({ identityStoreARN, identityStoreID, identityStoreName, identityStoreRegion, ssoStartURL } =
-      await setupSSO({ credentials, db, identityStoreName, identityStoreRegion }));
+      await setupSSO({ credentials, db, identityStoreName, identityStoreRegion }))
 
     db.sso.details.identityStoreARN = identityStoreARN
     db.sso.details.identityStoreID = identityStoreID

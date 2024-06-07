@@ -11,11 +11,11 @@ const setupSSO = async ({ credentials, db, identityStoreName, identityStoreRegio
       db.sso.details.identityStoreRegion !== undefined &&
       db.sso.details.ssoStartURL !== undefined) {
     progressLogger.write('Found identity store IDs in local database.')
-    return { 
-      identityStoreARN: db.sso.details.identityStoreARN, 
-      identityStoreID: db.sso.details.identityStoreID,
-      identityStoreRegion: db.sso.details.identityStoreRegion, 
-      ssoStartURL: db.sso.details.ssoStartURL
+    return {
+      identityStoreARN    : db.sso.details.identityStoreARN,
+      identityStoreID     : db.sso.details.identityStoreID,
+      identityStoreRegion : db.sso.details.identityStoreRegion,
+      ssoStartURL         : db.sso.details.ssoStartURL
     }
   }
 

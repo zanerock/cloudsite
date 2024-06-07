@@ -15,7 +15,7 @@ const doImportSSO = async ({ credentials, db }) => {
   const identityStoreClient = new IdentitystoreClient({ credentials, identityStoreRegion })
 
   const importFuncs = []
-  for (const groupName of await getGroupNames({ })) {
+  for (const groupName of await getGroupNames()) {
     const policyName = getPolicyNameFromGroupName(groupName)
     db.sso.groups[groupName] = {}
 
@@ -27,7 +27,7 @@ const doImportSSO = async ({ credentials, db }) => {
   await Promise.all(importFuncs)
 }
 
-const getGroupNames = async ({}) => {
+const getGroupNames = async () => {
   throw new Error('getGroupNames() Not yet implemented.')
 }
 

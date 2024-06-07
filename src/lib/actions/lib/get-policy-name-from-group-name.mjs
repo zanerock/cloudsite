@@ -1,4 +1,4 @@
-const getPolicyNameFromGroupName = (groupName) => {
+const getPolicyNameFromGroupName = (/* groupName */) => {
   throw new Error('getPolicyNameFromGroupName not yet implemented')
 }
 
