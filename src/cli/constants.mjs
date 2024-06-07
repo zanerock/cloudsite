@@ -267,8 +267,8 @@ const cliSpec = {
           type        : Boolean
         },
         {
-          name        : 'no-account',
-          description : 'If set, then the account-level data import is skipped.',
+          name        : 'no-sso',
+          description : 'If set, then the SSO data import is skipped.',
           type        : Boolean
         },
         {
@@ -495,8 +495,8 @@ const cliSpec = {
               type        : Boolean
             },
             {
-              name        : 'policy-name',
-              description : 'The policy to assign (via group) to this user.'
+              name        : 'group-name',
+              description : 'The authorization group to assign to this user.'
             },
             ...keyDeleteSpec,
             ...userPropertiesSpec

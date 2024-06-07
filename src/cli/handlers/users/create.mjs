@@ -18,10 +18,10 @@ const handler = async ({
   const userCreateOptionsSpec = getOptionsSpec({ cliSpec, path : ['users', 'create'] })
   const userCreateOptions = commandLineArgs(userCreateOptionsSpec, { argv })
   let {
+    'group-name': groupName,
     'key-delete' : keyDelete,
     'no-error-on-existing': noErrorOnExisting,
     'no-key-delete': noKeyDelete,
-    'policy-name': policyName,
     'user-email': userEmail,
     'user-family-name' : userFamilyName,
     'user-given-name' : userGivenName,
@@ -34,7 +34,7 @@ const handler = async ({
   ({ credentials, noKeyDelete } = await ensureAdminAuthentication({ authProfile, noKeyDelete }))
 
   // let's get the identity store info
-  const { identityStoreARN, identityStoreID, identityStoreRegion } = db.permissions.sso
+  const { identityStoreARN, identityStoreID, identityStoreRegion } = db.sso.details
 
   if (identityStoreARN === undefined || identityStoreID === undefined || identityStoreRegion === undefined) {
     throw new Error("DB 'permissions.sso' field is missing or incomplete; try:\n\n<code>cloudsite import<rst>")
@@ -89,9 +89,9 @@ const handler = async ({
     actions :
     [
       {
-        prompt    : 'Select the policy to assign to the user:',
+        prompt    : 'Select the group to assign the user to:',
         options   : [POLICY_SITE_MANAGER_POLICY],
-        parameter : 'policy-name'
+        parameter : 'group-name'
       },
       {
         prompt    : 'Enter the <em>email<rst> of the Cloudsite manager user:',
@@ -119,7 +119,7 @@ const handler = async ({
   const { values } = questioner;
 
   ({
-    'policy-name': policyName = policyName,
+    'group-name': groupName = groupName,
     'user-email': userEmail = userEmail,
     'user-family-name': userFamilyName = userFamilyName,
     'user-given-name' : userGivenName = userGivenName,
@@ -128,10 +128,14 @@ const handler = async ({
 
   // all user fields should be set at this point
 
-  const { groupID, groupName } = db.permissions.policies[policyName]
+  if (!(groupName in db.sso.groups)) {
+    throw new Error(`No record of group '${groupName}' found in the local DB. Check group name or try:\n\n<code>cloudsite import<rst>`)
+  }
 
-  if (groupID === undefined || groupName === undefined) {
-    throw new Error(`Missing 'groupID' and/or 'groupName' definitions in local DB 'permissions.policies["${policyName}"]'. Try:\n\n<code>cloudsite import<rst>`)
+  const { groupID } = db.sso.groups[groupName]
+
+  if (groupID === undefined) {
+    throw new Error(`Missing 'groupID' from group record 'sso.gro["${groupName}"]'. Try:\n\n<code>cloudsite import<rst>`)
   }
 
   await setupUser({

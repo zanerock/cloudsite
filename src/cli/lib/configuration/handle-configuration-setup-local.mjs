@@ -71,7 +71,7 @@ const configureAWSConfig = async ({ db }) => {
     }
     config.set(profileName, 'sso_session', 'cloudsite')
     const { accountID } = db.account
-    const { identityStoreRegion, ssoStartURL } = db.permissions.sso
+    const { identityStoreRegion, ssoStartURL } = db.sso.details
     config.set(profileName, 'sso_account_id', accountID)
     config.set(profileName, 'sso_role_name', POLICY_SITE_MANAGER_POLICY)
 

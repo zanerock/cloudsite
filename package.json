@@ -60,7 +60,7 @@
     "command-line-help": "^1.0.0-alpha.1",
     "js-yaml": "^4.1.0",
     "mime-types": "^2.1.35",
-    "question-and-answer": "^1.0.0-alpha.20",
+    "question-and-answer": "^1.0.0-alpha.22",
     "regex-repo": "^1.3.0",
     "s3-empty-bucket": "^1.0.0-alpha.8",
     "s3-sync-client": "^4.3.1",

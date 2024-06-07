@@ -55,10 +55,10 @@ const cloudsite = async () => {
     }
     // otherwise, it's fine, there just are no options
     db = {
-      account     : { settings : {} },
-      permissions : {
-        policies : {},
-        sso      : {}
+      account : { settings : {} },
+      sso     : {
+        details : {},
+        groups  : {}
       },
       reminders : [],
       sites     : {},

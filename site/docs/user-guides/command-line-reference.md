@@ -208,7 +208,7 @@ Generates a site database based on currently deployed site stacks.
 |------|------|
 |`--apex-domain`|The apex domain of the site to import data for. If '--source-path' is not specified, it will be dynamically queried.|
 |`--confirmed`|If set, will overwrite any group or policy name in the DB if a new group or policy name is provided. Will otherwise initiate interactive confirmation.|
-|`--no-account`|If set, then the account-level data import is skipped.|
+|`--no-sso`|If set, then the SSO data import is skipped.|
 |`--refresh`|By defaualt, cloudsite will refuse to overwrite existing site DB entries. if '--refresh' is true, then it will update/refresh the existing entry.|
 |`--region`|Specifies the region where the stack is to be found.|
 |`--source-path`|Local path to the static site root.|
@@ -389,7 +389,7 @@ Creates a new user. Any unspecified properties will be interactively queried.
 |Option|Description|
 |------|------|
 |`--no-error-on-existing`|Simply exits rather than raising an error if the user already exists.|
-|`--policy-name`|The policy to assign (via group) to this user.|
+|`--group-name`|The authorization group to assign to this user.|
 |`--key-delete`|Confirms deletion of the Access keys after setting up the SSO access. If neither '--delete' nor '--no-delete' are set, then deletion will be interactively confirmed.|
 |`--no-key-delete`|Retains the Access keys after setting up SSO access.|
 |`--user-email`|The primary email to associate with the user.|

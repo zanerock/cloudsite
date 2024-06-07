@@ -5,25 +5,23 @@ import { Questioner } from 'question-and-answer'
 import { findIdentityStore, findIdentityStoreStaged } from '../shared/find-identity-store'
 import { progressLogger } from '../shared/progress-logger'
 
-const setupSSO = async ({
-  credentials,
-  db,
-  identityStoreARN,
-  identityStoreID,
-  identityStoreName,
-  identityStoreRegion,
-  ssoStartURL
-}) => {
-  if (db.permissions.sso.identityStoreID !== undefined &&
-      db.permissions.sso.identityStoreARN !== undefined &&
-      db.permissions.sso.identityStoreRegion !== undefined &&
-      db.permissions.sso.ssoStartURL !== undefined) {
+const setupSSO = async ({ credentials, db, identityStoreName, identityStoreRegion }) => {
+  if (db.sso.details.identityStoreID !== undefined &&
+      db.sso.details.identityStoreARN !== undefined &&
+      db.sso.details.identityStoreRegion !== undefined &&
+      db.sso.details.ssoStartURL !== undefined) {
     progressLogger.write('Found identity store IDs in local database.')
-    return
+    return {
+      identityStoreARN    : db.sso.details.identityStoreARN,
+      identityStoreID     : db.sso.details.identityStoreID,
+      identityStoreRegion : db.sso.details.identityStoreRegion,
+      ssoStartURL         : db.sso.details.ssoStartURL
+    }
   }
 
   let tryCount = 0
   const maxTryCount = 4
+  let identityStoreID
   while (identityStoreID === undefined) {
     tryCount += 1
 
@@ -37,8 +35,9 @@ const setupSSO = async ({
       : "\n<warn>No Identity Center instance was found.<rst> You may have hit <RETURN> before the Identity Center creation finished, or maybe you didn't hit the 'Enable' button. Try the following URL."
     interrogationBundle.actions.push({ statement : userMessage })
     interrogationBundle.actions.push({
-      prompt    : `\n1) Copy the following URL into a browser:\n\n  <code>https://${identityStoreRegion}.console.aws.amazon.com/singlesignon/home?region=${identityStoreRegion}#!/<rst>\n\n2) Hit the 'Enable' button.\n3) Return here and hit <ENTER> to continue the automated setup.`,
-      parameter : 'IGNORE_ME'
+      prompt        : `\n1) Copy the following URL into a browser:\n\n  <code>https://${identityStoreRegion}.console.aws.amazon.com/singlesignon/home?region=${identityStoreRegion}#!/<rst>\n\n2) Hit the 'Enable' button and wait for the 'Dashboard' screen to appear.\n3) Return here and hit <ENTER> to continue the automated setup.`,
+      parameter     : 'IGNORE_ME',
+      outputOptions : { breakSpacesOnly : true }
     })
 
     const questioner = new Questioner({
@@ -50,19 +49,19 @@ const setupSSO = async ({
     const findIdentityStoreResult =
       await findIdentityStore({ credentials, identityStoreRegion })
     if (findIdentityStoreResult.identityStoreID !== undefined) {
-      let ssoAdminClient
+      let identityStoreARN, ssoAdminClient, ssoStartURL
       ({
-        id: identityStoreID,
+        identityStoreID,
         identityStoreRegion,
         identityStoreARN,
         ssoAdminClient,
         ssoStartURL
       } = findIdentityStoreResult)
 
-      db.permissions.sso.identityStoreID = identityStoreID
-      db.permissions.sso.identityStoreARN = identityStoreARN
-      db.permissions.sso.identityStoreRegion = identityStoreRegion
-      db.permissions.sso.ssoStartURL = ssoStartURL
+      db.sso.details.identityStoreID = identityStoreID
+      db.sso.details.identityStoreARN = identityStoreARN
+      db.sso.details.identityStoreRegion = identityStoreRegion
+      db.sso.details.ssoStartURL = ssoStartURL
 
       const updateInstanceCommand = new UpdateInstanceCommand({
         Name        : identityStoreName,
