@@ -34,8 +34,21 @@ import { handlePluginSettingsSet } from './lib/plugin-settings/handle-plugin-set
 import { handlePluginSettingsShow } from './lib/plugin-settings/handle-plugin-settings-show'
 // reminders handlers
 import { handleRemindersList } from './lib/reminders/handle-reminders-list'
+// sso handlers
+import { handler as handleSSODetail } from './handlers/sso/detail'
 // users handlers
 import { handler as handleUsersCreate } from './handlers/users/create'
+
+const initialDB = {
+  account : { settings : {} },
+  sso     : {
+    details : {},
+    groups  : {}
+  },
+  reminders : [],
+  sites     : {},
+  toCleanup : {}
+}
 
 const cloudsite = async () => {
   // we can 'stopAtFirstUnknown' because the globals are defined at the root level
@@ -48,22 +61,15 @@ const cloudsite = async () => {
   let db
   try {
     const dbContents = await fs.readFile(DB_PATH, { encoding : 'utf8' })
-    db = JSON.parse(dbContents)
+    db = dbContents.trim() === ''
+      ? initialDB
+      : JSON.parse(dbContents)
   } catch (e) {
     if (e.code !== 'ENOENT') {
       throw e
     }
     // otherwise, it's fine, there just are no options
-    db = {
-      account : { settings : {} },
-      sso     : {
-        details : {},
-        groups  : {}
-      },
-      reminders : [],
-      sites     : {},
-      toCleanup : {}
-    }
+    db = initialDB
   }
 
   const origDB = structuredClone(db)
@@ -171,6 +177,15 @@ const cloudsite = async () => {
       }
       case 'setup':
         ({ success, userMessage } = await handleSetup({ argv, db, globalOptions })); break
+      case 'sso': {
+        const handleSSO = createCommandGroupHandler({
+          commandHandlerMap: {
+            detail: handleSSODetail
+          },
+          groupPath : ['sso']
+        });
+        ({ data, success, userMessage } = await handleSSO({ argv, db, globalOptions })); break
+      }
       case 'update-contents':
         ({ success, userMessage } = await handleUpdateContents({ argv, db, globalOptions })); break
       case 'update-dns':

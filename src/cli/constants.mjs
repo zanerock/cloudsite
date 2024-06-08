@@ -409,6 +409,17 @@ const cliSpec = {
       ]
     },
     {
+      name : 'sso',
+      description: 'Command group to manage single sign on users, groups, and permissions.',
+      arguments: [subcommandSpec],
+      commands: [
+        { 
+          name : 'detail',
+          description: 'Returns a description of the SSO settings.'
+        }
+      ]
+    },
+    {
       name        : 'update-contents',
       description : 'Updates a website content and/or infrastructure.',
       arguments   : [

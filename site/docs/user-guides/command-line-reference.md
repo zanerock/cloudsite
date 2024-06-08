@@ -37,6 +37,7 @@ description: Documents available Cloudsite commands.
 - [`plugin-settings`](#cloudsite-plugin-settings): Command group for managing plugin settings.
 - [`reminders`](#cloudsite-reminders): Command group for managing reminders.
 - [`setup`](#cloudsite-setup): Runs the initial setup wizard.
+- [`sso`](#cloudsite-sso): Command group to manage single sign on users, groups, and permissions.
 - [`update-contents`](#cloudsite-update-contents): Updates a website content and/or infrastructure.
 - [`update-dns`](#cloudsite-update-dns): Updates the DNS entries to match the new site endpoint.
 - [`update-stack`](#cloudsite-update-stack): Updates website infrastructure.
@@ -323,6 +324,31 @@ Runs the initial setup wizard. This is safe to re-run in order to deal with case
 |`--user-name`|The name of the user account to create or reference.|
 |`--key-delete`|Confirms deletion of the Access keys after setting up the SSO access. If neither '--delete' nor '--no-delete' are set, then deletion will be interactively confirmed.|
 |`--no-key-delete`|Retains the Access keys after setting up SSO access.|
+
+<span id="cloudsite-sso"></span>
+### `sso`
+
+`cloudsite sso [subcommand]`
+
+Command group to manage single sign on users, groups, and permissions.
+
+#### `sso` options
+
+|Option|Description|
+|------|------|
+|`[subcommand]`|(_main argument_,_required_) The subcommand to execute.|
+
+
+#### Subcommands
+
+- [`detail`](#cloudsite-sso-detail): Returns a description of the SSO settings.
+
+<span id="cloudsite-sso-detail"></span>
+##### `detail`
+
+`cloudsite sso detail`
+
+Returns a description of the SSO settings.
 
 <span id="cloudsite-update-contents"></span>
 ### `update-contents`
