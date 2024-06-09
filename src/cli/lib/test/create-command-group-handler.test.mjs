@@ -1,6 +1,6 @@
 import { createCommandGroupHandler } from '../create-command-group-handler'
 
-describe('createCommandGroupHandler', () => {
+describe,('createCommandGroupHandler', () => {
   test('returns valid 1st level handler', async () => {
     const groupHandlerFunction = createCommandGroupHandler({
       commandHandlerMap : { 'configure-tags' : () => true },
@@ -11,21 +11,21 @@ describe('createCommandGroupHandler', () => {
     expect(result).toBe(true)
   })
 
-  /* TODO: reactivate this test once we have second level commands again
   test('returns valid 2nd level handler', async () => {
     const groupHandlerFunction = createCommandGroupHandler({
       commandHandlerMap : {
-        sso : createCommandGroupHandler({
+        detail : () => {},
+        groups : createCommandGroupHandler({
           commandHandlerMap : { create : () => true },
-          groupPath         : ['users', 'sso']
+          groupPath         : ['sso', 'groups']
         })
       },
-      groupPath : ['permissions']
+      groupPath : ['sso']
     })
 
-    const result = await groupHandlerFunction({ argv : ['sso', 'create'] })
+    const result = await groupHandlerFunction({ argv : [,'groups', 'create'] })
     expect(result).toBe(true)
-  }) */
+  })
 
   test('complains if command handler map entry count too low', () => {
     expect(() => createCommandGroupHandler({
