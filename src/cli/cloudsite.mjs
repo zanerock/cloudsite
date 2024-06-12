@@ -36,6 +36,8 @@ import { handlePluginSettingsShow } from './lib/plugin-settings/handle-plugin-se
 import { handleRemindersList } from './lib/reminders/handle-reminders-list'
 // sso handlers
 import { handler as handleSSODetail } from './handlers/sso/detail'
+// sso groups handlers
+import { handler as handleSSOGroupsCreate } from './handlers/sso/groups/create'
 // users handlers
 import { handler as handleUsersCreate } from './handlers/users/create'
 
@@ -178,9 +180,16 @@ const cloudsite = async () => {
       case 'setup':
         ({ success, userMessage } = await handleSetup({ argv, db, globalOptions })); break
       case 'sso': {
+        const handleSSOGroups = createCommandGroupHandler({
+          commandHandlerMap : {
+            create : handleSSOGroupsCreate
+          },
+          groupPath : ['sso', 'groups']
+        })
         const handleSSO = createCommandGroupHandler({
-          commandHandlerMap: {
-            detail: handleSSODetail
+          commandHandlerMap : {
+            detail : handleSSODetail,
+            groups : handleSSOGroups
           },
           groupPath : ['sso']
         });

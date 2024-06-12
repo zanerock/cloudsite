@@ -409,13 +409,35 @@ const cliSpec = {
       ]
     },
     {
-      name : 'sso',
-      description: 'Command group to manage single sign on users, groups, and permissions.',
-      arguments: [subcommandSpec],
-      commands: [
-        { 
-          name : 'detail',
-          description: 'Returns a description of the SSO settings.'
+      name        : 'sso',
+      description : 'Command group to manage single sign on users, groups, and permissions.',
+      arguments   : [subcommandSpec],
+      commands    : [
+        {
+          name        : 'detail',
+          description : 'Returns a description of the SSO settings.'
+        },
+        {
+          name        : 'groups',
+          description : 'The SSO groups command group.',
+          arguments   : [subcommandSpec],
+          commands    : [
+            {
+              name        : 'create',
+              description : 'Creates a new group with access to the specific domains.',
+              arguments   : [
+                {
+                  name        : 'prefix',
+                  description : "The prefix to use for the created admin and content manager groups. E.g., a prefix of 'Foo' yields group names 'CS:Foo admins' and 'CS:Foo content managers'."
+                },
+                {
+                  name        : 'domains',
+                  description : 'Specifies a domain to which the group has access. May be specified multiple times.',
+                  multiple    : true
+                }
+              ]
+            }
+          ]
         }
       ]
     },

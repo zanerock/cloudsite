@@ -10,9 +10,7 @@ export const COST_ALLOCATION_RULE_DEFINED = 'site cost allocation rule defined'
 export const AUTHENTICATION_PROFILE_ADMIN = 'cloudsite-admin'
 
 export const POLICY_SITE_MANAGER_GROUP = 'Cloudsite site managers'
-export const POLICY_SITE_MANAGER_POLICY = 'CloudsiteSiteManager'
 export const AUTHENTICATION_PROFILE_SITE_MANAGER = 'cloudsite-site-manager'
 
 export const POLICY_CONTENT_MANAGER_GROUP = 'Cloudsite content manager'
-export const POLICY_CONTENT_MANAGER_POLICY = 'CloudsiteContentManager'
 export const AUTHENTICATION_PROFILE_CONTENT_MANAGER = 'cloudsite-content-manager'

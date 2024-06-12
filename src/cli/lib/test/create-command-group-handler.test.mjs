@@ -1,6 +1,6 @@
 import { createCommandGroupHandler } from '../create-command-group-handler'
 
-describe,('createCommandGroupHandler', () => {
+describe('createCommandGroupHandler', () => {
   test('returns valid 1st level handler', async () => {
     const groupHandlerFunction = createCommandGroupHandler({
       commandHandlerMap : { 'configure-tags' : () => true },
@@ -23,7 +23,7 @@ describe,('createCommandGroupHandler', () => {
       groupPath : ['sso']
     })
 
-    const result = await groupHandlerFunction({ argv : [,'groups', 'create'] })
+    const result = await groupHandlerFunction({ argv : ['groups', 'create'] })
     expect(result).toBe(true)
   })
 

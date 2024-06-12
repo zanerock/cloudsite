@@ -32,13 +32,12 @@ const handler = async ({ argv, db, globalOptions }) => {
   ({ credentials, noKeyDelete } = await ensureAdminAuthentication({ authProfile, noKeyDelete }))
 
   const accountID = await getAccountID({ credentials })
+  db.account.accountID = accountID
 
-  let identityStoreARN, identityStoreID, ssoSuccess, ssoUserMessage
+  let ssoSuccess, ssoUserMessage
   ({
     success : ssoSuccess,
     userMessage : ssoUserMessage,
-    identityStoreARN,
-    identityStoreID,
     identityStoreRegion
   } =
     await createSSO({
@@ -52,15 +51,7 @@ const handler = async ({ argv, db, globalOptions }) => {
   if (ssoSuccess !== true) {
     return { success : ssoSuccess, userMessage : ssoUserMessage }
   }
-  await setupGlobalPermissions({
-    accountID,
-    credentials,
-    db,
-    globalOptions,
-    identityStoreARN,
-    identityStoreID,
-    identityStoreRegion
-  })
+  await setupGlobalPermissions({ credentials, db, globalOptions })
 
   const createUserArgv = []
   if (userEmail !== undefined) {

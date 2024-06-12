@@ -342,6 +342,7 @@ Command group to manage single sign on users, groups, and permissions.
 #### Subcommands
 
 - [`detail`](#cloudsite-sso-detail): Returns a description of the SSO settings.
+- [`groups`](#cloudsite-sso-groups): The SSO groups command group.
 
 <span id="cloudsite-sso-detail"></span>
 ##### `detail`
@@ -349,6 +350,38 @@ Command group to manage single sign on users, groups, and permissions.
 `cloudsite sso detail`
 
 Returns a description of the SSO settings.
+
+<span id="cloudsite-sso-groups"></span>
+##### `groups`
+
+`cloudsite sso groups [subcommand]`
+
+The SSO groups command group.
+
+###### `groups` options
+
+|Option|Description|
+|------|------|
+|`[subcommand]`|(_main argument_,_required_) The subcommand to execute.|
+
+
+###### Subcommands
+
+- [`create`](#cloudsite-sso-groups-create): Creates a new group with access to the specific domains.
+
+<span id="cloudsite-sso-groups-create"></span>
+___`create`___
+
+`cloudsite sso groups create <options>`
+
+Creates a new group with access to the specific domains.
+
+__`create` options__
+
+|Option|Description|
+|------|------|
+|`--prefix`|The prefix to use for the created admin and content manager groups. E.g., a prefix of 'Foo' yields group names 'CS:Foo admins' and 'CS:Foo content managers'.|
+|`--domains`|Specifies a domain to which the group has access. May be specified multiple times.|
 
 <span id="cloudsite-update-contents"></span>
 ### `update-contents`

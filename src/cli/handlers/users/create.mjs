@@ -3,7 +3,7 @@ import { Questioner } from 'question-and-answer'
 
 import { GetUserIdCommand, IdentitystoreClient } from '@aws-sdk/client-identitystore'
 
-import { AUTHENTICATION_PROFILE_ADMIN, POLICY_SITE_MANAGER_POLICY } from '../../../lib/shared/constants'
+import { AUTHENTICATION_PROFILE_ADMIN } from '../../../lib/shared/constants'
 import { cliSpec } from '../../constants'
 import { ensureAdminAuthentication, removeTemporaryAccessKeys } from '../../../lib/shared/authentication-lib'
 import { getOptionsSpec } from '../../lib/get-options-spec'
@@ -90,7 +90,7 @@ const handler = async ({
     [
       {
         prompt    : 'Select the group to assign the user to:',
-        options   : [POLICY_SITE_MANAGER_POLICY],
+        options   : Object.keys(db.sso.groups),
         parameter : 'group-name'
       },
       {

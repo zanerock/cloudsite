@@ -1,20 +1,20 @@
 import { getAccountID } from './get-account-id'
 import { getCredentials } from './authentication-lib'
-import { POLICY_CONTENT_MANAGER_POLICY, POLICY_SITE_MANAGER_POLICY } from './constants'
+import { POLICY_CONTENT_MANAGER_GROUP, POLICY_SITE_MANAGER_GROUP } from './constants'
 
-const generateIAMPolicy = async ({ db, globalOptions, policyName }) => {
+const generateIAMPolicy = async ({ db, globalOptions, groupName }) => {
   let { accountID } = db.account
   if (accountID === undefined) {
     const credentials = getCredentials(globalOptions)
     accountID = await getAccountID({ credentials })
   }
 
-  if (policyName === POLICY_SITE_MANAGER_POLICY) {
+  if (groupName === POLICY_SITE_MANAGER_GROUP) {
     return siteManagerPolicy(accountID)
-  } else if (policyName === POLICY_CONTENT_MANAGER_POLICY) {
+  } else if (groupName === POLICY_CONTENT_MANAGER_GROUP) {
     return contentManagerPolicy(accountID)
   } else {
-    throw new Error(`Cannot generate unknown policy: ${policyName}`)
+    throw new Error(`Cannot generate policy for unknown group: ${groupName}`)
   }
 }
 
