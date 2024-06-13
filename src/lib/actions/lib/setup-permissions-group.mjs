@@ -26,7 +26,7 @@ import { searchGroups } from './search-groups'
 import { searchPermissionSets } from './search-permission-sets'
 import { searchPolicies } from './search-policies'
 
-const setupPermissionsGroup = async ({ credentials, db, globalOptions, groupName }) => {
+const setupPermissionsGroup = async ({ credentials, db, domains, globalOptions, groupName }) => {
   const { accountID } = db.account
   const { identityStoreARN, identityStoreID, identityStoreRegion } = db.sso.details
 
@@ -35,18 +35,17 @@ const setupPermissionsGroup = async ({ credentials, db, globalOptions, groupName
 
   const policyName = getPolicyNameFromGroupName(groupName)
 
-  const { policyARN } = await setupPolicy({ db, groupName, iamClient, globalOptions, policyName })
-
   const identityStoreClient = new IdentitystoreClient({ credentials, region : identityStoreRegion })
 
   const { groupID } = await setupSSOGroup({
     db,
+    domains,
     groupName,
     identityStoreClient,
-    identityStoreID,
-    identityStoreRegion,
-    policyName
+    identityStoreID
   })
+
+  const { policyARN } = await setupPolicy({ db, groupName, iamClient, globalOptions, policyName })
 
   const { createdNewPermissionSet, permissionSetARN } =
     await setupPermissionSet({ db, groupName, identityStoreARN, policyARN, policyName, ssoAdminClient })
@@ -135,7 +134,8 @@ const setupPolicy = async ({ db, groupName, globalOptions, iamClient, policyName
     } else {
       progressLogger.write(' CREATING... ')
 
-      const iamPolicy = await generateIAMPolicy({ db, globalOptions, groupName })
+      const { domains } = db.sso.groups[groupName]
+      const iamPolicy = await generateIAMPolicy({ db, domains, globalOptions, groupName })
 
       const createPolicyCommand = new CreatePolicyCommand({
         PolicyName     : policyName,
@@ -245,10 +245,10 @@ const setupPermissionSetPolicy = async ({
   }
 }
 
-const setupSSOGroup = async ({ db, groupName, identityStoreClient, identityStoreID }) => {
+const setupSSOGroup = async ({ db, domains, groupName, identityStoreClient, identityStoreID }) => {
   progressLogger.write(`Checking for SSO group '${groupName}'... `)
 
-  let { groupID } = db.sso.groups[groupName]
+  let { groupID } = db.sso.groups[groupName] || {}
 
   if (groupID !== undefined) {
     progressLogger.write('\nFound group ID in local database; verifying data... ')
@@ -275,6 +275,25 @@ const setupSSOGroup = async ({ db, groupName, identityStoreClient, identityStore
   groupID = await searchGroups({ groupName, identityStoreClient, identityStoreID })
 
   if (groupID !== undefined) {
+    const dbGroupID = db.sso.groups[groupName]?.groupID
+    if (dbGroupID === undefined) {
+      if (db.sso.groups[groupName] === undefined) {
+        db.sso.groups[groupName] = {}
+      }
+      db.sso.groups[groupName].groupID = groupID
+    } else if (groupID !== dbGroupID) {
+      progressLogger.write(' data MISMATCH.\n')
+      throw new Error(`Found group ID mismatch; search found '${groupID}', but DB has '${dbGroupID}'. Try:\n\ncloudsite import`)
+    }
+    
+    const dbDomains = db.sso.groups[groupName].domains
+    if (dbDomains === undefined) {
+      db.sso.groups[groupName].domains = domains
+    } else if (domains.length !== dbDomains.length || domains.some((domain) => !dbDomains.includes(domain))) {
+      progressLogger.write(' data MISMATCH.\n')
+      throw new Error(`Found group domains mismatch; input domains are '${domains.join("', '")}' while DB domains are '${dbDomains.join("', '")}'. Try:\n\ncloudsite import`)
+    }
+
     progressLogger.write(' FOUND existing.\n')
   } else {
     progressLogger.write(' CREATING...')
@@ -287,7 +306,13 @@ const setupSSOGroup = async ({ db, groupName, identityStoreClient, identityStore
     try {
       const createGroupResult = await identityStoreClient.send(createGroupCommand)
       groupID = createGroupResult.GroupId
+      if (db.sso.groups[groupName] === undefined) {
+        db.sso.groups[groupName] = {}
+      }
       db.sso.groups[groupName].groupID = groupID
+      if (domains !== undefined) {
+        db.sso.groups[groupName].domains = domains.sort()
+      }
       progressLogger.write(' CREATED.\n')
     } catch (e) {
       progressLogger.write(' ERROR while creating.\n')

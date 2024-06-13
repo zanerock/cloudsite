@@ -2,8 +2,10 @@ import commandLineArgs from 'command-line-args'
 import { Questioner } from 'question-and-answer'
 
 import { cliSpec } from '../../../constants'
+import { getCredentials } from '../../../../lib/shared/authentication-lib'
 import { getOptionsSpec } from '../../../lib/get-options-spec'
 import { progressLogger } from '../../../../lib/shared/progress-logger'
+import { setupPermissionsGroup } from '../../../../lib/actions/lib/setup-permissions-group'
 
 const handler = async ({ argv, db, globalOptions }) => {
   const groupCreateOptionsSpec = getOptionsSpec({ cliSpec, path : ['sso', 'groups', 'create'] })
@@ -48,10 +50,11 @@ const handler = async ({ argv, db, globalOptions }) => {
     }
   }
 
-  console.log('prefix:', prefix) // DEBUG
-  console.log('domains:', domains) // DEBUG
+  const credentials = getCredentials(globalOptions)
 
   const groupName = 'CS: ' + prefix + ' content managers'
+
+  await setupPermissionsGroup({ credentials, db, domains, globalOptions, groupName })
 
   return { success : true, userMessage : `Created group '${groupName}'.` }
 }
