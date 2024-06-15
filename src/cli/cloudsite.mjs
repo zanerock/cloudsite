@@ -36,12 +36,6 @@ import { handlePluginSettingsShow } from './lib/plugin-settings/handle-plugin-se
 import { handleRemindersList } from './lib/reminders/handle-reminders-list'
 // sso handlers
 import { handler as handleSSODetail } from './handlers/sso/detail'
-// sso groups handlers
-import { handler as handleSSOGroupsCreate } from './handlers/sso/groups/create'
-import { handler from handleSSOGroupsGroup } from './handlers/sso/groups/default'
-import { handler as handleSSOGroupsList } from './handlers/sso/groups/list'
-// users handlers
-import { handler as handleUsersCreate } from './handlers/users/create'
 
 const initialDB = {
   account : { settings : {} },
@@ -182,18 +176,9 @@ const cloudsite = async () => {
       case 'setup':
         ({ success, userMessage } = await handleSetup({ argv, db, globalOptions })); break
       case 'sso': {
-        const handleSSOGroups = createCommandGroupHandler({
-          commandHandlerMap : {
-            create : handleSSOGroupsCreate,
-            list: handleSSOGroupsList
-          },
-          groupPath : ['sso', 'groups']
-        })
         const handleSSO = createCommandGroupHandler({
           commandHandlerMap : {
-            _default : handleSSOGroupsGroup,
-            detail   : handleSSODetail,
-            groups   : handleSSOGroups
+            detail   : handleSSODetail
           },
           groupPath : ['sso']
         });
@@ -205,15 +190,6 @@ const cloudsite = async () => {
         ({ success, userMessage } = await handleUpdateDNS({ argv, db, globalOptions })); break
       case 'update-stack':
         ({ success, userMessage } = await handleUpdateStack({ argv, db, globalOptions })); break
-      case 'users': {
-        const handleUsers = createCommandGroupHandler({
-          commandHandlerMap : {
-            create : handleUsersCreate
-          },
-          groupPath : ['users']
-        });
-        ({ data, success } = await handleUsers({ argv, db, globalOptions })); break
-      }
       case 'verify':
         ({ data } = await handleVerify({ argv, db, globalOptions })); break
       case undefined:

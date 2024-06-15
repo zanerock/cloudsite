@@ -1,3 +1,7 @@
+/* 
+* This handler is not called directly, but as part of the setup. We maintain it as a separate handler in case at some 
+* we want to support arbitrary users at some point.
+*/
 import commandLineArgs from 'command-line-args'
 import { Questioner } from 'question-and-answer'
 

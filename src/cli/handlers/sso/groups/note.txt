@@ -1,0 +1,1 @@
+Started creating custom groups and user's but then decided this was not necessary and distracted from the core goals. We're leaving this code in place for now.
