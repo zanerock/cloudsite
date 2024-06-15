@@ -101,7 +101,6 @@ const cloudsite = async () => {
 
   let exitCode = 0
   let data, userMessage, success
-  let noWrap = false // i.e., wrap by default
   try {
     switch (command) {
       case 'billing': {
@@ -131,13 +130,12 @@ const cloudsite = async () => {
         ({ data, success } = await handleDetail({ argv, db })); break
       case 'document':
         ({ data, success } = handleDocument({ argv, db }))
-        noWrap = true
         break
       case 'get-iam-policy':
         await handleGetIAMPolicy({ argv, db, globalOptions })
         return // get-iam-policy is handles it's own output as the IAM policy is always in JSON format
       case 'list':
-        ({ data, noWrap, success } = await handleList({ argv, db })); break
+        ({ data, success } = await handleList({ argv, db })); break
       case 'import':
         ({ success, userMessage } = await handleImport({ argv, db, globalOptions })); break
       /* case 'permissions': {
@@ -178,7 +176,7 @@ const cloudsite = async () => {
       case 'sso': {
         const handleSSO = createCommandGroupHandler({
           commandHandlerMap : {
-            detail   : handleSSODetail
+            detail : handleSSODetail
           },
           groupPath : ['sso']
         });
@@ -237,10 +235,10 @@ const cloudsite = async () => {
 
   // is it a data format
   if (format === 'json' || format === 'yaml') {
-    progressLogger.writeWithOptions({ width: -1 }, actionStatus, '')
+    progressLogger.writeWithOptions({ width : -1 }, actionStatus, '')
   } else { // then it's a 'human' format
     if (data !== undefined) {
-      progressLogger.writeWithOptions({ width: -1 }, data, '')
+      progressLogger.writeWithOptions({ width : -1 }, data, '')
     }
 
     if (userMessage !== undefined) {

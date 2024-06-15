@@ -285,7 +285,7 @@ const setupSSOGroup = async ({ db, domains, groupName, identityStoreClient, iden
       progressLogger.write(' data MISMATCH.\n')
       throw new Error(`Found group ID mismatch; search found '${groupID}', but DB has '${dbGroupID}'. Try:\n\ncloudsite import`)
     }
-    
+
     const dbDomains = db.sso.groups[groupName].domains
     if (dbDomains === undefined) {
       db.sso.groups[groupName].domains = domains

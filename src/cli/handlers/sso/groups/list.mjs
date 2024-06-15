@@ -7,7 +7,7 @@ const handler = ({ db }) => {
     data[key] = pick(value, 'domains')
   }
 
-  return { data, success: true }
+  return { data, success : true }
 }
 
 export { handler }

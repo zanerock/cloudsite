@@ -1,4 +1,4 @@
-const handler = ({ argv }) => {
+const handler = (/* { argv } */) => {
 
 }
 

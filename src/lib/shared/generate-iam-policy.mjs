@@ -22,18 +22,17 @@ const generateIAMPolicy = async ({ db, domains, globalOptions, groupName }) => {
 
     return contentManagerPolicy()
   } else if (domains.length > 0) {
-    return contentManagerPolicy({ db, domains })
+    return contentManagerPolicy({ db, domains, groupName })
   } else {
     throw new Error(`Cannot generate policy for unknown group '${groupName}'. If you meant to create an ad hoc content manager group, then you must specify domains.`)
   }
 }
 
-const contentManagerPolicy = ({ db, domains = [] } = {}) => {
+const contentManagerPolicy = ({ db, domains = [], groupName } = {}) => {
   let resources
   if (domains.length === 0) {
     resources = ['arn:aws:s3:::*']
-  }
-  else {
+  } else {
     resources = domains.map((domain) => {
       const siteInfo = db.sites[domain]
       if (siteInfo === undefined) {
