@@ -38,6 +38,7 @@ import { handleRemindersList } from './lib/reminders/handle-reminders-list'
 import { handler as handleSSODetail } from './handlers/sso/detail'
 // sso groups handlers
 import { handler as handleSSOGroupsCreate } from './handlers/sso/groups/create'
+import { handler from handleSSOGroupsGroup } from './handlers/sso/groups/default'
 import { handler as handleSSOGroupsList } from './handlers/sso/groups/list'
 // users handlers
 import { handler as handleUsersCreate } from './handlers/users/create'
@@ -190,8 +191,9 @@ const cloudsite = async () => {
         })
         const handleSSO = createCommandGroupHandler({
           commandHandlerMap : {
-            detail : handleSSODetail,
-            groups : handleSSOGroups
+            _default : handleSSOGroupsGroup,
+            detail   : handleSSODetail,
+            groups   : handleSSOGroups
           },
           groupPath : ['sso']
         });
