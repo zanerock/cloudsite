@@ -34,8 +34,19 @@ import { handlePluginSettingsSet } from './lib/plugin-settings/handle-plugin-set
 import { handlePluginSettingsShow } from './lib/plugin-settings/handle-plugin-settings-show'
 // reminders handlers
 import { handleRemindersList } from './lib/reminders/handle-reminders-list'
-// users handlers
-import { handler as handleUsersCreate } from './handlers/users/create'
+// sso handlers
+import { handler as handleSSODetail } from './handlers/sso/detail'
+
+const initialDB = {
+  account : { settings : {} },
+  sso     : {
+    details : {},
+    groups  : {}
+  },
+  reminders : [],
+  sites     : {},
+  toCleanup : {}
+}
 
 const cloudsite = async () => {
   // we can 'stopAtFirstUnknown' because the globals are defined at the root level
@@ -48,22 +59,15 @@ const cloudsite = async () => {
   let db
   try {
     const dbContents = await fs.readFile(DB_PATH, { encoding : 'utf8' })
-    db = JSON.parse(dbContents)
+    db = dbContents.trim() === ''
+      ? initialDB
+      : JSON.parse(dbContents)
   } catch (e) {
     if (e.code !== 'ENOENT') {
       throw e
     }
     // otherwise, it's fine, there just are no options
-    db = {
-      account : { settings : {} },
-      sso     : {
-        details : {},
-        groups  : {}
-      },
-      reminders : [],
-      sites     : {},
-      toCleanup : {}
-    }
+    db = initialDB
   }
 
   const origDB = structuredClone(db)
@@ -97,7 +101,6 @@ const cloudsite = async () => {
 
   let exitCode = 0
   let data, userMessage, success
-  let noWrap = false // i.e., wrap by default
   try {
     switch (command) {
       case 'billing': {
@@ -127,13 +130,12 @@ const cloudsite = async () => {
         ({ data, success } = await handleDetail({ argv, db })); break
       case 'document':
         ({ data, success } = handleDocument({ argv, db }))
-        noWrap = true
         break
       case 'get-iam-policy':
         await handleGetIAMPolicy({ argv, db, globalOptions })
         return // get-iam-policy is handles it's own output as the IAM policy is always in JSON format
       case 'list':
-        ({ data, noWrap, success } = await handleList({ argv, db })); break
+        ({ data, success } = await handleList({ argv, db })); break
       case 'import':
         ({ success, userMessage } = await handleImport({ argv, db, globalOptions })); break
       /* case 'permissions': {
@@ -171,21 +173,21 @@ const cloudsite = async () => {
       }
       case 'setup':
         ({ success, userMessage } = await handleSetup({ argv, db, globalOptions })); break
+      case 'sso': {
+        const handleSSO = createCommandGroupHandler({
+          commandHandlerMap : {
+            detail : handleSSODetail
+          },
+          groupPath : ['sso']
+        });
+        ({ data, success, userMessage } = await handleSSO({ argv, db, globalOptions })); break
+      }
       case 'update-contents':
         ({ success, userMessage } = await handleUpdateContents({ argv, db, globalOptions })); break
       case 'update-dns':
         ({ success, userMessage } = await handleUpdateDNS({ argv, db, globalOptions })); break
       case 'update-stack':
         ({ success, userMessage } = await handleUpdateStack({ argv, db, globalOptions })); break
-      case 'users': {
-        const handleUsers = createCommandGroupHandler({
-          commandHandlerMap : {
-            create : handleUsersCreate
-          },
-          groupPath : ['users']
-        });
-        ({ data, success } = await handleUsers({ argv, db, globalOptions })); break
-      }
       case 'verify':
         ({ data } = await handleVerify({ argv, db, globalOptions })); break
       case undefined:
@@ -233,10 +235,10 @@ const cloudsite = async () => {
 
   // is it a data format
   if (format === 'json' || format === 'yaml') {
-    progressLogger.write(actionStatus, '')
+    progressLogger.writeWithOptions({ width : -1 }, actionStatus, '')
   } else { // then it's a 'human' format
     if (data !== undefined) {
-      progressLogger.write(data, '', { width : noWrap === true ? -1 : undefined })
+      progressLogger.writeWithOptions({ width : -1 }, data, '')
     }
 
     if (userMessage !== undefined) {

@@ -1,5 +1,8 @@
 import { DescribeStacksCommand } from '@aws-sdk/client-cloudformation'
 
+const getCloudsiteStacks = async ({ cloudFormationClient, region }) =>
+  await getStacksBy({ cloudFormationClient, region, testFunc : isCloudsiteAppStack })
+
 const getStacksBy = async ({ cloudFormationClient, region, testFunc }) => {
   let nextToken
   const results = []
@@ -25,4 +28,7 @@ const getStacksBy = async ({ cloudFormationClient, region, testFunc }) => {
   return results
 }
 
-export { getStacksBy }
+const isCloudsiteAppStack = ({ Tags : tags }) =>
+  tags.some(({ Key: key, Value: value }) => key === 'application' && value === 'Cloudsite')
+
+export { getCloudsiteStacks, getStacksBy }

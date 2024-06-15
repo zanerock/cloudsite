@@ -409,6 +409,17 @@ const cliSpec = {
       ]
     },
     {
+      name        : 'sso',
+      description : 'Command group to manage single sign on users, groups, and permissions.',
+      arguments   : [subcommandSpec],
+      commands    : [
+        {
+          name        : 'detail',
+          description : 'Returns a description of the SSO settings.'
+        }
+      ]
+    },
+    {
       name        : 'update-contents',
       description : 'Updates a website content and/or infrastructure.',
       arguments   : [
@@ -478,29 +489,6 @@ const cliSpec = {
           name        : 'check-stack',
           description : 'If set, then checks for stack drift and skips other checks unless also specifically specified.',
           type        : Boolean
-        }
-      ]
-    },
-    {
-      name        : 'users',
-      description : 'Users command group',
-      commands    : [
-        {
-          name        : 'create',
-          description : 'Creates a new user. Any unspecified properties will be interactively queried.',
-          arguments   : [
-            {
-              name        : 'no-error-on-existing',
-              description : 'Simply exits rather than raising an error if the user already exists.',
-              type        : Boolean
-            },
-            {
-              name        : 'group-name',
-              description : 'The authorization group to assign to this user.'
-            },
-            ...keyDeleteSpec,
-            ...userPropertiesSpec
-          ]
         }
       ]
     }

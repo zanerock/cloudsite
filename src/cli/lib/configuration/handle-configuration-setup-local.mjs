@@ -5,7 +5,8 @@ import * as fsPath from 'node:path'
 import { ConfigIniParser } from 'config-ini-parser'
 import { Questioner } from 'question-and-answer'
 
-import { AUTHENTICATION_PROFILE_CONTENT_MANAGER, POLICY_SITE_MANAGER_POLICY } from '../../../lib/shared/constants'
+import { AUTHENTICATION_PROFILE_CONTENT_MANAGER, POLICY_SITE_MANAGER_GROUP } from '../../../lib/shared/constants'
+import { getPolicyNameFromGroupName } from '../../../lib/shared/get-policy-name-from-group-name'
 import { progressLogger } from '../../../lib/shared/progress-logger'
 
 const handleConfigurationSetupLocal = async ({ db }) => {
@@ -72,8 +73,9 @@ const configureAWSConfig = async ({ db }) => {
     config.set(profileName, 'sso_session', 'cloudsite')
     const { accountID } = db.account
     const { identityStoreRegion, ssoStartURL } = db.sso.details
+    const siteManagerPolicyName = getPolicyNameFromGroupName(POLICY_SITE_MANAGER_GROUP)
     config.set(profileName, 'sso_account_id', accountID)
-    config.set(profileName, 'sso_role_name', POLICY_SITE_MANAGER_POLICY)
+    config.set(profileName, 'sso_role_name', siteManagerPolicyName)
 
     if (!config.isHaveSection(sessionName)) {
       config.addSection(sessionName)

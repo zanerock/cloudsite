@@ -11,19 +11,20 @@ describe('createCommandGroupHandler', () => {
     expect(result).toBe(true)
   })
 
-  /* TODO: reactivate this test once we have second level commands again
+  /* TODO: re-enable when we have a second level command
   test('returns valid 2nd level handler', async () => {
     const groupHandlerFunction = createCommandGroupHandler({
       commandHandlerMap : {
-        sso : createCommandGroupHandler({
+        detail : () => {},
+        groups : createCommandGroupHandler({
           commandHandlerMap : { create : () => true },
-          groupPath         : ['users', 'sso']
+          groupPath         : ['sso', 'groups']
         })
       },
-      groupPath : ['permissions']
+      groupPath : ['sso']
     })
 
-    const result = await groupHandlerFunction({ argv : ['sso', 'create'] })
+    const result = await groupHandlerFunction({ argv : ['groups', 'create'] })
     expect(result).toBe(true)
   }) */
 

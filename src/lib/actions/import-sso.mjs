@@ -2,7 +2,7 @@ import { IAMClient } from '@aws-sdk/client-iam'
 import { IdentitystoreClient } from '@aws-sdk/client-identitystore'
 
 import { findIdentityStoreStaged } from '../shared/find-identity-store'
-import { getPolicyNameFromGroupName } from './lib/get-policy-name-from-group-name'
+import { getPolicyNameFromGroupName } from '../shared/get-policy-name-from-group-name'
 import { searchGroups } from './lib/search-groups'
 import { searchPermissionSets } from './lib/search-permission-sets'
 import { searchPolicies } from './lib/search-policies'

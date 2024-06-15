@@ -1,42 +1,65 @@
 import { getAccountID } from './get-account-id'
 import { getCredentials } from './authentication-lib'
-import { POLICY_CONTENT_MANAGER_POLICY, POLICY_SITE_MANAGER_POLICY } from './constants'
+import { POLICY_CONTENT_MANAGER_GROUP, POLICY_SITE_MANAGER_GROUP } from './constants'
 
-const generateIAMPolicy = async ({ db, globalOptions, policyName }) => {
+const generateIAMPolicy = async ({ db, domains, globalOptions, groupName }) => {
   let { accountID } = db.account
   if (accountID === undefined) {
     const credentials = getCredentials(globalOptions)
     accountID = await getAccountID({ credentials })
   }
 
-  if (policyName === POLICY_SITE_MANAGER_POLICY) {
+  if (groupName === POLICY_SITE_MANAGER_GROUP) {
+    if (domains !== undefined) {
+      throw new Error(`Domains must be undefined when creating '${POLICY_SITE_MANAGER_GROUP}'.`)
+    }
+
     return siteManagerPolicy(accountID)
-  } else if (policyName === POLICY_CONTENT_MANAGER_POLICY) {
-    return contentManagerPolicy(accountID)
+  } else if (groupName === POLICY_CONTENT_MANAGER_GROUP) {
+    if (domains !== undefined) {
+      throw new Error(`Domains must be undefined when creating '${POLICY_CONTENT_MANAGER_GROUP}'.`)
+    }
+
+    return contentManagerPolicy()
+  } else if (domains.length > 0) {
+    return contentManagerPolicy({ db, domains, groupName })
   } else {
-    throw new Error(`Cannot generate unknown policy: ${policyName}`)
+    throw new Error(`Cannot generate policy for unknown group '${groupName}'. If you meant to create an ad hoc content manager group, then you must specify domains.`)
   }
 }
 
-const contentManagerPolicy = () => ({
-  Version   : '2012-10-17',
-  Statement : [
-    {
-      Sid    : 'CloudsiteS3Grants',
-      Effect : 'Allow',
-      Action : [
-        's3:PutObject',
-        's3:DeleteObject',
-        's3:GetObject',
-        's3:ListAllMyBuckets',
-        's3:ListBucket'
-      ],
-      Resource : [
-        'arn:aws:s3:::*'
-      ]
-    }
-  ]
-})
+const contentManagerPolicy = ({ db, domains = [], groupName } = {}) => {
+  let resources
+  if (domains.length === 0) {
+    resources = ['arn:aws:s3:::*']
+  } else {
+    resources = domains.map((domain) => {
+      const siteInfo = db.sites[domain]
+      if (siteInfo === undefined) {
+        throw new Error(`Cannot create content manager group '${groupName}' with access to unknown domain '${domain}'.`)
+      } // else, good to go
+
+      return 'arn:aws:s3:::' + siteInfo.siteBucketName
+    })
+  }
+  return {
+    Version   : '2012-10-17',
+    Statement : [
+      {
+        Sid    : 'CloudsiteS3Grants',
+        Effect : 'Allow',
+        Action : [
+          's3:PutObject',
+          's3:DeleteObject',
+          's3:GetObject',
+          's3:ListAllMyBuckets',
+          's3:ListBucket'
+        ],
+        Resource : resources
+      }
+    ]
+  }
+}
 
 const siteManagerPolicy = (accountID) => ({
   Version   : '2012-10-17',

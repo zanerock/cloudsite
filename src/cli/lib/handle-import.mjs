@@ -11,7 +11,7 @@ import { doImportSite } from '../../lib/actions/import-site'
 import { doImportSSO } from '../../lib/actions/import-sso'
 import { getCredentials } from '../../lib/shared/authentication-lib'
 import { getOptionsSpec } from './get-options-spec'
-import { getStacksBy } from './get-stacks-by'
+import { getCloudsiteStacks, getStacksBy } from './get-stacks-by'
 import { processSourceType } from './process-source-type'
 import { progressLogger } from '../../lib/shared/progress-logger'
 
@@ -39,7 +39,7 @@ const handleImport = async ({ argv, db, globalOptions }) => {
   const cloudFormationClient = new CloudFormationClient({ credentials, region })
 
   if (updateSites.length === 0) { // then we find the mall
-    updateSites.push(...(await getStacksBy({ cloudFormationClient, region, testFunc : isCloudsiteAppStack })))
+    updateSites.push(...(await getCloudsiteStacks({ cloudFormationClient, region })))
   }
 
   const sitesInfo = db.sites
@@ -109,8 +109,5 @@ const handleImport = async ({ argv, db, globalOptions }) => {
 
   return { success : true, userMessage : 'Imported data.' }
 }
-
-const isCloudsiteAppStack = ({ Tags : tags }) =>
-  tags.some(({ Key: key, Value: value }) => key === 'application' && value === 'Cloudsite')
 
 export { handleImport }
