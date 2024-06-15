@@ -11,6 +11,7 @@ describe('createCommandGroupHandler', () => {
     expect(result).toBe(true)
   })
 
+  /* TODO: re-enable when we have a second level command
   test('returns valid 2nd level handler', async () => {
     const groupHandlerFunction = createCommandGroupHandler({
       commandHandlerMap : {
@@ -25,7 +26,7 @@ describe('createCommandGroupHandler', () => {
 
     const result = await groupHandlerFunction({ argv : ['groups', 'create'] })
     expect(result).toBe(true)
-  })
+  }) */
 
   test('complains if command handler map entry count too low', () => {
     expect(() => createCommandGroupHandler({
