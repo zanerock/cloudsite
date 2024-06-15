@@ -38,6 +38,7 @@ import { handleRemindersList } from './lib/reminders/handle-reminders-list'
 import { handler as handleSSODetail } from './handlers/sso/detail'
 // sso groups handlers
 import { handler as handleSSOGroupsCreate } from './handlers/sso/groups/create'
+import { handler as handleSSOGroupsList } from './handlers/sso/groups/list'
 // users handlers
 import { handler as handleUsersCreate } from './handlers/users/create'
 
@@ -182,7 +183,8 @@ const cloudsite = async () => {
       case 'sso': {
         const handleSSOGroups = createCommandGroupHandler({
           commandHandlerMap : {
-            create : handleSSOGroupsCreate
+            create : handleSSOGroupsCreate,
+            list: handleSSOGroupsList
           },
           groupPath : ['sso', 'groups']
         })
@@ -257,10 +259,10 @@ const cloudsite = async () => {
 
   // is it a data format
   if (format === 'json' || format === 'yaml') {
-    progressLogger.write(actionStatus, '')
+    progressLogger.writeWithOptions({ width: -1 }, actionStatus, '')
   } else { // then it's a 'human' format
     if (data !== undefined) {
-      progressLogger.write(data, '', { width : noWrap === true ? -1 : undefined })
+      progressLogger.writeWithOptions({ width: -1 }, data, '')
     }
 
     if (userMessage !== undefined) {

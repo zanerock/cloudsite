@@ -144,8 +144,8 @@ const setupPolicy = async ({ db, groupName, globalOptions, iamClient, policyName
 
       try {
         const createPolicyResult = await iamClient.send(createPolicyCommand)
-        policyARN = createPolicyResult.PolicyArn
-        db.sso.groups[groupName] = { policyARN }
+        policyARN = createPolicyResult.Policy.Arn
+        db.sso.groups[groupName].policyARN = policyARN
         progressLogger.write('CREATED.\n')
       } catch (e) {
         progressLogger.write('ERROR while creating.\n')

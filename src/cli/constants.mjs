@@ -436,6 +436,10 @@ const cliSpec = {
                   multiple    : true
                 }
               ]
+            },
+            {
+              name: 'list',
+              description: 'Lists the groups and their domains.'
             }
           ]
         }
