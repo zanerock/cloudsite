@@ -1,88 +1,64 @@
 import { AccountClient, ListRegionsCommand } from '@aws-sdk/client-account'
 import { ListInstancesCommand, SSOAdminClient } from '@aws-sdk/client-sso-admin'
 
+import { getAccountRegions } from './get-account-regions'
 import { progressLogger } from './progress-logger'
 
 const findIdentityStore = async ({ credentials, firstCheckRegion, identityStoreRegion, scope }) => {
   const regionDescription = identityStoreRegion !== undefined
-    ? identityStoreRegion + ' region '
+    ? identityStoreRegion + ' region'
     : scope !== undefined
-      ? scope + ' regions '
-      : ''
-  progressLogger.write(`Checking ${regionDescription}for SSO identity store...`)
+      ? scope + ' regions'
+      : 'all regions'
 
-  let nextToken
-  const accountClient = new AccountClient({ credentials })
-  let ssoAdminClient
+  progressLogger.write(`Searching for SSO identity store in ${regionDescription}...`)
 
-  do {
-    const listRegionsCommand = new ListRegionsCommand({
-      MaxResults              : 50, // max allowed as of 2024-04-15
-      NextToken               : nextToken,
-      RegionOptStatusContains : ['ENABLED', 'ENABLED_BY_DEFAULT']
-    })
-    const listRegionsResult = await accountClient.send(listRegionsCommand)
+  let instanceData
+  if (identityStoreRegion !== undefined) {
+    instanceData = getInstanceData({ credentials, region : identityStoreRegion })
+  } else {
+    // TODO: get sort preference from settings
+    const { allRegions, regions } = getAccountRegions({ credentials, scope, sortPreference : 'us-' })
 
-    let regions = listRegionsResult.Regions.map(({ RegionName }) => RegionName)
-    const origRegions = [...regions]
-    if (identityStoreRegion !== undefined || scope !== undefined) {
-      const testFunc = identityStoreRegion !== undefined
-        ? (regionName) => regionName === identityStoreRegion
-        : scope.startsWith('!') === true
-          ? (regionName) => !regionName.startsWith(scope.slice(1))
-          : (regionName) => regionName.startsWith(scope)
-
-      regions = regions.filter(testFunc)
-
-      if (regions.length === 0) {
-        throw new Error(`No such '${regionDescription}' found. Available regions are:\n- ` + origRegions.join('\n- '))
-      }
+    if (regions.length === 0) {
+      throw new Error(`No such '${regionDescription}' found. Available regions are:\n- ` + allRegions.join('\n- '))
     }
-
-    regions.sort((a, b) => {
-      const aName = a
-      const bName = b
-
-      const aUS = aName.startsWith('us-')
-      const bUS = bName.startsWith('us-')
-
-      if (aName === firstCheckRegion) {
-        return -1
-      } else if (bName === firstCheckRegion) {
-        return 1
-      } else if (aUS === true && bUS === false) {
-        return -1
-      } else if (aUS === false && bUS === true) {
-        return 1
-      } else {
-        return aName.localeCompare(bName)
-      }
-    })
 
     for (const region of regions) {
       progressLogger.write('.')
-      ssoAdminClient = new SSOAdminClient({ credentials, region })
-      const listInstancesCommand = new ListInstancesCommand({})
-      const listInstancesResult = await ssoAdminClient.send(listInstancesCommand)
-      if (listInstancesResult.Instances.length > 0) {
-        progressLogger.write(' FOUND.\n')
-        const instance = listInstancesResult.Instances[0]
-        return {
-          identityStoreID     : instance.IdentityStoreId,
-          identityStoreARN    : instance.InstanceArn,
-          identityStoreName   : instance.Name,
-          identityStoreRegion : region,
-          ssoAdminClient,
-          ssoStartURL         : 'https://' + instance.IdentityStoreId + '.awsapps.com/start'
-        }
+      
+      instanceData = getInstanceData({ credentials, region })
+      if (instanceData !== undefined) {
+        break
       }
     }
-    nextToken = listRegionsResult.NextToken
-  } while (nextToken !== undefined)
+  }
 
-  progressLogger.write(' NOT FOUND.\n')
-  // return { region : firstCheckRegion, ssoAdminClient : new SSOAdminClient({ credentials, region : firstCheckRegion }) }
-  return {}
+  if (instanceData !== undefined) {
+    progressLogger.write(' FOUND.\n')
+    return instanceData
+  }
+  else {
+    progressLogger.write(' NOT FOUND.\n')
+    return {}
+  }
+}
+
+const getInstanceData = ({ credentials, region }) => {
+  const ssoAdminClient = new SSOAdminClient({ credentials, region })
+  const listInstancesCommand = new ListInstancesCommand({})
+  const listInstancesResult = await ssoAdminClient.send(listInstancesCommand)
+  if (listInstancesResult.Instances.length > 0) {
+    const instance = listInstancesResult.Instances[0]
+    return {
+      identityStoreID     : instance.IdentityStoreId,
+      identityStoreARN    : instance.InstanceArn,
+      identityStoreName   : instance.Name,
+      identityStoreRegion : region,
+      ssoAdminClient,
+      ssoStartURL         : 'https://' + instance.IdentityStoreId + '.awsapps.com/start'
+    }
+  }
 }
 
 // TOOD: in future we can examine the default region to determine the first scope.

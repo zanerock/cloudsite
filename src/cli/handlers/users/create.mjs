@@ -3,6 +3,7 @@
 * we want to support arbitrary users at some point.
 */
 import commandLineArgs from 'command-line-args'
+import { regex } from 'regex'
 import { Questioner } from 'question-and-answer'
 
 import { GetUserIdCommand, IdentitystoreClient } from '@aws-sdk/client-identitystore'
@@ -52,7 +53,11 @@ const handler = async ({
           {
             prompt    : 'Enter the user name of the Cloudsite manager SSO account to create or reference:',
             default   : userName,
-            parameter : 'user-name'
+            parameter : 'user-name',
+            validations : {
+              'max-length': 128,
+              'match-re' : regex`[\p{L}\p{M}\p{S}\p{N}\p{P}]+`
+            }
           }
         ]
       },

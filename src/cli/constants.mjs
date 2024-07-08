@@ -83,7 +83,7 @@ const userPropertiesSpec = [
 const cliSpec = {
   mainCommand : 'cloudsite', // TODO: should just be command
   description : 'Low cost, high performance cloud based website hosting manager.',
-  mainOptions : [ // TODO: should just be arguments
+  arguments   : [
     { name : 'command', defaultOption : true, description : 'The command to run or a sub-command group.' },
     ...globalOptionsSpec
   ],

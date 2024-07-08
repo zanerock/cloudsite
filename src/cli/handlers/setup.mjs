@@ -111,13 +111,22 @@ const createSSO = async ({
 
     interrogationBundle.actions.push({
       prompt    : "Enter the preferred <em>name for the Identity Center<rst> instance (typically based on your primary domain name with '-' instead of '.'; e.g.: foo-com):",
-      parameter : 'identity-store-name'
+      parameter : 'identity-store-name',
+      validations : {
+        'match-re': '[\w+=,.@-]+',
+        'max-length': 255
+        'min-length': 0,
+      }
     })
+
+    const { regions } = getAccountRegions({ credentials })
 
     interrogationBundle.actions.push({
       prompt    : 'Enter the preferred <em>AWS region<rst> for the identity store instance:',
       default   : identityStoreRegion,
-      parameter : 'identity-store-region'
+      parameter : 'identity-store-region',
+      options   : regions,
+      validations : { 'one-of': regions }
     })
 
     const questioner = new Questioner({
